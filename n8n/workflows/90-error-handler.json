@@ -1,0 +1,45 @@
+{
+  "id": "pp90ErrorHandler",
+  "name": "90-error-handler",
+  "active": false,
+  "nodes": [
+    {
+      "id": "f4a3f9a5-0001-4dab-8d44-000000000001",
+      "name": "On workflow error",
+      "notes": "Fires when any workflow that names this one as its error workflow fails in a production (webhook-triggered) execution.",
+      "type": "n8n-nodes-base.errorTrigger",
+      "typeVersion": 1,
+      "position": [0, 300],
+      "parameters": {}
+    },
+    {
+      "id": "f4a3f9a5-0002-4dab-8d44-000000000002",
+      "name": "Mark run failed",
+      "notes": "pp-tools finds the run by the n8n execution id stored when the run was created.",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [220, 300],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.PP_TOOLS_URL }}/runs/fail-by-execution",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ n8n_execution_id: String($json.execution.id), error: { message: $json.execution.error.message, node: $json.execution.lastNodeExecuted, workflow: $json.workflow.name, execution_url: $json.execution.url } }) }}",
+        "options": { "timeout": 10000 }
+      }
+    }
+  ],
+  "connections": {
+    "On workflow error": {
+      "main": [[{ "node": "Mark run failed", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {},
+  "tags": []
+}

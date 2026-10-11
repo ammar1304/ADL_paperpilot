@@ -1,0 +1,48 @@
+{
+  "id": "pp30Audit0000001",
+  "name": "30-audit",
+  "active": false,
+  "nodes": [
+    {
+      "id": "c3f2e8f4-0001-4c9a-9c33-000000000001",
+      "name": "Called by router",
+      "notes": "Receives the run record (run_id, mode, input, ...) from 00-router.",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.1,
+      "position": [0, 300],
+      "parameters": { "inputSource": "passthrough" }
+    },
+    {
+      "id": "c3f2e8f4-0002-4c9a-9c33-000000000002",
+      "name": "Not implemented yet",
+      "notes": "Milestone 0 placeholder. Replaced in milestone 3 by parser -> claim extractor -> evidence -> judge -> verifier.",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [220, 300],
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            { "id": "e0000001-0000-4000-8000-000000000001", "name": "branch", "value": "audit", "type": "string" },
+            { "id": "e0000002-0000-4000-8000-000000000002", "name": "implemented", "value": false, "type": "boolean" },
+            { "id": "e0000003-0000-4000-8000-000000000003", "name": "run_id", "value": "={{ $json.run_id }}", "type": "string" }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      }
+    }
+  ],
+  "connections": {
+    "Called by router": {
+      "main": [[{ "node": "Not implemented yet", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "errorWorkflow": "pp90ErrorHandler",
+    "callerPolicy": "workflowsFromSameOwner"
+  },
+  "pinData": {},
+  "tags": []
+}

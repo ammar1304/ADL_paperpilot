@@ -1,0 +1,125 @@
+# PaperPilot milestone 0 stack: Postgres, Qdrant, pp-tools and n8n.
+#   cp .env.example .env   # then fill in the values
+#   docker compose up -d --build --wait
+# Image versions and why they were chosen: docs/DECISIONS.md (D3).
+
+name: paperpilot
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER in .env}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD in .env}
+      # The default database is n8n's; the init script creates the app database.
+      POSTGRES_DB: ${N8N_DB_NAME:-n8n}
+      APP_DB_NAME: ${APP_DB_NAME:-paperpilot}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infra/postgres/init:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "127.0.0.1:${POSTGRES_HOST_PORT:-5433}:5432"
+    healthcheck:
+      # -h 127.0.0.1 forces TCP. On first start the image runs its init scripts
+      # on a temporary server that listens on the Unix socket only, so a TCP
+      # check cannot report healthy before the app database has been created.
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U \"$$POSTGRES_USER\" -d \"$$APP_DB_NAME\""]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+
+  qdrant:
+    image: qdrant/qdrant:v1.19.2
+    restart: unless-stopped
+    volumes:
+      - qdrant_data:/qdrant/storage
+    ports:
+      - "127.0.0.1:6333:6333"
+    healthcheck:
+      # The Qdrant image ships without curl or wget, so this speaks HTTP over
+      # bash's /dev/tcp. Not verified in the dev sandbox (see docs/PROGRESS.md).
+      test:
+        - CMD
+        - bash
+        - -c
+        - 'exec 3<>/dev/tcp/127.0.0.1/6333 && printf "GET /readyz HTTP/1.1\r\nHost: localhost\r\nConnection: close\r\n\r\n" >&3 && head -n 1 <&3 | grep -q " 200 "'
+      interval: 5s
+      timeout: 5s
+      retries: 20
+      start_period: 10s
+
+  pp-tools:
+    build:
+      context: ./services/pp_tools
+    image: paperpilot/pp-tools:dev
+    restart: unless-stopped
+    environment:
+      APP_DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${APP_DB_NAME:-paperpilot}
+      QDRANT_URL: http://qdrant:6333
+      LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    ports:
+      - "127.0.0.1:8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+    # Healthcheck is defined in services/pp_tools/Dockerfile (GET /health).
+
+  n8n:
+    image: n8nio/n8n:2.42.6
+    restart: unless-stopped
+    # Imports n8n/workflows/*.json, publishes them, then starts n8n.
+    entrypoint: ["/bin/sh", "/pp/entrypoint.sh"]
+    environment:
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: postgres
+      DB_POSTGRESDB_PORT: 5432
+      DB_POSTGRESDB_DATABASE: ${N8N_DB_NAME:-n8n}
+      DB_POSTGRESDB_USER: ${POSTGRES_USER}
+      DB_POSTGRESDB_PASSWORD: ${POSTGRES_PASSWORD}
+      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY:?set N8N_ENCRYPTION_KEY in .env}
+      N8N_LISTEN_ADDRESS: 0.0.0.0
+      N8N_PORT: 5678
+      WEBHOOK_URL: http://localhost:5678/
+      # Plain HTTP on localhost; set to true behind HTTPS.
+      N8N_SECURE_COOKIE: "false"
+      N8N_DIAGNOSTICS_ENABLED: "false"
+      GENERIC_TIMEZONE: ${TZ:-Africa/Tunis}
+      TZ: ${TZ:-Africa/Tunis}
+      # Workflows read PP_TOOLS_URL with {{ $env.PP_TOOLS_URL }}. n8n 2.x blocks
+      # env access in nodes by default; see docs/DECISIONS.md (D6) for the trade-off.
+      N8N_BLOCK_ENV_ACCESS_IN_NODE: "false"
+      PP_TOOLS_URL: http://pp-tools:8000
+      PP_ALLOW_TEST_FAULTS: ${PP_ALLOW_TEST_FAULTS:-false}
+      PP_IMPORT_WORKFLOWS_ON_START: ${PP_IMPORT_WORKFLOWS_ON_START:-true}
+      PP_WORKFLOWS_DIR: /pp/workflows
+    volumes:
+      - n8n_data:/home/node/.n8n
+      - ./n8n/workflows:/pp/workflows:ro
+      - ./n8n/entrypoint.sh:/pp/entrypoint.sh:ro
+    ports:
+      - "127.0.0.1:5678:5678"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      pp-tools:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "require('http').get('http://127.0.0.1:5678/healthz', r => process.exit(r.statusCode === 200 ? 0 : 1)).on('error', () => process.exit(1))"
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      # Import and publish run before n8n starts listening.
+      start_period: 180s
+
+volumes:
+  postgres_data:
+  qdrant_data:
+  n8n_data:

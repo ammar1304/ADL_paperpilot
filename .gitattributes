@@ -1,0 +1,7 @@
+# Shell scripts run inside Linux containers: keep LF endings even when the
+# repo is cloned on Windows, or /bin/sh fails with "not found" errors.
+*.sh text eol=lf
+*.py text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.sql text eol=lf

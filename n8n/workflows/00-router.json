@@ -1,0 +1,342 @@
+{
+  "id": "pp00Router000001",
+  "name": "00-router",
+  "active": false,
+  "nodes": [
+    {
+      "id": "a1f0c6d2-0001-4a7e-9a11-000000000001",
+      "name": "Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 300],
+      "webhookId": "5c9b1d1e-6f6a-4b0e-9b1a-0d1e5a7c2b01",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "paperpilot",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "id": "a1f0c6d2-0002-4a7e-9a11-000000000002",
+      "name": "Create run",
+      "notes": "Validates the request and creates the run row in one call. neverError=true so a 422 reaches the next Switch instead of failing the workflow; connection errors are still retried.",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [220, 300],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.PP_TOOLS_URL }}/runs",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ request: $json.body, n8n_execution_id: String($execution.id) }) }}",
+        "options": {
+          "timeout": 10000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "a1f0c6d2-0003-4a7e-9a11-000000000003",
+      "name": "Check create result",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [440, 300],
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose", "version": 2 },
+                "conditions": [
+                  {
+                    "id": "c0000001-0000-4000-8000-000000000001",
+                    "leftValue": "={{ $json.statusCode }}",
+                    "rightValue": 201,
+                    "operator": { "type": "number", "operation": "equals" }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "created"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose", "version": 2 },
+                "conditions": [
+                  {
+                    "id": "c0000002-0000-4000-8000-000000000002",
+                    "leftValue": "={{ $json.statusCode }}",
+                    "rightValue": 422,
+                    "operator": { "type": "number", "operation": "equals" }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "invalid"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "unexpected"
+        }
+      }
+    },
+    {
+      "id": "a1f0c6d2-0004-4a7e-9a11-000000000004",
+      "name": "Respond invalid request",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [660, 480],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json.body) }}",
+        "options": { "responseCode": 422 }
+      }
+    },
+    {
+      "id": "a1f0c6d2-0005-4a7e-9a11-000000000005",
+      "name": "pp-tools unexpected response",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [660, 660],
+      "parameters": {
+        "errorMessage": "={{ 'pp-tools POST /runs returned HTTP ' + $json.statusCode + ': ' + JSON.stringify($json.body).slice(0, 300) }}"
+      }
+    },
+    {
+      "id": "a1f0c6d2-0006-4a7e-9a11-000000000006",
+      "name": "Mark running",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [660, 200],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ $env.PP_TOOLS_URL }}/runs/{{ $json.body.run_id }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\"status\": \"running\"}",
+        "options": { "timeout": 10000 }
+      }
+    },
+    {
+      "id": "a1f0c6d2-0007-4a7e-9a11-000000000007",
+      "name": "Test fault requested?",
+      "notes": "Test hook for the error path. Only fires when PP_ALLOW_TEST_FAULTS=true AND the request carries the header X-PaperPilot-Test-Fault: fail-after-create. Keep the env var false outside development.",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [880, 200],
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2 },
+          "conditions": [
+            {
+              "id": "c0000003-0000-4000-8000-000000000003",
+              "leftValue": "={{ $env.PP_ALLOW_TEST_FAULTS === 'true' && $('Webhook').first().json.headers['x-paperpilot-test-fault'] === 'fail-after-create' }}",
+              "rightValue": "",
+              "operator": { "type": "boolean", "operation": "true", "singleValue": true }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "a1f0c6d2-0008-4a7e-9a11-000000000008",
+      "name": "Injected test fault",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [1100, 60],
+      "parameters": {
+        "errorMessage": "Injected test fault (X-PaperPilot-Test-Fault: fail-after-create)"
+      }
+    },
+    {
+      "id": "a1f0c6d2-0009-4a7e-9a11-000000000009",
+      "name": "Route by mode",
+      "notes": "Deterministic router: no LLM. The mode was already validated by pp-tools.",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [1100, 260],
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2 },
+                "conditions": [
+                  {
+                    "id": "c0000004-0000-4000-8000-000000000004",
+                    "leftValue": "={{ $json.mode }}",
+                    "rightValue": "novelty",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "novelty"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2 },
+                "conditions": [
+                  {
+                    "id": "c0000005-0000-4000-8000-000000000005",
+                    "leftValue": "={{ $json.mode }}",
+                    "rightValue": "audit",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "audit"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "unknown"
+        }
+      }
+    },
+    {
+      "id": "a1f0c6d2-0010-4a7e-9a11-000000000010",
+      "name": "Unknown mode",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [1320, 480],
+      "parameters": {
+        "errorMessage": "={{ 'No branch for mode: ' + $json.mode }}"
+      }
+    },
+    {
+      "id": "a1f0c6d2-0011-4a7e-9a11-000000000011",
+      "name": "Run novelty branch",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [1320, 160],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "pp20Novelty00001"
+        },
+        "mode": "once",
+        "options": { "waitForSubWorkflow": true }
+      }
+    },
+    {
+      "id": "a1f0c6d2-0012-4a7e-9a11-000000000012",
+      "name": "Run audit branch",
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.2,
+      "position": [1320, 320],
+      "parameters": {
+        "source": "database",
+        "workflowId": {
+          "__rl": true,
+          "mode": "id",
+          "value": "pp30Audit0000001"
+        },
+        "mode": "once",
+        "options": { "waitForSubWorkflow": true }
+      }
+    },
+    {
+      "id": "a1f0c6d2-0013-4a7e-9a11-000000000013",
+      "name": "Mark done",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1540, 240],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "parameters": {
+        "method": "PATCH",
+        "url": "={{ $env.PP_TOOLS_URL }}/runs/{{ $('Create run').first().json.body.run_id }}",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ status: 'done', result: $json }) }}",
+        "options": { "timeout": 10000 }
+      }
+    },
+    {
+      "id": "a1f0c6d2-0014-4a7e-9a11-000000000014",
+      "name": "Respond with result",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [1760, 240],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ run_id: $json.run_id, mode: $json.mode, status: $json.status, result: $json.result }) }}",
+        "options": { "responseCode": 200 }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{ "node": "Create run", "type": "main", "index": 0 }]]
+    },
+    "Create run": {
+      "main": [[{ "node": "Check create result", "type": "main", "index": 0 }]]
+    },
+    "Check create result": {
+      "main": [
+        [{ "node": "Mark running", "type": "main", "index": 0 }],
+        [{ "node": "Respond invalid request", "type": "main", "index": 0 }],
+        [{ "node": "pp-tools unexpected response", "type": "main", "index": 0 }]
+      ]
+    },
+    "Mark running": {
+      "main": [[{ "node": "Test fault requested?", "type": "main", "index": 0 }]]
+    },
+    "Test fault requested?": {
+      "main": [
+        [{ "node": "Injected test fault", "type": "main", "index": 0 }],
+        [{ "node": "Route by mode", "type": "main", "index": 0 }]
+      ]
+    },
+    "Route by mode": {
+      "main": [
+        [{ "node": "Run novelty branch", "type": "main", "index": 0 }],
+        [{ "node": "Run audit branch", "type": "main", "index": 0 }],
+        [{ "node": "Unknown mode", "type": "main", "index": 0 }]
+      ]
+    },
+    "Run novelty branch": {
+      "main": [[{ "node": "Mark done", "type": "main", "index": 0 }]]
+    },
+    "Run audit branch": {
+      "main": [[{ "node": "Mark done", "type": "main", "index": 0 }]]
+    },
+    "Mark done": {
+      "main": [[{ "node": "Respond with result", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "errorWorkflow": "pp90ErrorHandler",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all"
+  },
+  "pinData": {},
+  "tags": []
+}
