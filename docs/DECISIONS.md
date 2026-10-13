@@ -74,3 +74,84 @@ The container registries were not reachable from the development sandbox, so the
 
 - **Decision:** every published port binds to `127.0.0.1`. Postgres uses host port 5433 by default.
 - **Why:** nothing is reachable from the local network, and 5433 avoids clashing with a Postgres already installed on a teammate's machine.
+
+## D12. LLM providers and models (all free)
+
+- **Date:** 2026-10-12, before milestone 2
+- **Decision:**
+
+  | Role | Model | Provider |
+  | --- | --- | --- |
+  | Decomposer, query generator, claim extractor | `openai/gpt-oss-20b` | Groq free tier |
+  | Novelty judge, audit judge, citation checker | `openai/gpt-oss-120b` | Groq free tier |
+  | Figure reader (vision) | `qwen/qwen3.8-27b` | Groq free tier |
+  | Fallback when Groq is rate-limited | `gemini-3.5-flash-lite` | Gemini API free tier |
+
+- **Why Groq first:**
+  - Groq publishes its free-tier limits; Google does not, and cut its free limits sharply in December 2025.
+  - Both gpt-oss models support strict JSON-schema output on Groq, which the agents' contracts rely on.
+  - Groq does not retain inference data by default.
+  - Each model has its own quota, so splitting roles spreads the load.
+- **Why Gemini only as a fallback:** Google states that free-tier content is used to improve its products. That is acceptable for public arXiv papers. Never send an unpublished draft to the Gemini free tier.
+- **Constraint:** about 8,000 tokens per minute and 200,000 tokens per day per gpt-oss model (check your own limits under Settings, then Limits in the Groq console). This means caching every LLM response, backoff and fallback in n8n, short prompts, top-ranked chunks only, and evaluations spread over days. Each teammate uses their own key for their own development; keys are never pooled onto one pipeline to get around the limits.
+- **Sources:** [Groq rate limits](https://console.groq.com/docs/rate-limits), [Groq structured outputs](https://console.groq.com/docs/structured-outputs), [Groq data retention](https://console.groq.com/docs/your-data), [Gemini API pricing](https://ai.google.dev/gemini-api/docs/pricing).
+
+## D13. Domain and corpus selection
+
+- **Decision:** arXiv papers on retrieval-augmented generation for question answering, 2020 onward, in cs.CL, cs.IR, cs.AI or cs.LG. Up to 500 papers by arXiv relevance; 50 get their full text chunked, chosen by relevance with a per-year cap and then reviewed by the team. The query is in `app/corpus/select.py`.
+- **Why:**
+  - The team studies RAG, so it can judge method overlap and label gold claims.
+  - Papers report results in tables (EM, F1, Recall@k), so the audit has numbers to check.
+  - The corpus is open access on arXiv, so the citation check works.
+  - The field is narrow enough that a few hundred papers give meaningful coverage.
+- **Reproducibility:** `corpus/manifest.csv` (ids, versions, titles) is committed, so everyone indexes the same papers at the same versions. arXiv metadata is CC0; PDFs and extracted text are cached locally and never committed, since arXiv allows research use but not re-hosting.
+- **arXiv etiquette:** one request every 3 seconds, one connection, a User-Agent with a contact address (`ARXIV_CONTACT_EMAIL`), as the [arXiv API terms](https://info.arxiv.org/help/api/tou.html) ask.
+
+## D14. Embedding model: BGE-M3
+
+- **Decision:** `BAAI/bge-m3` (568M parameters, dense vectors) for both chunking strategies.
+- **Why:**
+  - Free, runs locally on CPU, no rate limits, no data leaves the machine.
+  - Multilingual, so French queries work if the team keeps them in scope.
+  - Its 8192-token limit is far above our 512-token chunks, so nothing is truncated.
+  - It can also produce sparse vectors, if hybrid search turns out to be needed (not used yet).
+- **Still to do:** compare it against an English-only model on the dev queries (planned in the design). Keep BGE-M3 only if it does not lose on English.
+
+## D15. Serve embeddings with Text Embeddings Inference (TEI)
+
+- **Decision:** a separate `embedder` container running Hugging Face TEI (`cpu-1.9`); pp-tools calls `POST /embed` over HTTP.
+- **Alternatives:** sentence-transformers inside pp-tools.
+- **Why:** pp-tools stays a small image without PyTorch (the model alone is about 2.3 GB). The model loads once and stays loaded. The same API serves the reranker in milestone 2. TEI's source confirms BGE-M3 support (XLM-RoBERTa architecture) and its `/health` endpoint.
+- **Cost:** the first start downloads the model, taking a few minutes. pp-tools reports the embedder in `/health` but does not require it, so run tracking works while the model loads. Apple Silicon needs the `cpu-arm64-1.9` image (`EMBEDDER_IMAGE` in `.env`).
+
+## D16. Plain PDF text first, MinerU later
+
+- **Decision:** milestone 1 extracts full text with pdfminer.six. Structure (sections, table blocks, figure captions) is recovered with documented heuristics in `app/corpus/structure.py`. MinerU's layout model replaces this in milestone 3.
+- **Why:** it unblocks the chunking experiment now, without a GPU or the MinerU service. It also creates the planned ablation for free: the same experiments with plain extraction and with MinerU show what layout parsing adds.
+- **Found while building:** pdfminer's default ordering read the right column before the left on two-column pages. The extractor now sorts text boxes itself, left column top to bottom and then right column (`_reading_key`).
+- **Known limits:** table cells come out as a flat run of values joined by `|`, with no cell coordinates (MinerU will provide those). Heading detection misses unnumbered headings with unusual names. Appendices after the references are skipped. `build_report.json` lists papers where no heading was found.
+
+## D17. Chunking experiment design
+
+- **Decision:** both strategies index the same text (title, abstract, body; references and acknowledgements excluded) with the same size budget (512 approximate tokens). A uses 64 tokens of overlap. The difference between them is the boundaries (fixed windows against sections, tables and captions) and B's short header naming the paper and section.
+- **Why:** with the same text and the same budget, a difference in Recall@k can be attributed to structure-awareness rather than to more text or bigger chunks.
+- **Token counting:** a regex counts words and punctuation marks (`app/textutil.py`), because pp-tools does not ship the model's tokenizer. It undercounts BGE-M3 subword tokens by roughly 20 to 40%, which is harmless here because both strategies use the same ruler and every chunk stays far below 8192 model tokens.
+
+## D18. Long builds run as background jobs that n8n polls
+
+- **Decision:** `POST /corpus/build` queues a job and answers 202 with a `job_id`. The `10-ingest-papers` workflow replies to its caller at once, then polls `GET /jobs/{id}` every 15 seconds until `done` or `failed`, with a 1-hour cap.
+- **Why:** a build takes minutes, longer than any sensible HTTP timeout. Jobs are rows in Postgres, so their status survives n8n restarts. A unique index allows one active build at a time; a second request gets 409. Jobs left running when pp-tools restarts are marked failed at startup.
+
+## D19. Retrieval evaluation through the deployed API
+
+- **Decision:** `app.eval.retrieval` queries the running service's `/search` by default (`--direct` bypasses it). Metrics are paper-level Recall@k and MRR. Every run writes its config (git commit, manifest hash, query file hash, chunk sizes) next to its results.
+- **Why:**
+  - The numbers describe exactly what the novelty branch will receive.
+  - Paper-level relevance is what novelty search needs, and it can be labelled reliably by hand.
+  - Queries are written by teammates from a generated worksheet, not by an LLM, so milestone 1 needs no API key and the queries are not biased toward one model's phrasing.
+  - Whole papers are assigned to dev or test, so tuning on dev cannot leak into test.
+
+## D20. Planned for milestone 2: an agentic search loop
+
+- **Decision:** the novelty branch's search agent may run up to 3 search rounds. After each round it judges which facets are poorly covered and writes new queries, then decides when to stop.
+- **Why:** it is the part of the system where autonomy helps, since a single search often misses work described in different words. It also answers "where is the agency?" honestly. The rest of the pipeline stays a fixed order on purpose, so that it can be tested.

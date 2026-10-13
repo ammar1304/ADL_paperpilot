@@ -1,4 +1,4 @@
-# PaperPilot milestone 0 stack: Postgres, Qdrant, pp-tools and n8n.
+# PaperPilot stack: Postgres, Qdrant, the embedding server, pp-tools and n8n.
 #   cp .env.example .env   # then fill in the values
 #   docker compose up -d --build --wait
 # Image versions and why they were chosen: docs/DECISIONS.md (D3).
@@ -50,15 +50,46 @@ services:
       retries: 20
       start_period: 10s
 
+  embedder:
+    # Text Embeddings Inference serving BGE-M3 (docs/DECISIONS.md D14, D15).
+    # Apple Silicon: set EMBEDDER_IMAGE=ghcr.io/huggingface/text-embeddings-inference:cpu-arm64-1.9
+    image: ${EMBEDDER_IMAGE:-ghcr.io/huggingface/text-embeddings-inference:cpu-1.9}
+    restart: unless-stopped
+    environment:
+      MODEL_ID: ${EMBEDDING_MODEL:-BAAI/bge-m3}
+      # To pin the exact model version for the final evaluation, add
+      # REVISION: <commit hash from the model page> here (see README).
+      MAX_CLIENT_BATCH_SIZE: 32
+    command: ["--json-output"]
+    volumes:
+      - embedder_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:80/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      # The first start downloads the model (about 2.3 GB).
+      start_period: 900s
+
   pp-tools:
     build:
       context: ./services/pp_tools
     image: paperpilot/pp-tools:dev
     restart: unless-stopped
+    # Host uid/gid, so files written to ./corpus, ./eval and ./.cache belong to you (Linux).
+    user: "${PP_UID:-1000}:${PP_GID:-1000}"
     environment:
       APP_DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${APP_DB_NAME:-paperpilot}
       QDRANT_URL: http://qdrant:6333
+      EMBEDDER_URL: http://embedder:80
+      ARXIV_CONTACT_EMAIL: ${ARXIV_CONTACT_EMAIL:-}
+      CHUNK_TOKENS: ${CHUNK_TOKENS:-512}
+      CHUNK_OVERLAP: ${CHUNK_OVERLAP:-64}
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
+    volumes:
+      - ./corpus:/pp/corpus
+      - ./eval:/pp/eval
+      - ./.cache/pp-tools:/var/pp/cache
     ports:
       - "127.0.0.1:8000:8000"
     depends_on:
@@ -66,6 +97,10 @@ services:
         condition: service_healthy
       qdrant:
         condition: service_healthy
+      # Started, not healthy: run tracking works while the model downloads.
+      # /health reports the embedder separately.
+      embedder:
+        condition: service_started
     # Healthcheck is defined in services/pp_tools/Dockerfile (GET /health).
 
   n8n:
@@ -123,3 +158,4 @@ volumes:
   postgres_data:
   qdrant_data:
   n8n_data:
+  embedder_data:

@@ -94,3 +94,72 @@ class FieldError(BaseModel):
 
 class ValidationErrorResponse(BaseModel):
     errors: list[FieldError]
+
+
+# ---- corpus and retrieval (milestone 1) ------------------------------------------
+
+Strategy = Literal["fixed", "structured"]
+
+
+class BuildRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    # true: drop and rebuild both collections (reproducible); false: upsert into them.
+    recreate: bool = True
+    # Index only the first N manifest rows (quick checks); None = the whole manifest.
+    limit: int | None = Field(default=None, ge=1, le=5000)
+    n8n_execution_id: str | None = Field(default=None, max_length=100)
+
+
+class JobAccepted(BaseModel):
+    job_id: UUID
+    status: Literal["queued"]
+
+
+class JobRecord(BaseModel):
+    job_id: UUID
+    kind: str
+    status: Literal["queued", "running", "done", "failed"]
+    params: dict[str, Any]
+    progress: dict[str, Any] | None
+    result: dict[str, Any] | None
+    error: dict[str, Any] | None
+    n8n_execution_id: str | None
+    created_at: str
+    updated_at: str
+
+
+class SearchFilters(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    paper_id: str | None = None
+    chunk_type: Literal["window", "abstract", "section", "table", "figure"] | None = None
+
+
+class SearchRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    query: str = Field(min_length=3, max_length=2000)
+    strategy: Strategy = "structured"
+    k: int = Field(default=10, ge=1, le=50)
+    # "chunk": top-k chunks; "paper": top-k distinct papers, best chunk each.
+    level: Literal["chunk", "paper"] = "chunk"
+    filters: SearchFilters | None = None
+
+
+class SearchHit(BaseModel):
+    chunk_id: str
+    paper_id: str
+    score: float
+    chunk_type: str
+    section: str | None
+    title: str
+    year: int
+    text: str
+
+
+class SearchResponse(BaseModel):
+    query: str
+    strategy: Strategy
+    level: str
+    hits: list[SearchHit]

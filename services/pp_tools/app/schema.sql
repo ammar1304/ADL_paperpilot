@@ -35,3 +35,21 @@ CREATE TABLE IF NOT EXISTS run_steps (
 );
 
 CREATE INDEX IF NOT EXISTS run_steps_run_id_idx ON run_steps (run_id);
+
+-- Long-running background work (corpus builds). n8n starts a job, then polls it.
+CREATE TABLE IF NOT EXISTS jobs (
+    job_id            uuid PRIMARY KEY,
+    kind              text        NOT NULL,
+    status            text        NOT NULL CHECK (status IN ('queued', 'running', 'done', 'failed')),
+    params            jsonb       NOT NULL DEFAULT '{}'::jsonb,
+    progress          jsonb,
+    result            jsonb,
+    error             jsonb,
+    n8n_execution_id  text,
+    created_at        timestamptz NOT NULL DEFAULT now(),
+    updated_at        timestamptz NOT NULL DEFAULT now()
+);
+
+-- At most one active job of each kind: a second build request gets HTTP 409.
+CREATE UNIQUE INDEX IF NOT EXISTS jobs_one_active_per_kind
+    ON jobs (kind) WHERE status IN ('queued', 'running');

@@ -15,5 +15,10 @@ __pycache__/
 .DS_Store
 
 # Local data and outputs
+# Downloaded papers, PDFs and extracted text (arXiv content is not ours to redistribute).
+.cache/*
+!.cache/pp-tools/
+.cache/pp-tools/*
+!.cache/pp-tools/.gitkeep
 eval/results/tmp/
 *.log

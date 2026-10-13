@@ -13,8 +13,12 @@ RUN pip install -r requirements.txt
 
 COPY app ./app
 
-# Run as an unprivileged user.
-RUN useradd --system --uid 10001 pptools
+# Run as an unprivileged user. docker-compose.yml overrides the uid with
+# PP_UID/PP_GID so files written to the bind-mounted corpus/, eval/ and cache
+# folders belong to the host user on Linux.
+RUN useradd --system --uid 10001 pptools \
+    && mkdir -p /pp/corpus /pp/eval /var/pp/cache \
+    && chown -R pptools /pp /var/pp
 USER pptools
 
 EXPOSE 8000

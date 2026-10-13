@@ -1,4 +1,4 @@
-"""Postgres access for run state. pp-tools is the only writer of the app schema."""
+"""Postgres access for run and job state. pp-tools is the only writer of the app schema."""
 
 import logging
 import time
@@ -6,6 +6,7 @@ from importlib import resources
 from typing import Any
 from uuid import UUID, uuid4
 
+from psycopg import errors
 from psycopg.rows import dict_row
 from psycopg.types.json import Jsonb
 from psycopg_pool import ConnectionPool
@@ -21,8 +22,19 @@ _RUN_COLUMNS = (
 )
 
 
+_JOB_COLUMNS = (
+    "job_id, kind, status, params, progress, result, error, n8n_execution_id, "
+    "to_char(created_at AT TIME ZONE 'UTC', 'YYYY-MM-DD\"T\"HH24:MI:SS.MS\"Z\"') AS created_at, "
+    "to_char(updated_at AT TIME ZONE 'UTC', 'YYYY-MM-DD\"T\"HH24:MI:SS.MS\"Z\"') AS updated_at"
+)
+
+
 class RunConflict(Exception):
     """Raised when a run is already in a terminal state."""
+
+
+class JobConflict(Exception):
+    """Raised when a job of the same kind is already queued or running."""
 
 
 class Database:
@@ -135,6 +147,60 @@ class Database:
                 (Jsonb(error), n8n_execution_id),
             )
             return [r[0] for r in cur.fetchall()]
+
+    # ---- jobs -------------------------------------------------------------
+
+    def create_job(self, kind: str, params: dict[str, Any], n8n_execution_id: str | None) -> UUID:
+        self.ensure_schema()
+        job_id = uuid4()
+        try:
+            with self.pool.connection() as conn:
+                conn.execute(
+                    "INSERT INTO jobs (job_id, kind, status, params, n8n_execution_id) VALUES (%s, %s, 'queued', %s, %s)",
+                    (job_id, kind, Jsonb(params), n8n_execution_id),
+                )
+        except errors.UniqueViolation as exc:
+            raise JobConflict(f"a '{kind}' job is already queued or running") from exc
+        return job_id
+
+
+    def update_job(
+        self,
+        job_id: UUID,
+        status: str | None = None,
+        progress: dict[str, Any] | None = None,
+        result: dict[str, Any] | None = None,
+        error: dict[str, Any] | None = None,
+    ) -> None:
+        with self.pool.connection() as conn:
+            conn.execute(
+                """UPDATE jobs
+                   SET status = COALESCE(%s, status),
+                       progress = COALESCE(%s, progress),
+                       result = COALESCE(%s, result),
+                       error = COALESCE(%s, error),
+                       updated_at = now()
+                   WHERE job_id = %s""",
+                (status, _jsonb_or_none(progress), _jsonb_or_none(result), _jsonb_or_none(error), job_id),
+            )
+
+
+    def get_job(self, job_id: UUID) -> dict[str, Any] | None:
+        self.ensure_schema()
+        with self.pool.connection() as conn, conn.cursor(row_factory=dict_row) as cur:
+            cur.execute(f"SELECT {_JOB_COLUMNS} FROM jobs WHERE job_id = %s", (job_id,))
+            return cur.fetchone()
+
+
+    def fail_interrupted_jobs(self) -> int:
+        """At startup, no job can still be running in this process: mark leftovers failed."""
+        with self.pool.connection() as conn, conn.cursor() as cur:
+            cur.execute(
+                """UPDATE jobs SET status = 'failed', updated_at = now(),
+                       error = '{"message": "pp-tools restarted while the job was running"}'::jsonb
+                   WHERE status IN ('queued', 'running')"""
+            )
+            return cur.rowcount
 
 
 def _jsonb_or_none(value: dict[str, Any] | None) -> Jsonb | None:
