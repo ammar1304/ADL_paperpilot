@@ -140,7 +140,7 @@ The container registries were not reachable from the development sandbox, so the
 
 ## D18. Long builds run as background jobs that n8n polls
 
-- **Decision:** `POST /corpus/build` queues a job and answers 202 with a `job_id`. The `10-ingest-papers` workflow replies to its caller at once, then polls `GET /jobs/{id}` every 15 seconds until `done` or `failed`, with a 1-hour cap.
+- **Decision:** `POST /corpus/build` queues a job and answers 202 with a `job_id`. The `10-ingest-papers` workflow replies to its caller at once, then polls `GET /jobs/{id}` every 15 seconds until `done` or `failed`, with a 4-hour cap (raised from 1 hour after the first full build took 88 minutes on CPU).
 - **Why:** a build takes minutes, longer than any sensible HTTP timeout. Jobs are rows in Postgres, so their status survives n8n restarts. A unique index allows one active build at a time; a second request gets 409. Jobs left running when pp-tools restarts are marked failed at startup.
 
 ## D19. Retrieval evaluation through the deployed API

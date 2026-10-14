@@ -96,15 +96,34 @@ Run in the development sandbox. arXiv, Hugging Face and the container registries
 ### Not verified yet: needs a team machine with internet
 
 - [x] Images pull: `ghcr.io/huggingface/text-embeddings-inference:cpu-1.9`, plus the milestone 0 list
-- [ ] TEI downloads and serves BGE-M3; `/health` shows `embedder.ok: true` (download done in 13 minutes; serving pending the memory fix)
-- [ ] Real corpus selection against arXiv (the query syntax has not been run against the real API)
-- [ ] Real build: 500 abstracts and 50 PDFs; check `pdf_failures` and `papers_without_headings` in the build report
+- [x] TEI downloads and serves BGE-M3; `/health` shows `embedder.ok: true` (after the memory fix, about 3.4 GB of RAM)
+- [x] Real corpus selection against arXiv: 1,298 matches, 620 returned, 500 kept, 50 full text (manifest sha `51836bdfd4db`)
+- [x] Real build: 500 abstracts and 50 PDFs, see the table below
 - [ ] Section and table detection on real papers: inspect a few chunks per paper type
 - [ ] Bind-mount permissions on Linux (`PP_UID`, `PP_GID`) and on Docker Desktop
-- [ ] `python scripts/smoke_test.py --with-corpus`
+- [x] `python scripts/smoke_test.py --no-compose --with-corpus` on Windows
+
+**First real full build** (team PC, Windows 11, Docker Desktop, CPU only, 2026-10-14):
+
+| What | Result |
+| --- | --- |
+| Duration | 88 minutes (17:06 to 18:34 UTC); PDFs took about 5 minutes, embedding the rest (about 1 chunk per second) |
+| Papers indexed | 500 of 500; full text 50 of 50 |
+| PDF failures | 0 |
+| No section headings detected | 2 of 50 (`arxiv:2601.07054`, `arxiv:2506.16037`): these fall back to plain windows |
+| References not cut | 1 of 50 (`arxiv:2512.05430`) |
+| Tables and figures found | 173 and 177 |
+| Chunks | fixed: 1,240 windows; structured: 500 abstracts, 1,217 sections, 177 figures, 173 tables (2,067) |
+
+**Problems found:**
+
+- The `10-ingest-papers` workflow gave up after 1 hour of polling while the build carried on; the cap is now 4 hours.
+- The papers per year are skewed to recent work (2020: 1, 2021: 2, 2022: 7, 2023: 23, 2024: 137, 2025: 206, 2026: 124). Foundational RAG papers are probably missing; add them by hand during the manifest review.
+- Formula text extracted by pdfminer contains `(cid:NN)` glyph codes (seen in `arxiv:2502.18536`). Harmless for search, ugly in evidence; MinerU (milestone 3) should fix it.
 
 ### Not done yet: needs the team
 
+- [ ] Add foundational papers to the manifest (the selection query favours 2024 to 2026)
 - [ ] Review and commit `corpus/manifest.csv` (choose the 50 full-text papers)
 - [ ] Write the E1 queries in the worksheet (rules in `eval/queries/README.md`)
 - [ ] First E1 run on dev, then tune; one final run on test
@@ -154,17 +173,21 @@ Run in the sandbox with real n8n 2.42.6. The LLM nodes talked to a local stand-i
 
 ### Not verified yet: needs a Groq key and internet
 
-- [ ] A real run with `GROQ_API_KEY`: gpt-oss-20b and gpt-oss-120b return output the parser accepts
+- [x] A real run with `GROQ_API_KEY`: gpt-oss-20b and gpt-oss-120b return output the parser accepts (smoke test step 7 and run `e36edefe`, both verifier pass on attempt 1)
 - [ ] Gemini fallback with a real `GEMINI_API_KEY`
-- [ ] The model ids `openai/gpt-oss-20b`, `openai/gpt-oss-120b` and `models/gemini-3.5-flash-lite` are accepted by the live APIs
+- [x] The Groq model ids `openai/gpt-oss-20b` and `openai/gpt-oss-120b` are accepted by the live API
+- [ ] The Gemini model id `models/gemini-3.5-flash-lite` is accepted by the live API
 - [ ] Tokens per judge call stay under the free per-minute limit
-- [ ] First real failures logged in `prompts/failure_log.md`
+- [x] First real failures logged in `prompts/failure_log.md` (F-001 to F-003)
+- [x] A novelty run on the full 500-paper library with a known answer (run `659c5d05`): Adaptive-RAG found and labelled `partial`, a closer 2026 paper labelled `same`; verifier passed on attempt 1
 
 ### Known issues
 
 - Token usage is not stored per run yet (D21).
 - The router waits for the whole novelty branch before answering the webhook; with real models and rate limits this can take a minute or more.
 - The LLM-written summary is shown, labelled `summary_llm_written`: the verifier checks ids, not prose.
+- Papers judged `different` on every facet still appear as "closest work" (F-001), and the summary does not say how small the searched library was (F-002).
+- pp-tools did not declare a charset, so Windows PowerShell 5.1 garbled non-ASCII text in its responses. Fixed: every JSON response now says `charset=utf-8`.
 
 ## Next: milestone 2, part 2
 

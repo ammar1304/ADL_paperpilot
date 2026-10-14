@@ -203,7 +203,7 @@
     {
       "id": "d5b4a0b6-0011-4e1c-8e55-000000000011",
       "name": "Polled too long?",
-      "notes": "240 polls x 15 s = 1 hour. A build of 500 abstracts and 50 PDFs on CPU should take well under that.",
+      "notes": "960 polls x 15 s = 4 hours. The first full build (500 abstracts, 50 PDFs, about 3,300 chunks) took 88 minutes on a laptop CPU, so 1 hour was too short.",
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.2,
       "position": [1540, 400],
@@ -214,7 +214,7 @@
             {
               "id": "c1000004-0000-4000-8000-000000000004",
               "leftValue": "={{ $runIndex }}",
-              "rightValue": 240,
+              "rightValue": 960,
               "operator": { "type": "number", "operation": "gte" }
             }
           ],
@@ -230,7 +230,7 @@
       "typeVersion": 1,
       "position": [1760, 340],
       "parameters": {
-        "errorMessage": "={{ 'Corpus build ' + $json.job_id + ' still ' + $json.status + ' after 1 hour of polling. Last progress: ' + JSON.stringify($json.progress) }}"
+        "errorMessage": "={{ 'Corpus build ' + $json.job_id + ' still ' + $json.status + ' after 4 hours of polling. The build may still finish: check GET /jobs/' + $json.job_id + '. Last progress: ' + JSON.stringify($json.progress) }}"
       }
     }
   ],
