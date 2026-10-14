@@ -29,13 +29,22 @@ Run in the development sandbox (Linux), with the same components installed nativ
 
 Run `docker compose up -d --build --wait` then `python scripts/smoke_test.py` on a clean clone, and record the result here.
 
-- [ ] All four images pull with the pinned tags
-- [ ] pp-tools image builds
-- [ ] Qdrant healthcheck (bash `/dev/tcp` probe) turns healthy; the smoke test then passes without `--allow-degraded-qdrant`
-- [ ] n8n container: entrypoint runs under the image's shell, `n8n_data` volume is writable
-- [ ] Postgres 17 works with n8n and pp-tools (tests ran on 16)
+- [x] All four images pull with the pinned tags (team PC, Windows 11 + Docker Desktop, 2026-10-14)
+- [x] pp-tools image builds
+- [x] Qdrant healthcheck (bash `/dev/tcp` probe) turns healthy
+- [x] n8n container: entrypoint runs under the image's shell, after fixing a BusyBox `mktemp` incompatibility (PR #4)
+- [x] Postgres 17 works with n8n and pp-tools
 - [ ] `scripts/export_workflows.sh` against the n8n container
-- [ ] Smoke test on Windows (Docker Desktop) and macOS
+- [x] Smoke test on Windows (Docker Desktop): steps 1 to 5 passed, 2026-10-14
+- [ ] Smoke test on macOS
+
+**Problems found on the first real run (all fixed):**
+
+| Problem | Cause | Fix |
+| --- | --- | --- |
+| `docker compose up` refused port 8000, then 8010 | Windows (Hyper-V/WSL) reserves port ranges | Ports configurable in `.env` (PR #3); `net stop winnat` and `net start winnat` freed them |
+| n8n restarted in a loop: `mktemp: Invalid argument` | BusyBox `mktemp` on Alpine needs the X's at the end of the template | New template, entrypoint tested under BusyBox (PR #4) |
+| The embedder restarted after "Warming up model" at 8.8 of 9.6 GB | TEI's default 16384 batch tokens is too much for CPU warm-up | `MAX_BATCH_TOKENS=2048` (D15) |
 
 ### Known issues
 
@@ -86,8 +95,8 @@ Run in the development sandbox. arXiv, Hugging Face and the container registries
 
 ### Not verified yet: needs a team machine with internet
 
-- [ ] Images pull: `ghcr.io/huggingface/text-embeddings-inference:cpu-1.9`, plus the milestone 0 list
-- [ ] TEI downloads and serves BGE-M3; `/health` shows `embedder.ok: true`
+- [x] Images pull: `ghcr.io/huggingface/text-embeddings-inference:cpu-1.9`, plus the milestone 0 list
+- [ ] TEI downloads and serves BGE-M3; `/health` shows `embedder.ok: true` (download done in 13 minutes; serving pending the memory fix)
 - [ ] Real corpus selection against arXiv (the query syntax has not been run against the real API)
 - [ ] Real build: 500 abstracts and 50 PDFs; check `pdf_failures` and `papers_without_headings` in the build report
 - [ ] Section and table detection on real papers: inspect a few chunks per paper type
