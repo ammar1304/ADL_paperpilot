@@ -1,2 +1,4 @@
 -r requirements.txt
 pytest==9.1.1
+# Generates the two-column test PDF served by tests/stubs.py.
+reportlab==5.0.1

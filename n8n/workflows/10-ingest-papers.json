@@ -1,0 +1,281 @@
+{
+  "id": "pp10IngestPapers",
+  "name": "10-ingest-papers",
+  "active": false,
+  "nodes": [
+    {
+      "id": "d5b4a0b6-0001-4e1c-8e55-000000000001",
+      "name": "Webhook",
+      "notes": "POST /webhook/ingest with optional {\"recreate\": true, \"limit\": 20}. Replies at once with the job id; the build continues in the background.",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [0, 300],
+      "webhookId": "7a3e5c21-4b8d-4f0e-a6c2-1e9d0b7f3a10",
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "ingest",
+        "responseMode": "responseNode",
+        "options": {}
+      }
+    },
+    {
+      "id": "d5b4a0b6-0002-4e1c-8e55-000000000002",
+      "name": "Start build",
+      "notes": "pp-tools validates the manifest and queues the job. 400 = no manifest, 409 = a build is already running.",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [220, 300],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.PP_TOOLS_URL }}/corpus/build",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify(Object.assign({ recreate: true }, ($json.body && typeof $json.body === 'object') ? $json.body : {}, { n8n_execution_id: String($execution.id) })) }}",
+        "options": {
+          "timeout": 15000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "d5b4a0b6-0003-4e1c-8e55-000000000003",
+      "name": "Build accepted?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [440, 300],
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose", "version": 2 },
+          "conditions": [
+            {
+              "id": "c1000001-0000-4000-8000-000000000001",
+              "leftValue": "={{ $json.statusCode }}",
+              "rightValue": 202,
+              "operator": { "type": "number", "operation": "equals" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "d5b4a0b6-0004-4e1c-8e55-000000000004",
+      "name": "Respond rejected",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [660, 480],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify($json.body) }}",
+        "options": { "responseCode": "={{ $json.statusCode }}" }
+      }
+    },
+    {
+      "id": "d5b4a0b6-0005-4e1c-8e55-000000000005",
+      "name": "Respond job started",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [660, 200],
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ job_id: $json.body.job_id, status: 'queued', poll: '/jobs/' + $json.body.job_id }) }}",
+        "options": { "responseCode": 202 }
+      }
+    },
+    {
+      "id": "d5b4a0b6-0006-4e1c-8e55-000000000006",
+      "name": "Wait 15 s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [880, 200],
+      "webhookId": "0f2b6d8e-9c4a-4e1b-8f3d-2a5c7e9b1d40",
+      "parameters": {
+        "resume": "timeInterval",
+        "amount": 15,
+        "unit": "seconds"
+      }
+    },
+    {
+      "id": "d5b4a0b6-0007-4e1c-8e55-000000000007",
+      "name": "Get job",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1100, 200],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 3000,
+      "parameters": {
+        "method": "GET",
+        "url": "={{ $env.PP_TOOLS_URL }}/jobs/{{ $('Start build').first().json.body.job_id }}",
+        "options": { "timeout": 10000 }
+      }
+    },
+    {
+      "id": "d5b4a0b6-0008-4e1c-8e55-000000000008",
+      "name": "Job status",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [1320, 200],
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2 },
+                "conditions": [
+                  {
+                    "id": "c1000002-0000-4000-8000-000000000002",
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "done",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "done"
+            },
+            {
+              "conditions": {
+                "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2 },
+                "conditions": [
+                  {
+                    "id": "c1000003-0000-4000-8000-000000000003",
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "failed",
+                    "operator": { "type": "string", "operation": "equals" }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "failed"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "still running"
+        }
+      }
+    },
+    {
+      "id": "d5b4a0b6-0009-4e1c-8e55-000000000009",
+      "name": "Build summary",
+      "notes": "Visible in the execution log. The full report is in GET /jobs/{id} and .cache/pp-tools/build_report.json.",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [1540, 60],
+      "parameters": {
+        "mode": "manual",
+        "assignments": {
+          "assignments": [
+            { "id": "f1000001-0000-4000-8000-000000000001", "name": "job_id", "value": "={{ $json.job_id }}", "type": "string" },
+            { "id": "f1000002-0000-4000-8000-000000000002", "name": "papers_indexed", "value": "={{ $json.result.papers_indexed }}", "type": "number" },
+            { "id": "f1000003-0000-4000-8000-000000000003", "name": "fulltext_indexed", "value": "={{ $json.result.fulltext_indexed }}", "type": "number" },
+            { "id": "f1000004-0000-4000-8000-000000000004", "name": "pdf_failures", "value": "={{ Object.keys($json.result.pdf_failures || {}).length }}", "type": "number" },
+            { "id": "f1000005-0000-4000-8000-000000000005", "name": "chunks", "value": "={{ $json.result.chunks }}", "type": "object" }
+          ]
+        },
+        "includeOtherFields": false,
+        "options": {}
+      }
+    },
+    {
+      "id": "d5b4a0b6-0010-4e1c-8e55-000000000010",
+      "name": "Build failed",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [1540, 220],
+      "parameters": {
+        "errorMessage": "={{ 'Corpus build ' + $json.job_id + ' failed: ' + ($json.error ? $json.error.message : 'no error message') }}"
+      }
+    },
+    {
+      "id": "d5b4a0b6-0011-4e1c-8e55-000000000011",
+      "name": "Polled too long?",
+      "notes": "240 polls x 15 s = 1 hour. A build of 500 abstracts and 50 PDFs on CPU should take well under that.",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [1540, 400],
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "strict", "version": 2 },
+          "conditions": [
+            {
+              "id": "c1000004-0000-4000-8000-000000000004",
+              "leftValue": "={{ $runIndex }}",
+              "rightValue": 240,
+              "operator": { "type": "number", "operation": "gte" }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "d5b4a0b6-0012-4e1c-8e55-000000000012",
+      "name": "Build timed out",
+      "type": "n8n-nodes-base.stopAndError",
+      "typeVersion": 1,
+      "position": [1760, 340],
+      "parameters": {
+        "errorMessage": "={{ 'Corpus build ' + $json.job_id + ' still ' + $json.status + ' after 1 hour of polling. Last progress: ' + JSON.stringify($json.progress) }}"
+      }
+    }
+  ],
+  "connections": {
+    "Webhook": {
+      "main": [[{ "node": "Start build", "type": "main", "index": 0 }]]
+    },
+    "Start build": {
+      "main": [[{ "node": "Build accepted?", "type": "main", "index": 0 }]]
+    },
+    "Build accepted?": {
+      "main": [
+        [{ "node": "Respond job started", "type": "main", "index": 0 }],
+        [{ "node": "Respond rejected", "type": "main", "index": 0 }]
+      ]
+    },
+    "Respond job started": {
+      "main": [[{ "node": "Wait 15 s", "type": "main", "index": 0 }]]
+    },
+    "Wait 15 s": {
+      "main": [[{ "node": "Get job", "type": "main", "index": 0 }]]
+    },
+    "Get job": {
+      "main": [[{ "node": "Job status", "type": "main", "index": 0 }]]
+    },
+    "Job status": {
+      "main": [
+        [{ "node": "Build summary", "type": "main", "index": 0 }],
+        [{ "node": "Build failed", "type": "main", "index": 0 }],
+        [{ "node": "Polled too long?", "type": "main", "index": 0 }]
+      ]
+    },
+    "Polled too long?": {
+      "main": [
+        [{ "node": "Build timed out", "type": "main", "index": 0 }],
+        [{ "node": "Wait 15 s", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "errorWorkflow": "pp90ErrorHandler",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all"
+  },
+  "pinData": {},
+  "tags": []
+}

@@ -75,6 +75,36 @@ def compose_up() -> None:
         raise SmokeFailure("docker compose up failed; run `docker compose ps` and `docker compose logs`")
 
 
+def corpus_check(pp: str, n8n: str, limit: int) -> None:
+    print(f"\n[7/7] knowledge base: ingest {limit} papers through n8n, then search")
+
+    def embedder_ready():
+        status, body = http("GET", f"{pp}/health", timeout=10)
+        return isinstance(body, dict) and body.get("checks", {}).get("embedder", {}).get("ok") is True, body
+
+    # The first start downloads the embedding model (about 2.3 GB).
+    wait_for("embedding model loaded", embedder_ready, 1200)
+    status, body = http("POST", f"{n8n}/webhook/ingest", {"recreate": True, "limit": limit})
+    if status == 400:
+        raise SmokeFailure(f"no manifest yet: {body}. See corpus/README.md (corpus selection).")
+    check(status == 202 and "job_id" in body, "ingest workflow started a build job", body)
+    job_id = body["job_id"]
+
+    def job_done():
+        s, job = http("GET", f"{pp}/jobs/{job_id}", timeout=10)
+        return s == 200 and job["status"] in ("done", "failed"), job
+
+    job = wait_for("build job finished", job_done, 1800)
+    check(job["status"] == "done", "build job succeeded", job)
+    result = job["result"]
+    check(result["papers_indexed"] == min(limit, result["papers_in_manifest"]), "every requested paper indexed", result)
+    if result["pdf_failures"]:
+        print(f"  !!  PDFs that fell back to the abstract: {result['pdf_failures']}")
+    for strategy in ("fixed", "structured"):
+        s, res = http("POST", f"{pp}/search", {"query": "retrieval-augmented question answering", "strategy": strategy, "k": 3})
+        check(s == 200 and len(res["hits"]) > 0, f"search on the {strategy} collection returns hits", res)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--no-compose", action="store_true", help="do not start docker compose; test running services")
@@ -85,6 +115,13 @@ def main() -> int:
         action="store_true",
         help="accept /health reporting Qdrant down (only for running without Qdrant; never in the real stack)",
     )
+    parser.add_argument(
+        "--with-corpus",
+        action="store_true",
+        help="also build a small knowledge base through the 10-ingest-papers workflow and search it "
+        "(needs corpus/manifest.csv, internet access and the embedding model)",
+    )
+    parser.add_argument("--corpus-limit", type=int, default=5, help="papers to index with --with-corpus")
     parser.add_argument(
         "--skip-fault-test",
         action="store_true",
@@ -170,6 +207,9 @@ def main() -> int:
 
             match = wait_for("run marked failed by 90-error-handler", failed_run, 30)
             check("Injected test fault" in match[0]["error"]["message"], "stored error explains the failure", match[0])
+
+        if args.with_corpus:
+            corpus_check(pp, n8n, args.corpus_limit)
 
     except SmokeFailure as exc:
         print(f"\nFAIL: {exc}", file=sys.stderr)

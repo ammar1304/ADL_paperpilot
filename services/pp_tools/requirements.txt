@@ -1,4 +1,4 @@
-# Runtime dependencies, pinned to the versions the tests were run with (2026-10-11).
+# Runtime dependencies, pinned to the versions the tests were run with.
 fastapi==0.143.0
 uvicorn[standard]==0.54.0
 pydantic==2.14.1
@@ -6,3 +6,6 @@ pydantic-settings==2.15.0
 psycopg[binary,pool]==3.3.6
 psycopg-pool==3.3.3
 httpx==0.28.1
+# Milestone 1: vector store client (matches Qdrant server v1.19) and plain PDF text.
+qdrant-client==1.19.1
+pdfminer.six==20260107
