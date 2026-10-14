@@ -44,6 +44,12 @@ class Settings(BaseSettings):
     embed_batch_size: int = Field(default=16, alias="EMBED_BATCH_SIZE")
     embed_timeout_s: float = Field(default=120.0, alias="EMBED_TIMEOUT_S")
 
+    # ---- prompts and novelty branch (milestone 2) ------------------------------
+    prompts_dir: Path = Field(default=Path("/pp/prompts"), alias="PROMPTS_DIR")
+    # Which chunking strategy the novelty branch searches (decide from E1 results).
+    novelty_strategy: str = Field(default="structured", alias="NOVELTY_STRATEGY")
+    novelty_top_papers: int = Field(default=6, alias="NOVELTY_TOP_PAPERS")
+
     @property
     def manifest_path(self) -> Path:
         return self.corpus_dir / "manifest.csv"

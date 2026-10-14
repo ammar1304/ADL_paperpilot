@@ -163,3 +163,39 @@ class SearchResponse(BaseModel):
     strategy: Strategy
     level: str
     hits: list[SearchHit]
+
+
+# ---- prompts and novelty branch (milestone 2) ---------------------------------------
+
+
+class RenderRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    variables: dict[str, Any] = Field(default_factory=dict)
+    version: str | None = Field(default=None, pattern=r"^v\d+$")
+
+
+class RenderedPromptOut(BaseModel):
+    name: str
+    version: str
+    system: str
+    user: str
+
+
+class JudgePromptOut(RenderedPromptOut):
+    attempt: int
+
+
+class LlmOutput(BaseModel):
+    """What n8n posts after an LLM node: the parsed output and the prompt version used."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    output: Any
+    prompt_version: str | None = Field(default=None, max_length=20)
+
+
+class RetrieveRequest(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    strategy: Strategy | None = None

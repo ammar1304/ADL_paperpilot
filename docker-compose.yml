@@ -85,11 +85,14 @@ services:
       ARXIV_CONTACT_EMAIL: ${ARXIV_CONTACT_EMAIL:-}
       CHUNK_TOKENS: ${CHUNK_TOKENS:-512}
       CHUNK_OVERLAP: ${CHUNK_OVERLAP:-64}
+      NOVELTY_STRATEGY: ${NOVELTY_STRATEGY:-structured}
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
     volumes:
       - ./corpus:/pp/corpus
       - ./eval:/pp/eval
       - ./.cache/pp-tools:/var/pp/cache
+      # The prompt library; read on every call, so switching versions needs no restart.
+      - ./prompts:/pp/prompts:ro
     ports:
       - "127.0.0.1:8000:8000"
     depends_on:
@@ -128,6 +131,10 @@ services:
       # env access in nodes by default; see docs/DECISIONS.md (D6) for the trade-off.
       N8N_BLOCK_ENV_ACCESS_IN_NODE: "false"
       PP_TOOLS_URL: http://pp-tools:8000
+      # Turned into encrypted n8n credentials at startup, then removed from the
+      # environment before n8n starts (n8n/entrypoint.sh).
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
       PP_ALLOW_TEST_FAULTS: ${PP_ALLOW_TEST_FAULTS:-false}
       PP_IMPORT_WORKFLOWS_ON_START: ${PP_IMPORT_WORKFLOWS_ON_START:-true}
       PP_WORKFLOWS_DIR: /pp/workflows

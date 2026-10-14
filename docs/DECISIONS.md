@@ -155,3 +155,37 @@ The container registries were not reachable from the development sandbox, so the
 
 - **Decision:** the novelty branch's search agent may run up to 3 search rounds. After each round it judges which facets are poorly covered and writes new queries, then decides when to stop.
 - **Why:** it is the part of the system where autonomy helps, since a single search often misses work described in different words. It also answers "where is the agency?" honestly. The rest of the pipeline stays a fixed order on purpose, so that it can be tested.
+
+## D21. LLM calls run in n8n's own AI nodes
+
+- **Date:** 2026-10-14, milestone 2
+- **Decision:** each LLM step is an n8n **Basic LLM Chain** node (v1.9) with a **Groq Chat Model** as primary, a **Google Gemini Chat Model** as fallback (the chain's built-in "fallback model"), and a **Structured Output Parser** holding the JSON schema. pp-tools never calls an LLM.
+- **Alternatives:** calling Groq from Python inside pp-tools.
+- **Why:**
+  - The LLM, its model, its fallback and its output schema are visible on the n8n canvas, which is what a low-code automation course grades and what the demo shows.
+  - Retries (3 tries, 5 s apart), fallback and output parsing come with the nodes.
+  - pp-tools keeps only the deterministic parts (validation, retrieval, the verifier), so they stay unit-testable.
+- **Credentials:** the entrypoint imports them from `GROQ_API_KEY` and `GEMINI_API_KEY` (encrypted with `N8N_ENCRYPTION_KEY`, fixed ids referenced by the workflow), then removes both keys from the environment before n8n starts, so no expression can read them (D6).
+- **Found while building:** n8n's parser expects the model to answer `{"output": {...}}`, so prompt examples use that wrapper. n8n doubles braces in system messages, so JSON examples in prompts are safe. The Groq SDK honours `GROQ_BASE_URL`, which lets tests point the real Groq node at a local stand-in model.
+- **Limit:** n8n does not report token usage per run in a form we store yet, so `runs.tokens_used` stays 0 for now.
+
+## D22. Prompts are files, rendered by pp-tools
+
+- **Decision:** prompts live in `prompts/<name>/v<n>.md`, with the active version in `prompts/active.json`. n8n calls `POST /prompts/{name}/render` (or `/novelty/{run_id}/judge-prompt`), and the chain node uses the returned `system` and `user` text.
+- **Why:**
+  - One source of truth for the graded prompt library: what runs is exactly what is versioned in git.
+  - Every run step records the prompt version.
+  - Switching or rolling back a version is one line in `active.json`, with no restart.
+  - A missing template variable fails loudly instead of sending a half-filled prompt.
+- **Cost:** the JSON schemas live in two places, the n8n parser node and the pp-tools contract. A test (`test_prompts.py`) checks that they agree.
+
+## D23. The verifier reads the retrieved set from the database
+
+- **Decision:** the verifier compares the judge's paper ids and chunk ids with the `retrieve` step stored in `run_steps`, not with anything n8n passes along. One retry with the rejection reasons as feedback; anything still wrong is reported as `unverified`, never dropped silently.
+- **Why:** the check cannot be bypassed by a payload, and every decision is stored for audit. The retry closes the loop between agents (verifier to judge) without letting it run forever.
+
+## D24. Multi-query retrieval with reciprocal rank fusion
+
+- **Decision:** each decomposer query searches the knowledge base (20 chunks). Papers are scored by reciprocal rank fusion (k = 60) across queries. The top 6 papers go to the judge with their 2 best chunks (900 characters each).
+- **Why:** one query rarely covers every facet. Fusion rewards papers that several facet queries find, without tuning weights. The caps keep the judge prompt around 3,000 tokens, inside Groq's 8,000-tokens-per-minute free limit (D12).
+- **Next:** the agentic search loop (D20) adds rounds when facets are poorly covered, and a reranker can replace the raw fusion order.

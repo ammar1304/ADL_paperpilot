@@ -107,6 +107,59 @@ Run in the development sandbox. arXiv, Hugging Face and the container registries
 - Token counts are approximate (D17).
 - The first build on CPU may take 10 to 30 minutes; most of it is waiting 3 s between PDF downloads, plus embedding.
 
-## Next: milestone 2, novelty branch
+## Milestone 2, part 1: the LLM layer and the novelty check (2026-10-14)
 
-Decomposer, agentic search loop with Semantic Scholar (D20), reranker, novelty judge, verifier on citations; LLM calls through Groq (D12). Blocked only on teammates creating Groq keys.
+**Goal:** the first real LLM features. "Check my idea" now runs end to end: LLM decomposer, RAG retrieval, LLM judge, code verifier. Branch `feat/m2-novelty` (on top of milestone 1).
+
+### Built
+
+- **n8n `20-novelty`:**
+  - Two Basic LLM Chain nodes: "Decompose idea" uses Groq gpt-oss-20b, "Judge novelty" uses gpt-oss-120b. Each has a Gemini fallback and a strict JSON output parser.
+  - pp-tools calls in between: render prompt, save facets, retrieve, render judge prompt, verify, assemble.
+  - A verifier loop: one retry with feedback.
+- **Prompt library:** `prompts/` holds P1-decomposer v1 and P3-novelty-judge v1, plus `active.json`, `failure_log.md` and a README. pp-tools renders them (`/prompts/{name}/render`).
+- **pp-tools `app/novelty.py`:**
+  - Output contracts, and multi-query retrieval with reciprocal rank fusion.
+  - Judge prompt rendering with candidates, evidence chunk ids and verifier feedback.
+  - The verifier, and result assembly with coverage and prompt versions.
+  - Every step is stored in `run_steps`; see `GET /runs/{id}/steps`.
+- **Credentials:** Groq and Gemini credentials are created at n8n start from `.env`, then the keys are removed from n8n's environment.
+- **Smoke test:** new optional step 7, `--with-llm` (a full novelty check). Step 3 now uses the audit branch, which is still a placeholder.
+
+### Verified
+
+Run in the sandbox with real n8n 2.42.6. The LLM nodes talked to a local stand-in model through the real Groq and Gemini node code (`GROQ_BASE_URL` and the Gemini credential host pointed at `tests/stubs.py`). This proves the wiring, contracts, fallback and verifier logic, **not answer quality**.
+
+| What | How | Result |
+| --- | --- | --- |
+| Tests | `pytest` with Postgres | 81 passed |
+| Normal run | Novelty request through the router | 3 verified matches, 1 judge attempt, every step stored |
+| Hallucinated paper | Stand-in judge cites a paper not retrieved | Verifier rejects it, judge retries with feedback, run passes on attempt 2 (n8n loop ran twice) |
+| Persistent hallucination | Stand-in judge repeats it after feedback | Reported under `unverified` with the reason; not in `closest_work` |
+| Groq down | Groq endpoint returns 500 | Gemini fallback nodes answered; run done |
+| Both down | Both endpoints return 500 | 3 tries, then the run is marked `failed` by the error workflow |
+| Credentials | Entrypoint on a fresh and an existing database | 2 credentials imported, workflows published |
+| Export round trip | Export `20-novelty`, normalize, compare | Identical, credentials kept |
+| Schemas agree | Workflow parser schemas against pp-tools contracts | Test passes |
+| Smoke test | `--with-corpus --corpus-limit 3 --with-llm` | 7 of 7 steps |
+
+### Not verified yet: needs a Groq key and internet
+
+- [ ] A real run with `GROQ_API_KEY`: gpt-oss-20b and gpt-oss-120b return output the parser accepts
+- [ ] Gemini fallback with a real `GEMINI_API_KEY`
+- [ ] The model ids `openai/gpt-oss-20b`, `openai/gpt-oss-120b` and `models/gemini-3.5-flash-lite` are accepted by the live APIs
+- [ ] Tokens per judge call stay under the free per-minute limit
+- [ ] First real failures logged in `prompts/failure_log.md`
+
+### Known issues
+
+- Token usage is not stored per run yet (D21).
+- The router waits for the whole novelty branch before answering the webhook; with real models and rate limits this can take a minute or more.
+- The LLM-written summary is shown, labelled `summary_llm_written`: the verifier checks ids, not prose.
+
+## Next: milestone 2, part 2
+
+- Agentic search loop with Semantic Scholar (D20): the LLM judges facet coverage and decides to search again.
+- Reranker (`bge-reranker-v2-m3` on TEI).
+- E2 leave-one-out evaluation.
+- First prompt iterations from real failures.

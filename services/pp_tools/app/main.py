@@ -35,6 +35,11 @@ from .models import (
     FailByExecutionBody,
     FieldError,
     JobAccepted,
+    JudgePromptOut,
+    LlmOutput,
+    RenderedPromptOut,
+    RenderRequest,
+    RetrieveRequest,
     JobRecord,
     RunRecord,
     RunRequest,
@@ -44,6 +49,16 @@ from .models import (
     UpdateRunBody,
     ValidationErrorResponse,
 )
+from .novelty import (
+    NoveltyError,
+    RetrievalConfig,
+    assemble,
+    judge_prompt,
+    retrieve,
+    save_facets,
+    verify,
+)
+from .prompts import PromptError, PromptLibrary
 from .retrieval.embedder import Embedder, EmbedderError
 from .retrieval.search import Retriever, hit_dict
 from .retrieval.store import Store, collection_name, make_client
@@ -60,6 +75,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     store = Store(make_client(settings.qdrant_url, settings.health_timeout_s * 5))
     embedder = Embedder(settings.embedder_url, settings.embed_batch_size, settings.embed_timeout_s)
     retriever = Retriever(embedder, store)
+    library = PromptLibrary(settings.prompts_dir)
     # One worker: builds run one at a time, and never inside a request.
     jobs = ThreadPoolExecutor(max_workers=1, thread_name_prefix="pp-job")
 
@@ -271,6 +287,81 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             level=body.level,
             hits=[SearchHit(**hit_dict(h)) for h in hits],
         )
+
+    # ---- prompt library -----------------------------------------------------
+
+    @app.get("/prompts")
+    async def list_prompts() -> dict[str, Any]:
+        """Active prompt versions, and any problem loading them."""
+        try:
+            active = library.active_versions()
+        except PromptError as exc:
+            raise HTTPException(status_code=500, detail=str(exc)) from exc
+        return {"active": active, "problems": library.check_all()}
+
+    @app.post("/prompts/{name}/render", response_model=RenderedPromptOut)
+    async def render_prompt(name: str, body: RenderRequest) -> Any:
+        try:
+            rendered = library.load(name, body.version).render(body.variables)
+        except PromptError as exc:
+            status = 404 if "not found" in str(exc) or "no active version" in str(exc) else 422
+            raise HTTPException(status_code=status, detail=str(exc)) from exc
+        return RenderedPromptOut(**rendered.__dict__)
+
+    # ---- novelty branch steps (called by n8n 20-novelty) -------------------------
+
+    def _novelty_errors(fn, *args):
+        try:
+            return fn(*args)
+        except LookupError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        except NoveltyError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
+        except PromptError as exc:
+            raise HTTPException(status_code=500, detail=f"prompt library: {exc}") from exc
+
+    @app.post("/novelty/{run_id}/facets")
+    async def novelty_facets(run_id: UUID, body: LlmOutput) -> Any:
+        try:
+            parsed = await run_in_threadpool(_novelty_errors, save_facets, db, run_id, body.output, body.prompt_version or "unknown")
+        except ValidationError as exc:
+            errors = [FieldError(field=_loc(e["loc"]), message=e["msg"]).model_dump() for e in exc.errors()]
+            return JSONResponse(status_code=422, content={"errors": errors})
+        return parsed.model_dump()
+
+    @app.post("/novelty/{run_id}/retrieve")
+    async def novelty_retrieve(run_id: UUID, body: RetrieveRequest) -> Any:
+        strategy = body.strategy or settings.novelty_strategy
+        if not await run_in_threadpool(store.client.collection_exists, collection_name(strategy)):
+            raise HTTPException(status_code=409, detail=f"no '{strategy}' collection yet; run a corpus build first")
+        stats = await run_in_threadpool(store.stats)
+        s = stats.get(strategy, {})
+        coverage = {"papers_in_knowledge_base": s.get("papers", 0), "chunks_searched": s.get("chunks", 0)}
+        cfg = RetrievalConfig(strategy=strategy, top_papers=settings.novelty_top_papers)
+        try:
+            return await run_in_threadpool(_novelty_errors, retrieve, db, retriever, run_id, cfg, coverage)
+        except EmbedderError as exc:
+            raise HTTPException(status_code=503, detail=f"embedder unavailable: {_short(exc)}") from exc
+
+    @app.post("/novelty/{run_id}/judge-prompt", response_model=JudgePromptOut)
+    async def novelty_judge_prompt(run_id: UUID) -> Any:
+        rendered, attempt = await run_in_threadpool(_novelty_errors, judge_prompt, db, library, run_id)
+        return JudgePromptOut(**rendered.__dict__, attempt=attempt)
+
+    @app.post("/novelty/{run_id}/verify")
+    async def novelty_verify(run_id: UUID, body: LlmOutput) -> Any:
+        return await run_in_threadpool(_novelty_errors, verify, db, run_id, body.output)
+
+    @app.post("/novelty/{run_id}/result")
+    async def novelty_result(run_id: UUID) -> Any:
+        return await run_in_threadpool(_novelty_errors, assemble, db, run_id)
+
+    @app.get("/runs/{run_id}/steps")
+    async def run_steps(run_id: UUID) -> Any:
+        """Every recorded step of a run: prompts used, LLM outputs, verifier decisions."""
+        if await run_in_threadpool(db.get_run, run_id) is None:
+            raise HTTPException(status_code=404, detail="run not found")
+        return await run_in_threadpool(db.get_steps, run_id)
 
     return app
 
