@@ -28,7 +28,8 @@ workflow_ids() {
 # Stored encrypted in n8n's database (N8N_ENCRYPTION_KEY). The ids are fixed
 # because the workflow JSON refers to them. A missing key becomes a placeholder:
 # the workflows still import, and an LLM call fails with a clear auth error.
-creds_file="$(mktemp /tmp/pp-creds-XXXXXX.json)"
+# BusyBox mktemp (Alpine, the n8n image) needs the X's at the very end of the name.
+creds_file="$(mktemp /tmp/pp-creds.XXXXXX)"
 trap 'rm -f "$creds_file"' EXIT
 node -e '
 const fs = require("fs");
