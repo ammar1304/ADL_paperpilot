@@ -122,6 +122,7 @@ The container registries were not reachable from the development sandbox, so the
 - **Decision:** a separate `embedder` container running Hugging Face TEI (`cpu-1.9`); pp-tools calls `POST /embed` over HTTP.
 - **Alternatives:** sentence-transformers inside pp-tools.
 - **Why:** pp-tools stays a small image without PyTorch (the model alone is about 2.3 GB). The model loads once and stays loaded. The same API serves the reranker in milestone 2. TEI's source confirms BGE-M3 support (XLM-RoBERTa architecture) and its `/health` endpoint.
+- **Memory (found on a team PC, 2026-10-14):** with TEI's default `--max-batch-tokens 16384`, warm-up on CPU used 8.8 of 9.6 GB of Docker memory and the container was killed in a loop. We set `MAX_BATCH_TOKENS=2048`: it is also the longest accepted input, and our chunks are about 700 model tokens, so nothing is truncated.
 - **Cost:** the first start downloads the model, taking a few minutes. pp-tools reports the embedder in `/health` but does not require it, so run tracking works while the model loads. Apple Silicon needs the `cpu-arm64-1.9` image (`EMBEDDER_IMAGE` in `.env`).
 
 ## D16. Plain PDF text first, MinerU later

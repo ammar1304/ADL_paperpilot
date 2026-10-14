@@ -53,7 +53,7 @@ Any failure ─► 90-error-handler ─► pp-tools POST /runs/fail-by-execution
 - Docker with Compose v2 (Docker Desktop on Windows and macOS)
 - Python 3.10+ for the scripts in `scripts/` (standard library only)
 - Bash for `scripts/export_workflows.sh` (Git Bash on Windows)
-- About 6 GB of RAM for Docker (the embedding model needs about 2.5 GB). On Windows, check the WSL memory limit in `.wslconfig` if containers get killed.
+- About 6 GB of RAM for Docker (the embedding server needs about 2 to 3 GB). On Windows, check the WSL memory limit in `.wslconfig` if containers get killed.
 - About 6 GB of free disk space (images and model)
 
 ## Setup
@@ -218,6 +218,7 @@ These are problems we actually hit while building milestones 0 and 1, except whe
 - **`/search` answers 409.** No corpus build has run yet: see [corpus/README.md](corpus/README.md).
 - **`/search` answers 503 "embedder unavailable" (not hit here).** The model is still downloading, or the embedder container ran out of memory: `docker compose logs embedder`.
 - **Permission denied writing `corpus/`, `eval/` or `.cache/` (Linux, not hit here).** Set `PP_UID` and `PP_GID` in `.env` to the output of `id -u` and `id -g`, then `docker compose up -d`.
+- **The embedder restarts after "Warming up model", using almost all of Docker's memory (hit on a team PC).** Its batch size is too large for the available RAM. `EMBEDDER_MAX_BATCH_TOKENS` in `.env` (default 2048) controls it; lower it to 1024 if it still runs out of memory, then `docker compose up -d --wait`. The model download is cached, so restarts are fast.
 - **The embedder fails to start on a Mac with Apple Silicon (not hit here).** Set `EMBEDDER_IMAGE=ghcr.io/huggingface/text-embeddings-inference:cpu-arm64-1.9` in `.env`.
 - **A request returns `{"message": "Error in workflow"}`.** Open the execution in the n8n UI (Executions tab) to see which node failed. If pp-tools was down, no run row exists.
 

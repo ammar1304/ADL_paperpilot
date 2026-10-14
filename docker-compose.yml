@@ -60,6 +60,11 @@ services:
       # To pin the exact model version for the final evaluation, add
       # REVISION: <commit hash from the model page> here (see README).
       MAX_CLIENT_BATCH_SIZE: 32
+      # Tokens processed together, and the longest input accepted (longer
+      # inputs are truncated). TEI's default, 16384, makes the CPU warm-up use
+      # about 9 GB of RAM and get killed. Our chunks are about 700 model tokens,
+      # so 2048 truncates nothing and keeps memory around 2 GB.
+      MAX_BATCH_TOKENS: ${EMBEDDER_MAX_BATCH_TOKENS:-2048}
     command: ["--json-output"]
     volumes:
       - embedder_data:/data
