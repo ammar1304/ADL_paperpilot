@@ -6,6 +6,19 @@
 - /pdf/<id>v<n>    returns a generated two-column paper PDF
 - /embed, /health  answer like Text Embeddings Inference, with hashed
                    bag-of-words vectors (texts sharing words are similar)
+- /openai/v1/chat/completions
+                   answers like Groq's OpenAI-compatible API with canned,
+                   rule-based JSON for the decomposer and the novelty judge.
+                   Words at the start of the idea steer it, to exercise error paths
+                   (the stub decomposer keeps only the first 12 words):
+                     HALLUCINATE  the judge adds a paper that was not retrieved
+                                  (and drops it when given feedback)
+                     STUBBORN     the judge keeps hallucinating after feedback
+                     FAIL_LLM     the Groq endpoint returns HTTP 500 (the
+                                  Gemini endpoint still answers: fallback)
+                     FAIL_ALL     both endpoints return HTTP 500
+- /v1beta/models/<model>:generateContent
+                   answers like the Gemini API with the same canned JSON
 
 These are NOT the real services: they exist so the build, search and n8n
 workflows can be exercised end to end without internet access.
@@ -154,6 +167,104 @@ def embed(text: str) -> list[float]:
     return [v / norm for v in vec]
 
 
+# ---- chat model ---------------------------------------------------------------
+
+LLM_CALLS: list[dict] = []  # every request received, for tests
+
+
+def _decompose(idea: str) -> dict:
+    words = re.findall(r"[A-Za-z][\w-]+", idea)
+    head = " ".join(words[:12]) or "unspecified method"
+    return {
+        "facets": {"task": "question answering", "method": head, "data": "not specified", "result": "not specified"},
+        "queries": [
+            {"text": " ".join(words[:10]) or "retrieval question answering", "facets": ["method"]},
+            {"text": " ".join(words[5:15]) or "question answering retrieval", "facets": ["method", "task"]},
+            {"text": "question answering " + " ".join(words[-4:]), "facets": ["task"]},
+        ],
+    }
+
+
+def _judge(user: str) -> dict:
+    matches = []
+    for block in re.split(r"\n(?=\[C\d+\])", user):
+        m = re.search(r"paper_id: (\S+)", block)
+        if not m:
+            continue
+        chunks = re.findall(r"^\s+- \(([^)]+)\)", block, re.MULTILINE)
+        matches.append(
+            {
+                "paper_id": m.group(1),
+                "overlap": {"task": "same", "method": "partial", "data": "unknown", "result": "unknown"},
+                "evidence": chunks[:1],
+                "rationale": "Both address question answering; the passages describe a related retrieval method.",
+            }
+        )
+    feedback = "FEEDBACK ON YOUR PREVIOUS ANSWER" in user
+    if "STUBBORN" in user or ("HALLUCINATE" in user and not feedback):
+        matches.append(
+            {
+                "paper_id": "arxiv:9999.99999",
+                "overlap": {"task": "same", "method": "same", "data": "same", "result": "same"},
+                "evidence": ["arxiv:9999.99999#abs"],
+                "rationale": "A well-known paper that does exactly this.",
+            }
+        )
+    return {"matches": matches, "summary": "The closest papers share the task; the method overlaps only partly."}
+
+
+def _answer(system: str, user: str) -> str:
+    if "idea decomposer" in system:
+        idea = user.split("<<<IDEA", 1)[-1].split("IDEA>>>", 1)[0]
+        body = _decompose(idea)
+    elif "novelty judge" in system:
+        body = _judge(user)
+    else:
+        body = {"note": "stub: unknown prompt"}
+    return "```json\n" + json.dumps({"output": body}) + "\n```"
+
+
+GEMINI_CALLS: list[dict] = []
+
+
+def gemini_generate(payload: dict) -> tuple[int, dict]:
+    GEMINI_CALLS.append(payload)
+
+    def texts(content: dict | None) -> str:
+        return " ".join(p.get("text", "") for p in (content or {}).get("parts", []))
+
+    system = texts(payload.get("systemInstruction") or payload.get("system_instruction"))
+    user = " ".join(texts(c) for c in payload.get("contents", []) if c.get("role") != "model")
+    if not system and "idea decomposer" in user:  # system prompt merged into the contents
+        system = user
+    if "FAIL_ALL" in user:
+        return 500, {"error": {"code": 500, "message": "stub model failure", "status": "INTERNAL"}}
+    content = _answer(system or user, user)
+    return 200, {
+        "candidates": [{"content": {"parts": [{"text": content}], "role": "model"}, "finishReason": "STOP", "index": 0}],
+        "usageMetadata": {"promptTokenCount": len(user) // 4, "candidatesTokenCount": len(content) // 4, "totalTokenCount": (len(user) + len(content)) // 4},
+        "modelVersion": "stub",
+    }
+
+
+def chat_completion(payload: dict) -> tuple[int, dict]:
+    messages = payload.get("messages", [])
+    LLM_CALLS.append(payload)
+    system = " ".join(str(m.get("content", "")) for m in messages if m.get("role") == "system")
+    user = " ".join(str(m.get("content", "")) for m in messages if m.get("role") == "user")
+    if "FAIL_LLM" in user or "FAIL_ALL" in user:
+        return 500, {"error": {"message": "stub model failure", "type": "server_error"}}
+    content = _answer(system, user)
+    return 200, {
+        "id": "chatcmpl-stub",
+        "object": "chat.completion",
+        "created": 0,
+        "model": payload.get("model", "stub"),
+        "choices": [{"index": 0, "message": {"role": "assistant", "content": content}, "finish_reason": "stop"}],
+        "usage": {"prompt_tokens": len(user) // 4, "completion_tokens": len(content) // 4, "total_tokens": (len(user) + len(content)) // 4},
+    }
+
+
 # ---- server ----------------------------------------------------------------
 
 
@@ -194,10 +305,17 @@ class Handler(BaseHTTPRequestHandler):
         self._send(404, b"not found", "text/plain")
 
     def do_POST(self) -> None:  # noqa: N802
-        if urlparse(self.path).path != "/embed":
-            return self._send(404, b"not found", "text/plain")
+        path = urlparse(self.path).path
         length = int(self.headers.get("Content-Length", 0))
         payload = json.loads(self.rfile.read(length))
+        if path == "/openai/v1/chat/completions":
+            code, body = chat_completion(payload)
+            return self._send(code, json.dumps(body).encode(), "application/json")
+        if re.match(r"^/v1(beta)?/models/[^/]+:generateContent$", path):
+            code, body = gemini_generate(payload)
+            return self._send(code, json.dumps(body).encode(), "application/json")
+        if path != "/embed":
+            return self._send(404, b"not found", "text/plain")
         inputs = payload["inputs"]
         inputs = [inputs] if isinstance(inputs, str) else inputs
         self._send(200, json.dumps([embed(t) for t in inputs]).encode(), "application/json")

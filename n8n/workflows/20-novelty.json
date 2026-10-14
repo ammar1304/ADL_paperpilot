@@ -4,44 +4,568 @@
   "active": false,
   "nodes": [
     {
-      "id": "b2e1d7e3-0001-4b8f-8b22-000000000001",
+      "id": "e6c5b1c7-0001-4f2d-9f66-000000000001",
       "name": "Called by router",
-      "notes": "Receives the run record (run_id, mode, input, ...) from 00-router.",
+      "notes": "Receives the run record from 00-router: run_id, input.idea_text, ...",
       "type": "n8n-nodes-base.executeWorkflowTrigger",
       "typeVersion": 1.1,
-      "position": [0, 300],
-      "parameters": { "inputSource": "passthrough" }
+      "position": [
+        0,
+        300
+      ],
+      "parameters": {
+        "inputSource": "passthrough"
+      }
     },
     {
-      "id": "b2e1d7e3-0002-4b8f-8b22-000000000002",
-      "name": "Not implemented yet",
-      "notes": "Milestone 0 placeholder. Replaced in milestone 2 by decomposer -> retrieval -> judge -> verifier.",
-      "type": "n8n-nodes-base.set",
-      "typeVersion": 3.4,
-      "position": [220, 300],
+      "id": "e6c5b1c7-0002-4f2d-9f66-000000000002",
+      "name": "Render decomposer prompt",
+      "notes": "Loads the active version of P1-decomposer from the prompt library (prompts/) and fills in the idea.",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        240,
+        300
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
       "parameters": {
-        "mode": "manual",
-        "assignments": {
-          "assignments": [
-            { "id": "d0000001-0000-4000-8000-000000000001", "name": "branch", "value": "novelty", "type": "string" },
-            { "id": "d0000002-0000-4000-8000-000000000002", "name": "implemented", "value": false, "type": "boolean" },
-            { "id": "d0000003-0000-4000-8000-000000000003", "name": "run_id", "value": "={{ $json.run_id }}", "type": "string" }
+        "method": "POST",
+        "url": "={{ $env.PP_TOOLS_URL }}/prompts/P1-decomposer/render",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ variables: { idea_text: $json.input.idea_text } }) }}",
+        "options": {
+          "timeout": 60000
+        }
+      }
+    },
+    {
+      "id": "e6c5b1c7-0003-4f2d-9f66-000000000003",
+      "name": "Decompose idea",
+      "notes": "LLM call 1. Splits the idea into task, method, data and result, and writes search queries. Groq gpt-oss-20b, Gemini as fallback, JSON enforced by the parser.",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        560,
+        300
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.user }}",
+        "hasOutputParser": true,
+        "needsFallback": true,
+        "messages": {
+          "messageValues": [
+            {
+              "type": "SystemMessagePromptTemplate",
+              "message": "={{ $json.system }}"
+            }
           ]
         },
-        "includeOtherFields": false,
-        "options": {}
+        "batching": {}
+      }
+    },
+    {
+      "id": "e6c5b1c7-0004-4f2d-9f66-000000000004",
+      "name": "Groq gpt-oss-20b",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        380,
+        560
+      ],
+      "parameters": {
+        "model": "openai/gpt-oss-20b",
+        "options": {
+          "temperature": 0,
+          "maxTokensToSample": 2048
+        }
+      },
+      "credentials": {
+        "groqApi": {
+          "id": "ppGroqCredent001",
+          "name": "Groq (PaperPilot)"
+        }
+      }
+    },
+    {
+      "id": "e6c5b1c7-0005-4f2d-9f66-000000000005",
+      "name": "Gemini fallback (decomposer)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        580,
+        560
+      ],
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash-lite",
+        "options": {
+          "temperature": 0,
+          "maxOutputTokens": 2048
+        }
+      },
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ppGeminiCredent1",
+          "name": "Gemini (PaperPilot)"
+        }
+      }
+    },
+    {
+      "id": "e6c5b1c7-0006-4f2d-9f66-000000000006",
+      "name": "Facets schema",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        780,
+        560
+      ],
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"facets\": {\n      \"type\": \"object\",\n      \"properties\": {\n        \"task\": {\n          \"type\": \"string\",\n          \"description\": \"the problem or task addressed\"\n        },\n        \"method\": {\n          \"type\": \"string\",\n          \"description\": \"the core technique proposed\"\n        },\n        \"data\": {\n          \"type\": \"string\",\n          \"description\": \"datasets or benchmarks, or 'not specified'\"\n        },\n        \"result\": {\n          \"type\": \"string\",\n          \"description\": \"claimed or expected outcome, or 'not specified'\"\n        }\n      },\n      \"required\": [\n        \"task\",\n        \"method\",\n        \"data\",\n        \"result\"\n      ],\n      \"additionalProperties\": false\n    },\n    \"queries\": {\n      \"type\": \"array\",\n      \"minItems\": 1,\n      \"maxItems\": 8,\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"text\": {\n            \"type\": \"string\"\n          },\n          \"facets\": {\n            \"type\": \"array\",\n            \"minItems\": 1,\n            \"items\": {\n              \"type\": \"string\",\n              \"enum\": [\n                \"task\",\n                \"method\",\n                \"data\",\n                \"result\"\n              ]\n            }\n          }\n        },\n        \"required\": [\n          \"text\",\n          \"facets\"\n        ],\n        \"additionalProperties\": false\n      }\n    }\n  },\n  \"required\": [\n    \"facets\",\n    \"queries\"\n  ],\n  \"additionalProperties\": false\n}",
+        "autoFix": false
+      }
+    },
+    {
+      "id": "e6c5b1c7-0007-4f2d-9f66-000000000007",
+      "name": "Save facets",
+      "notes": "pp-tools validates the LLM output again (strict) and stores it as a run step.",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        900,
+        300
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.PP_TOOLS_URL }}/novelty/{{ $('Called by router').first().json.run_id }}/facets",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ output: $json.output, prompt_version: $('Render decomposer prompt').first().json.version }) }}",
+        "options": {
+          "timeout": 60000
+        }
+      }
+    },
+    {
+      "id": "e6c5b1c7-0008-4f2d-9f66-000000000008",
+      "name": "Retrieve candidates",
+      "notes": "RAG retrieval: every query searches the knowledge base; rankings are fused (reciprocal rank fusion); top papers with their best evidence chunks.",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1120,
+        300
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.PP_TOOLS_URL }}/novelty/{{ $('Called by router').first().json.run_id }}/retrieve",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({}) }}",
+        "options": {
+          "timeout": 60000
+        }
+      }
+    },
+    {
+      "id": "e6c5b1c7-0009-4f2d-9f66-000000000009",
+      "name": "Render judge prompt",
+      "notes": "Fills P3-novelty-judge with the facets and candidates. On a retry it adds the verifier's rejection reasons as feedback.",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1340,
+        300
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.PP_TOOLS_URL }}/novelty/{{ $('Called by router').first().json.run_id }}/judge-prompt",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({}) }}",
+        "options": {
+          "timeout": 60000
+        }
+      }
+    },
+    {
+      "id": "e6c5b1c7-0010-4f2d-9f66-000000000010",
+      "name": "Judge novelty",
+      "notes": "LLM call 2 (generation step of RAG). Compares the idea with each candidate per facet, citing chunk ids. Groq gpt-oss-120b, Gemini as fallback.",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        1660,
+        300
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 5000,
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.user }}",
+        "hasOutputParser": true,
+        "needsFallback": true,
+        "messages": {
+          "messageValues": [
+            {
+              "type": "SystemMessagePromptTemplate",
+              "message": "={{ $json.system }}"
+            }
+          ]
+        },
+        "batching": {}
+      }
+    },
+    {
+      "id": "e6c5b1c7-0011-4f2d-9f66-000000000011",
+      "name": "Groq gpt-oss-120b",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        1480,
+        560
+      ],
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {
+          "temperature": 0,
+          "maxTokensToSample": 3000
+        }
+      },
+      "credentials": {
+        "groqApi": {
+          "id": "ppGroqCredent001",
+          "name": "Groq (PaperPilot)"
+        }
+      }
+    },
+    {
+      "id": "e6c5b1c7-0012-4f2d-9f66-000000000012",
+      "name": "Gemini fallback (judge)",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.2,
+      "position": [
+        1680,
+        560
+      ],
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash-lite",
+        "options": {
+          "temperature": 0,
+          "maxOutputTokens": 3000
+        }
+      },
+      "credentials": {
+        "googlePalmApi": {
+          "id": "ppGeminiCredent1",
+          "name": "Gemini (PaperPilot)"
+        }
+      }
+    },
+    {
+      "id": "e6c5b1c7-0013-4f2d-9f66-000000000013",
+      "name": "Judgement schema",
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1880,
+        560
+      ],
+      "parameters": {
+        "schemaType": "manual",
+        "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"matches\": {\n      \"type\": \"array\",\n      \"maxItems\": 12,\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"paper_id\": {\n            \"type\": \"string\"\n          },\n          \"overlap\": {\n            \"type\": \"object\",\n            \"properties\": {\n              \"task\": {\n                \"type\": \"string\",\n                \"enum\": [\n                  \"same\",\n                  \"partial\",\n                  \"different\",\n                  \"unknown\"\n                ]\n              },\n              \"method\": {\n                \"type\": \"string\",\n                \"enum\": [\n                  \"same\",\n                  \"partial\",\n                  \"different\",\n                  \"unknown\"\n                ]\n              },\n              \"data\": {\n                \"type\": \"string\",\n                \"enum\": [\n                  \"same\",\n                  \"partial\",\n                  \"different\",\n                  \"unknown\"\n                ]\n              },\n              \"result\": {\n                \"type\": \"string\",\n                \"enum\": [\n                  \"same\",\n                  \"partial\",\n                  \"different\",\n                  \"unknown\"\n                ]\n              }\n            },\n            \"required\": [\n              \"task\",\n              \"method\",\n              \"data\",\n              \"result\"\n            ],\n            \"additionalProperties\": false\n          },\n          \"evidence\": {\n            \"type\": \"array\",\n            \"items\": {\n              \"type\": \"string\"\n            }\n          },\n          \"rationale\": {\n            \"type\": \"string\"\n          }\n        },\n        \"required\": [\n          \"paper_id\",\n          \"overlap\",\n          \"evidence\",\n          \"rationale\"\n        ],\n        \"additionalProperties\": false\n      }\n    },\n    \"summary\": {\n      \"type\": \"string\"\n    }\n  },\n  \"required\": [\n    \"matches\",\n    \"summary\"\n  ],\n  \"additionalProperties\": false\n}",
+        "autoFix": false
+      }
+    },
+    {
+      "id": "e6c5b1c7-0014-4f2d-9f66-000000000014",
+      "name": "Verify",
+      "notes": "The verifier: plain code, no LLM. Rejects papers and chunk ids that retrieval did not return. Answers pass, retry (once) or final.",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2000,
+        300
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.PP_TOOLS_URL }}/novelty/{{ $('Called by router').first().json.run_id }}/verify",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ output: $json.output, prompt_version: $('Render judge prompt').last().json.version }) }}",
+        "options": {
+          "timeout": 60000
+        }
+      }
+    },
+    {
+      "id": "e6c5b1c7-0015-4f2d-9f66-000000000015",
+      "name": "Verifier verdict",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        2220,
+        300
+      ],
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "c2000001-0000-4000-8000-000000000001",
+                    "leftValue": "={{ $json.status }}",
+                    "rightValue": "retry",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "retry with feedback"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra",
+          "renameFallbackOutput": "accepted"
+        }
+      }
+    },
+    {
+      "id": "e6c5b1c7-0016-4f2d-9f66-000000000016",
+      "name": "Assemble result",
+      "notes": "Builds the branch result only from stored, verified steps; returned to 00-router.",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2460,
+        380
+      ],
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.PP_TOOLS_URL }}/novelty/{{ $('Called by router').first().json.run_id }}/result",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({}) }}",
+        "options": {
+          "timeout": 60000
+        }
       }
     }
   ],
   "connections": {
     "Called by router": {
-      "main": [[{ "node": "Not implemented yet", "type": "main", "index": 0 }]]
+      "main": [
+        [
+          {
+            "node": "Render decomposer prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Render decomposer prompt": {
+      "main": [
+        [
+          {
+            "node": "Decompose idea",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Decompose idea": {
+      "main": [
+        [
+          {
+            "node": "Save facets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq gpt-oss-20b": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Decompose idea",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini fallback (decomposer)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Decompose idea",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Facets schema": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Decompose idea",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save facets": {
+      "main": [
+        [
+          {
+            "node": "Retrieve candidates",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Retrieve candidates": {
+      "main": [
+        [
+          {
+            "node": "Render judge prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Render judge prompt": {
+      "main": [
+        [
+          {
+            "node": "Judge novelty",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Judge novelty": {
+      "main": [
+        [
+          {
+            "node": "Verify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq gpt-oss-120b": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Judge novelty",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gemini fallback (judge)": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Judge novelty",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Judgement schema": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Judge novelty",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verify": {
+      "main": [
+        [
+          {
+            "node": "Verifier verdict",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Verifier verdict": {
+      "main": [
+        [
+          {
+            "node": "Render judge prompt",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Assemble result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
     }
   },
   "settings": {
     "executionOrder": "v1",
     "errorWorkflow": "pp90ErrorHandler",
-    "callerPolicy": "workflowsFromSameOwner"
+    "callerPolicy": "workflowsFromSameOwner",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all"
   },
   "pinData": {},
   "tags": []

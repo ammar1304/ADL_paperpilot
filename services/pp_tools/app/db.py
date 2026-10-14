@@ -148,6 +148,36 @@ class Database:
             )
             return [r[0] for r in cur.fetchall()]
 
+    # ---- run steps -----------------------------------------------------------
+
+    def add_step(self, run_id: UUID, step_name: str, status: str, detail: dict[str, Any]) -> int:
+        """Record one pipeline step (finished) with its full input/output detail."""
+        self.ensure_schema()
+        with self.pool.connection() as conn, conn.cursor() as cur:
+            cur.execute(
+                """INSERT INTO run_steps (run_id, step_name, status, finished_at, detail)
+                   VALUES (%s, %s, %s, now(), %s) RETURNING step_id""",
+                (run_id, step_name, status, Jsonb(detail)),
+            )
+            return cur.fetchone()[0]
+
+    def get_steps(self, run_id: UUID, step_name: str | None = None) -> list[dict[str, Any]]:
+        """Steps of a run in the order they were recorded."""
+        self.ensure_schema()
+        query = (
+            "SELECT step_id, step_name, status, detail, "
+            "to_char(finished_at AT TIME ZONE 'UTC', 'YYYY-MM-DD\"T\"HH24:MI:SS.MS\"Z\"') AS finished_at "
+            "FROM run_steps WHERE run_id = %s"
+        )
+        params: list[Any] = [run_id]
+        if step_name:
+            query += " AND step_name = %s"
+            params.append(step_name)
+        query += " ORDER BY step_id"
+        with self.pool.connection() as conn, conn.cursor(row_factory=dict_row) as cur:
+            cur.execute(query, params)
+            return cur.fetchall()
+
     # ---- jobs -------------------------------------------------------------
 
     def create_job(self, kind: str, params: dict[str, Any], n8n_execution_id: str | None) -> UUID:

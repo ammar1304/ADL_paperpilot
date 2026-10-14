@@ -1,5 +1,8 @@
 #!/bin/sh
-# Imports the workflows from git into n8n, publishes them, then starts n8n.
+# Prepares n8n, then starts it:
+#   1. creates the LLM credentials (Groq, Gemini) from GROQ_API_KEY and GEMINI_API_KEY
+#   2. imports the workflows from git and publishes them
+#   3. removes the API keys from the environment and starts n8n
 #
 # The JSON files in n8n/workflows/ are the source of truth. With
 # PP_IMPORT_WORKFLOWS_ON_START=true (the default) every start OVERWRITES the
@@ -21,6 +24,29 @@ workflow_ids() {
     done
 }
 
+# ---- 1. LLM credentials ----------------------------------------------------------
+# Stored encrypted in n8n's database (N8N_ENCRYPTION_KEY). The ids are fixed
+# because the workflow JSON refers to them. A missing key becomes a placeholder:
+# the workflows still import, and an LLM call fails with a clear auth error.
+creds_file="$(mktemp /tmp/pp-creds-XXXXXX.json)"
+trap 'rm -f "$creds_file"' EXIT
+node -e '
+const fs = require("fs");
+const key = (name) => (process.env[name] || "").trim() || "not-set";
+fs.writeFileSync(process.argv[1], JSON.stringify([
+  { id: "ppGroqCredent001", name: "Groq (PaperPilot)", type: "groqApi",
+    data: { apiKey: key("GROQ_API_KEY") } },
+  { id: "ppGeminiCredent1", name: "Gemini (PaperPilot)", type: "googlePalmApi",
+    data: { host: process.env.GEMINI_API_HOST || "https://generativelanguage.googleapis.com", apiKey: key("GEMINI_API_KEY") } },
+]));
+' "$creds_file"
+[ -n "${GROQ_API_KEY:-}" ] || echo "[entrypoint] WARNING: GROQ_API_KEY is empty; LLM nodes will fail until it is set in .env"
+[ -n "${GEMINI_API_KEY:-}" ] || echo "[entrypoint] note: GEMINI_API_KEY is empty; the fallback model is unavailable"
+echo "[entrypoint] importing LLM credentials"
+$N8N_BIN import:credentials --input="$creds_file"
+rm -f "$creds_file"
+
+# ---- 2. workflows ----------------------------------------------------------------------
 if [ "${PP_IMPORT_WORKFLOWS_ON_START:-true}" = "true" ]; then
     ids=$(workflow_ids)
 
@@ -43,4 +69,8 @@ else
     echo "[entrypoint] PP_IMPORT_WORKFLOWS_ON_START=false, keeping workflows already in n8n"
 fi
 
+# ---- 3. start ----------------------------------------------------------------------------
+# Workflows can read environment variables ($env), so the raw keys must not
+# stay in n8n's environment once they are stored as credentials (DECISIONS D6, D21).
+unset GROQ_API_KEY GEMINI_API_KEY
 exec $N8N_BIN start

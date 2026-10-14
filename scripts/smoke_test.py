@@ -68,7 +68,7 @@ def wait_for(label: str, fn, timeout_s: float) -> object:
 
 
 def compose_up() -> None:
-    print("\n[1/6] docker compose up (builds pp-tools, waits for healthchecks)")
+    print("\n[1] docker compose up (builds pp-tools, waits for healthchecks)")
     cmd = ["docker", "compose", "up", "-d", "--build", "--wait", "--wait-timeout", "300"]
     result = subprocess.run(cmd, cwd=ROOT)
     if result.returncode != 0:
@@ -76,7 +76,7 @@ def compose_up() -> None:
 
 
 def corpus_check(pp: str, n8n: str, limit: int) -> None:
-    print(f"\n[7/7] knowledge base: ingest {limit} papers through n8n, then search")
+    print(f"\n[6] knowledge base: ingest {limit} papers through n8n, then search")
 
     def embedder_ready():
         status, body = http("GET", f"{pp}/health", timeout=10)
@@ -105,6 +105,32 @@ def corpus_check(pp: str, n8n: str, limit: int) -> None:
         check(s == 200 and len(res["hits"]) > 0, f"search on the {strategy} collection returns hits", res)
 
 
+def novelty_check(pp: str, webhook: str) -> None:
+    print("\n[7] novelty check: LLM decomposer, retrieval, LLM judge, verifier")
+    idea = (
+        "Let the language model rewrite its search query after each retrieval step, "
+        "so that it can answer multi-hop questions that need several documents."
+    )
+    status, body = http("POST", webhook, {"mode": "novelty", "idea_text": idea}, timeout=300)
+    if status == 500:
+        raise SmokeFailure(
+            f"the novelty run failed: {body}. Check GROQ_API_KEY in .env, the knowledge base (step 6), "
+            "and the failed execution in the n8n UI (Executions)."
+        )
+    check(status == 200, "novelty request returns HTTP 200", body)
+    result = body.get("result", {})
+    check(result.get("branch") == "novelty" and result.get("implemented") is True, "novelty branch ran for real", result)
+    check(set(result.get("idea_facets", {})) == {"task", "method", "data", "result"}, "the LLM split the idea into four facets", result)
+    check(result.get("coverage", {}).get("papers_in_knowledge_base", 0) > 0, "result states the knowledge-base coverage", result)
+    for m in result.get("closest_work", []):
+        check(all(e.startswith(m["paper_id"] + "#") for e in m["evidence"]), f"evidence of {m['paper_id']} cites its own chunks", m)
+    print(f"  ..  {len(result.get('closest_work', []))} verified matches, {len(result.get('unverified', []))} unverified, "
+          f"judge attempts: {result.get('judge_attempts')}")
+    s, steps = http("GET", f"{pp}/runs/{body['run_id']}/steps")
+    names = [st["step_name"] for st in steps] if s == 200 else []
+    check(names[:2] == ["decompose", "retrieve"] and "verify" in names, "every step was recorded for audit", names)
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--no-compose", action="store_true", help="do not start docker compose; test running services")
@@ -123,6 +149,12 @@ def main() -> int:
     )
     parser.add_argument("--corpus-limit", type=int, default=5, help="papers to index with --with-corpus")
     parser.add_argument(
+        "--with-llm",
+        action="store_true",
+        help="also run a full novelty check (decomposer and judge LLM calls); needs a built knowledge base "
+        "(--with-corpus or an earlier build) and GROQ_API_KEY in .env",
+    )
+    parser.add_argument(
         "--skip-fault-test",
         action="store_true",
         help="skip the error-workflow test (use when n8n runs with PP_ALLOW_TEST_FAULTS=false)",
@@ -133,11 +165,11 @@ def main() -> int:
 
     try:
         if args.no_compose:
-            print("\n[1/6] skipping docker compose (--no-compose)")
+            print("\n[1] skipping docker compose (--no-compose)")
         else:
             compose_up()
 
-        print("\n[2/6] health checks")
+        print("\n[2] health checks")
 
         def pp_health():
             status, body = http("GET", f"{pp}/health", timeout=10)
@@ -153,33 +185,24 @@ def main() -> int:
             print(f"  !!  Qdrant reported down and accepted because of --allow-degraded-qdrant: {health['checks']['qdrant']}")
         wait_for("n8n /healthz", lambda: (http("GET", f"{n8n}/healthz", timeout=10)[0] == 200, None), 180)
 
-        print("\n[3/6] novelty request through the webhook")
-        idea = f"Smoke test {uuid.uuid4().hex[:8]}: retrieval-augmented checks of numeric claims in result tables."
+        print("\n[3] audit request through the webhook (branch still a placeholder)")
 
-        def novelty():
-            status, body = http("POST", webhook, {"mode": "novelty", "idea_text": idea})
+        def audit():
+            status, body = http(
+                "POST", webhook, {"mode": "audit", "draft_pdf_url": "https://arxiv.org/pdf/1706.03762", "venue": "NeurIPS"}
+            )
             # 404 means the webhook is not registered yet (n8n still activating workflows).
             return status != 404, (status, body)
 
-        status, body = wait_for("webhook registered", novelty, 120)
-        check(status == 200, "novelty request returns HTTP 200", body)
-        check(body.get("status") == "done" and body.get("mode") == "novelty", "novelty run reported done", body)
-        check(body.get("result", {}).get("branch") == "novelty", "routed to the novelty branch", body)
-        check(body.get("result", {}).get("implemented") is False, "branch honestly reports implemented=false", body)
-        s, run = http("GET", f"{pp}/runs/{body['run_id']}")
-        check(s == 200 and run["status"] == "done", "novelty run stored with status done", run)
-        check(run["input"]["idea_text"] == idea, "stored input matches what was sent", run)
-
-        print("\n[4/6] audit request through the webhook")
-        status, body = http(
-            "POST", webhook, {"mode": "audit", "draft_pdf_url": "https://arxiv.org/pdf/1706.03762", "venue": "NeurIPS"}
-        )
+        status, body = wait_for("webhook registered", audit, 120)
         check(status == 200, "audit request returns HTTP 200", body)
         check(body.get("result", {}).get("branch") == "audit", "routed to the audit branch", body)
+        check(body.get("result", {}).get("implemented") is False, "audit branch honestly reports implemented=false", body)
         s, run = http("GET", f"{pp}/runs/{body['run_id']}")
         check(s == 200 and run["status"] == "done", "audit run stored with status done", run)
+        check(run["input"]["draft_pdf_url"] == "https://arxiv.org/pdf/1706.03762", "stored input matches what was sent", run)
 
-        print("\n[5/6] invalid request is rejected before any run is created")
+        print("\n[4] invalid request is rejected before any run is created")
         before = len(http("GET", f"{pp}/runs?limit=100")[1])
         status, body = http("POST", webhook, {"mode": "novelty", "idea_text": "too short"})
         check(status == 422, "invalid request returns HTTP 422", body)
@@ -187,7 +210,7 @@ def main() -> int:
         after = len(http("GET", f"{pp}/runs?limit=100")[1])
         check(after == before or before == 100, "no run row was created", {"before": before, "after": after})
 
-        print("\n[6/6] error workflow marks the run failed")
+        print("\n[5] error workflow marks the run failed")
         if args.skip_fault_test:
             print("  --  skipped (--skip-fault-test)")
         else:
@@ -210,6 +233,8 @@ def main() -> int:
 
         if args.with_corpus:
             corpus_check(pp, n8n, args.corpus_limit)
+        if args.with_llm:
+            novelty_check(pp, webhook)
 
     except SmokeFailure as exc:
         print(f"\nFAIL: {exc}", file=sys.stderr)

@@ -2,9 +2,10 @@
 
 Pre-submission copilot for research papers, built on n8n. Given an idea or a draft PDF, PaperPilot finds the closest prior work, checks whether the draft's claims are supported by its own tables and cited papers, and returns a venue-readiness report. It does not predict acceptance.
 
-**Current state: milestone 1 (corpus and chunking).**
+**Current state: milestone 2, part 1 (LLM layer and novelty check).**
 
-- **The request pipeline** runs end to end, but the novelty and audit branches are still placeholders that answer `"implemented": false`.
+- **"Check my idea" works end to end:** an LLM splits the idea into facets, the knowledge base is searched, a second LLM compares the idea with the closest papers citing evidence, and a code verifier rejects anything retrieval cannot back up.
+- **The audit branch** is still a placeholder that answers `"implemented": false`.
 - **The papers knowledge base** (RAG for question answering, from arXiv) can be selected, built through n8n, searched, and evaluated with two chunking strategies.
 
 See [docs/PROGRESS.md](docs/PROGRESS.md) for what is verified and [docs/DECISIONS.md](docs/DECISIONS.md) for why it is built this way.
@@ -18,7 +19,11 @@ POST /webhook/paperpilot
         ├─ Create run ──────────────► pp-tools POST /runs  (validate + store, 422 on bad input)
         ├─ Mark running ────────────► pp-tools PATCH /runs/{id}
         ├─ Route by mode (Switch, no LLM)
-        │     ├─ novelty ─► 20-novelty sub-workflow (placeholder)
+        │     ├─ novelty ─► 20-novelty sub-workflow
+        │     │      render P1 ─► LLM "Decompose idea" (Groq gpt-oss-20b, Gemini fallback, JSON schema)
+        │     │      ─► save facets ─► retrieve (all queries, rank fusion) ─► render P3
+        │     │      ─► LLM "Judge novelty" (Groq gpt-oss-120b, Gemini fallback, JSON schema)
+        │     │      ─► verifier (code) ─► retry once with feedback, or assemble result
         │     └─ audit ───► 30-audit sub-workflow   (placeholder)
         ├─ Mark done ───────────────► pp-tools PATCH /runs/{id}
         └─ Respond with run_id, mode, status, result
@@ -37,7 +42,7 @@ Any failure ─► 90-error-handler ─► pp-tools POST /runs/fail-by-execution
 
 | Service | Port (localhost only) | Role |
 | --- | --- | --- |
-| n8n 2.42.6 | 5678 | Orchestration, webhook, routing |
+| n8n 2.42.6 | 5678 | Orchestration, webhook, routing, LLM calls (Groq, Gemini fallback) |
 | pp-tools | 8000 | Python service: validation, run state, corpus build jobs, search; later the verifier |
 | embedder (TEI cpu-1.9) | internal | Serves the BGE-M3 embedding model |
 | Postgres 17 | 5433 | n8n's database and the `paperpilot` app database (runs, jobs) |
@@ -61,6 +66,7 @@ cp .env.example .env
 Edit `.env`:
 
 1. `POSTGRES_PASSWORD`: letters and digits only.
+1. `GROQ_API_KEY`: free at https://console.groq.com (needed for "check my idea"). `GEMINI_API_KEY` is optional (fallback model, free at https://aistudio.google.com).
 2. `N8N_ENCRYPTION_KEY`: generate with `python3 -c "import secrets; print(secrets.token_hex(24))"`. Use the same key on every machine that shares a database volume, and never change it after the first start.
 
 Start everything:
@@ -82,6 +88,8 @@ python scripts/smoke_test.py
 It starts the stack if needed, checks health, sends a novelty, an audit, an invalid and a deliberately failing request, and checks the stored runs. The failing-request step needs `PP_ALLOW_TEST_FAULTS=true` in `.env`; otherwise add `--skip-fault-test`.
 
 Add `--with-corpus` to also build a small knowledge base (5 papers) through the ingestion workflow and search it. This needs `corpus/manifest.csv`, internet access, and the embedding model; the first run waits for the model download.
+
+Add `--with-llm` to also run a full novelty check with the real LLMs. This needs a built knowledge base and `GROQ_API_KEY`.
 
 To test services that are already running: `python scripts/smoke_test.py --no-compose`.
 
@@ -134,6 +142,19 @@ curl -X POST http://localhost:8000/search -H 'Content-Type: application/json' \
 
 Comparing the two chunking strategies (evaluation E1): [eval/README.md](eval/README.md).
 
+## Checking an idea (novelty)
+
+Needs a built knowledge base and `GROQ_API_KEY`:
+
+```bash
+curl -X POST http://localhost:5678/webhook/paperpilot -H 'Content-Type: application/json' \
+  -d '{"mode": "novelty", "idea_text": "Let the language model rewrite its search query after each retrieval step to answer multi-hop questions."}'
+```
+
+The result lists `closest_work` (papers with a same, partial, different or unknown verdict per facet, the evidence chunk ids and a rationale), `unverified` (anything the verifier rejected, with the reason), `coverage` (what was searched) and the prompt versions used. Every step, including the exact LLM outputs, is in `GET /runs/<run_id>/steps`.
+
+Prompts: [prompts/README.md](prompts/README.md).
+
 ## Working on workflows
 
 The JSON files in `n8n/workflows/` are the source of truth. On every start, n8n replaces its workflows with these files.
@@ -175,7 +196,7 @@ infra/postgres/init/      creates the app database on first start
 scripts/                  smoke test, workflow export and normalizer
 corpus/                   manifest.csv (the papers), selection.json, guide
 .cache/pp-tools/          downloaded PDFs, metadata, extracted text, build report (not in git)
-prompts/                  prompt library (from milestone 2)
+prompts/                  prompt library: versioned prompts, active.json, failure log
 eval/                     queries, results, evaluation guide
 docs/                     DECISIONS.md, PROGRESS.md
 ```
@@ -192,6 +213,7 @@ These are problems we actually hit while building milestones 0 and 1, except whe
 - **Port already in use.** Change `POSTGRES_HOST_PORT` in `.env`, or stop the other service on 5678, 8000 or 6333.
 - **n8n cannot read credentials after changing `N8N_ENCRYPTION_KEY` (not hit here).** The key is stored with the data. Restore the old key, or reset with `docker compose down -v` (deletes all data).
 - **`pp-tools` unhealthy.** `curl localhost:8000/health` shows which dependency is down; `docker compose logs pp-tools` has JSON logs.
+- **A novelty request returns HTTP 500 (not hit with real keys yet).** Open the failed execution in the n8n UI (`20-novelty`, Executions): a red LLM node usually means a missing or invalid `GROQ_API_KEY` or a rate limit. After changing a key in `.env`, run `docker compose up -d` so n8n re-imports the credential.
 - **`/search` answers 409.** No corpus build has run yet: see [corpus/README.md](corpus/README.md).
 - **`/search` answers 503 "embedder unavailable" (not hit here).** The model is still downloading, or the embedder container ran out of memory: `docker compose logs embedder`.
 - **Permission denied writing `corpus/`, `eval/` or `.cache/` (Linux, not hit here).** Set `PP_UID` and `PP_GID` in `.env` to the output of `id -u` and `id -g`, then `docker compose up -d`.
