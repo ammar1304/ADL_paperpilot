@@ -27,6 +27,18 @@ class SmokeFailure(Exception):
     pass
 
 
+def _dotenv() -> dict[str, str]:
+    """Port settings from the repo's .env, so the smoke test follows PP_TOOLS_HOST_PORT and N8N_HOST_PORT."""
+    values: dict[str, str] = {}
+    path = ROOT / ".env"
+    if path.exists():
+        for line in path.read_text(encoding="utf-8").splitlines():
+            if "=" in line and not line.lstrip().startswith("#"):
+                key, value = line.split("=", 1)
+                values[key.strip()] = value.strip()
+    return values
+
+
 def http(method: str, url: str, body: dict | None = None, headers: dict | None = None, timeout: float = 30):
     """Returns (status, parsed JSON or raw text). Never raises on HTTP error codes."""
     data = json.dumps(body).encode() if body is not None else None
@@ -134,8 +146,11 @@ def novelty_check(pp: str, webhook: str) -> None:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--no-compose", action="store_true", help="do not start docker compose; test running services")
-    parser.add_argument("--pp-tools-url", default=os.environ.get("SMOKE_PP_TOOLS_URL", "http://localhost:8000"))
-    parser.add_argument("--n8n-url", default=os.environ.get("SMOKE_N8N_URL", "http://localhost:5678"))
+    env = _dotenv()
+    pp_port = os.environ.get("PP_TOOLS_HOST_PORT") or env.get("PP_TOOLS_HOST_PORT") or "8000"
+    n8n_port = os.environ.get("N8N_HOST_PORT") or env.get("N8N_HOST_PORT") or "5678"
+    parser.add_argument("--pp-tools-url", default=os.environ.get("SMOKE_PP_TOOLS_URL", f"http://localhost:{pp_port}"))
+    parser.add_argument("--n8n-url", default=os.environ.get("SMOKE_N8N_URL", f"http://localhost:{n8n_port}"))
     parser.add_argument(
         "--allow-degraded-qdrant",
         action="store_true",

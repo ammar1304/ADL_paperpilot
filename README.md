@@ -210,7 +210,8 @@ These are problems we actually hit while building milestones 0 and 1, except whe
 - **`n8n's address '::' is not available`.** The host has no IPv6. Compose sets `N8N_LISTEN_ADDRESS=0.0.0.0` for this.
 - **`Postgres 16 is outside the supported range`.** n8n 2.42 warns on Postgres 16, which is why compose uses Postgres 17.
 - **`/pp/entrypoint.sh: not found` or `\r` errors (not hit here).** The script has Windows line endings. `.gitattributes` forces LF; if you cloned before it existed, run `git rm --cached -r . && git reset --hard`.
-- **Port already in use.** Change `POSTGRES_HOST_PORT` in `.env`, or stop the other service on 5678, 8000 or 6333.
+- **`ports are not available ... access a socket in a way forbidden by its access permissions` (Windows, hit on a team PC).** Windows reserved that port (Hyper-V/WSL port ranges), or another program uses it. Either run `net stop winnat` then `net start winnat` in an administrator PowerShell, or pick another port in `.env` (`PP_TOOLS_HOST_PORT=8010`, `N8N_HOST_PORT`, `QDRANT_HOST_PORT`, `POSTGRES_HOST_PORT`) and run `docker compose up -d --wait`. The smoke test reads these ports from `.env`; for curl commands in this README, replace 8000 or 5678 with your port.
+- **Port already in use.** Change the port in `.env` (see above), or stop the other program.
 - **n8n cannot read credentials after changing `N8N_ENCRYPTION_KEY` (not hit here).** The key is stored with the data. Restore the old key, or reset with `docker compose down -v` (deletes all data).
 - **`pp-tools` unhealthy.** `curl localhost:8000/health` shows which dependency is down; `docker compose logs pp-tools` has JSON logs.
 - **A novelty request returns HTTP 500 (not hit with real keys yet).** Open the failed execution in the n8n UI (`20-novelty`, Executions): a red LLM node usually means a missing or invalid `GROQ_API_KEY` or a rate limit. After changing a key in `.env`, run `docker compose up -d` so n8n re-imports the credential.
