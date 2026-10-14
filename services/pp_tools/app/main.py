@@ -93,6 +93,16 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         db.close()
 
     app = FastAPI(title="pp-tools", version="0.2.0", lifespan=lifespan)
+    @app.middleware("http")
+    async def declare_utf8(request, call_next):
+        # Without an explicit charset, Windows PowerShell 5.1 (Invoke-RestMethod)
+        # decodes JSON as Latin-1 and garbles every non-ASCII character. Seen on
+        # the first real run: "per‑question" came back as "perâquestion".
+        response = await call_next(request)
+        if response.headers.get("content-type") == "application/json":
+            response.headers["content-type"] = "application/json; charset=utf-8"
+        return response
+
     app.state.db = db
     app.state.settings = settings
     app.state.store = store

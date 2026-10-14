@@ -42,3 +42,10 @@ def test_create_run_returns_503_when_database_is_down():
             json={"request": {"mode": "novelty", "idea_text": "A long enough idea about table claims."}},
         )
     assert resp.status_code == 503
+
+
+def test_json_responses_declare_utf8(client):
+    """PowerShell 5.1 garbles non-ASCII text unless the charset is explicit."""
+    for path in ("/health", "/runs", "/prompts"):  # explicit and default responses
+        resp = client.get(path)
+        assert resp.headers["content-type"] == "application/json; charset=utf-8", path
