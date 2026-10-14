@@ -178,8 +178,8 @@ Run in the sandbox with real n8n 2.42.6. The LLM nodes talked to a local stand-i
 - [x] The Groq model ids `openai/gpt-oss-20b` and `openai/gpt-oss-120b` are accepted by the live API
 - [ ] The Gemini model id `models/gemini-3.5-flash-lite` is accepted by the live API
 - [ ] Tokens per judge call stay under the free per-minute limit
-- [x] First real failures logged in `prompts/failure_log.md` (F-001, F-002)
-- [ ] A novelty run on the full 500-paper library, including an idea whose answer is known
+- [x] First real failures logged in `prompts/failure_log.md` (F-001 to F-003)
+- [x] A novelty run on the full 500-paper library with a known answer (run `659c5d05`): Adaptive-RAG found and labelled `partial`, a closer 2026 paper labelled `same`; verifier passed on attempt 1
 
 ### Known issues
 
