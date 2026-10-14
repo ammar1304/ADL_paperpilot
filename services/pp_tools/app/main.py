@@ -346,7 +346,12 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             raise HTTPException(status_code=409, detail=f"no '{strategy}' collection yet; run a corpus build first")
         stats = await run_in_threadpool(store.stats)
         s = stats.get(strategy, {})
-        coverage = {"papers_in_knowledge_base": s.get("papers", 0), "chunks_searched": s.get("chunks", 0)}
+        coverage = {
+            "papers_in_knowledge_base": s.get("papers", 0),
+            # Full text is only visible in the structured collection (section, table, figure chunks).
+            "papers_with_full_text": stats.get("structured", {}).get("papers_with_sections", 0),
+            "chunks_searched": s.get("chunks", 0),
+        }
         cfg = RetrievalConfig(strategy=strategy, top_papers=settings.novelty_top_papers)
         try:
             return await run_in_threadpool(_novelty_errors, retrieve, db, retriever, run_id, cfg, coverage)

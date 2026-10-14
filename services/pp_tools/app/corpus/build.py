@@ -48,6 +48,9 @@ class BuildReport:
     tables_found: int = 0
     figures_found: int = 0
     chunks: dict[str, dict[str, int]] = field(default_factory=dict)
+    chunks_embedded: dict[str, int] = field(default_factory=dict)  # sent to the embedder
+    chunks_reused: dict[str, int] = field(default_factory=dict)  # vector unchanged, taken from Qdrant
+    embedding_model: str | None = None
     settings: dict[str, Any] = field(default_factory=dict)
 
 
@@ -93,9 +96,10 @@ class CorpusBuilder:
         report.papers_indexed = len(papers)
         report.fulltext_indexed = sum(1 for p in papers if p.structured is not None)
 
+        report.embedding_model = self.embedder.model_id()
         for strategy in STRATEGIES:
             chunks = [c for p in papers for c in chunk_paper(p, strategy, self.s.chunk_tokens, self.s.chunk_overlap)]
-            self._index(strategy, chunks, recreate)
+            self._index(strategy, chunks, recreate, report)
             report.chunks[strategy] = dict(Counter(c.chunk_type for c in chunks))
 
         report.finished_at = _now()
@@ -161,19 +165,31 @@ class CorpusBuilder:
         cached.write_text(json.dumps([{"lines": list(b.lines), "page": b.page} for b in boxes]), encoding="utf-8")
         return boxes
 
-    def _index(self, strategy: str, chunks: list[Chunk], recreate: bool) -> None:
+    def _index(self, strategy: str, chunks: list[Chunk], recreate: bool, report: BuildReport) -> None:
         if not chunks:
             return
+        model = report.embedding_model
+        # Read reusable vectors before a recreate deletes the collection.
+        reuse = self.store.reusable_vectors(chunks, model) if self.s.reuse_vectors else {}
+        if reuse:
+            log.info("reusing stored vectors", extra={"strategy": strategy, "reused": len(reuse), "total": len(chunks)})
+        report.chunks_reused[strategy] = len(reuse)
+        report.chunks_embedded[strategy] = 0
         batch = max(1, self.s.embed_batch_size) * 4
         created = False
         for i in range(0, len(chunks), batch):
             part = chunks[i : i + batch]
-            vectors = self.embedder.embed([c.text for c in part])
+            todo = [c for c in part if c.chunk_id not in reuse]
+            fresh = dict(zip((c.chunk_id for c in todo), self.embedder.embed([c.text for c in todo]))) if todo else {}
+            report.chunks_embedded[strategy] += len(todo)
+            vectors = [reuse.get(c.chunk_id) or fresh[c.chunk_id] for c in part]
             if not created:
                 self.store.ensure_collection(strategy, dim=len(vectors[0]), recreate=recreate)
                 created = True
-            self.store.upsert(part, vectors)
-            self.progress({"stage": f"index:{strategy}", "done": min(i + batch, len(chunks)), "total": len(chunks)})
+            self.store.upsert(part, vectors, model)
+            self.progress(
+                {"stage": f"index:{strategy}", "done": min(i + batch, len(chunks)), "total": len(chunks), "reused": len(reuse)}
+            )
 
     def _write_report(self, report: BuildReport) -> None:
         self.s.cache_dir.mkdir(parents=True, exist_ok=True)

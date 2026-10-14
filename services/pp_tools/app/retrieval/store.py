@@ -60,14 +60,44 @@ class Store:
             for field in INDEXED_FIELDS:
                 self.client.create_payload_index(name, field_name=field, field_schema=models.PayloadSchemaType.KEYWORD)
 
-    def upsert(self, chunks: list[Chunk], vectors: list[list[float]]) -> None:
+    def reusable_vectors(self, chunks: list[Chunk], model: str | None, batch: int = 256) -> dict[str, list[float]]:
+        """Vectors already stored for these chunks, keyed by chunk id.
+
+        A vector is reused only when the stored text is identical and it was made
+        by the same embedding model. Points stored before the model was recorded
+        (builds before pp-tools 0.3, all BGE-M3) count as the current model.
+        """
+        if not chunks or model is None:
+            return {}
+        name = collection_name(chunks[0].strategy)
+        if not self.client.collection_exists(name):
+            return {}
+        by_point = {point_id(c.chunk_id, c.strategy): c for c in chunks}
+        ids = list(by_point)
+        out: dict[str, list[float]] = {}
+        for i in range(0, len(ids), batch):
+            for p in self.client.retrieve(name, ids=ids[i : i + batch], with_vectors=True, with_payload=["text", "embedding_model"]):
+                chunk = by_point.get(str(p.id))
+                pl = p.payload or {}
+                if chunk is None or pl.get("text") != chunk.text or not isinstance(p.vector, list):
+                    continue
+                if pl.get("embedding_model", model) != model:
+                    continue
+                out[chunk.chunk_id] = p.vector
+        return out
+
+    def upsert(self, chunks: list[Chunk], vectors: list[list[float]], model: str | None = None) -> None:
         if not chunks:
             return
         if len(chunks) != len(vectors):
             raise ValueError("chunks and vectors differ in length")
         strategy = chunks[0].strategy
         points = [
-            models.PointStruct(id=point_id(c.chunk_id, c.strategy), vector=v, payload=c.payload())
+            models.PointStruct(
+                id=point_id(c.chunk_id, c.strategy),
+                vector=v,
+                payload={**c.payload(), **({"embedding_model": model} if model else {})},
+            )
             for c, v in zip(chunks, vectors, strict=True)
         ]
         self.client.upsert(collection_name(strategy), points=points, wait=True)
@@ -109,6 +139,7 @@ class Store:
                 out[strategy] = {"exists": False}
                 continue
             papers: set[str] = set()
+            with_sections: set[str] = set()  # papers whose full text was chunked (structured strategy only)
             types: dict[str, int] = {}
             offset = None
             while True:
@@ -118,8 +149,16 @@ class Store:
                 for p in points:
                     pl = p.payload or {}
                     papers.add(pl.get("paper_id", ""))
+                    if pl.get("chunk_type") in {"section", "table", "figure"}:
+                        with_sections.add(pl.get("paper_id", ""))
                     types[pl.get("chunk_type", "")] = types.get(pl.get("chunk_type", ""), 0) + 1
                 if offset is None:
                     break
-            out[strategy] = {"exists": True, "chunks": sum(types.values()), "papers": len(papers), "chunk_types": types}
+            out[strategy] = {
+                "exists": True,
+                "chunks": sum(types.values()),
+                "papers": len(papers),
+                "papers_with_sections": len(with_sections),
+                "chunk_types": types,
+            }
         return out

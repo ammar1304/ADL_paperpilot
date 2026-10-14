@@ -137,8 +137,76 @@ def test_honest_judge_passes_first_time(db, kb):
     assert final["implemented"] is True
     assert final["closest_work"] and final["unverified"] == []
     assert final["closest_work"][0]["url"].startswith("https://arxiv.org/abs/")
-    assert final["prompt_versions"] == {"P1-decomposer": "v1", "P3-novelty-judge": "v1"}
+    assert final["prompt_versions"] == {"P1-decomposer": "v1", "P3-novelty-judge": "v2"}
     assert "does not mean novel" in final["coverage"]["note"]
+
+
+def test_v2_prompt_states_scope_and_labels_passages(db, kb):
+    run_id, rendered, _ = run_to_judge(db, kb)
+    assert rendered.version == "v2"
+    assert "WHAT WAS SEARCHED\nThe knowledge base holds 3 papers." in rendered.user
+    assert "Retrieval ran" in rendered.user and "candidate papers below" in rendered.user
+    assert "[abstract]" in rendered.user  # every passage says what kind of text it is
+
+
+def test_v1_prompt_still_renders_for_comparison(db, kb, tmp_path):
+    """Before/after runs need the old version to keep working with the new code."""
+    import shutil
+
+    lib = tmp_path / "prompts"
+    shutil.copytree(REPO / "prompts", lib)
+    (lib / "active.json").write_text('{"P1-decomposer": "v1", "P3-novelty-judge": "v1"}')
+    run_id = new_run(db)
+    save_facets(db, run_id, decompose(IDEA), "v1")
+    retrieve(db, kb, run_id, RetrievalConfig(top_papers=3), {"papers_in_knowledge_base": 3})
+    rendered, _ = judge_prompt(db, PromptLibrary(lib), run_id)
+    assert rendered.version == "v1" and "WHAT WAS SEARCHED" not in rendered.user
+
+
+def _judged(db, kb, labels_per_paper):
+    """Run to the judge, then answer with the given labels for the retrieved papers, in order."""
+    run_id, rendered, _ = run_to_judge(db, kb)
+    retrieved = db.get_steps(run_id, "retrieve")[-1]["detail"]["candidates"]
+    matches = [
+        {
+            "paper_id": c["paper_id"],
+            "overlap": dict(zip(("task", "method", "data", "result"), labels)),
+            "evidence": [c["evidence"][0]["chunk_id"]],
+            "rationale": "test rationale",
+        }
+        for c, labels in zip(retrieved, labels_per_paper)
+    ]
+    assert verify(db, run_id, {"matches": matches, "summary": "llm summary"})["status"] == "pass"
+    return assemble(db, run_id), [c["paper_id"] for c in retrieved]
+
+
+def test_report_separates_overlapping_papers_from_checked_ones(db, kb):
+    """F-001: papers 'different' on every facet are not presented as closest work."""
+    final, ids = _judged(
+        db,
+        kb,
+        [("different", "different", "unknown", "unknown"), ("same", "partial", "unknown", "unknown")],
+    )
+    assert final["overlap_found"] is True
+    assert [m["paper_id"] for m in final["closest_work"]] == [ids[1]]
+    assert [m["paper_id"] for m in final["checked_not_close"]] == [ids[0]]
+    assert final["unspecified_facets"] == ["data", "result"]
+    summary = final["summary"]
+    assert summary.startswith("Searched 3 papers with ")
+    assert f"1 overlap with the idea: {ids[1]} (task same, method partial)" in summary
+    assert "1 were checked and found different or unclear on every facet" in summary
+    assert "does not specify its data or result" in summary
+    assert "does not mean novel" in summary
+    assert final["summary_llm_written"] == "llm summary"
+
+
+def test_report_says_plainly_when_nothing_overlaps(db, kb):
+    final, _ = _judged(db, kb, [("different", "unknown", "unknown", "unknown")] * 2)
+    assert final["overlap_found"] is False and final["closest_work"] == []
+    assert len(final["checked_not_close"]) == 2
+    assert "None of them overlaps with the idea on any facet." in final["summary"]
+    for word in ("novel.", "new idea", "unexplored"):
+        assert word not in final["summary"].replace("does not mean novel.", "")
 
 
 def test_hallucinated_paper_is_rejected_then_fixed_with_feedback(db, kb):
@@ -209,7 +277,7 @@ def test_novelty_api_end_to_end(tmp_path, test_db_url, stub_url, db):
     )
     write_stub_manifest(settings, {"2101.00001"})
     with TestClient(create_app(settings)) as client:
-        assert client.get("/prompts").json() == {"active": {"P1-decomposer": "v1", "P3-novelty-judge": "v1"}, "problems": []}
+        assert client.get("/prompts").json() == {"active": {"P1-decomposer": "v1", "P3-novelty-judge": "v2"}, "problems": []}
         r = client.post("/prompts/P1-decomposer/render", json={"variables": {"idea_text": IDEA}})
         assert r.status_code == 200 and IDEA in r.json()["user"] and r.json()["version"] == "v1"
         assert client.post("/prompts/P1-decomposer/render", json={"variables": {}}).status_code == 422
@@ -233,6 +301,7 @@ def test_novelty_api_end_to_end(tmp_path, test_db_url, stub_url, db):
         assert ok.status_code == 200
         ret = client.post(f"/novelty/{run_id}/retrieve", json={}).json()
         assert ret["coverage"]["papers_in_knowledge_base"] == 3
+        assert ret["coverage"]["papers_with_full_text"] == 1  # only 2101.00001 is full text here
         prompt = client.post(f"/novelty/{run_id}/judge-prompt").json()
         assert prompt["attempt"] == 1
         v = client.post(f"/novelty/{run_id}/verify", json={"output": stubs._judge(prompt["user"])}).json()

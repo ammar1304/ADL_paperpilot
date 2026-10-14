@@ -1,0 +1,34 @@
+arxiv_id,fulltext,expected_title,reason
+2005.11401,1,Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks,the original RAG paper
+2004.04906,1,Dense Passage Retrieval for Open-Domain Question Answering,DPR: the standard dense retriever
+2007.01282,1,Leveraging Passage Retrieval with Generative Models for Open Domain Question Answering,Fusion-in-Decoder (FiD)
+2112.04426,0,Improving language models by retrieving from trillions of tokens,RETRO: retrieval at pre-training scale
+2310.11511,1,"Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection",adaptive retrieval with reflection tokens; missed by the first known-answer test
+2305.06983,1,Active Retrieval Augmented Generation,FLARE: retrieve when the model is unsure
+2301.12652,0,REPLUG: Retrieval-Augmented Black-Box Language Models,retrieval for black-box LLMs
+2302.00083,0,In-Context Retrieval-Augmented Language Models,RALM without training
+2212.10511,1,When Not to Trust Language Models: Investigating Effectiveness of Parametric and Non-Parametric Memories,PopQA and adaptive retrieval by entity popularity
+2401.15884,1,Corrective Retrieval Augmented Generation,CRAG: judge retrieved documents before use
+2307.03172,1,Lost in the Middle: How Language Models Use Long Contexts,position of evidence in the context
+2310.05002,1,Self-Knowledge Guided Retrieval Augmentation for Large Language Models,SKR: decide when to retrieve from self-knowledge
+2403.14403,1,Adaptive-RAG: Learning to Adapt Retrieval-Augmented Large Language Models through Question Complexity,already in the manifest; upgrade to full text for the known-answer test
+2212.10509,1,Interleaving Retrieval with Chain-of-Thought Reasoning for Knowledge-Intensive Multi-Step Questions,IRCoT: multi-hop retrieval
+2210.03350,0,Measuring and Narrowing the Compositionality Gap in Language Models,Self-Ask: multi-hop decomposition
+2210.03629,0,ReAct: Synergizing Reasoning and Acting in Language Models,reasoning plus tool calls
+2403.10081,0,DRAGIN: Dynamic Retrieval Augmented Generation based on the Real-time Information Needs of Large Language Models,dynamic retrieval timing
+2311.09210,0,Chain-of-Note: Enhancing Robustness in Retrieval-Augmented Language Models,robustness to noisy retrieval
+2403.10131,0,RAFT: Adapting Language Model to Domain Specific RAG,fine-tuning for RAG
+2310.03025,0,Retrieval meets Long Context Large Language Models,RAG versus long context
+2404.16130,0,From Local to Global: A Graph RAG Approach to Query-Focused Summarization,GraphRAG
+2004.12832,0,ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction over BERT,late-interaction retrieval
+2112.01488,0,ColBERTv2: Effective and Efficient Retrieval via Lightweight Late Interaction,late-interaction retrieval
+2112.09118,0,Unsupervised Dense Information Retrieval with Contrastive Learning,Contriever
+2212.10496,0,Precise Zero-Shot Dense Retrieval without Relevance Labels,HyDE: query rewriting by generation
+2107.05720,0,SPLADE: Sparse Lexical and Expansion Model for First Stage Ranking,learned sparse retrieval
+2304.09542,0,Is ChatGPT Good at Search? Investigating Large Language Models as Re-Ranking Agents,LLM rerankers (RankGPT)
+2009.02252,0,KILT: a Benchmark for Knowledge Intensive Language Tasks,benchmark
+2104.08663,0,BEIR: A Heterogenous Benchmark for Zero-shot Evaluation of Information Retrieval Models,benchmark
+1809.09600,0,"HotpotQA: A Dataset for Diverse, Explainable Multi-hop Question Answering",benchmark
+2309.15217,0,RAGAS: Automated Evaluation of Retrieval Augmented Generation,RAG evaluation
+2311.09476,0,ARES: An Automated Evaluation Framework for Retrieval-Augmented Generation Systems,RAG evaluation
+2312.10997,0,Retrieval-Augmented Generation for Large Language Models: A Survey,survey

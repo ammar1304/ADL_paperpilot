@@ -283,11 +283,14 @@ class Handler(BaseHTTPRequestHandler):
         url = urlparse(self.path)
         if url.path == "/health":
             return self._send(200, b"", "text/plain")
+        if url.path == "/info":  # like TEI
+            return self._send(200, json.dumps({"model_id": "stub/hashed-bow"}).encode(), "application/json")
         if url.path == "/api/query":
             q = parse_qs(url.query)
             if "id_list" in q:
                 wanted = set(q["id_list"][0].split(","))
-                found = [p for p in PAPERS if f"{p['id']}v{p['version']}" in wanted]
+                # Like arXiv: a versioned id asks for that version, a bare id for the latest one.
+                found = [p for p in PAPERS if f"{p['id']}v{p['version']}" in wanted or p["id"] in wanted]
                 return self._send(200, atom_feed(found, len(found)).encode(), "application/atom+xml")
             start = int(q.get("start", ["0"])[0])
             size = int(q.get("max_results", ["10"])[0])

@@ -28,6 +28,9 @@ from .retrieval.search import Retriever
 FacetName = Literal["task", "method", "data", "result"]
 Label = Literal["same", "partial", "different", "unknown"]
 FACETS: tuple[str, ...] = ("task", "method", "data", "result")
+NOT_SPECIFIED = "not specified"  # what P1 writes for a facet the idea does not mention
+# How strongly a label counts as overlap, for ranking the report (not a novelty score).
+LABEL_WEIGHT = {"same": 2, "partial": 1, "different": 0, "unknown": 0}
 
 DECOMPOSER = "P1-decomposer"
 JUDGE = "P3-novelty-judge"
@@ -187,15 +190,49 @@ def _facets_block(facets: Facets) -> str:
     return "\n".join(f"- {name}: {getattr(facets, name)}" for name in FACETS)
 
 
+def unspecified_facets(facets: dict[str, str]) -> list[str]:
+    """Facets the idea itself leaves open: nothing can be covered or uncovered there."""
+    return [name for name in FACETS if facets.get(name, "").strip().lower().startswith(NOT_SPECIFIED)]
+
+
+def _passage_label(e: dict[str, Any]) -> str:
+    kind = e.get("chunk_type") or "passage"
+    if kind == "abstract":
+        return "abstract"
+    if kind == "section" and e.get("section"):
+        return f"section: {e['section']}"
+    return kind  # window, table, figure
+
+
+def _library_block(retrieved: dict[str, Any]) -> str:
+    """What was searched, so the judge can qualify its summary (F-002)."""
+    cov = retrieved.get("coverage", {})
+    papers = cov.get("papers_in_knowledge_base")
+    full = cov.get("papers_with_full_text")
+    parts = []
+    if papers is not None:
+        sentence = f"The knowledge base holds {papers} papers"
+        if full is not None:
+            sentence += f", {full} of them with full text and the rest with the abstract only"
+        parts.append(sentence + ".")
+    parts.append(
+        f"Retrieval ran {len(retrieved.get('queries', []))} search queries and kept the "
+        f"{len(retrieved.get('candidates', []))} candidate papers below. Papers outside the knowledge base were not searched."
+    )
+    return " ".join(parts)
+
+
 def _candidates_block(candidates: list[dict[str, Any]]) -> str:
     if not candidates:
         return "(no candidate papers were retrieved)"
     lines = []
     for i, c in enumerate(candidates, start=1):
         lines.append(f"[C{i}] paper_id: {c['paper_id']} | title: {c['title']} | year: {c['year']}")
+        if c["evidence"] and all(e.get("chunk_type") == "abstract" for e in c["evidence"]):
+            lines.append("  Only the abstract of this paper is shown: its data and results are usually not visible.")
         for e in c["evidence"]:
             text = " ".join(e["text"].split())
-            lines.append(f"  - ({e['chunk_id']}) {text}")
+            lines.append(f"  - ({e['chunk_id']}) [{_passage_label(e)}] {text}")
         lines.append("")
     return "\n".join(lines).rstrip()
 
@@ -219,13 +256,15 @@ def judge_prompt(db: Database, library: PromptLibrary, run_id: UUID) -> tuple[Re
             + "\nAnswer again, fixing every problem. Use only the paper ids and chunk ids shown above."
         )
 
-    rendered = library.load(JUDGE).render(
-        {
-            "facets_block": _facets_block(decomposed.facets),
-            "candidates_block": _candidates_block(retrieved["candidates"]),
-            "feedback_block": feedback,
-        }
-    )
+    variables = {
+        "facets_block": _facets_block(decomposed.facets),
+        "candidates_block": _candidates_block(retrieved["candidates"]),
+        "feedback_block": feedback,
+        "library_block": _library_block(retrieved),
+    }
+    prompt = library.load(JUDGE)
+    # Older prompt versions (v1) do not use every variable; pass only what they declare.
+    rendered = prompt.render({k: v for k, v in variables.items() if k in prompt.variables})
     db.add_step(run_id, "judge_prompt", "done", {"prompt": JUDGE, "prompt_version": rendered.version, "attempt": attempt})
     return rendered, attempt
 
@@ -309,29 +348,73 @@ def assemble(db: Database, run_id: UUID) -> dict[str, Any]:
         }
 
     judge_prompts = db.get_steps(run_id, "judge_prompt")
+    facets = decompose["output"]["facets"]
+    unspecified = unspecified_facets(facets)
+    order = {c["paper_id"]: i for i, c in enumerate(retrieved["candidates"])}
+
+    def strength(item: dict[str, Any]) -> tuple[int, int, int]:
+        labels = item["overlap"]
+        core = LABEL_WEIGHT[labels["task"]] + LABEL_WEIGHT[labels["method"]]
+        total = sum(LABEL_WEIGHT[labels[f]] for f in FACETS)
+        return (-core, -total, order.get(item["paper_id"], 99))
+
+    # F-001: a paper is "closest work" only if the judge found some overlap. The
+    # others were still checked; they are listed separately, never hidden.
+    overlapping = sorted((i for i in last["verified"] if strength(i)[1] < 0), key=strength)
+    not_close = sorted((i for i in last["verified"] if strength(i)[1] == 0), key=strength)
+    coverage = {
+        **retrieved["coverage"],
+        "strategy": retrieved["strategy"],
+        "queries": retrieved["queries"],
+        "candidates_considered": len(retrieved["candidates"]),
+        "note": "Not found in this knowledge base does not mean novel.",
+    }
     return {
         "branch": "novelty",
         "implemented": True,
-        "idea_facets": decompose["output"]["facets"],
-        "closest_work": [enrich(i) for i in last["verified"]],
+        "idea_facets": facets,
+        "unspecified_facets": unspecified,
+        "overlap_found": bool(overlapping),
+        "closest_work": [enrich(i) for i in overlapping],
+        "checked_not_close": [enrich(i) for i in not_close],
+        # Written by code from verified labels only, so every statement in it is backed by the steps above.
+        "summary": _summary(overlapping, not_close, unspecified, coverage),
         "unverified": [
             {"item": enrich(r["item"]) if r["item"] else None, "reasons": r["reasons"]} for r in last["rejected"]
         ],
         # Free text written by the LLM: shown, but labelled, because the verifier checks ids, not prose.
         "summary_llm_written": last.get("summary"),
-        "coverage": {
-            **retrieved["coverage"],
-            "strategy": retrieved["strategy"],
-            "queries": retrieved["queries"],
-            "candidates_considered": len(retrieved["candidates"]),
-            "note": "Not found in this knowledge base does not mean novel.",
-        },
+        "coverage": coverage,
         "judge_attempts": len(verifications),
         "prompt_versions": {
             DECOMPOSER: decompose["prompt_version"],
             JUDGE: judge_prompts[-1]["detail"]["prompt_version"] if judge_prompts else None,
         },
     }
+
+
+def _summary(overlapping: list[dict[str, Any]], not_close: list[dict[str, Any]], unspecified: list[str], coverage: dict[str, Any]) -> str:
+    papers = coverage.get("papers_in_knowledge_base")
+    searched = f"Searched {papers} papers" if papers is not None else "Searched the knowledge base"
+    full = coverage.get("papers_with_full_text")
+    if papers is not None and full is not None:
+        searched += f" ({full} with full text)"
+    checked = len(overlapping) + len(not_close)
+    lines = [f"{searched} with {len(coverage.get('queries', []))} queries; {checked} candidate papers were judged."]
+    if overlapping:
+        parts = []
+        for item in overlapping[:3]:
+            shared = [f"{f} {item['overlap'][f]}" for f in FACETS if item["overlap"][f] in ("same", "partial")]
+            parts.append(f"{item['paper_id']} ({', '.join(shared)})")
+        lines.append(f"{len(overlapping)} overlap with the idea: " + "; ".join(parts) + ("; ..." if len(overlapping) > 3 else "") + ".")
+    else:
+        lines.append("None of them overlaps with the idea on any facet.")
+    if not_close:
+        lines.append(f"{len(not_close)} were checked and found different or unclear on every facet.")
+    if unspecified:
+        lines.append(f"The idea does not specify its {' or '.join(unspecified)}, so overlap there could not be judged.")
+    lines.append("Not found in this knowledge base does not mean novel.")
+    return " ".join(lines)
 
 
 # ---- helpers -------------------------------------------------------------------------------
