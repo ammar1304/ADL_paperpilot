@@ -92,6 +92,46 @@ def test_rebuild_is_idempotent_and_uses_the_cache(built, stub_url):
     assert store.stats() == before  # same deterministic point ids: no duplicates
 
 
+def test_rebuild_reuses_vectors_and_embeds_only_what_changed(built):
+    """Adding papers must not re-embed the whole library (88 minutes on a laptop CPU)."""
+    settings, first, retriever, store, _ = built
+    assert first.embedding_model == "stub/hashed-bow"
+    total = {k: sum(v.values()) for k, v in first.chunks.items()}
+    assert first.chunks_embedded == total and first.chunks_reused == {"fixed": 0, "structured": 0}
+
+    arxiv = ArxivClient(settings.arxiv_api_url, settings.arxiv_pdf_url, delay_s=0)
+    same = CorpusBuilder(settings, arxiv, retriever.embedder, store).run(recreate=True)
+    assert same.chunks_embedded == {"fixed": 0, "structured": 0}
+    assert same.chunks_reused == total
+    assert store.stats()["structured"]["chunks"] == total["structured"]  # recreated, nothing lost
+
+    # One more paper gets its full text: only that paper's new chunks are embedded.
+    write_stub_manifest(settings, {"2101.00001", "2405.00003", "2203.00002"})
+    more = CorpusBuilder(settings, arxiv, retriever.embedder, store).run(recreate=True)
+    new_structured = sum(more.chunks["structured"].values())
+    assert 0 < more.chunks_embedded["structured"] < new_structured
+    assert more.chunks_reused["structured"] + more.chunks_embedded["structured"] == new_structured
+    hits = retriever.chunks("rewriting multi-hop hotpotqa musique iterative", "structured", 5)
+    assert hits[0].paper_id == "arxiv:2203.00002"  # the new vectors are searchable
+    arxiv.close()
+
+
+def test_vectors_from_another_model_are_not_reused(built):
+    settings, first, retriever, store, _ = built
+    from app.retrieval.store import collection_name
+
+    name = collection_name("structured")
+    points, _ = store.client.scroll(name, limit=1000, with_payload=True, with_vectors=True)
+    texts = {p.payload["text"] for p in points}
+    assert all(p.payload.get("embedding_model") == "stub/hashed-bow" for p in points)
+    store.client.set_payload(name, payload={"embedding_model": "other/model"}, points=[p.id for p in points])
+    arxiv = ArxivClient(settings.arxiv_api_url, settings.arxiv_pdf_url, delay_s=0)
+    again = CorpusBuilder(settings, arxiv, retriever.embedder, store).run(recreate=True)
+    assert again.chunks_reused["structured"] == 0
+    assert again.chunks_embedded["structured"] == len(texts)
+    arxiv.close()
+
+
 def test_pdf_failure_falls_back_to_abstract(tmp_path, stub_url):
     settings = make_settings(tmp_path, stub_url)
     write_stub_manifest(settings, {"2101.00001"})

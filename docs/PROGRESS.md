@@ -189,6 +189,37 @@ Run in the sandbox with real n8n 2.42.6. The LLM nodes talked to a local stand-i
 - Papers judged `different` on every facet still appear as "closest work" (F-001), and the summary does not say how small the searched library was (F-002).
 - pp-tools did not declare a charset, so Windows PowerShell 5.1 garbled non-ASCII text in its responses. Fixed: every JSON response now says `charset=utf-8`.
 
+## Milestone 2, part 1b: prompt v2 and a corpus that includes the classics (2026-10-14)
+
+Branch `feat/prompt-v2`. Driven by the first real runs (F-001 to F-003).
+
+### Built
+
+- **P3-novelty-judge v2** (v1 kept for comparison): the search scope, labelled passages, unknown versus not covered, unspecified facets, a counter-example (D25).
+- **Report:** `closest_work` only for papers with some overlap, `checked_not_close`, `overlap_found`, `unspecified_facets`, and a summary written by code.
+- **`app.corpus.add`** and `corpus/additions.csv`: 33 foundational papers with expected titles, 11 of them full text (D26).
+- **Vector reuse on rebuilds** (D27), with `chunks_embedded` and `chunks_reused` in the build report.
+
+### Verified
+
+Sandbox, stubs for arXiv, TEI and the LLMs:
+
+| What | Result |
+| --- | --- |
+| Tests | 93 passed |
+| Report split, code summary, nothing overlapping | Tests pass |
+| v1 still renders with the new code (for before/after runs) | Test passes |
+| `app.corpus.add`: added, upgraded, already present, not found, wrong title refused, dry run writes nothing | Tests pass |
+| Rebuild with no change embeds 0 chunks; adding a full-text paper embeds only its chunks; another model's vectors are not reused | Tests pass |
+| Smoke test with real n8n 2.42.6 | 7 of 7 steps, prompts `P3 v2` |
+
+### Not verified yet: needs the team PC
+
+- [ ] `app.corpus.add` against real arXiv: every id found and every title accepted
+- [ ] Rebuild after the additions reuses the existing vectors (TEI `/info` gives the model id)
+- [ ] The known-answer idea with v2 on the bigger library: does Self-RAG appear, and do the report and summaries avoid F-001 to F-003?
+- [ ] Same idea with v1 (set `active.json` back) for the before/after record
+
 ## Next: milestone 2, part 2
 
 - Agentic search loop with Semantic Scholar (D20): the LLM judges facet coverage and decides to search again.

@@ -134,10 +134,14 @@ def novelty_check(pp: str, webhook: str) -> None:
     check(result.get("branch") == "novelty" and result.get("implemented") is True, "novelty branch ran for real", result)
     check(set(result.get("idea_facets", {})) == {"task", "method", "data", "result"}, "the LLM split the idea into four facets", result)
     check(result.get("coverage", {}).get("papers_in_knowledge_base", 0) > 0, "result states the knowledge-base coverage", result)
-    for m in result.get("closest_work", []):
+    judged = result.get("closest_work", []) + result.get("checked_not_close", [])
+    for m in judged:
         check(all(e.startswith(m["paper_id"] + "#") for e in m["evidence"]), f"evidence of {m['paper_id']} cites its own chunks", m)
-    print(f"  ..  {len(result.get('closest_work', []))} verified matches, {len(result.get('unverified', []))} unverified, "
-          f"judge attempts: {result.get('judge_attempts')}")
+    check(str(result.get("summary", "")).startswith("Searched "), "report summary states what was searched", result.get("summary"))
+    print(f"  ..  {len(result.get('closest_work', []))} overlapping, {len(result.get('checked_not_close', []))} checked and not close, "
+          f"{len(result.get('unverified', []))} unverified, judge attempts: {result.get('judge_attempts')}, "
+          f"prompts: {result.get('prompt_versions')}")
+    print(f"  ..  summary: {result.get('summary')}")
     s, steps = http("GET", f"{pp}/runs/{body['run_id']}/steps")
     names = [st["step_name"] for st in steps] if s == 200 else []
     check(names[:2] == ["decompose", "retrieve"] and "verify" in names, "every step was recorded for audit", names)

@@ -28,6 +28,14 @@ class Embedder:
     def close(self) -> None:
         self.http.close()
 
+    def model_id(self) -> str | None:
+        """The served model, from TEI's GET /info; None if the server does not say."""
+        try:
+            resp = self.http.get(f"{self.url}/info", timeout=10)
+            return resp.json().get("model_id") if resp.status_code == 200 else None
+        except (httpx.HTTPError, ValueError, AttributeError):
+            return None
+
     def healthy(self) -> bool:
         try:
             return self.http.get(f"{self.url}/health", timeout=5).status_code == 200

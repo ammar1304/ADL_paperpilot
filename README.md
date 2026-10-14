@@ -131,6 +131,7 @@ Full guide: [corpus/README.md](corpus/README.md). In short:
 
 ```bash
 docker compose exec pp-tools python -m app.corpus.select           # once: writes corpus/manifest.csv
+docker compose exec pp-tools python -m app.corpus.add              # adds corpus/additions.csv (checks every title)
 curl -X POST http://localhost:5678/webhook/ingest -d '{}' -H 'Content-Type: application/json'
 curl http://localhost:8000/jobs/<job_id>                          # follow the build
 curl http://localhost:8000/corpus/stats                           # what was indexed
@@ -151,7 +152,13 @@ curl -X POST http://localhost:5678/webhook/paperpilot -H 'Content-Type: applicat
   -d '{"mode": "novelty", "idea_text": "Let the language model rewrite its search query after each retrieval step to answer multi-hop questions."}'
 ```
 
-The result lists `closest_work` (papers with a same, partial, different or unknown verdict per facet, the evidence chunk ids and a rationale), `unverified` (anything the verifier rejected, with the reason), `coverage` (what was searched) and the prompt versions used. Every step, including the exact LLM outputs, is in `GET /runs/<run_id>/steps`.
+The result holds:
+
+- `summary`: written by code from the verified labels only: what was searched, which papers overlap and on which facets, and which facets the idea leaves unspecified. `summary_llm_written` is the judge's own prose, shown but labelled.
+- `overlap_found` and `closest_work`: papers labelled `same` or `partial` on at least one facet, strongest first, with the evidence chunk ids and a rationale.
+- `checked_not_close`: papers retrieved and judged, but `different` or `unknown` on every facet.
+- `unverified`: anything the verifier rejected, with the reason.
+- `unspecified_facets`, `coverage` (what was searched, including how many papers have full text) and the prompt versions used. Every step, including the exact LLM outputs, is in `GET /runs/<run_id>/steps`.
 
 Prompts: [prompts/README.md](prompts/README.md).
 

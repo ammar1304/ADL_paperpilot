@@ -190,3 +190,26 @@ The container registries were not reachable from the development sandbox, so the
 - **Decision:** each decomposer query searches the knowledge base (20 chunks). Papers are scored by reciprocal rank fusion (k = 60) across queries. The top 6 papers go to the judge with their 2 best chunks (900 characters each).
 - **Why:** one query rarely covers every facet. Fusion rewards papers that several facet queries find, without tuning weights. The caps keep the judge prompt around 3,000 tokens, inside Groq's 8,000-tokens-per-minute free limit (D12).
 - **Next:** the agentic search loop (D20) adds rounds when facets are poorly covered, and a reranker can replace the raw fusion order.
+
+## D25. The novelty report is assembled by code; the LLM summary is secondary
+
+- **Context:** the first real runs (`prompts/failure_log.md` F-001 to F-003) showed the judge's labels were right but its prose overreached: papers different on every facet were shown as "closest work", and missing evidence was described as "uncovered".
+- **Decision:**
+  - `closest_work` holds only papers with at least one `same` or `partial` label, ranked by code (task and method first). The others go to `checked_not_close`, never hidden.
+  - A `summary` is written by code from the verified labels and the search coverage. The judge's summary is kept as `summary_llm_written`.
+  - P3 v2 receives the search scope (papers, full texts, queries) and labelled passages, with explicit rules separating `unknown` from "not covered".
+- **Why:** every sentence a user reads first is now backed by verified labels; the LLM still does the judging, which is what it is good at. The report is also easier to evaluate: overlap found or not is a boolean.
+- **Trade-off:** the code summary is plainer than the LLM's.
+
+## D26. Hand-picked additions to the corpus, checked by title
+
+- **Context:** the arXiv relevance search returned mostly 2024 to 2026 papers; Self-RAG, RAG, DPR and FiD were missing, and the first known-answer test could not find Self-RAG.
+- **Decision:** `corpus/additions.csv` lists foundational papers with their expected titles; `app.corpus.add` fetches each id and refuses it if the real title differs (similarity below 0.85). The additions are recorded in `selection.json`.
+- **Why:** the ids were written by hand (and partly from memory); the title check turns a typo into a visible error instead of a wrong paper in the knowledge base.
+
+## D27. Rebuilds reuse stored vectors
+
+- **Context:** the first full build took 88 minutes on CPU, nearly all embedding. Every manifest change would cost that again.
+- **Decision:** before indexing, the build reads the vectors already in Qdrant for the same chunk ids and reuses those whose stored text is identical and whose `embedding_model` (from TEI's `/info`) matches. Only new or changed chunks are embedded. Points from earlier builds have no model recorded and are treated as BGE-M3, the only model used so far.
+- **Why:** adding 30 papers costs minutes, not an hour and a half. Reuse is exact (same text, same model), so results are identical to a full rebuild.
+- **Off switch:** `REUSE_VECTORS=false`.

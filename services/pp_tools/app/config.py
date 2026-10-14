@@ -43,6 +43,9 @@ class Settings(BaseSettings):
     chunk_overlap: int = Field(default=64, alias="CHUNK_OVERLAP")
     embed_batch_size: int = Field(default=16, alias="EMBED_BATCH_SIZE")
     embed_timeout_s: float = Field(default=120.0, alias="EMBED_TIMEOUT_S")
+    # Rebuilds reuse vectors already in Qdrant for chunks whose text and embedding
+    # model are unchanged, so adding 30 papers does not re-embed the other 500.
+    reuse_vectors: bool = Field(default=True, alias="REUSE_VECTORS")
 
     # ---- prompts and novelty branch (milestone 2) ------------------------------
     prompts_dir: Path = Field(default=Path("/pp/prompts"), alias="PROMPTS_DIR")

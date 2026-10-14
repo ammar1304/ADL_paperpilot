@@ -187,6 +187,26 @@ class ArxivClient:
                 found[p.versioned_id] = p
         return found
 
+    def fetch_latest(self, arxiv_ids: list[str]) -> dict[str, ArxivPaper]:
+        """Latest-version metadata for bare ids (e.g. '2310.11511'), keyed by bare id.
+
+        Ids arXiv does not know are simply missing from the result. If a batch is
+        refused as a whole (one malformed id makes arXiv answer 400), the ids are
+        retried one by one so the good ones still come back.
+        """
+        found: dict[str, ArxivPaper] = {}
+        try:
+            _, papers = parse_feed(self._get(self.api_url, {"id_list": ",".join(arxiv_ids), "max_results": len(arxiv_ids)}).text)
+            found = {p.arxiv_id: p for p in papers}
+        except (ArxivError, httpx.HTTPError):
+            for one in arxiv_ids:
+                try:
+                    _, papers = parse_feed(self._get(self.api_url, {"id_list": one, "max_results": 1}).text)
+                except (ArxivError, httpx.HTTPError):
+                    continue
+                found.update({p.arxiv_id: p for p in papers})
+        return {i: found[i] for i in arxiv_ids if i in found}
+
     def download_pdf(self, versioned_id: str, dest: Path) -> Path:
         """Download a PDF unless it is already cached. Returns its path."""
         if dest.exists() and dest.stat().st_size > 0:
