@@ -254,6 +254,21 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             raise HTTPException(status_code=404, detail="job not found")
         return row
 
+    def _fulltext_count(stats: dict[str, Any]) -> int:
+        """Papers whose full text was indexed, from the last build report.
+
+        Counting papers with section chunks undercounts: a paper whose headings
+        were not detected is indexed in full but as plain windows.
+        """
+        report = settings.cache_dir / "build_report.json"
+        try:
+            data = json.loads(report.read_text(encoding="utf-8"))
+            if data.get("limit") is None and isinstance(data.get("fulltext_indexed"), int):
+                return data["fulltext_indexed"]
+        except (OSError, ValueError):
+            pass
+        return stats.get("structured", {}).get("papers_with_sections", 0)
+
     @app.get("/corpus/stats")
     async def corpus_stats() -> dict[str, Any]:
         """What the knowledge base contains. The novelty report quotes this as its coverage."""
@@ -348,8 +363,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         s = stats.get(strategy, {})
         coverage = {
             "papers_in_knowledge_base": s.get("papers", 0),
-            # Full text is only visible in the structured collection (section, table, figure chunks).
-            "papers_with_full_text": stats.get("structured", {}).get("papers_with_sections", 0),
+            "papers_with_full_text": await run_in_threadpool(_fulltext_count, stats),
             "chunks_searched": s.get("chunks", 0),
         }
         cfg = RetrievalConfig(strategy=strategy, top_papers=settings.novelty_top_papers)

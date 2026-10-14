@@ -125,6 +125,9 @@ class RetrievalConfig:
     top_papers: int = 6  # candidates sent to the judge
     evidence_per_paper: int = 2
     evidence_chars: int = 900  # per passage, keeps the judge prompt within Groq's per-minute token budget
+    # Abstracts are kept whole up to this length: cutting them at 900 characters hid
+    # the method sentence of Adaptive-RAG and the end of 2604.07985's abstract (F-004).
+    abstract_chars: int = 2000
     rrf_k: int = 60  # standard reciprocal rank fusion constant
 
 
@@ -160,7 +163,7 @@ def retrieve(db: Database, retriever: Retriever, run_id: UUID, cfg: RetrievalCon
                 "chunk_id": c.chunk_id,
                 "chunk_type": c.chunk_type,
                 "section": c.section,
-                "text": c.text[: cfg.evidence_chars],
+                "text": c.text[: cfg.abstract_chars if c.chunk_type == "abstract" else cfg.evidence_chars],
             }
             for c in own[: cfg.evidence_per_paper]
         ]

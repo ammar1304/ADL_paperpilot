@@ -73,6 +73,7 @@ def test_every_active_prompt_loads():
 
 def test_prompt_variables_are_the_ones_pp_tools_provides():
     assert LIBRARY.load("P1-decomposer").variables == {"idea_text"}
+    assert LIBRARY.load("P1-decomposer", "v1").variables == {"idea_text"}
     assert LIBRARY.load("P3-novelty-judge").variables == {"library_block", "facets_block", "candidates_block", "feedback_block"}
     # v1 stays loadable for before/after comparisons
     assert LIBRARY.load("P3-novelty-judge", "v1").variables == {"facets_block", "candidates_block", "feedback_block"}
@@ -84,7 +85,9 @@ def test_decomposer_example_satisfies_its_own_contract():
     example = system.split("Answer:", 1)[1].strip().splitlines()[0]
     wrapped = json.loads(example)
     assert set(wrapped) == {"output"}  # n8n's Structured Output Parser expects this wrapper
-    DecomposerOutput.model_validate(wrapped["output"])
+    parsed = DecomposerOutput.model_validate(wrapped["output"])
+    # The example must also obey the prompt's own rules, or it teaches the opposite (v2: 4 to 6 queries).
+    assert 4 <= len(parsed.queries) <= 6
 
 
 # ---- workflow schemas match pp-tools contracts ------------------------------------------------
