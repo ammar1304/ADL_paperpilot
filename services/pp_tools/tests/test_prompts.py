@@ -68,12 +68,15 @@ def test_library_rejects_path_tricks():
 
 def test_every_active_prompt_loads():
     assert LIBRARY.check_all() == []
-    assert set(LIBRARY.active_versions()) == {"P1-decomposer", "P3-novelty-judge"}
+    assert set(LIBRARY.active_versions()) == {"P1-decomposer", "P2-search-planner", "P3-novelty-judge"}
 
 
 def test_prompt_variables_are_the_ones_pp_tools_provides():
     assert LIBRARY.load("P1-decomposer").variables == {"idea_text"}
     assert LIBRARY.load("P1-decomposer", "v1").variables == {"idea_text"}
+    assert LIBRARY.load("P2-search-planner").variables == {
+        "idea_block", "facets_block", "round_block", "candidates_block", "history_block",
+    }
     assert LIBRARY.load("P3-novelty-judge").variables == {"library_block", "facets_block", "candidates_block", "feedback_block"}
     # v1 stays loadable for before/after comparisons
     assert LIBRARY.load("P3-novelty-judge", "v1").variables == {"facets_block", "candidates_block", "feedback_block"}
@@ -115,12 +118,33 @@ def test_judgement_schema_matches_judge_contract():
         assert item["properties"]["overlap"]["properties"][facet]["enum"] == list(typing.get_args(Label))
 
 
+def test_plan_schema_matches_planner_contract():
+    from app.novelty import PlanOutput, PlanQuery
+
+    schema = _parser_schema("Plan schema")
+    assert set(schema["properties"]) == set(PlanOutput.model_fields)
+    assert schema["properties"]["decision"]["enum"] == ["search", "stop"]
+    item = schema["properties"]["queries"]["items"]
+    assert set(item["required"]) == set(PlanQuery.model_fields)
+    assert item["properties"]["where"]["enum"] == ["local", "web"]
+    assert schema["properties"]["queries"]["maxItems"] == 3
+
+
+def test_search_loop_is_wired_with_both_exits():
+    conns = WORKFLOW["connections"]
+    assert conns["Retrieve candidates"]["main"] == [[{"node": "Render planner prompt", "type": "main", "index": 0}]]
+    assert [o[0]["node"] for o in conns["Agent should plan?"]["main"]] == ["Plan search", "Render judge prompt"]
+    assert [o[0]["node"] for o in conns["Search again?"]["main"]] == ["Render planner prompt", "Render judge prompt"]
+
+
 def test_workflow_llm_nodes_use_the_documented_models():
     models = {n["name"]: n["parameters"].get("model") or n["parameters"].get("modelName") for n in WORKFLOW["nodes"] if "lmChat" in n["type"]}
     assert models == {
         "Groq gpt-oss-20b": "openai/gpt-oss-20b",
+        "Groq gpt-oss-20b (planner)": "openai/gpt-oss-20b",
         "Groq gpt-oss-120b": "openai/gpt-oss-120b",
         "Gemini fallback (decomposer)": "models/gemini-3.5-flash-lite",
+        "Gemini fallback (planner)": "models/gemini-3.5-flash-lite",
         "Gemini fallback (judge)": "models/gemini-3.5-flash-lite",
     }
     for n in WORKFLOW["nodes"]:
@@ -135,3 +159,15 @@ def test_workflow_prompts_come_from_the_library():
             assert n["parameters"]["text"] == "={{ $json.user }}"
             assert n["parameters"]["messages"]["messageValues"][0]["message"] == "={{ $json.system }}"
     assert re.search(r"/prompts/P1-decomposer/render", json.dumps(WORKFLOW))
+    assert re.search(r"/plan-prompt", json.dumps(WORKFLOW))
+
+
+def test_planner_example_satisfies_its_own_contract():
+    from app.novelty import PlanOutput
+
+    system = LIBRARY.load("P2-search-planner").system
+    example = system.split("Answer:", 1)[1].strip().splitlines()[0]
+    wrapped = json.loads(example)
+    assert set(wrapped) == {"output"}
+    plan = PlanOutput.model_validate(wrapped["output"])
+    assert plan.decision == "search" and {q.where for q in plan.queries} == {"local", "web"}

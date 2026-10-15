@@ -9,9 +9,10 @@ This folder is a graded deliverable (20% of the grade).
 | Prompt | Active | Role | Model | Technique | Called by |
 | --- | --- | --- | --- | --- | --- |
 | [P1-decomposer](P1-decomposer/v2.md) | v2 (v1 kept) | Splits an idea into task, method, data, result; writes search queries | gpt-oss-20b (Groq), Gemini fallback | Role, rules, one worked example, vocabulary-diversity rule, JSON output | 20-novelty "Decompose idea" |
+| [P2-search-planner](P2-search-planner/v1.md) | v1 | The search agent: each round, stop or search again (local library or Semantic Scholar) with new queries | gpt-oss-20b (Groq), Gemini fallback | Decision criteria, tool descriptions, state (round budget, history), one worked example, JSON output; limits enforced in code | 20-novelty "Plan search" |
 | [P3-novelty-judge](P3-novelty-judge/v2.md) | v2 (v1 kept) | Compares the idea with each retrieved paper per facet, citing chunk ids | gpt-oss-120b (Groq), Gemini fallback | Fixed taxonomy with definitions, search scope, unknown versus not covered, counter-example from a real failure, evidence guardrail, JSON output, verifier feedback on retry | 20-novelty "Judge novelty" |
 
-P2 (the search agent) and P4 to P9 come with the agentic search loop and the audit branch.
+P4 to P9 come with the audit branch.
 
 ## How the prompts are protected
 
@@ -27,6 +28,7 @@ prompts/
   active.json            which version of each prompt is in use
   P1-decomposer/v1.md    one file per version
   P1-decomposer/v2.md
+  P2-search-planner/v1.md
   P3-novelty-judge/v1.md
   P3-novelty-judge/v2.md
   failure_log.md         every observed failure
