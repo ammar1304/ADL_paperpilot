@@ -108,8 +108,19 @@ def summarize(rows: list[dict], methods: list[str]) -> str:
 # ---- Semantic Scholar ------------------------------------------------------------------------
 
 
-def s2_references(arxiv_id: str, key: str, retries: int = 4, base: str = S2) -> list[dict] | None:
+class TransientError(Exception):
+    """The network or Semantic Scholar failed; the paper is retried on the next build."""
+
+
+def s2_references(arxiv_id: str, key: str, retries: int = 5, base: str = S2) -> list[dict] | None:
+    """Reference list, or None if Semantic Scholar does not know the paper (404).
+
+    Dropped connections (seen on the team PC: ConnectionResetError after 200 papers),
+    timeouts, 429 and 5xx are retried with a growing pause; if they persist,
+    TransientError is raised and nothing is cached for that paper.
+    """
     url = f"{base}/paper/arXiv:{arxiv_id}/references?" + urllib.parse.urlencode({"fields": "externalIds,title", "limit": 1000})
+    last = ""
     for attempt in range(retries):
         req = urllib.request.Request(url, headers={"x-api-key": key, "User-Agent": "PaperPilot-E2/0.1"})
         try:
@@ -120,10 +131,11 @@ def s2_references(arxiv_id: str, key: str, retries: int = 4, base: str = S2) -> 
                 return None
             if exc.code not in (429, 500, 502, 503, 504):
                 raise
-        except urllib.error.URLError:
-            pass
+            last = f"HTTP {exc.code}"
+        except (urllib.error.URLError, OSError, TimeoutError) as exc:  # includes ConnectionResetError
+            last = f"{type(exc).__name__}: {exc}"
         time.sleep(2 * 2**attempt)
-    return None
+    raise TransientError(f"arXiv:{arxiv_id}: {last}")
 
 
 # ---- commands --------------------------------------------------------------------------------
@@ -139,8 +151,14 @@ def build(args, env) -> int:
     cache = json.loads(args.cache.read_text(encoding="utf-8")) if args.cache.exists() else {}
     todo = [r["arxiv_id"] for r in rows if r["arxiv_id"] not in cache]
     print(f"{len(rows)} papers in the manifest; {len(todo)} reference lists to fetch (about {len(todo) * 1.2 / 60:.0f} min)")
+    skipped = []
     for i, arxiv_id in enumerate(todo, start=1):
-        refs = s2_references(arxiv_id, key, base=args.s2_url)
+        try:
+            refs = s2_references(arxiv_id, key, base=args.s2_url)
+        except TransientError as exc:
+            skipped.append(arxiv_id)
+            print(f"  skipped for now ({exc}); run build again to retry it")
+            continue
         cache[arxiv_id] = None if refs is None else [
             {"arxiv": ((r.get("citedPaper") or {}).get("externalIds") or {}).get("ArXiv"), "title": (r.get("citedPaper") or {}).get("title")}
             for r in refs
@@ -150,6 +168,11 @@ def build(args, env) -> int:
             args.cache.parent.mkdir(parents=True, exist_ok=True)
             args.cache.write_text(json.dumps(cache, indent=1, sort_keys=True), encoding="utf-8")
             print(f"  {i}/{len(todo)}")
+    args.cache.parent.mkdir(parents=True, exist_ok=True)
+    args.cache.write_text(json.dumps(cache, indent=1, sort_keys=True), encoding="utf-8")
+    if skipped:
+        print(f"{len(skipped)} reference lists could not be fetched this time; run build again to fetch them "
+              "(the query set is still written from the papers fetched so far).")
 
     candidates = []
     for r in rows:

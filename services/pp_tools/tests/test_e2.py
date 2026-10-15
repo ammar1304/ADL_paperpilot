@@ -42,3 +42,19 @@ def test_summary_micro_and_macro():
     table = e2.summarize(rows, ["hybrid"])
     assert "| hybrid | 2/5 (40%) | 3/5 |" in table
     assert "| 0.42 | 2 |" in table  # macro recall@6 = (1/2 + 1/3) / 2
+
+
+def test_dropped_connections_are_retried_then_reported(monkeypatch):
+    calls = []
+
+    def boom(req, timeout):
+        calls.append(req.full_url)
+        raise ConnectionResetError(10054, "connection reset by peer")
+
+    monkeypatch.setattr(e2.urllib.request, "urlopen", boom)
+    monkeypatch.setattr(e2.time, "sleep", lambda s: None)
+    import pytest
+
+    with pytest.raises(e2.TransientError, match="ConnectionResetError"):
+        e2.s2_references("2310.11511", "key", retries=3)
+    assert len(calls) == 3
