@@ -220,6 +220,8 @@ def _answer(system: str, user: str) -> str:
         body = _decompose(idea)
     elif "novelty judge" in system:
         body = _judge(user)
+    elif "search planner" in system:
+        body = _plan(user)
     else:
         body = {"note": "stub: unknown prompt"}
     return "```json\n" + json.dumps({"output": body}) + "\n```"
@@ -286,6 +288,10 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(200, b"", "text/plain")
         if url.path == "/info":  # like TEI
             return self._send(200, json.dumps({"model_id": "stub/hashed-bow"}).encode(), "application/json")
+        if url.path == "/graph/v1/paper/search":  # like Semantic Scholar
+            q = parse_qs(url.query).get("query", [""])[0]
+            code, body = s2_search(q)
+            return self._send(code, json.dumps(body).encode(), "application/json")
         if url.path == "/api/query":
             q = parse_qs(url.query)
             if "id_list" in q:
@@ -328,6 +334,50 @@ class Handler(BaseHTTPRequestHandler):
 
     def log_message(self, *args: object) -> None:
         pass
+
+
+S2_CALLS: list[str] = []
+S2_PAPERS = [
+    # Also in the local stub library (same arXiv id): must not be counted twice.
+    {"paperId": "s2aaa", "externalIds": {"ArXiv": "2203.00002"}, "title": PAPERS[1]["title"],
+     "abstract": PAPERS[1]["abstract"], "year": 2022, "venue": "ACL", "url": "https://s2/aaa", "citationCount": 40},
+    # Only on Semantic Scholar.
+    {"paperId": "s2bbb", "externalIds": {}, "title": "Self-Ask Multi-Hop Retrieval with Query Rewriting",
+     "abstract": "The language model rewrites its search query after each retrieval step to answer multi-hop questions.",
+     "year": 2023, "venue": "EMNLP", "url": "https://s2/bbb", "citationCount": 300},
+    # No abstract: skipped.
+    {"paperId": "s2ccc", "externalIds": {}, "title": "A paper without abstract", "abstract": None, "year": 2020},
+]
+
+
+def s2_search(query: str) -> tuple[int, dict]:
+    """Semantic Scholar stand-in. "S2_DOWN" in the query answers 500 every time."""
+    S2_CALLS.append(query)
+    if "S2_DOWN" in query:
+        return 500, {"error": "stub outage"}
+    return 200, {"total": len(S2_PAPERS), "offset": 0, "data": S2_PAPERS}
+
+
+def _plan(user: str) -> dict:
+    """Search planner stand-in: search once (one local, one web query), then stop.
+
+    Ideas starting with NO_SEARCH stop at once; PLAN_LOOP searches every round
+    (to exercise the round limit); S2_DOWN makes the web query fail.
+    """
+    m = re.search(r"ROUND (\d+) of (\d+)", user)
+    rnd = int(m.group(1)) if m else 1
+    if "NO_SEARCH" in user or (rnd > 1 and "PLAN_LOOP" not in user):
+        return {"decision": "stop", "reason": "The candidates cover the task and the method.", "gaps": [], "queries": []}
+    prefix = "S2_DOWN " if "S2_DOWN" in user else ""
+    return {
+        "decision": "search",
+        "reason": "No candidate shows the method; search other vocabulary and outside the library.",
+        "gaps": ["method"],
+        "queries": [
+            {"text": f"iterative query reformulation multi-hop round {rnd}", "where": "local", "facets": ["method"]},
+            {"text": f"{prefix}query rewriting retrieval multi-hop round {rnd}", "where": "web", "facets": ["method", "task"]},
+        ],
+    }
 
 
 def rerank(query: str, texts: list[str]) -> list[dict]:

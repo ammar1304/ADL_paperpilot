@@ -23,6 +23,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_valida
 
 from .db import Database
 from .prompts import PromptLibrary, RenderedPrompt
+from .external.semantic_scholar import ExternalPaper, SemanticScholar, SemanticScholarError
 from .retrieval.reranker import Reranker, RerankerError
 from .retrieval.search import Retriever
 
@@ -34,6 +35,7 @@ NOT_SPECIFIED = "not specified"  # what P1 writes for a facet the idea does not 
 LABEL_WEIGHT = {"same": 2, "partial": 1, "different": 0, "unknown": 0}
 
 DECOMPOSER = "P1-decomposer"
+PLANNER = "P2-search-planner"
 JUDGE = "P3-novelty-judge"
 MAX_VERIFY_ATTEMPTS = 2  # first answer + one retry with the verifier's feedback
 
@@ -105,6 +107,31 @@ class JudgeOutput(BaseModel):
     summary: str = Field(min_length=3, max_length=1500)
 
 
+class PlanQuery(BaseModel):
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    text: str = Field(min_length=3, max_length=300)
+    where: Literal["local", "web"]
+    facets: list[FacetName] = Field(min_length=1, max_length=4)
+
+
+class PlanOutput(BaseModel):
+    """The search planner's decision for one round (P2)."""
+
+    model_config = ConfigDict(extra="forbid", str_strip_whitespace=True)
+
+    decision: Literal["search", "stop"]
+    reason: str = Field(min_length=3, max_length=600)
+    gaps: list[FacetName] = Field(default_factory=list, max_length=4)
+    queries: list[PlanQuery] = Field(default_factory=list, max_length=3)
+
+    @field_validator("queries")
+    @classmethod
+    def distinct(cls, queries: list[PlanQuery]) -> list[PlanQuery]:
+        seen: set[str] = set()
+        return [q for q in queries if not (q.text.lower() in seen or seen.add(q.text.lower()))]
+
+
 # ---- steps ---------------------------------------------------------------------------------
 
 
@@ -145,7 +172,12 @@ class RetrievalConfig:
 
 
 def rank_candidates(
-    retriever: Retriever, reranker: "Reranker | None", idea_text: str, queries: list[str], cfg: RetrievalConfig
+    retriever: Retriever,
+    reranker: "Reranker | None",
+    idea_text: str,
+    queries: list[str],
+    cfg: RetrievalConfig,
+    external: list[list[ExternalPaper]] | None = None,
 ) -> dict[str, Any]:
     """Search with every query, fuse the rankings, then optionally rerank the pool.
 
@@ -156,12 +188,17 @@ def rank_candidates(
        is missing or fails, the fused order is kept and the reason recorded.
     3. The cfg.top_papers best become the judge's candidates; their evidence is the
        chunks the final ranking scored highest.
+
+    `external` holds the search agent's Semantic Scholar results, one ranked list
+    per web query. Each list joins the fusion like a local query, with the paper's
+    abstract as its only chunk, so local and external papers compete in one pool.
     """
     searches = list(queries) + ([idea_text] if cfg.idea_as_query else [])
     paper_score: dict[str, float] = defaultdict(float)
     paper_queries: dict[str, set[int]] = defaultdict(set)
     chunk_score: dict[str, float] = defaultdict(float)
     chunks: dict[str, Any] = {}
+    sources: dict[str, set[str]] = defaultdict(set)
     for qi, query in enumerate(searches):
         hits = retriever.chunks(query, cfg.strategy, cfg.per_query_k)
         seen_papers: set[str] = set()
@@ -172,6 +209,19 @@ def rank_candidates(
                 seen_papers.add(hit.paper_id)
                 paper_score[hit.paper_id] += 1.0 / (cfg.rrf_k + len(seen_papers))
                 paper_queries[hit.paper_id].add(qi)
+                sources[hit.paper_id].add("local")
+
+    external_meta: dict[str, ExternalPaper] = {}
+    for ei, papers in enumerate(external or []):
+        qi = len(searches) + ei
+        for rank, paper in enumerate(papers, start=1):
+            hit = paper.as_hit()
+            chunk_score[hit.chunk_id] += 1.0 / (cfg.rrf_k + rank)
+            chunks.setdefault(hit.chunk_id, hit)  # a local abstract with the same id wins
+            paper_score[paper.paper_id] += 1.0 / (cfg.rrf_k + rank)
+            paper_queries[paper.paper_id].add(qi)
+            sources[paper.paper_id].add("semantic_scholar")
+            external_meta.setdefault(paper.paper_id, paper)
 
     fused = sorted(paper_score, key=lambda p: paper_score[p], reverse=True)
     pool = fused[: max(cfg.pool_papers, cfg.top_papers)]
@@ -231,6 +281,8 @@ def rank_candidates(
             "rerank_score": round(rerank_paper[pid], 6) if pid in rerank_paper else None,
             "rerank_rank": rerank_rank.get(pid),
             "matched_queries": sorted(paper_queries[pid]),
+            "source": "+".join(sorted(sources[pid])),
+            "url": _url(pid, external_meta.get(pid)),
         }
         for pid in pool
     ]
@@ -261,11 +313,18 @@ def rank_candidates(
     }
 
 
+def _url(paper_id: str, external: "ExternalPaper | None") -> str | None:
+    if paper_id.startswith("arxiv:"):
+        return f"https://arxiv.org/abs/{paper_id.removeprefix('arxiv:')}"
+    return external.url if external else None
+
+
 def _abstracts(retriever: Retriever, papers: list[str], strategy: str) -> dict[str, Any]:
     """Each paper's abstract chunk, looked up by id (structured collection only)."""
     if strategy != "structured":
         return {}
-    hits = retriever.by_ids([f"{p}#abs" for p in papers] + [f"{p}#abs/p1" for p in papers], strategy)
+    local = [p for p in papers if p.startswith("arxiv:")]
+    hits = retriever.by_ids([f"{p}#abs" for p in local] + [f"{p}#abs/p1" for p in local], strategy)
     out: dict[str, Any] = {}
     for h in hits:
         out.setdefault(h.paper_id, h)
@@ -288,6 +347,152 @@ def retrieve(
     detail = {"strategy": cfg.strategy, **ranked, "coverage": coverage}
     db.add_step(run_id, "retrieve", "done", detail)
     return detail
+
+
+# ---- the search agent (D29) -------------------------------------------------------------------
+#
+# After the first retrieval, an LLM (P2, node "Plan search" in n8n) looks at the idea
+# and the current candidates and decides: stop, or search again with up to 3 new
+# queries, each either in the local library or on Semantic Scholar. Code executes
+# the plan, re-ranks everything found so far, and records what each round added.
+# Guards that the LLM cannot override: a round limit, at most 3 queries per round,
+# no repeated query, and a stop when a round finds no new paper.
+
+PLAN_CANDIDATES_SHOWN = 8
+
+
+def _plan_steps(db: Database, run_id: UUID) -> list[dict[str, Any]]:
+    return [s_["detail"] for s_ in db.get_steps(run_id, "plan")]
+
+
+def plan_prompt(db: Database, library: PromptLibrary, run_id: UUID, max_rounds: int) -> dict[str, Any]:
+    """Render P2 for the next round, or report that the round budget is used up."""
+    decomposed = DecomposerOutput.model_validate(_last_step(db, run_id, "decompose")["output"])
+    retrieved = _last_step(db, run_id, "retrieve")
+    plans = _plan_steps(db, run_id)
+    rnd = len(plans) + 1
+    stopped = any(p_.get("continue") is False for p_ in plans)
+    if rnd > max_rounds or stopped:
+        return {"run": False, "round": rnd, "max_rounds": max_rounds}
+
+    run = db.get_run(run_id) or {}
+    idea = (run.get("input") or {}).get("idea_text") or decomposed.facets.method
+    lines = []
+    for i, c in enumerate(retrieved.get("pool", retrieved["candidates"])[:PLAN_CANDIDATES_SHOWN], start=1):
+        ev = next((c2["evidence"] for c2 in retrieved["candidates"] if c2["paper_id"] == c["paper_id"]), [])
+        snippet = " ".join(ev[0]["text"].split())[:300] if ev else ""
+        score = f"{c['rerank_score']:.2f}" if c.get("rerank_score") is not None else "n/a"
+        lines.append(f"{i}. {c['title']} ({c.get('year') or 'n.d.'}; source: {c.get('source', 'local')}; relevance {score})")
+        if snippet:
+            lines.append(f"   {snippet}")
+    history = []
+    all_queries = list(retrieved.get("queries", []))
+    history.append("Decomposer queries (local library): " + "; ".join(f'"{q}"' for q in all_queries[: len(decomposed.queries)]))
+    for p_ in plans:
+        for q in p_.get("queries", []):
+            history.append(f'Round {p_["round"]}, {q["where"]}: "{q["text"]}" -> {q.get("new_papers", 0)} new papers'
+                           + (f' (failed: {q["error"]})' if q.get("error") else ""))
+    variables = {
+        "idea_block": idea,
+        "facets_block": _facets_block(decomposed.facets),
+        "round_block": f"ROUND {rnd} of {max_rounds}. Searches left after this one: {max_rounds - rnd}.",
+        "candidates_block": "\n".join(lines) or "(no candidates yet)",
+        "history_block": "\n".join(history),
+    }
+    prompt = library.load(PLANNER)
+    rendered = prompt.render({k: v for k, v in variables.items() if k in prompt.variables})
+    db.add_step(run_id, "plan_prompt", "done", {"prompt": PLANNER, "prompt_version": rendered.version, "round": rnd})
+    return {"run": True, "round": rnd, "max_rounds": max_rounds, **rendered.__dict__}
+
+
+def apply_plan(
+    db: Database,
+    retriever: Retriever,
+    reranker: "Reranker | None",
+    s2: "SemanticScholar | None",
+    run_id: UUID,
+    output: Any,
+    cfg: RetrievalConfig,
+    coverage: dict[str, Any],
+    max_rounds: int,
+    results_per_query: int = 10,
+) -> dict[str, Any]:
+    """Execute one planner decision. Returns {"continue": bool, ...} for the n8n loop."""
+    decomposed = DecomposerOutput.model_validate(_last_step(db, run_id, "decompose")["output"])
+    before = _last_step(db, run_id, "retrieve")
+    plans = _plan_steps(db, run_id)
+    rnd = len(plans) + 1
+    detail: dict[str, Any] = {"round": rnd, "max_rounds": max_rounds}
+
+    try:
+        plan = PlanOutput.model_validate(output)
+    except ValidationError as exc:
+        # An unusable plan ends the search; the judge still runs on what was found.
+        detail |= {"decision": "invalid", "errors": _field_errors(exc)[:10], "continue": False, "stop_reason": "invalid plan"}
+        db.add_step(run_id, "plan", "failed", detail)
+        return detail
+    detail |= {"decision": plan.decision, "reason": plan.reason, "gaps": plan.gaps}
+
+    if rnd > max_rounds:
+        detail |= {"continue": False, "stop_reason": "round limit reached", "queries": []}
+    elif plan.decision == "stop":
+        detail |= {"continue": False, "stop_reason": "planner decided to stop", "queries": []}
+    elif not plan.queries:
+        detail |= {"continue": False, "stop_reason": "search decided without queries", "queries": []}
+    else:
+        used = {q.lower() for q in before.get("queries", [])} | {
+            q["text"].lower() for p_ in plans for q in p_.get("queries", [])
+        }
+        executed = []
+        for q in plan.queries:
+            entry: dict[str, Any] = {"text": q.text, "where": q.where, "facets": q.facets}
+            if q.text.lower() in used:
+                entry["skipped"] = "already searched"
+            elif q.where == "web":
+                if s2 is None:
+                    entry["error"] = "Semantic Scholar not configured"
+                else:
+                    try:
+                        entry["results"] = [p_.as_dict() for p_ in s2.search(q.text, results_per_query)]
+                    except SemanticScholarError as exc:
+                        entry["error"] = str(exc)[:200]
+            used.add(q.text.lower())
+            executed.append(entry)
+
+        local_queries = [q.text for q in decomposed.queries] + [
+            e["text"] for p_ in plans + [{"queries": executed}] for e in p_.get("queries", [])
+            if e["where"] == "local" and not e.get("skipped")
+        ]
+        web = [e for p_ in plans + [{"queries": executed}] for e in p_.get("queries", []) if e.get("results")]
+        external = [[ExternalPaper.from_dict(d) for d in e["results"]] for e in web]
+        run = db.get_run(run_id) or {}
+        idea = (run.get("input") or {}).get("idea_text") or decomposed.facets.method
+        ranked = rank_candidates(retriever, reranker, idea, local_queries, cfg, external)
+
+        old_pool = {c["paper_id"] for c in before.get("pool", before["candidates"])}
+        old_top = {c["paper_id"] for c in before["candidates"]}
+        new_pool = [c["paper_id"] for c in ranked["pool"] if c["paper_id"] not in old_pool]
+        for e in executed:
+            found = {r["paper_id"] for r in e.get("results", [])}
+            e["new_papers"] = len(found - old_pool) if e["where"] == "web" else None
+            if e.get("results"):
+                e["results_count"] = len(e["results"])
+        cov = {**coverage, "web_queries": len(web), "search_rounds": rnd}
+        db.add_step(
+            run_id, "retrieve", "done",
+            {"strategy": cfg.strategy, **ranked, "web_queries": [e["text"] for e in web], "round": rnd, "coverage": cov},
+        )
+        added_top = [c["paper_id"] for c in ranked["candidates"] if c["paper_id"] not in old_top]
+        detail |= {"queries": executed, "new_in_pool": new_pool, "new_candidates": added_top}
+        if not new_pool:
+            detail |= {"continue": False, "stop_reason": "the round found no new paper"}
+        else:
+            detail |= {"continue": rnd < max_rounds, "stop_reason": None if rnd < max_rounds else "round limit reached"}
+
+    db.add_step(run_id, "plan", "done", detail)
+    return {k: v for k, v in detail.items() if k != "queries"} | {
+        "queries": [{k: v for k, v in e.items() if k != "results"} for e in detail.get("queries", [])]
+    }
 
 
 def _facets_block(facets: Facets) -> str:
@@ -319,9 +524,12 @@ def _library_block(retrieved: dict[str, Any]) -> str:
         if full is not None:
             sentence += f", {full} of them with full text and the rest with the abstract only"
         parts.append(sentence + ".")
+    web = retrieved.get("web_queries") or []
     parts.append(
-        f"Retrieval ran {len(retrieved.get('queries', []))} search queries and kept the "
-        f"{len(retrieved.get('candidates', []))} candidate papers below. Papers outside the knowledge base were not searched."
+        f"Retrieval ran {len(retrieved.get('queries', []))} search queries in the knowledge base"
+        + (f" and {len(web)} on Semantic Scholar (about 200 million papers; titles and abstracts only)" if web else "")
+        + f", and kept the {len(retrieved.get('candidates', []))} candidate papers below."
+        + ("" if web else " Papers outside the knowledge base were not searched.")
     )
     return " ".join(parts)
 
@@ -331,7 +539,8 @@ def _candidates_block(candidates: list[dict[str, Any]]) -> str:
         return "(no candidate papers were retrieved)"
     lines = []
     for i, c in enumerate(candidates, start=1):
-        lines.append(f"[C{i}] paper_id: {c['paper_id']} | title: {c['title']} | year: {c['year']}")
+        source = " | found on Semantic Scholar" if c.get("source") == "semantic_scholar" else ""
+        lines.append(f"[C{i}] paper_id: {c['paper_id']} | title: {c['title']} | year: {c['year']}{source}")
         if c["evidence"] and all(e.get("chunk_type") == "abstract" for e in c["evidence"]):
             lines.append("  Only the abstract of this paper is shown: its data and results are usually not visible.")
         for e in c["evidence"]:
@@ -443,12 +652,12 @@ def assemble(db: Database, run_id: UUID) -> dict[str, Any]:
 
     def enrich(item: dict[str, Any]) -> dict[str, Any]:
         c = titles.get(item["paper_id"], {})
-        arxiv_id = item["paper_id"].removeprefix("arxiv:")
         return {
             **item,
             "title": c.get("title"),
             "year": c.get("year"),
-            "url": f"https://arxiv.org/abs/{arxiv_id}" if item["paper_id"].startswith("arxiv:") else None,
+            "url": c.get("url") or _url(item["paper_id"], None),
+            "source": c.get("source", "local"),
         }
 
     judge_prompts = db.get_steps(run_id, "judge_prompt")
@@ -470,9 +679,12 @@ def assemble(db: Database, run_id: UUID) -> dict[str, Any]:
         **retrieved["coverage"],
         "strategy": retrieved["strategy"],
         "queries": retrieved["queries"],
+        "web_queries": retrieved.get("web_queries", []),
         "candidates_considered": len(retrieved["candidates"]),
         "note": "Not found in this knowledge base does not mean novel.",
     }
+    plans = _plan_steps(db, run_id)
+    plan_prompts = db.get_steps(run_id, "plan_prompt")
     return {
         "branch": "novelty",
         "implemented": True,
@@ -490,8 +702,25 @@ def assemble(db: Database, run_id: UUID) -> dict[str, Any]:
         "summary_llm_written": last.get("summary"),
         "coverage": coverage,
         "judge_attempts": len(verifications),
+        # What the search agent decided in each round, and what it found (D29).
+        "search_agent": [
+            {
+                "round": p_["round"],
+                "decision": p_.get("decision"),
+                "reason": p_.get("reason"),
+                "gaps": p_.get("gaps", []),
+                "queries": [
+                    {k: q.get(k) for k in ("text", "where", "new_papers", "error", "skipped") if q.get(k) is not None}
+                    for q in p_.get("queries", [])
+                ],
+                "new_candidates": p_.get("new_candidates", []),
+                "stop_reason": p_.get("stop_reason"),
+            }
+            for p_ in plans
+        ],
         "prompt_versions": {
             DECOMPOSER: decompose["prompt_version"],
+            **({PLANNER: plan_prompts[-1]["detail"]["prompt_version"]} if plan_prompts else {}),
             JUDGE: judge_prompts[-1]["detail"]["prompt_version"] if judge_prompts else None,
         },
     }
@@ -504,7 +733,9 @@ def _summary(overlapping: list[dict[str, Any]], not_close: list[dict[str, Any]],
     if papers is not None and full is not None:
         searched += f" ({full} with full text)"
     checked = len(overlapping) + len(not_close)
-    lines = [f"{searched} with {len(coverage.get('queries', []))} queries; {checked} candidate papers were judged."]
+    web = len(coverage.get("web_queries") or [])
+    also = f", plus {web} Semantic Scholar {'query' if web == 1 else 'queries'}" if web else ""
+    lines = [f"{searched} with {len(coverage.get('queries', []))} queries{also}; {checked} candidate papers were judged."]
     if overlapping:
         parts = []
         for item in overlapping[:3]:
@@ -517,7 +748,7 @@ def _summary(overlapping: list[dict[str, Any]], not_close: list[dict[str, Any]],
         lines.append(f"{len(not_close)} were checked and found different or unclear on every facet.")
     if unspecified:
         lines.append(f"The idea does not specify its {' or '.join(unspecified)}, so overlap there could not be judged.")
-    lines.append("Not found in this knowledge base does not mean novel.")
+    lines.append("Not found here does not mean novel." if web else "Not found in this knowledge base does not mean novel.")
     return " ".join(lines)
 
 

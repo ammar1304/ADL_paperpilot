@@ -201,6 +201,13 @@ class RetrieveRequest(BaseModel):
     strategy: Strategy | None = None
 
 
+class PlanApplyBody(BaseModel):
+    model_config = ConfigDict(extra="forbid")
+
+    output: Any = None
+    prompt_version: str | None = None
+
+
 class RankRequest(BaseModel):
     """Stateless ranking for retrieval experiments: no run, no LLM, nothing stored."""
 

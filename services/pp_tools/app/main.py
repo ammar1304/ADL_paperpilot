@@ -39,6 +39,7 @@ from .models import (
     LlmOutput,
     RenderedPromptOut,
     RenderRequest,
+    PlanApplyBody,
     RankRequest,
     RetrieveRequest,
     JobRecord,
@@ -53,7 +54,9 @@ from .models import (
 from .novelty import (
     NoveltyError,
     RetrievalConfig,
+    apply_plan,
     assemble,
+    plan_prompt,
     rank_candidates,
     judge_prompt,
     retrieve,
@@ -62,6 +65,7 @@ from .novelty import (
 )
 from .prompts import PromptError, PromptLibrary
 from .retrieval.embedder import Embedder, EmbedderError
+from .external.semantic_scholar import SemanticScholar
 from .retrieval.reranker import Reranker
 from .retrieval.search import Retriever, hit_dict
 from .retrieval.store import Store, collection_name, make_client
@@ -79,6 +83,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     embedder = Embedder(settings.embedder_url, settings.embed_batch_size, settings.embed_timeout_s)
     retriever = Retriever(embedder, store)
     reranker = Reranker(settings.reranker_url, timeout_s=settings.rerank_timeout_s) if settings.reranker_url else None
+    s2 = (
+        SemanticScholar(settings.semantic_scholar_url, settings.semantic_scholar_api_key, settings.semantic_scholar_interval_s)
+        if settings.semantic_scholar_url
+        else None
+    )
     library = PromptLibrary(settings.prompts_dir)
     # One worker: builds run one at a time, and never inside a request.
     jobs = ThreadPoolExecutor(max_workers=1, thread_name_prefix="pp-job")
@@ -96,6 +105,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         embedder.close()
         if reranker is not None:
             reranker.close()
+        if s2 is not None:
+            s2.close()
         db.close()
 
     app = FastAPI(title="pp-tools", version="0.2.0", lifespan=lifespan)
@@ -379,6 +390,33 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         cfg = _retrieval_config(strategy)
         try:
             return await run_in_threadpool(_novelty_errors, retrieve, db, retriever, run_id, cfg, coverage, reranker)
+        except EmbedderError as exc:
+            raise HTTPException(status_code=503, detail=f"embedder unavailable: {_short(exc)}") from exc
+
+    async def _coverage(strategy: str) -> dict[str, Any]:
+        stats = await run_in_threadpool(store.stats)
+        s = stats.get(strategy, {})
+        return {
+            "papers_in_knowledge_base": s.get("papers", 0),
+            "papers_with_full_text": await run_in_threadpool(_fulltext_count, stats),
+            "chunks_searched": s.get("chunks", 0),
+        }
+
+    @app.post("/novelty/{run_id}/plan-prompt")
+    async def novelty_plan_prompt(run_id: UUID) -> Any:
+        """P2 for the next search round, or {"run": false} when the agent should not run."""
+        return await run_in_threadpool(_novelty_errors, plan_prompt, db, library, run_id, settings.novelty_max_search_rounds)
+
+    @app.post("/novelty/{run_id}/plan")
+    async def novelty_plan(run_id: UUID, body: PlanApplyBody) -> Any:
+        """Execute the planner's decision: searches, re-ranking, a new retrieve step."""
+        cfg = _retrieval_config(settings.novelty_strategy)
+        coverage = await _coverage(cfg.strategy)
+        try:
+            return await run_in_threadpool(
+                _novelty_errors, apply_plan, db, retriever, reranker, s2, run_id, body.output, cfg, coverage,
+                settings.novelty_max_search_rounds, settings.semantic_scholar_results,
+            )
         except EmbedderError as exc:
             raise HTTPException(status_code=503, detail=f"embedder unavailable: {_short(exc)}") from exc
 

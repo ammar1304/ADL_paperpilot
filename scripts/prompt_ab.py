@@ -132,6 +132,10 @@ def score(idea: dict, result: dict, candidates: list[str], queries: list[str]) -
         "n_judged": len(judged),
         "unverified": len(result.get("unverified", [])),
         "judge_attempts": result.get("judge_attempts"),
+        # The search agent (D29): rounds that searched, and expected papers it added to the candidates.
+        "search_rounds": sum(1 for a in result.get("search_agent", []) if a.get("decision") == "search"),
+        "web_queries": len(result.get("coverage", {}).get("web_queries", [])),
+        "expected_added_by_agent": len(expected & {p for a in result.get("search_agent", []) for p in a.get("new_candidates", [])}),
     }
     row.update(summary_checks(result.get("summary_llm_written"), result.get("unspecified_facets", [])))
     return row
@@ -164,8 +168,8 @@ def _mean(vals: list[float]) -> str:
 
 def summarize(rows: list[dict], agreements: dict[tuple[str, str], float | None], configs: list[str]) -> str:
     lines = [
-        "| Config | Runs ok | Expected papers in candidates | Expected in closest work | Query similarity | False overlap | LLM states scope | LLM overclaims | LLM calls unspecified facets (un)covered | LLM mentions unspecified facets | Label agreement across repeats | Judge attempts |",
-        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+        "| Config | Runs ok | Expected papers in candidates | Expected in closest work | Query similarity | False overlap | LLM states scope | LLM overclaims | LLM calls unspecified facets (un)covered | LLM mentions unspecified facets | Label agreement across repeats | Judge attempts | Agent search rounds | Expected papers added by the agent |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
     for name in configs:
         rs = [r for r in rows if r["config"] == name]
@@ -178,7 +182,8 @@ def summarize(rows: list[dict], agreements: dict[tuple[str, str], float | None],
             f"| {name} | {len(ok)}/{len(rs)} | {found_c}/{exp} | {found_k}/{exp} | {_mean([r['query_similarity'] for r in ok])} "
             f"| {_rate(ok, 'false_overlap')} | {_rate(ok, 'llm_states_scope')} | {_rate(ok, 'llm_overclaims')} "
             f"| {_rate(ok, 'llm_coverage_claim_unspecified')} | {_rate(ok, 'llm_discusses_unspecified')} "
-            f"| {_mean(agree)} | {_mean([r['judge_attempts'] for r in ok])} |"
+            f"| {_mean(agree)} | {_mean([r['judge_attempts'] for r in ok])} "
+            f"| {_mean([r.get('search_rounds') for r in ok])} | {sum(r.get('expected_added_by_agent') or 0 for r in ok)} |"
         )
     ideas = list(dict.fromkeys(r["idea"] for r in rows))
     lines += ["", "Expected papers among the judge's candidates, per idea (found / expected, summed over repeats):", "",
@@ -202,8 +207,15 @@ def summarize(rows: list[dict], agreements: dict[tuple[str, str], float | None],
 # ---- running ---------------------------------------------------------------------------------
 
 
+def write_active(text: str) -> None:
+    # newline="\n": on Windows, write_text would turn \n into \r\n and git would
+    # report prompts/active.json as changed after every run.
+    with ACTIVE.open("w", encoding="utf-8", newline="\n") as f:
+        f.write(text)
+
+
 def set_active(versions: dict[str, str], base: dict[str, str]) -> None:
-    ACTIVE.write_text(json.dumps({**base, **versions}, indent=2) + "\n", encoding="utf-8")
+    write_active(json.dumps({**base, **versions}, indent=2) + "\n")
 
 
 def run_once(webhook: str, pp: str, idea: dict, wait_on_limit: float) -> tuple[dict | None, dict, str | None]:
@@ -320,7 +332,7 @@ def main() -> int:
                         found = f"{row.get('expected_in_candidates', '-')}/{row.get('expected', '-')}" if row["ok"] else (error or "")[:80]
                         print(f"  [{n}/{total}] {flag} {name:<10} {idea['id']:<22} #{rep}  expected found: {found}")
     finally:
-        ACTIVE.write_text(original, encoding="utf-8")
+        write_active(original)
         print(f"restored {ACTIVE.relative_to(REPO)}")
 
     meta = {"ideas": [i["id"] for i in ideas], "configs": dict(configs), "repeats": args.repeats, "pause_s": args.pause}

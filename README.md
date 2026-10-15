@@ -162,6 +162,8 @@ The result holds:
 
 Candidates are ranked in two stages: vector search with every query, fused into a pool of 30 papers, then a cross-encoder reranker (`reranker` service, `BAAI/bge-reranker-base`) re-orders the pool against the idea text. The retrieve step records `ranking_method` (`reranked`, or `fused` with the reason in `ranking_note`) and each candidate's fused rank and rerank score. `POST /novelty/rank` ranks without a run or an LLM, for experiments (E8).
 
+After the first retrieval, a **search agent** (D29) may run up to `NOVELTY_MAX_SEARCH_ROUNDS` more rounds (default 2). Each round, an LLM (prompt P2) looks at the best candidates and decides to stop or to search again, writing up to 3 queries, each for the local library or for Semantic Scholar. pp-tools runs the queries, merges and re-ranks everything found, and enforces the limits. The result's `search_agent` lists every round's decision, reason, queries and new candidates. A free Semantic Scholar key (`SEMANTIC_SCHOLAR_API_KEY`) avoids the public pool's rate limits.
+
 Prompts: [prompts/README.md](prompts/README.md).
 
 ## Working on workflows

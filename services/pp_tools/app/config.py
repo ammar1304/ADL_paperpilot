@@ -62,6 +62,16 @@ class Settings(BaseSettings):
     novelty_order: str = Field(default="hybrid", alias="NOVELTY_ORDER")
     # Text Embeddings Inference server running the cross-encoder; empty disables reranking.
     reranker_url: str = Field(default="", alias="RERANKER_URL")
+
+    # ---- search agent (D29) ----------------------------------------------------------
+    # Rounds the planner may add after the first retrieval; 0 turns the agent off.
+    novelty_max_search_rounds: int = Field(default=2, ge=0, le=4, alias="NOVELTY_MAX_SEARCH_ROUNDS")
+    semantic_scholar_url: str = Field(default="https://api.semanticscholar.org/graph/v1", alias="SEMANTIC_SCHOLAR_URL")
+    # Optional; with a key Semantic Scholar allows 1 request per second, without one
+    # requests share a public pool and are often refused (HTTP 429).
+    semantic_scholar_api_key: str = Field(default="", alias="SEMANTIC_SCHOLAR_API_KEY")
+    semantic_scholar_results: int = Field(default=10, ge=1, le=50, alias="SEMANTIC_SCHOLAR_RESULTS")
+    semantic_scholar_interval_s: float = Field(default=1.1, alias="SEMANTIC_SCHOLAR_INTERVAL_S")
     rerank_timeout_s: float = Field(default=120.0, alias="RERANK_TIMEOUT_S")
 
     @property

@@ -290,9 +290,39 @@ Branch `feat/m2-rerank-tuning`.
 - [x] E8 run 2: the hybrid order recovers iterative rewriting (4/12) and keeps adaptive retrieval (18/30): 37 of 57 expected papers reach the judge, from 25 before the reranker. Abstract scoring made it worse. Hybrid is now the default (D28).
 - [x] Reranker RAM with 2048 batch tokens: 3.5 GB
 
+## Milestone 2, part 2c: the search agent (2026-10-15)
+
+Branch `feat/m2-search-agent`. The agentic part of the novelty check (D29).
+
+### Built
+
+- **P2-search-planner v1:** each round, stop or search again, with up to 3 queries, each in the local library or on Semantic Scholar.
+- **n8n `20-novelty`:** a loop of Render planner prompt → Agent should plan? → Plan search (LLM) → Apply plan → Search again?, between retrieval and the judge.
+- **pp-tools:** a Semantic Scholar client (`app/external/semantic_scholar.py`), `POST /novelty/{run}/plan-prompt` and `/plan`, and fusion of web results with local search. Limits enforced in code: round budget, 3 queries per round, no repeats, stop when nothing new, invalid plans and outages handled.
+- **Result:** `search_agent` (each round's decision, reason, queries, new candidates), web queries in `coverage` and in the summary, and the source of each paper (`local`, `semantic_scholar`, or both).
+- **E7 script:** reports agent rounds and expected papers added by the agent. It also writes `prompts/active.json` with Unix line endings, so git no longer sees a change on Windows.
+
+### Verified
+
+Sandbox with stand-ins for the LLMs, the reranker and Semantic Scholar:
+
+| What | Result |
+| --- | --- |
+| Tests | 125 passed |
+| Search once, then stop | Through real n8n 2.42.6: round 1 searched (1 local, 1 web query), a web-only paper reached the judge, round 2 stopped; verifier accepted the `s2:` evidence |
+| Stop at once | Through n8n: one round, `stop` |
+| Planner that always searches | Through n8n: round 2 found nothing new, the loop stopped |
+| Repeated queries, round limit, invalid plan, Semantic Scholar down | Tests pass |
+| Same paper from both sources | Counted once, source `local+semantic_scholar` |
+
+### Not verified yet: needs the team PC
+
+- [ ] Real Semantic Scholar from the PC, with and without an API key
+- [ ] gpt-oss-20b's plans: sensible decisions and queries? (log failures)
+- [ ] E7 with the agent on (rounds 2) and off (0): expected papers reaching the judge, and run time
+
 ## Next: milestone 2, part 2
 
-- Agentic search loop with Semantic Scholar (D20): the LLM judges facet coverage and decides to search again.
 - Reranker (`bge-reranker-v2-m3` on TEI).
 - E2 leave-one-out evaluation.
 - First prompt iterations from real failures.
