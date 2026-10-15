@@ -22,3 +22,5 @@ __pycache__/
 !.cache/pp-tools/.gitkeep
 eval/results/tmp/
 *.log
+# E2: Semantic Scholar reference lists, re-fetchable (eval/e2/queries.json is committed)
+eval/e2/s2_references.json

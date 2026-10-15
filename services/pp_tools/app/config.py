@@ -68,6 +68,7 @@ class Settings(BaseSettings):
     novelty_max_search_rounds: int = Field(default=2, ge=0, le=4, alias="NOVELTY_MAX_SEARCH_ROUNDS")
     # New papers the agent may add to the judge's candidates (it never removes any).
     novelty_agent_extra_papers: int = Field(default=2, ge=0, le=6, alias="NOVELTY_AGENT_EXTRA_PAPERS")
+    novelty_agent_min_relevance: float = Field(default=0.2, ge=0, le=1, alias="NOVELTY_AGENT_MIN_RELEVANCE")
     semantic_scholar_url: str = Field(default="https://api.semanticscholar.org/graph/v1", alias="SEMANTIC_SCHOLAR_URL")
     # Optional; with a key Semantic Scholar allows 1 request per second, without one
     # requests share a public pool and are often refused (HTTP 429).

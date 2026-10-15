@@ -5,7 +5,7 @@ Retrieval quality and answer quality are measured separately.
 | Test | Milestone | Question | Status |
 | --- | --- | --- | --- |
 | E1 chunking | 1 | Does structure-aware chunking (B) retrieve the right paper more often than fixed-size (A)? Recall@k and MRR | Tooling ready; queries to write |
-| E2 novelty | 2 | Leave-one-out: does the system find the papers a paper builds on? | Not started |
+| E2 novelty | 2 | Leave-one-out: does the system find the papers a paper builds on? | Tooling ready (`scripts/e2_leave_one_out.py`); run on the team PC |
 | E3 planted errors | 3 | Detection rate of altered table values, inflated claims, swapped citations | Not started |
 | E4 gold claims | 3 | Audit judge accuracy on about 30 labelled claims | Not started |
 | E5 citation faithfulness | 3 | Faithful vs unfaithful citation pairs | Not started |
@@ -93,3 +93,28 @@ python scripts/retrieval_ab.py        # uses the latest eval/results/*-prompt-ab
 ```
 
 It reports, per method and per idea, how many expected papers reach the judge (top 6), how many are in the pool (top 30, the ceiling for any reordering), the MRR and the time per ranking. The first row repeats what the judge saw in the stored runs. Output: `eval/results/<timestamp>-retrieval-ab/` with `summary.md`, `rows.csv` and `pools.jsonl` (every returned pool). Run 1's results are in `docs/DECISIONS.md` (D28).
+
+## E2: leave-one-out
+
+A paper from the library plays the user: its own abstract is the idea, the paper itself is removed from the results, and the expected answers are the papers it really cites that are in the library (from Semantic Scholar's reference lists). Nothing here was used to choose the system's settings, so it checks whether the choices made on E7 and E8 generalise.
+
+```bash
+python scripts/e2_leave_one_out.py build                 # needs SEMANTIC_SCHOLAR_API_KEY in .env; about 11 minutes the first time
+python scripts/e2_leave_one_out.py run                   # retrieval only, no LLM: fused vs reranked vs hybrid, about 15 minutes
+python scripts/e2_leave_one_out.py run --mode full --limit 15   # whole pipeline through n8n (decomposer, agent, judge)
+```
+
+- `build` fetches every library paper's reference list (cached in `eval/e2/s2_references.json`, not committed), keeps papers that cite at least 3 library papers, picks 40 of them with a fixed seed, and reads their abstracts from the library. It writes `eval/e2/queries.json`: **commit it**, so every later run uses the same queries.
+- `run` reports, per method: cited papers reaching the judge (top 6, micro and macro), in the pool (top 30), and MRR. Output in `eval/results/<timestamp>-e2-<mode>/`.
+- Limits: a paper cites what existed when it was written and what its authors chose to cite, so a "miss" can be a fair answer; the comparison between methods is what matters, not the absolute number.
+
+## Agent on and off (E7)
+
+The search agent's effect, on the same ideas and prompts. `NOVELTY_MAX_SEARCH_ROUNDS` is read by pp-tools at start, so switch it between the two runs (PowerShell):
+
+```powershell
+$env:NOVELTY_MAX_SEARCH_ROUNDS = "0"; docker compose up -d --wait
+python scripts/prompt_ab.py --config "agent-off=P1-decomposer:v2,P2-search-planner:v2,P3-novelty-judge:v2" --label agent-off
+Remove-Item Env:NOVELTY_MAX_SEARCH_ROUNDS; docker compose up -d --wait
+python scripts/prompt_ab.py --config "agent-on=P1-decomposer:v2,P2-search-planner:v2,P3-novelty-judge:v2" --label agent-on
+```
