@@ -240,3 +240,18 @@ The container registries were not reachable from the development sandbox, so the
 - Per idea, adaptive retrieval went from 7 to 18 of 30, Self-RAG and HyDE reached 3/3 and 6/6, but **iterative rewriting fell from 4 to 1 of 12**: IRCoT moved from ranks 2-6 to 7-10 and FLARE to 22-30. Their best vector matches were results and model sections, which do not say what the papers do; the reranker scored those passages, not the papers' contributions.
 - RAM: the reranker used 3.8 GB with `MAX_BATCH_TOKENS=4096`, the embedder 3.4 GB, about 8 GB of the 9.6 GB available. The default is now 2048.
 - **Follow-up (E8 run 2):** two options, measured from the same pools: the reranker also scores each paper's abstract (`NOVELTY_RERANK_ABSTRACT`), and a hybrid order, reciprocal rank fusion of the fused rank and the rerank rank (`NOVELTY_ORDER=hybrid`), so a paper both stages rank well stays high.
+
+**E8 run 2 (2026-10-15, same 25 query sets, orders derived from the same pools):**
+
+| Method | Reaching the judge (top 6) | MRR | Adaptive retrieval | Iterative rewriting |
+| --- | --- | --- | --- | --- |
+| fused + idea | 26 | 0.33 | 8/30 | 4/12 |
+| reranked + idea | 34 | 0.41 | 18/30 | 1/12 |
+| **hybrid + idea** | **37** | 0.39 | **18/30** | **4/12** |
+| reranked + idea + abstract | 29 | 0.41 | 13/30 | 1/12 |
+| hybrid + idea + abstract | 34 | 0.37 | 15/30 | 4/12 |
+
+- **Decision: hybrid order with the idea as a query is the default** (`NOVELTY_ORDER=hybrid`). It keeps the reranker's gain on adaptive retrieval and the vector search's ranking of IRCoT, and gets the most expected papers to the judge (37 of 57, from 25 before the reranker). Its MRR is slightly lower than pure reranking (0.39 vs 0.41): the first expected paper is sometimes one place lower, but more of them reach the top 6, which is what the judge sees.
+- **Scoring abstracts made things worse** (29 and 34): with two scored passages per paper, the abstract replaced the second-best chunk, and abstracts written in general terms outscored specific passages (Mallen et al. dropped from rank 2 to 15-20 in several query sets). Left off.
+- **Caveat:** the 6 ideas were used both to choose the setting and to measure it, so 37/57 is optimistic. The leave-one-out evaluation (E2) will measure it on papers not used for tuning.
+- RAM with 2048 batch tokens: reranker 3.5 GB (3.8 GB before), embedder 3.4 GB.

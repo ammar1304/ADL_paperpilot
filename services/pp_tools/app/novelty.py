@@ -141,7 +141,7 @@ class RetrievalConfig:
     rerank_abstract: bool = False
     # Final order: "rerank" (cross-encoder score) or "hybrid" (reciprocal rank fusion of
     # the fused rank and the rerank rank, so a paper both stages like stays high).
-    order: str = "rerank"
+    order: str = "hybrid"  # best in E8 run 2 (D28)
 
 
 def rank_candidates(

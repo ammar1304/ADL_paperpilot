@@ -302,7 +302,7 @@ def test_novelty_api_end_to_end(tmp_path, test_db_url, stub_url, db):
         assert ok.status_code == 200
         ret = client.post(f"/novelty/{run_id}/retrieve", json={}).json()
         assert ret["coverage"]["papers_in_knowledge_base"] == 3
-        assert ret["ranking_method"] == "reranked" and ret["candidates"][0]["rerank_score"] is not None
+        assert ret["ranking_method"] == "hybrid" and ret["candidates"][0]["rerank_score"] is not None  # the default (D28)
         assert client.get("/health").json()["checks"]["reranker"] == {"ok": True, "required": False}
 
         ranked = client.post("/novelty/rank", json={"idea_text": IDEA, "queries": ["multi-hop query rewriting"], "rerank": False})
