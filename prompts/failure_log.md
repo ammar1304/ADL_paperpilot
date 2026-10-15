@@ -101,3 +101,15 @@ Results: `eval/results/20261015-213516-agent-off`, `20261015-215304-agent-on`, `
 | hybrid | 11/273 (4%) | 46/273 | 0.029 |
 
 A random choice of 6 of 530 papers would find about 1%, so retrieval is 3 to 5 times better than chance, but the gold is loose. For 30 of the 40 papers no cited paper reaches the top 6. The most-missed cited papers are background citations: RAG (2005.11401, missed 33 times), DPR (18), REALM (17), the HotpotQA dataset (13), FiD (12), a RAG survey (8). A paper's abstract does not describe the methods it cites as background, so the reranker scores them low, correctly for a novelty check. This is also why the reranker loses to the fused order here, unlike E8. Next: keep only the citations Semantic Scholar marks as influential (`isInfluential`, the cited work is used or extended), and compare.
+
+**E2 with stricter gold sets (2026-10-16, run 1's stored pools re-scored, `eval/results/20261015-231007-e2-rescored`).** The reference lists were fetched again with Semantic Scholar's influence flags. 5 of 501 failed (HTTP 429); none is one of the 40 query papers, so the gold sets are complete.
+
+| Gold | Query papers | Cited papers | fused top 6 | reranked top 6 | hybrid top 6 | In the pool |
+| --- | --- | --- | --- | --- | --- | --- |
+| all | 40 | 273 | 14 (5%) | 10 (4%) | 11 (4%) | 46 (17%) |
+| influential | 19 | 39 | 4 (10%) | 2 (5%) | 2 (5%) | 7 (18%) |
+| method | 13 | 39 | 2 (5%) | 0 | 0 | 6 (15%) |
+
+- Restricting to influential citations doubles the fused hit rate (5% to 10%), as the background-citation explanation predicts, but on 39 papers the difference is 4 against 2. It is a direction, not a result.
+- The real bottleneck is the pool: whatever the gold, only 15 to 18% of cited papers are in the top 30, so no ordering can find the rest.
+- On E2 the reranker is never better than the fused order, the opposite of E7 and E8. One difference may explain it: E2's idea is a whole abstract (up to 4,000 characters), E7's ideas are one sentence. The reranker reads the idea and a passage together in at most 512 tokens (bge-reranker-base, `truncate: true`). With a 250 to 400-token abstract as the idea, most of each passage is cut off before it is scored. This is a hypothesis. Test: `e2_leave_one_out.py run --idea-chars 600 --label short-idea` gives the reranker room to read the passage.

@@ -258,7 +258,7 @@ def run(args, env) -> int:
         for i, q in enumerate(queries, start=1):
             if args.mode == "retrieval":
                 status, body = http("POST", f"{args.pp_tools_url}/novelty/rank", {
-                    "idea_text": q["abstract"][:4000], "queries": [q["abstract"][:300]],
+                    "idea_text": q["abstract"][: args.idea_chars], "queries": [q["abstract"][:300]],
                     "rerank": True, "idea_as_query": True, "order": "rerank",
                 }, timeout=300)
                 if status != 200:
@@ -286,7 +286,7 @@ def run(args, env) -> int:
             if last:
                 found = last[-1]["ranks"]
                 print(f"  [{i}/{len(queries)}] {q['paper_id']}: {sum(1 for x in found.values() if x and x <= TOP)}/{len(found)} cited papers in top {TOP} ({last[-1]['method']})")
-    write_results(out, rows, {"mode": args.mode, "queries": len(queries), "built": data["meta"]})
+    write_results(out, rows, {"mode": args.mode, "idea_chars": args.idea_chars if args.mode == "retrieval" else None, "queries": len(queries), "built": data["meta"]})
     return 0
 
 
@@ -347,6 +347,9 @@ def main() -> int:
     parser.add_argument("--seed", type=int, default=13)
     parser.add_argument("--queries", type=Path, default=QUERIES, help="the query set (default eval/e2/queries.json)")
     parser.add_argument("--label", default="", help="added to the results folder name")
+    parser.add_argument("--idea-chars", type=int, default=4000,
+                        help="retrieval mode: characters of the abstract used as the idea (the reranker reads the idea and "
+                             "a passage together in 512 tokens, so a long idea leaves little room for the passage)")
     parser.add_argument("--s2-url", default=S2, help=argparse.SUPPRESS)
     parser.add_argument("--manifest", type=Path, default=REPO / "corpus" / "manifest.csv", help=argparse.SUPPRESS)  # tests point this at a stand-in
     parser.add_argument("--s2-interval", type=float, default=1.1, help=argparse.SUPPRESS)
