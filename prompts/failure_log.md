@@ -113,3 +113,17 @@ A random choice of 6 of 530 papers would find about 1%, so retrieval is 3 to 5 t
 - Restricting to influential citations doubles the fused hit rate (5% to 10%), as the background-citation explanation predicts, but on 39 papers the difference is 4 against 2. It is a direction, not a result.
 - The real bottleneck is the pool: whatever the gold, only 15 to 18% of cited papers are in the top 30, so no ordering can find the rest.
 - On E2 the reranker is never better than the fused order, the opposite of E7 and E8. One difference may explain it: E2's idea is a whole abstract (up to 4,000 characters), E7's ideas are one sentence. The reranker reads the idea and a passage together in at most 512 tokens (bge-reranker-base, `truncate: true`). With a 250 to 400-token abstract as the idea, most of each passage is cut off before it is scored. This is a hypothesis. Test: `e2_leave_one_out.py run --idea-chars 600 --label short-idea` gives the reranker room to read the passage.
+
+**Truncation hypothesis tested: rejected (2026-10-16, `eval/results/20261015-231237-e2-retrieval-short-idea`, idea = first 600 characters of the abstract).**
+
+| Gold | fused top 6 (4,000 → 600 chars) | reranked | hybrid | In the pool |
+| --- | --- | --- | --- | --- |
+| all (273) | 14 → 15 | 10 → 12 | 11 → 11 | 46 → 50 |
+| influential (39) | 4 → 5 | 2 → 2 | 2 → 2 | 7 → 8 |
+| method (39) | 2 → 4 | 0 → 1 | 0 → 2 | 6 → 8 |
+
+The shorter idea helps every order slightly, mostly by putting a few more cited papers in the pool. But the reranker still never beats the fused order, so truncation is not why it loses on E2.
+
+A better explanation is that E2 asks a different question. A cross-encoder scores how far a passage says the same thing as the idea. That is what a novelty check needs: E7 and E8 have known overlapping papers, and there the reranker helps. A paper's citations are, by definition, other work: earlier methods it builds on, baselines, datasets. The more similar a cited paper is to the citing paper, the less reason there was to write the new one. So a ranking tuned to find overlap should demote most citations. E2 measures "related work" retrieval, not overlap retrieval.
+
+**Decision:** keep the hybrid order (D28, D30). E2 is reported as a generalisation check of first-stage retrieval (the pool holds 17 to 20% of cited papers, about 5 times what 30 random papers would hold), with this limitation stated, not as the measure of the novelty check.
