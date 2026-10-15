@@ -233,9 +233,15 @@ Branch `feat/prompt-ab-eval`.
 - **`papers_with_full_text`** now comes from the build report (61), not from papers with detected sections (59).
 - **E7, `scripts/prompt_ab.py`:** 6 ideas with known answers (one out of domain) x 3 prompt configurations x repeats, failures counted automatically; scoring unit-tested on the logged failures. Verified in the sandbox against n8n with stub models (12 runs, plumbing only).
 
-### Not verified yet: needs the team PC
+### Verified on the team PC (2026-10-15)
 
-- [ ] `python scripts/prompt_ab.py` with real Groq: the summary table goes into `prompts/failure_log.md` and the report
+- [x] `python scripts/prompt_ab.py` with real Groq: 36 of 36 runs, about 45 minutes. Results in `eval/results/20261015-000708-prompt-ab/`, analysis in `prompts/failure_log.md` (E7 run 1).
+
+**Result:** P3 v2 fixes F-002 (0/12 to 12/12) and F-003 (7/12 to 0/12); the code-built report fixes F-001; P1 v2 does not measurably improve retrieval (8 to 10 of 22 expected papers), which is the bottleneck.
+
+## Milestone 2, part 1: done (2026-10-15)
+
+Exit criteria met: real LLMs end to end, a 531-paper library built on a team PC, a known-answer test passing, real failures logged (F-001 to F-005), and a measured prompt comparison. Open items carried forward: retrieval recall (part 2), Gemini fallback never exercised with a real key, the manifest PR, the E1 queries.
 
 ## Next: milestone 2, part 2
 
