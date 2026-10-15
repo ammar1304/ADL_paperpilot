@@ -168,6 +168,8 @@ Prompts: [prompts/README.md](prompts/README.md).
 
 ## Working on workflows
 
+**After pulling changes to `n8n/workflows/`, restart n8n:** `docker compose restart n8n`. n8n imports the workflow files only when it starts, and `docker compose up -d --build` does not restart it when only the workflow files changed. Wait until `docker compose ps` shows it healthy (1 to 2 minutes) before sending requests. The smoke test's step 7 fails with this hint if the novelty workflow is out of date.
+
 The JSON files in `n8n/workflows/` are the source of truth. On every start, n8n replaces its workflows with these files.
 
 1. Open http://localhost:5678. The first visit asks you to create a local owner account.

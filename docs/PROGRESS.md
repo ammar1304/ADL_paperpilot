@@ -318,8 +318,23 @@ Sandbox with stand-ins for the LLMs, the reranker and Semantic Scholar:
 ### Not verified yet: needs the team PC
 
 - [ ] Real Semantic Scholar from the PC, with and without an API key
-- [ ] gpt-oss-20b's plans: sensible decisions and queries? (log failures)
+- [x] gpt-oss-20b's plans on the known-answer idea (team PC): the loop ran 2 rounds, but the plans were poor (F-006) and re-ranking after the agent's queries lost Self-RAG and SKR (F-007). Fixed in part 2d.
 - [ ] E7 with the agent on (rounds 2) and off (0): expected papers reaching the judge, and run time
+
+## Milestone 2, part 2d: the agent only adds (2026-10-15)
+
+Branch `fix/agent-keeps-candidates`.
+
+- **F-007 fix (code):** earlier candidates are always kept with their evidence; the agent may add at most `NOVELTY_AGENT_EXTRA_PAPERS` (2) papers, each scored by the reranker at least as relevant as the weakest candidate already shown. The `retrieve` step records the admission (`floor_rerank_score`, `slots`, `admitted`).
+- **F-006 fix (prompt):** P2-search-planner v2. The planner sees the judge's current candidates, abstract first, 500 characters.
+- Local queries now report how many new papers they found, so the planner's history shows unproductive rounds.
+- Smoke test step 7 checks that the planner ran, and says to restart n8n when the workflow is out of date. README: restart n8n after pulling workflow changes.
+- Sandbox: 126 tests pass; smoke test with real n8n passes.
+
+### Not verified yet: needs the team PC
+
+- [ ] The known-answer idea again: Self-RAG and SKR kept; what does P2 v2 decide?
+- [ ] E7 with the agent on and off
 
 ## Next: milestone 2, part 2
 
