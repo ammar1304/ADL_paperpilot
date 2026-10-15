@@ -74,6 +74,9 @@ class Settings(BaseSettings):
     semantic_scholar_api_key: str = Field(default="", alias="SEMANTIC_SCHOLAR_API_KEY")
     semantic_scholar_results: int = Field(default=10, ge=1, le=50, alias="SEMANTIC_SCHOLAR_RESULTS")
     semantic_scholar_interval_s: float = Field(default=1.1, alias="SEMANTIC_SCHOLAR_INTERVAL_S")
+    # OpenAlex: the other web source; no key needed (10 requests per second). Empty URL disables it.
+    openalex_url: str = Field(default="https://api.openalex.org", alias="OPENALEX_URL")
+    openalex_api_key: str = Field(default="", alias="OPENALEX_API_KEY")
     rerank_timeout_s: float = Field(default=120.0, alias="RERANK_TIMEOUT_S")
 
     @property

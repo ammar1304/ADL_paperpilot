@@ -292,6 +292,10 @@ class Handler(BaseHTTPRequestHandler):
             q = parse_qs(url.query).get("query", [""])[0]
             code, body = s2_search(q)
             return self._send(code, json.dumps(body).encode(), "application/json")
+        if url.path == "/works":  # like OpenAlex
+            q = parse_qs(url.query).get("search", [""])[0]
+            code, body = openalex_search(q)
+            return self._send(code, json.dumps(body).encode(), "application/json")
         if url.path == "/api/query":
             q = parse_qs(url.query)
             if "id_list" in q:
@@ -356,6 +360,33 @@ def s2_search(query: str) -> tuple[int, dict]:
     if "S2_DOWN" in query:
         return 500, {"error": "stub outage"}
     return 200, {"total": len(S2_PAPERS), "offset": 0, "data": S2_PAPERS}
+
+
+OA_CALLS: list[str] = []
+
+
+def _inverted(text: str) -> dict[str, list[int]]:
+    index: dict[str, list[int]] = {}
+    for i, word in enumerate(text.split()):
+        index.setdefault(word, []).append(i)
+    return index
+
+
+def openalex_search(query: str) -> tuple[int, dict]:
+    """OpenAlex stand-in. "OA_DOWN" in the query answers 500 every time."""
+    OA_CALLS.append(query)
+    if "OA_DOWN" in query:
+        return 500, {"error": "stub outage"}
+    works = [
+        {"id": "https://openalex.org/W111", "doi": "https://doi.org/10.48550/arxiv.2203.00002", "title": PAPERS[1]["title"],
+         "publication_year": 2022, "abstract_inverted_index": _inverted(PAPERS[1]["abstract"]), "cited_by_count": 40,
+         "primary_location": {"landing_page_url": "https://arxiv.org/abs/2203.00002", "source": {"display_name": "arXiv"}}},
+        {"id": "https://openalex.org/W222", "doi": "https://doi.org/10.1000/xyz", "title": "Query Rewriting Agents for Multi-Hop QA",
+         "publication_year": 2024, "abstract_inverted_index": _inverted("Agents rewrite the search query after each retrieval step."),
+         "cited_by_count": 12, "primary_location": {"landing_page_url": "https://example.org/paper", "source": {"display_name": "TACL"}}},
+        {"id": "https://openalex.org/W333", "title": "No abstract here", "publication_year": 2020, "abstract_inverted_index": None},
+    ]
+    return 200, {"meta": {"count": len(works)}, "results": works}
 
 
 def _plan(user: str) -> dict:

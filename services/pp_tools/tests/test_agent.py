@@ -7,7 +7,9 @@ needs TEST_DATABASE_URL like test_novelty.py.
 import pytest
 
 import stubs
+from app.external.openalex import OpenAlex, abstract_from_index
 from app.external.semantic_scholar import SemanticScholar, SemanticScholarError
+from app.external.web import WebSearch, WebSearchError
 from app.novelty import (
     RetrievalConfig,
     apply_plan,
@@ -28,7 +30,8 @@ LIB = PromptLibrary(REPO / "prompts")
 
 @pytest.fixture
 def s2(stub_url):  # noqa: F811
-    client = SemanticScholar(f"{stub_url}/graph/v1", min_interval_s=0.0, retries=2)
+    """Web search as the agent uses it, with Semantic Scholar only (OpenAlex has its own tests)."""
+    client = WebSearch([("semantic_scholar", SemanticScholar(f"{stub_url}/graph/v1", min_interval_s=0.0, retries=2))])
     yield client
     client.close()
 
@@ -45,7 +48,8 @@ def planner(rendered: dict) -> dict:
     return stubs._plan(rendered["user"])
 
 
-def test_semantic_scholar_client(s2):
+def test_semantic_scholar_client(stub_url):  # noqa: F811
+    s2 = SemanticScholar(f"{stub_url}/graph/v1", min_interval_s=0.0, retries=2)
     papers = s2.search("query rewriting", 10)
     assert [p.paper_id for p in papers] == ["arxiv:2203.00002", "s2:s2bbb"]  # no-abstract paper skipped
     assert papers[0].url == "https://arxiv.org/abs/2203.00002" and papers[1].url == "https://s2/bbb"
@@ -123,7 +127,7 @@ def test_semantic_scholar_outage_is_recorded_and_local_search_still_runs(db, kb,
     run_id = start(db, kb, "S2_DOWN " + IDEA)
     out = apply_plan(db, kb, None, s2, run_id, planner(plan_prompt(db, LIB, run_id, 2)), RetrievalConfig(), COVERAGE, 2)
     web = next(q for q in out["queries"] if q["where"] == "web")
-    assert web["error"].startswith("search failed")
+    assert web["error"].startswith("Semantic Scholar: search failed")
     local = next(q for q in out["queries"] if q["where"] == "local")
     assert "error" not in local
 
@@ -179,4 +183,40 @@ def test_agent_never_removes_candidates_and_admits_few_relevant_ones(db, kb, s2,
     assert len(now) <= 2 + 1 and out["new_candidates"] == now[len(first):]
     floor = latest["admission"]["floor_rerank_score"]
     assert all(c["rerank_score"] >= floor for c in latest["candidates"][len(first):])
+    assert set(out["new_candidates"]) <= set(out["new_in_pool"])  # only papers this round's searches brought in
     assert latest["admission"]["slots"] == 1
+
+
+def test_openalex_client(stub_url):  # noqa: F811
+    oa = OpenAlex(stub_url, retries=1)
+    papers = oa.search("query rewriting", 10)
+    assert [p.paper_id for p in papers] == ["arxiv:2203.00002", "openalex:W222"]  # arXiv id from the DOI
+    assert papers[1].abstract == "Agents rewrite the search query after each retrieval step."
+    assert papers[1].source == "openalex" and papers[1].venue == "TACL" and papers[1].url == "https://example.org/paper"
+    assert abstract_from_index({"b": [1], "a": [0, 2]}) == "a b a"
+
+
+def test_web_search_falls_back_to_the_next_provider(stub_url):  # noqa: F811
+    web = WebSearch([
+        ("semantic_scholar", SemanticScholar(f"{stub_url}/graph/v1", min_interval_s=0.0, retries=1)),
+        ("openalex", OpenAlex(stub_url, retries=1)),
+    ])
+    papers, source, errors = web.search("S2_DOWN query rewriting", 5)
+    assert source == "openalex" and len(errors) == 1 and errors[0].startswith("Semantic Scholar:")
+    assert papers[0].paper_id == "arxiv:2203.00002"
+    with pytest.raises(WebSearchError):
+        web.search("S2_DOWN OA_DOWN query", 5)
+
+
+def test_agent_records_the_fallback_source(db, kb, stub_url):  # noqa: F811
+    web = WebSearch([
+        ("semantic_scholar", SemanticScholar(f"{stub_url}/graph/v1", min_interval_s=0.0, retries=1)),
+        ("openalex", OpenAlex(stub_url, retries=1)),
+    ])
+    run_id = start(db, kb, "S2_DOWN " + IDEA)
+    out = apply_plan(db, kb, None, web, run_id, planner(plan_prompt(db, LIB, run_id, 2)), RetrievalConfig(), COVERAGE, 2)
+    q = next(q for q in out["queries"] if q["where"] == "web")
+    assert q["source"] == "OpenAlex" and q["fallback_from"][0].startswith("Semantic Scholar:")
+    latest = db.get_steps(run_id, "retrieve")[-1]["detail"]
+    assert latest["web_sources"] == ["OpenAlex"]
+    assert {c["paper_id"]: c["source"] for c in latest["pool"]}["openalex:W222"] == "openalex"

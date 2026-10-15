@@ -333,7 +333,22 @@ Branch `fix/agent-keeps-candidates`.
 
 ### Not verified yet: needs the team PC
 
-- [ ] The known-answer idea again: Self-RAG and SKR kept; what does P2 v2 decide?
+- [x] The known-answer idea again (team PC): the judge kept its candidates (6 of 8 overlapping, F-007 fixed); P2 v2 still judged the method uncovered (truncated abstract, F-006) and Semantic Scholar answered 429 without a key. Fixed in part 2e.
+- [ ] E7 with the agent on and off
+
+## Milestone 2, part 2e: OpenAlex fallback, honest attribution (2026-10-15)
+
+Branch `fix/agent-web-and-admission`.
+
+- **OpenAlex** client (`app/external/openalex.py`) and a provider-fallback web search (`app/external/web.py`): OpenAlex first without a Semantic Scholar key, Semantic Scholar first with one; failures recorded per query.
+- **Attribution:** the agent only admits papers its own round brought into the pool.
+- **Planner input:** 1,200 characters per candidate, abstract first (F-006 cause).
+- Sandbox: 129 tests pass; smoke test with real n8n passes (web query answered by the OpenAlex stand-in).
+
+### Not verified yet: needs the team PC
+
+- [ ] OpenAlex from the PC (no key)
+- [ ] The known-answer idea: what does the planner decide when it can read the full abstracts?
 - [ ] E7 with the agent on and off
 
 ## Next: milestone 2, part 2
