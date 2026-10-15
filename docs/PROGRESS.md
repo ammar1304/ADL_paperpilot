@@ -363,8 +363,24 @@ Branch `feat/m2-e2-and-agent-eval`.
 
 ### Not verified yet: needs the team PC
 
-- [ ] E2 build and retrieval run
-- [ ] E7 with the agent off and on
+- [x] E2 build and retrieval run (`eval/results/20261015-211913-e2-retrieval`)
+- [x] E7 with the agent off and on (`20261015-213516-agent-off`, `20261015-215304-agent-on`)
+
+## Milestone 2, part 2g: analysis of the final runs (2026-10-15)
+
+Branch `eval/m2-final-runs`. Details in `prompts/failure_log.md` (section "M2 final runs") and D30.
+
+- Agent off 16/22 expected papers, agent on 15/22; the gap is first-pass variance, not the agent (it only adds).
+- Planner: stopped correctly in 6 of 12 runs; searched needlessly in 2 (F-006 residual, harmless); added useful papers outside the expected list in 2; used the web for the out-of-domain idea and found adjacent real work (diffusion for inverse folding).
+- F-008: the false-overlap metric counted that correct web finding as an error.
+- E2: 4 to 5% of cited papers in the top 6 (about 1% by chance); misses are mostly background citations (RAG, DPR, REALM, HotpotQA).
+- `scripts/order_replay.py`: ordering rules scored on stored pools; the hybrid order stays (D30).
+
+### Next (last measurement round of milestone 2)
+
+- [ ] E2 gold from influential citations only
+- [ ] False overlap counts local closest work only (F-008)
+- [ ] 2 or 3 ideas whose closest work is outside the library, to measure what the web search adds
 
 ## Next: milestone 2, part 2
 

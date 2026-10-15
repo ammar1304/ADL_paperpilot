@@ -275,3 +275,22 @@ The container registries were not reachable from the development sandbox, so the
 **Second real run and revision (2026-10-15).** With the "agent only adds" rule the judge's evidence no longer got worse (6 overlapping papers of 8). Two more changes:
 - **Web search has two providers.** Without an API key, Semantic Scholar's shared pool refused the agent's request (HTTP 429). OpenAlex answers keyless queries (10 requests per second) and returns abstracts and DOIs, from which arXiv ids are recovered (`10.48550/arxiv.<id>`), so a paper already in the library is still one candidate. Order: Semantic Scholar first when `SEMANTIC_SCHOLAR_API_KEY` is set, OpenAlex first otherwise; a failure falls back to the other and is recorded (`fallback_from`). Each web query records which provider answered.
 - **Attribution:** the agent may only admit papers that its own round brought into the pool, so `new_candidates` means "found by the agent". In that run the result had credited the agent with two papers that were already in the pool below the top 6.
+
+## D30. The hybrid order stays; ordering rules are replayed offline before any change
+
+- **Context:** in one agent-on run Self-RAG had the highest reranker score in the pool (0.82) but fused rank 12, and the hybrid order (D28) left it 7th, outside the judge's top 6. Two fixes looked plausible: a smaller RRF constant k in the hybrid order (one strong rank counts more), or a guaranteed slot for any paper the reranker scores above a threshold.
+- **How it was tested:** every stored pool carries fused rank, rerank rank and rerank score, so `scripts/order_replay.py` re-scores any rule without running retrieval: E8's 25 pools (57 expected papers), the 10 first-pass pools of the agent-off E7 run (22), and E2's 40 pools (273 cited papers).
+
+| Rule | E8 top 6 | E7 top 6 | E2 top 6 |
+| --- | --- | --- | --- |
+| fused | 26/57 | 9/22 | 14/273 |
+| reranked | 34/57 | 16/22 | 10/273 |
+| hybrid, k=60 (current) | **37/57** | **16/22** | 11/273 |
+| hybrid, k=20 | 36/57 | 16/22 | 11/273 |
+| hybrid, k=10 | 35/57 | 16/22 | 12/273 |
+| guaranteed slot, rerank ≥ 0.5 | 34/57 | 16/22 | 10/273 |
+| guaranteed slot, rerank ≥ 0.7 | 34/57 | 16/22 | 10/273 |
+
+  A third variant, showing up to 2 extra papers (8 instead of 6) when they score above both 0.2 and the weakest of the 6, gains 3/57 (E8) and 2/22 (E7) at the cost of 16 and 9 extra papers shown, of which 13 and 7 are not expected.
+- **Decision:** keep hybrid with k=60. The Self-RAG case is a boundary case; every alternative that fixes it loses more elsewhere or mostly adds noise to the judge prompt. Any future ordering change must first be replayed on the stored pools.
+- **Limit:** E8 and E7 share the same 5 ideas, so they are not independent; E2's gold is loose (citations, D31 pending). The differences between the hybrid variants (1 or 2 papers) are within noise; only the guaranteed-slot loss on E8 is consistent.
