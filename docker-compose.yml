@@ -76,6 +76,25 @@ services:
       # The first start downloads the model (about 2.3 GB).
       start_period: 900s
 
+  reranker:
+    # Cross-encoder that re-orders the novelty candidates (docs/DECISIONS.md D28).
+    # Same TEI image as the embedder; bge-reranker-base is about 1.1 GB.
+    image: ${EMBEDDER_IMAGE:-ghcr.io/huggingface/text-embeddings-inference:cpu-1.9}
+    restart: unless-stopped
+    environment:
+      MODEL_ID: ${RERANKER_MODEL:-BAAI/bge-reranker-base}
+      MAX_CLIENT_BATCH_SIZE: 64
+      MAX_BATCH_TOKENS: ${RERANKER_MAX_BATCH_TOKENS:-4096}
+    command: ["--json-output"]
+    volumes:
+      - reranker_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:80/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 900s
+
   pp-tools:
     build:
       context: ./services/pp_tools
@@ -87,6 +106,10 @@ services:
       APP_DATABASE_URL: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${APP_DB_NAME:-paperpilot}
       QDRANT_URL: http://qdrant:6333
       EMBEDDER_URL: http://embedder:80
+      RERANKER_URL: ${RERANKER_URL-http://reranker:80}
+      NOVELTY_RERANK: ${NOVELTY_RERANK:-true}
+      NOVELTY_IDEA_QUERY: ${NOVELTY_IDEA_QUERY:-false}
+      NOVELTY_POOL_PAPERS: ${NOVELTY_POOL_PAPERS:-30}
       ARXIV_CONTACT_EMAIL: ${ARXIV_CONTACT_EMAIL:-}
       CHUNK_TOKENS: ${CHUNK_TOKENS:-512}
       CHUNK_OVERLAP: ${CHUNK_OVERLAP:-64}
@@ -108,6 +131,8 @@ services:
       # Started, not healthy: run tracking works while the model downloads.
       # /health reports the embedder separately.
       embedder:
+        condition: service_started
+      reranker:
         condition: service_started
     # Healthcheck is defined in services/pp_tools/Dockerfile (GET /health).
 
@@ -171,3 +196,4 @@ volumes:
   qdrant_data:
   n8n_data:
   embedder_data:
+  reranker_data:

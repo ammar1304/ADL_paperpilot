@@ -39,6 +39,7 @@ from .models import (
     LlmOutput,
     RenderedPromptOut,
     RenderRequest,
+    RankRequest,
     RetrieveRequest,
     JobRecord,
     RunRecord,
@@ -53,6 +54,7 @@ from .novelty import (
     NoveltyError,
     RetrievalConfig,
     assemble,
+    rank_candidates,
     judge_prompt,
     retrieve,
     save_facets,
@@ -60,6 +62,7 @@ from .novelty import (
 )
 from .prompts import PromptError, PromptLibrary
 from .retrieval.embedder import Embedder, EmbedderError
+from .retrieval.reranker import Reranker
 from .retrieval.search import Retriever, hit_dict
 from .retrieval.store import Store, collection_name, make_client
 
@@ -75,6 +78,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     store = Store(make_client(settings.qdrant_url, settings.health_timeout_s * 5))
     embedder = Embedder(settings.embedder_url, settings.embed_batch_size, settings.embed_timeout_s)
     retriever = Retriever(embedder, store)
+    reranker = Reranker(settings.reranker_url, timeout_s=settings.rerank_timeout_s) if settings.reranker_url else None
     library = PromptLibrary(settings.prompts_dir)
     # One worker: builds run one at a time, and never inside a request.
     jobs = ThreadPoolExecutor(max_workers=1, thread_name_prefix="pp-job")
@@ -90,6 +94,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         yield
         jobs.shutdown(wait=False, cancel_futures=True)
         embedder.close()
+        if reranker is not None:
+            reranker.close()
         db.close()
 
     app = FastAPI(title="pp-tools", version="0.2.0", lifespan=lifespan)
@@ -138,6 +144,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         # download on first start, and run tracking works without it.
         embedder_ok = await run_in_threadpool(embedder.healthy)
         checks["embedder"] = {"ok": embedder_ok, "required": False}
+        if reranker is not None:
+            checks["reranker"] = {"ok": await run_in_threadpool(reranker.healthy), "required": False}
+        else:
+            checks["reranker"] = {"ok": False, "required": False, "error": "RERANKER_URL not set; novelty uses fused order"}
 
         ok = all(c["ok"] for c in checks.values() if c.get("required", True))
         body = {"status": "ok" if ok else "degraded", "service": "pp-tools", "checks": checks}
@@ -366,11 +376,39 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             "papers_with_full_text": await run_in_threadpool(_fulltext_count, stats),
             "chunks_searched": s.get("chunks", 0),
         }
-        cfg = RetrievalConfig(strategy=strategy, top_papers=settings.novelty_top_papers)
+        cfg = _retrieval_config(strategy)
         try:
-            return await run_in_threadpool(_novelty_errors, retrieve, db, retriever, run_id, cfg, coverage)
+            return await run_in_threadpool(_novelty_errors, retrieve, db, retriever, run_id, cfg, coverage, reranker)
         except EmbedderError as exc:
             raise HTTPException(status_code=503, detail=f"embedder unavailable: {_short(exc)}") from exc
+
+    def _retrieval_config(strategy: str, **overrides: Any) -> RetrievalConfig:
+        values = {
+            "strategy": strategy,
+            "top_papers": settings.novelty_top_papers,
+            "pool_papers": settings.novelty_pool_papers,
+            "rerank": settings.novelty_rerank,
+            "idea_as_query": settings.novelty_idea_query,
+        }
+        values.update({k: v for k, v in overrides.items() if v is not None})
+        return RetrievalConfig(**values)
+
+    @app.post("/novelty/rank")
+    async def novelty_rank(body: RankRequest) -> Any:
+        """Rank candidates for an idea and given queries, without a run or an LLM.
+
+        Used by scripts/retrieval_ab.py to compare ranking settings on the queries
+        stored from real runs. Returns the whole pool, not only the judge's top papers.
+        """
+        strategy = body.strategy or settings.novelty_strategy
+        if not await run_in_threadpool(store.client.collection_exists, collection_name(strategy)):
+            raise HTTPException(status_code=409, detail=f"no '{strategy}' collection yet; run a corpus build first")
+        cfg = _retrieval_config(strategy, rerank=body.rerank, idea_as_query=body.idea_as_query, pool_papers=body.pool_papers)
+        try:
+            ranked = await run_in_threadpool(rank_candidates, retriever, reranker, body.idea_text, body.queries, cfg)
+        except EmbedderError as exc:
+            raise HTTPException(status_code=503, detail=f"embedder unavailable: {_short(exc)}") from exc
+        return {"strategy": strategy, "config": {k: getattr(cfg, k) for k in ("rerank", "idea_as_query", "pool_papers", "top_papers", "per_query_k")}, **ranked}
 
     @app.post("/novelty/{run_id}/judge-prompt", response_model=JudgePromptOut)
     async def novelty_judge_prompt(run_id: UUID) -> Any:

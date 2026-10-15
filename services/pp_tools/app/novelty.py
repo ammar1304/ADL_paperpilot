@@ -23,6 +23,7 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_valida
 
 from .db import Database
 from .prompts import PromptLibrary, RenderedPrompt
+from .retrieval.reranker import Reranker, RerankerError
 from .retrieval.search import Retriever
 
 FacetName = Literal["task", "method", "data", "result"]
@@ -121,7 +122,8 @@ def save_facets(db: Database, run_id: UUID, output: dict[str, Any], prompt_versi
 @dataclass
 class RetrievalConfig:
     strategy: str = "structured"
-    per_query_k: int = 20  # chunks retrieved per query
+    per_query_k: int = 50  # chunks retrieved per query
+    pool_papers: int = 30  # fused candidates the reranker re-orders
     top_papers: int = 6  # candidates sent to the judge
     evidence_per_paper: int = 2
     evidence_chars: int = 900  # per passage, keeps the judge prompt within Groq's per-minute token budget
@@ -129,22 +131,32 @@ class RetrievalConfig:
     # the method sentence of Adaptive-RAG and the end of 2604.07985's abstract (F-004).
     abstract_chars: int = 2000
     rrf_k: int = 60  # standard reciprocal rank fusion constant
+    rerank: bool = True  # re-order the pool with the cross-encoder when one is configured
+    rerank_chunks_per_paper: int = 2  # a paper's best chunks scored by the reranker; its score is the max
+    rerank_chars: int = 1200  # text per scored chunk (speed on CPU)
+    idea_as_query: bool = False  # also search with the idea text itself, next to the decomposer's queries
 
 
-def retrieve(db: Database, retriever: Retriever, run_id: UUID, cfg: RetrievalConfig, coverage: dict[str, Any]) -> dict[str, Any]:
-    """Search with every decomposer query and fuse the rankings with reciprocal rank fusion.
+def rank_candidates(
+    retriever: Retriever, reranker: "Reranker | None", idea_text: str, queries: list[str], cfg: RetrievalConfig
+) -> dict[str, Any]:
+    """Search with every query, fuse the rankings, then optionally rerank the pool.
 
-    A paper found by several queries, or ranked high by one, rises to the top.
-    For each candidate, the best-scoring distinct chunks become its evidence.
+    1. Each query retrieves cfg.per_query_k chunks. Reciprocal rank fusion gives a
+       paper credit for its best chunk in every query (D24).
+    2. The cfg.pool_papers best fused papers are re-ordered by a cross-encoder that
+       reads the idea and each paper's best chunks together (D28). If the reranker
+       is missing or fails, the fused order is kept and the reason recorded.
+    3. The cfg.top_papers best become the judge's candidates; their evidence is the
+       chunks the final ranking scored highest.
     """
-    decomposed = DecomposerOutput.model_validate(_last_step(db, run_id, "decompose")["output"])
-
+    searches = list(queries) + ([idea_text] if cfg.idea_as_query else [])
     paper_score: dict[str, float] = defaultdict(float)
     paper_queries: dict[str, set[int]] = defaultdict(set)
     chunk_score: dict[str, float] = defaultdict(float)
     chunks: dict[str, Any] = {}
-    for qi, query in enumerate(decomposed.queries):
-        hits = retriever.chunks(query.text, cfg.strategy, cfg.per_query_k)
+    for qi, query in enumerate(searches):
+        hits = retriever.chunks(query, cfg.strategy, cfg.per_query_k)
         seen_papers: set[str] = set()
         for rank, hit in enumerate(hits, start=1):
             chunk_score[hit.chunk_id] += 1.0 / (cfg.rrf_k + rank)
@@ -154,10 +166,48 @@ def retrieve(db: Database, retriever: Retriever, run_id: UUID, cfg: RetrievalCon
                 paper_score[hit.paper_id] += 1.0 / (cfg.rrf_k + len(seen_papers))
                 paper_queries[hit.paper_id].add(qi)
 
-    ranked = sorted(paper_score, key=lambda p: paper_score[p], reverse=True)[: cfg.top_papers]
+    fused = sorted(paper_score, key=lambda p: paper_score[p], reverse=True)
+    pool = fused[: max(cfg.pool_papers, cfg.top_papers)]
+    own = {
+        pid: sorted((c for c in chunks.values() if c.paper_id == pid), key=lambda c: chunk_score[c.chunk_id], reverse=True)
+        for pid in pool
+    }
+
+    method = "fused"
+    note = None
+    rerank_chunk: dict[str, float] = {}
+    rerank_paper: dict[str, float] = {}
+    if cfg.rerank and reranker is not None and pool:
+        scored = [c for pid in pool for c in own[pid][: cfg.rerank_chunks_per_paper]]
+        try:
+            values = reranker.scores(idea_text, [c.text[: cfg.rerank_chars] for c in scored])
+            rerank_chunk = {c.chunk_id: v for c, v in zip(scored, values, strict=True)}
+            for c in scored:
+                rerank_paper[c.paper_id] = max(rerank_paper.get(c.paper_id, 0.0), rerank_chunk[c.chunk_id])
+            pool = sorted(pool, key=lambda p: (-rerank_paper.get(p, 0.0), fused.index(p)))
+            method = "reranked"
+        except RerankerError as exc:
+            note = f"reranker failed, fused order kept: {str(exc)[:200]}"
+    elif cfg.rerank and reranker is None:
+        note = "no reranker configured, fused order kept"
+
+    ranking = [
+        {
+            "paper_id": pid,
+            "title": own[pid][0].title,
+            "year": own[pid][0].year,
+            "fused_rank": fused.index(pid) + 1,
+            "fused_score": round(paper_score[pid], 6),
+            "rerank_score": round(rerank_paper[pid], 6) if pid in rerank_paper else None,
+            "matched_queries": sorted(paper_queries[pid]),
+        }
+        for pid in pool
+    ]
+
     candidates = []
-    for pid in ranked:
-        own = sorted((c for c in chunks.values() if c.paper_id == pid), key=lambda c: chunk_score[c.chunk_id], reverse=True)
+    for entry in ranking[: cfg.top_papers]:
+        pid = entry["paper_id"]
+        best = sorted(own[pid], key=lambda c: (-rerank_chunk.get(c.chunk_id, -1.0), -chunk_score[c.chunk_id]))
         evidence = [
             {
                 "chunk_id": c.chunk_id,
@@ -165,26 +215,34 @@ def retrieve(db: Database, retriever: Retriever, run_id: UUID, cfg: RetrievalCon
                 "section": c.section,
                 "text": c.text[: cfg.abstract_chars if c.chunk_type == "abstract" else cfg.evidence_chars],
             }
-            for c in own[: cfg.evidence_per_paper]
+            for c in best[: cfg.evidence_per_paper]
         ]
-        first = own[0]
-        candidates.append(
-            {
-                "paper_id": pid,
-                "title": first.title,
-                "year": first.year,
-                "fused_score": round(paper_score[pid], 6),
-                "matched_queries": sorted(paper_queries[pid]),
-                "evidence": evidence,
-            }
-        )
+        candidates.append({**entry, "evidence": evidence})
 
-    detail = {
-        "strategy": cfg.strategy,
-        "queries": [q.text for q in decomposed.queries],
+    return {
+        "queries": list(queries),
+        "idea_as_query": cfg.idea_as_query,
+        "ranking_method": method,
+        "ranking_note": note,
+        "pool": ranking,
         "candidates": candidates,
-        "coverage": coverage,
     }
+
+
+def retrieve(
+    db: Database,
+    retriever: Retriever,
+    run_id: UUID,
+    cfg: RetrievalConfig,
+    coverage: dict[str, Any],
+    reranker: "Reranker | None" = None,
+) -> dict[str, Any]:
+    """Rank candidates for the run's idea with the decomposer's queries, and store the step."""
+    decomposed = DecomposerOutput.model_validate(_last_step(db, run_id, "decompose")["output"])
+    run = db.get_run(run_id)
+    idea_text = (run.get("input") or {}).get("idea_text") or decomposed.facets.method
+    ranked = rank_candidates(retriever, reranker, idea_text, [q.text for q in decomposed.queries], cfg)
+    detail = {"strategy": cfg.strategy, **ranked, "coverage": coverage}
     db.add_step(run_id, "retrieve", "done", detail)
     return detail
 

@@ -52,6 +52,14 @@ class Settings(BaseSettings):
     # Which chunking strategy the novelty branch searches (decide from E1 results).
     novelty_strategy: str = Field(default="structured", alias="NOVELTY_STRATEGY")
     novelty_top_papers: int = Field(default=6, alias="NOVELTY_TOP_PAPERS")
+    # Fused candidates re-ordered by the reranker before the top papers go to the judge.
+    novelty_pool_papers: int = Field(default=30, alias="NOVELTY_POOL_PAPERS")
+    novelty_rerank: bool = Field(default=True, alias="NOVELTY_RERANK")
+    # Also search with the idea text itself, next to the decomposer's queries.
+    novelty_idea_query: bool = Field(default=False, alias="NOVELTY_IDEA_QUERY")
+    # Text Embeddings Inference server running the cross-encoder; empty disables reranking.
+    reranker_url: str = Field(default="", alias="RERANKER_URL")
+    rerank_timeout_s: float = Field(default=120.0, alias="RERANK_TIMEOUT_S")
 
     @property
     def manifest_path(self) -> Path:

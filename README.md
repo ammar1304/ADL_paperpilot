@@ -160,6 +160,8 @@ The result holds:
 - `unverified`: anything the verifier rejected, with the reason.
 - `unspecified_facets`, `coverage` (what was searched, including how many papers have full text) and the prompt versions used. Every step, including the exact LLM outputs, is in `GET /runs/<run_id>/steps`.
 
+Candidates are ranked in two stages: vector search with every query, fused into a pool of 30 papers, then a cross-encoder reranker (`reranker` service, `BAAI/bge-reranker-base`) re-orders the pool against the idea text. The retrieve step records `ranking_method` (`reranked`, or `fused` with the reason in `ranking_note`) and each candidate's fused rank and rerank score. `POST /novelty/rank` ranks without a run or an LLM, for experiments (E8).
+
 Prompts: [prompts/README.md](prompts/README.md).
 
 ## Working on workflows

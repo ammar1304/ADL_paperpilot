@@ -243,6 +243,37 @@ Branch `feat/prompt-ab-eval`.
 
 Exit criteria met: real LLMs end to end, a 531-paper library built on a team PC, a known-answer test passing, real failures logged (F-001 to F-005), and a measured prompt comparison. Open items carried forward: retrieval recall (part 2), Gemini fallback never exercised with a real key, the manifest PR, the E1 queries.
 
+## Milestone 2, part 2a: reranker (2026-10-15)
+
+Branch `feat/m2-reranker`. Driven by E7 run 1: retrieval, not the judge, is the bottleneck (25 of 57 expected papers reached the judge).
+
+### Built
+
+- **`reranker` service:** TEI with `BAAI/bge-reranker-base`; pp-tools client with retries; reported in `/health` (not required).
+- **Two-stage ranking (D28):** 50 chunks per query, a fused pool of 30 papers, cross-encoder re-ordering against the idea text, evidence chosen by reranker score. Falls back to the fused order with a recorded reason if the reranker fails. Switches: `NOVELTY_RERANK`, `NOVELTY_POOL_PAPERS`, `NOVELTY_IDEA_QUERY`.
+- **`POST /novelty/rank`:** stateless ranking for experiments.
+- **E8, `scripts/retrieval_ab.py`:** replays the 25 query sets stored in E7 run 1 under four settings, no LLM calls.
+- n8n: the retrieve call may take up to 3 minutes (CPU reranking).
+
+### Verified
+
+Sandbox with stub models (a word-overlap stand-in for the cross-encoder):
+
+| What | Result |
+| --- | --- |
+| Tests | 111 passed |
+| Reranker re-orders the pool and picks the most relevant passage as evidence | Test passes |
+| Reranker failure or absence keeps the fused order, with the reason | Tests pass |
+| Scores come back in input order although TEI sorts them | Test passes |
+| Novelty run through real n8n 2.42.6 | `ranking_method: reranked`, 7 of 7 smoke steps |
+| E8 script end to end | 25 query sets x 4 settings; stored-run baseline 25/57 read from E7 run 1 |
+
+### Not verified yet: needs the team PC
+
+- [ ] TEI loads `BAAI/bge-reranker-base` on the CPU image; RAM with both models
+- [ ] Time per reranked ranking on the team PC's CPU
+- [ ] `python scripts/retrieval_ab.py`: does reranking raise the 25/57 that reached the judge?
+
 ## Next: milestone 2, part 2
 
 - Agentic search loop with Semantic Scholar (D20): the LLM judges facet coverage and decides to search again.
