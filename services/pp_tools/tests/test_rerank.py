@@ -65,7 +65,7 @@ def test_fused_order_without_reranker():
 
 
 def test_reranker_reorders_pool_and_picks_evidence(stub_url):
-    out = rank_candidates(FakeRetriever(), Reranker(stub_url), IDEA, ["q1", "q2"], RetrievalConfig(top_papers=2, pool_papers=6))
+    out = rank_candidates(FakeRetriever(), Reranker(stub_url), IDEA, ["q1", "q2"], RetrievalConfig(top_papers=2, pool_papers=6, order="rerank"))
     assert out["ranking_method"] == "reranked" and out["ranking_note"] is None
     ranked = [c["paper_id"] for c in out["candidates"]]
     assert ranked == ["arxiv:B", "arxiv:A"]  # the paper that does the idea now comes first
@@ -99,7 +99,7 @@ def test_idea_text_as_an_extra_query():
 def test_abstract_scoring_rescues_a_paper_whose_best_chunks_are_off_topic(stub_url):
     """E8 run 1: IRCoT's best vector matches were results sections, so the reranker sank it."""
     abstracts = {"arxiv:C": "we train a small classifier to decide when retrieval is needed for each question"}
-    cfg = RetrievalConfig(top_papers=3, pool_papers=6, rerank_chunks_per_paper=1)
+    cfg = RetrievalConfig(top_papers=3, pool_papers=6, rerank_chunks_per_paper=1, order="rerank")
     without = rank_candidates(FakeRetriever(abstracts), Reranker(stub_url), IDEA, ["q1"], cfg)
     assert [c["paper_id"] for c in without["candidates"]][0] != "arxiv:C"
 

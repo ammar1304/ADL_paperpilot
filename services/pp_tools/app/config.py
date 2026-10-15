@@ -59,7 +59,7 @@ class Settings(BaseSettings):
     novelty_idea_query: bool = Field(default=True, alias="NOVELTY_IDEA_QUERY")
     novelty_rerank_abstract: bool = Field(default=False, alias="NOVELTY_RERANK_ABSTRACT")
     # "rerank" or "hybrid" (D28): how the final order combines vector search and reranker.
-    novelty_order: str = Field(default="rerank", alias="NOVELTY_ORDER")
+    novelty_order: str = Field(default="hybrid", alias="NOVELTY_ORDER")
     # Text Embeddings Inference server running the cross-encoder; empty disables reranking.
     reranker_url: str = Field(default="", alias="RERANKER_URL")
     rerank_timeout_s: float = Field(default=120.0, alias="RERANK_TIMEOUT_S")

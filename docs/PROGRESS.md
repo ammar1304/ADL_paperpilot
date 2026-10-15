@@ -287,8 +287,8 @@ Branch `feat/m2-rerank-tuning`.
 
 ### Not verified yet: needs the team PC
 
-- [ ] E8 run 2: do abstract scoring or the hybrid order recover iterative rewriting without losing adaptive retrieval?
-- [ ] Reranker RAM with 2048 batch tokens
+- [x] E8 run 2: the hybrid order recovers iterative rewriting (4/12) and keeps adaptive retrieval (18/30): 37 of 57 expected papers reach the judge, from 25 before the reranker. Abstract scoring made it worse. Hybrid is now the default (D28).
+- [x] Reranker RAM with 2048 batch tokens: 3.5 GB
 
 ## Next: milestone 2, part 2
 
