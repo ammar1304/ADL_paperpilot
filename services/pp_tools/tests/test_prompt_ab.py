@@ -34,21 +34,32 @@ def test_query_similarity_flags_paraphrases():
 
 
 @pytest.mark.parametrize(
-    "text, scope, overclaim, unspecified",
+    "text, scope, overclaim, mentions, coverage_claim",
     [
         # F-002 and F-003, verbatim from run e36edefe (v1)
         ("Consequently, the task of deciding retrieval necessity per question and the method of training a small "
-         "predictor remain largely uncovered.", False, True, False),
+         "predictor remain largely uncovered.", False, True, False, False),
         ("However, none of the examined papers provide details on the specific datasets or concrete results for this "
-         "prediction problem, leaving the data and result facets largely uncovered.", False, True, True),
-        # v2, run 6d4001f3
+         "prediction problem, leaving the data and result facets largely uncovered.", False, True, True, True),
+        # E7 run 1, baseline: coverage claim through "those facets"
+        ("However, the idea's data and result aspects are not addressed in the presented passages. The remaining "
+         "papers only address the general RAG task, leaving those facets uncovered.", False, True, True, True),
+        # v2, run 6d4001f3: clean
         ("Among the 531 papers searched, arxiv:2604.07985 overlaps with the idea on both the task and the method.",
-         True, False, False),
+         True, False, False, False),
+        # E7 run 1, judge-v2: a neutral mention, not a coverage claim
+        ("Among the 531 papers searched, C1 overlaps on task and method. No passages provide information on data or "
+         "results for any paper.", True, False, True, False),
     ],
 )
-def test_summary_checks_catch_the_logged_failures(text, scope, overclaim, unspecified):
+def test_summary_checks_catch_the_logged_failures(text, scope, overclaim, mentions, coverage_claim):
     got = ab.summary_checks(text, ["data", "result"])
-    assert got == {"llm_states_scope": scope, "llm_overclaims": overclaim, "llm_discusses_unspecified": unspecified}
+    assert got == {
+        "llm_states_scope": scope,
+        "llm_overclaims": overclaim,
+        "llm_discusses_unspecified": mentions,
+        "llm_coverage_claim_unspecified": coverage_claim,
+    }
 
 
 def test_score_and_label_agreement():

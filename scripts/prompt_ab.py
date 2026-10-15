@@ -59,6 +59,10 @@ UNSPECIFIED_RE = {
     "task": re.compile(r"\btask\b", re.I),
     "method": re.compile(r"\bmethod\b", re.I),
 }
+# A coverage claim, as opposed to a neutral "unknown" or "no passage says".
+COVERAGE_RE = re.compile(
+    r"\b(uncovered|not (?:been )?covered|less covered|least covered|not addressed|largely unspecified|gap)\b", re.I
+)
 RATE_LIMIT_RE = re.compile(r"too many requests|rate.?limit|429|tokens per minute", re.I)
 
 
@@ -89,12 +93,25 @@ def query_similarity(queries: list[str]) -> float | None:
 
 
 def summary_checks(text: str | None, unspecified: list[str]) -> dict[str, bool | None]:
+    """F-002 (scope), F-003 (coverage claims), and mentions of facets the idea left unspecified.
+
+    llm_discusses_unspecified counts any mention ("no passage gives data or results" included);
+    llm_coverage_claim_unspecified counts only sentences that call such a facet covered or
+    uncovered, which is the actual F-003 failure.
+    """
     if not text:
-        return {"llm_states_scope": None, "llm_overclaims": None, "llm_discusses_unspecified": None}
+        return {"llm_states_scope": None, "llm_overclaims": None, "llm_discusses_unspecified": None,
+                "llm_coverage_claim_unspecified": None}
+    regexes = [UNSPECIFIED_RE[f] for f in unspecified if f in UNSPECIFIED_RE]
+    sentences = re.split(r"(?<=[.!?])\s+", text)
     return {
         "llm_states_scope": bool(SCOPE_RE.search(text)),
         "llm_overclaims": bool(OVERCLAIM_RE.search(text)),
-        "llm_discusses_unspecified": any(UNSPECIFIED_RE[f].search(text) for f in unspecified if f in UNSPECIFIED_RE),
+        "llm_discusses_unspecified": any(r.search(text) for r in regexes),
+        "llm_coverage_claim_unspecified": any(
+            COVERAGE_RE.search(s_) and (any(r.search(s_) for r in regexes) or re.search(r"\b(those|these) facets\b", s_, re.I))
+            for s_ in sentences
+        ),
     }
 
 
@@ -147,8 +164,8 @@ def _mean(vals: list[float]) -> str:
 
 def summarize(rows: list[dict], agreements: dict[tuple[str, str], float | None], configs: list[str]) -> str:
     lines = [
-        "| Config | Runs ok | Expected papers in candidates | Expected in closest work | Query similarity | False overlap | LLM states scope | LLM overclaims | LLM discusses unspecified facets | Label agreement across repeats | Judge attempts |",
-        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+        "| Config | Runs ok | Expected papers in candidates | Expected in closest work | Query similarity | False overlap | LLM states scope | LLM overclaims | LLM calls unspecified facets (un)covered | LLM mentions unspecified facets | Label agreement across repeats | Judge attempts |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
     for name in configs:
         rs = [r for r in rows if r["config"] == name]
@@ -160,12 +177,23 @@ def summarize(rows: list[dict], agreements: dict[tuple[str, str], float | None],
         lines.append(
             f"| {name} | {len(ok)}/{len(rs)} | {found_c}/{exp} | {found_k}/{exp} | {_mean([r['query_similarity'] for r in ok])} "
             f"| {_rate(ok, 'false_overlap')} | {_rate(ok, 'llm_states_scope')} | {_rate(ok, 'llm_overclaims')} "
-            f"| {_rate(ok, 'llm_discusses_unspecified')} | {_mean(agree)} | {_mean([r['judge_attempts'] for r in ok])} |"
+            f"| {_rate(ok, 'llm_coverage_claim_unspecified')} | {_rate(ok, 'llm_discusses_unspecified')} "
+            f"| {_mean(agree)} | {_mean([r['judge_attempts'] for r in ok])} |"
         )
+    ideas = list(dict.fromkeys(r["idea"] for r in rows))
+    lines += ["", "Expected papers among the judge's candidates, per idea (found / expected, summed over repeats):", "",
+              "| Idea | " + " | ".join(configs) + " |", "| --- |" + " --- |" * len(configs)]
+    for idea in ideas:
+        cells = []
+        for name in configs:
+            rs = [r for r in rows if r["config"] == name and r["idea"] == idea and r["ok"]]
+            cells.append(f"{sum(r['expected_in_candidates'] for r in rs)}/{sum(r['expected'] for r in rs)}")
+        lines.append(f"| {idea} | " + " | ".join(cells) + " |")
     lines += [
         "",
         "Higher is better for: expected papers found, LLM states scope, label agreement.",
-        "Lower is better for: query similarity (1.0 = paraphrases), false overlap, overclaims, discussing unspecified facets, judge attempts.",
+        "Lower is better for: query similarity (1.0 = paraphrases), false overlap, overclaims, coverage claims and mentions of unspecified facets, judge attempts.",
+        "A coverage claim (\"data and results remain uncovered\") is the F-003 failure; a mention (\"no passage gives data or results\") is a milder rule breach.",
         "Counts are over successful runs; the regular expressions are in scripts/prompt_ab.py.",
     ]
     return "\n".join(lines)
@@ -195,6 +223,41 @@ def run_once(webhook: str, pp: str, idea: dict, wait_on_limit: float) -> tuple[d
     return None, {}, "unreachable"
 
 
+def write_outputs(out: Path, rows: list[dict], results: dict, configs: list[str], meta: dict) -> str:
+    fields = sorted({k for r in rows for k in r}, key=lambda k: (k not in ("config", "idea", "repeat", "ok"), k))
+    with (out / "runs.csv").open("w", newline="", encoding="utf-8") as f:
+        writer = csv.DictWriter(f, fieldnames=fields)
+        writer.writeheader()
+        writer.writerows(rows)
+    agreements = {key: label_agreement(rs) for key, rs in results.items()}
+    table = summarize(rows, agreements, configs)
+    (out / "summary.md").write_text(f"# Prompt A/B\n\n```json\n{json.dumps(meta, indent=2)}\n```\n\n{table}\n", encoding="utf-8")
+    return table
+
+
+def rescore(out: Path, ideas_file: Path) -> int:
+    """Apply the current scoring rules to stored runs (no LLM calls)."""
+    ideas = {i["id"]: i for i in json.loads(ideas_file.read_text(encoding="utf-8"))}
+    rows, results, configs = [], {}, []
+    for line in (out / "runs.jsonl").read_text(encoding="utf-8-sig").splitlines():
+        rec = json.loads(line)
+        row = {k: rec["row"][k] for k in ("config", "idea", "repeat", "ok", "error", "seconds", "run_id") if k in rec["row"]}
+        if row["config"] not in configs:
+            configs.append(row["config"])
+        result, steps = rec.get("result"), rec.get("steps") or {}
+        if result is not None:
+            retrieved = steps.get("retrieve", {})
+            row |= score(ideas[row["idea"]], result, [c["paper_id"] for c in retrieved.get("candidates", [])], retrieved.get("queries", []))
+            results.setdefault((row["config"], row["idea"]), []).append(result)
+        rows.append(row)
+    meta_text = (out / "summary.md").read_text(encoding="utf-8") if (out / "summary.md").exists() else ""
+    m = re.search(r"```json\n(.*?)\n```", meta_text, re.S)
+    meta = json.loads(m.group(1)) if m else {}
+    meta["rescored_at"] = datetime.now(timezone.utc).isoformat(timespec="seconds")
+    print(write_outputs(out, rows, results, configs, meta))
+    return 0
+
+
 def main() -> int:
     env = _dotenv()
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -207,7 +270,10 @@ def main() -> int:
     parser.add_argument("--n8n-url", default=f"http://localhost:{env.get('N8N_HOST_PORT', '5678')}")
     parser.add_argument("--pp-tools-url", default=f"http://localhost:{env.get('PP_TOOLS_HOST_PORT', '8000')}")
     parser.add_argument("--label", default="prompt-ab")
+    parser.add_argument("--rescore", type=Path, help="recompute summary.md and runs.csv from a results folder's runs.jsonl, without running")
     args = parser.parse_args()
+    if args.rescore:
+        return rescore(args.rescore, args.ideas_file)
 
     ideas = json.loads(args.ideas_file.read_text(encoding="utf-8"))
     if args.ideas:
@@ -257,15 +323,8 @@ def main() -> int:
         ACTIVE.write_text(original, encoding="utf-8")
         print(f"restored {ACTIVE.relative_to(REPO)}")
 
-    fields = sorted({k for r in rows for k in r}, key=lambda k: (k not in ("config", "idea", "repeat", "ok"), k))
-    with (out / "runs.csv").open("w", newline="", encoding="utf-8") as f:
-        writer = csv.DictWriter(f, fieldnames=fields)
-        writer.writeheader()
-        writer.writerows(rows)
-    agreements = {key: label_agreement(rs) for key, rs in results.items()}
-    table = summarize(rows, agreements, [name for name, _ in configs])
     meta = {"ideas": [i["id"] for i in ideas], "configs": dict(configs), "repeats": args.repeats, "pause_s": args.pause}
-    (out / "summary.md").write_text(f"# Prompt A/B\n\n```json\n{json.dumps(meta, indent=2)}\n```\n\n{table}\n", encoding="utf-8")
+    table = write_outputs(out, rows, results, [name for name, _ in configs], meta)
     print("\n" + table)
     print(f"\nWrote {out.relative_to(REPO)}/ (summary.md, runs.csv, runs.jsonl)")
     return 0 if all(r["ok"] for r in rows) else 1
