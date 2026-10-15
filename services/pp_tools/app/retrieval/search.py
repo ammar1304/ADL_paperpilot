@@ -16,6 +16,9 @@ class Retriever:
         vector = self.embedder.embed([query])[0]
         return self.store.search(strategy, vector, k, filters)
 
+    def by_ids(self, chunk_ids: list[str], strategy: str) -> list[Hit]:
+        return self.store.get(strategy, chunk_ids)
+
     def papers(
         self, query: str, strategy: str, k: int, pool: int | None = None, filters: dict[str, Any] | None = None
     ) -> list[Hit]:

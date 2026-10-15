@@ -78,17 +78,18 @@ Output in `eval/results/<timestamp>-prompt-ab/`: `summary.md` (the table for the
 
 ## E8: retrieval A/B
 
-Replays the decomposer queries stored in an E7 run through `POST /novelty/rank` under four ranking settings, with no LLM call, so every setting ranks exactly the same queries:
+Replays the decomposer queries stored in an E7 run through `POST /novelty/rank`, with no LLM call, so every setting ranks exactly the same queries. pp-tools is called once per query set and pool setting; the orders are derived from the returned pool (each paper carries its fused rank and rerank rank):
 
-| Setting | What it does |
-| --- | --- |
-| `fused` | Vector search per query (50 chunks), reciprocal rank fusion |
-| `fused+idea` | The same, plus the idea text itself as one more query |
-| `reranked` | The fused pool of 30 papers re-ordered by the cross-encoder (D28) |
-| `reranked+idea` | Both |
+| Method | Pool | Order |
+| --- | --- | --- |
+| `fused+idea` | decomposer queries plus the idea text | vector search and reciprocal rank fusion |
+| `reranked+idea` | same | cross-encoder score (the default) |
+| `hybrid+idea` | same | reciprocal rank fusion of fused rank and rerank rank |
+| `reranked+idea+abs` | same, and the reranker also scores each paper's abstract | cross-encoder score |
+| `hybrid+idea+abs` | same | hybrid |
 
 ```bash
-python scripts/retrieval_ab.py        # uses the latest eval/results/*-prompt-ab/runs.jsonl, about 10 minutes
+python scripts/retrieval_ab.py        # uses the latest eval/results/*-prompt-ab/runs.jsonl, about 20 minutes
 ```
 
-It reports, per setting and per idea, how many expected papers reach the judge (top 6), how many are in the pool at all (top 30, the ceiling for any reranking), the MRR, and the time per ranking. The first row repeats what the judge actually saw in the stored runs. Output: `eval/results/<timestamp>-retrieval-ab/`.
+It reports, per method and per idea, how many expected papers reach the judge (top 6), how many are in the pool (top 30, the ceiling for any reordering), the MRR and the time per ranking. The first row repeats what the judge saw in the stored runs. Output: `eval/results/<timestamp>-retrieval-ab/` with `summary.md`, `rows.csv` and `pools.jsonl` (every returned pool). Run 1's results are in `docs/DECISIONS.md` (D28).

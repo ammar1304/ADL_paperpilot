@@ -31,10 +31,23 @@ def test_ranks_and_aggregate():
     pool = [{"paper_id": f"arxiv:{i}"} for i in range(1, 31)]
     ranks = ab.expected_ranks(pool, ["arxiv:2", "arxiv:10", "arxiv:99"])
     assert ranks == {"arxiv:2": 2, "arxiv:10": 10, "arxiv:99": None}
-    rows = [{"idea": "x", "method": "reranked", "ranks": ranks, "seconds": 4.0, "ranking_method": "reranked"},
-            {"idea": "x", "method": "fused", "ranks": ranks, "seconds": 1.0, "ranking_method": "fused"}]
-    a = ab.aggregate(rows, "reranked")
+    rows = [{"idea": "x", "method": "reranked+idea", "ranks": ranks, "seconds": 4.0, "ranking_method": "reranked"},
+            {"idea": "x", "method": "fused+idea", "ranks": ranks, "seconds": 1.0, "ranking_method": "reranked"}]
+    a = ab.aggregate(rows, "reranked+idea")
     assert (a["at_6"], a["in_pool"], a["expected"], a["not_reranked"]) == (1, 2, 3, 0)
     assert a["mrr"] == round((1 / 2 + 1 / 10) / 3, 3)
     table = ab.summarize(rows, ["x"])
-    assert "| reranked | 1/3 | 2/3 |" in table and "| x | 1/3 | - | 1/3 | - |" in table
+    assert "| reranked+idea | 1/3 | 2/3 |" in table and "| x | 1/3 | 1/3 | - | - | - |" in table
+
+
+def test_orders_derived_from_one_pool():
+    # fused order A, B, C; the reranker prefers C, then A, then B
+    pool = [
+        {"paper_id": "A", "fused_rank": 1, "rerank_rank": 2},
+        {"paper_id": "B", "fused_rank": 2, "rerank_rank": 3},
+        {"paper_id": "C", "fused_rank": 3, "rerank_rank": 1},
+    ]
+    ids = lambda order: [p["paper_id"] for p in ab.order_pool(pool, order)]  # noqa: E731
+    assert ids("fused") == ["A", "B", "C"]
+    assert ids("reranked") == ["C", "A", "B"]
+    assert ids("hybrid") == ["A", "C", "B"]  # 1/61+1/62 > 1/63+1/61 > 1/62+1/63

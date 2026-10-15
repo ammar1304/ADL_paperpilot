@@ -135,6 +135,13 @@ class RetrievalConfig:
     rerank_chunks_per_paper: int = 2  # a paper's best chunks scored by the reranker; its score is the max
     rerank_chars: int = 1200  # text per scored chunk (speed on CPU)
     idea_as_query: bool = False  # also search with the idea text itself, next to the decomposer's queries
+    # Score each pool paper's abstract as well as its best-matching chunk. A paper's best
+    # vector matches can be results or related-work passages that do not say what the
+    # paper does (IRCoT dropped from rank 2-6 to 7-10 when reranked on those, E8 run 1).
+    rerank_abstract: bool = False
+    # Final order: "rerank" (cross-encoder score) or "hybrid" (reciprocal rank fusion of
+    # the fused rank and the rerank rank, so a paper both stages like stays high).
+    order: str = "rerank"
 
 
 def rank_candidates(
@@ -177,15 +184,38 @@ def rank_candidates(
     note = None
     rerank_chunk: dict[str, float] = {}
     rerank_paper: dict[str, float] = {}
+    rerank_rank: dict[str, int] = {}
     if cfg.rerank and reranker is not None and pool:
-        scored = [c for pid in pool for c in own[pid][: cfg.rerank_chunks_per_paper]]
+        scored = []
+        abstracts = _abstracts(retriever, pool, cfg.strategy) if cfg.rerank_abstract else {}
+        for pid in pool:
+            picked = []
+            if pid in abstracts:
+                picked.append(abstracts[pid])
+                if all(c.chunk_id != abstracts[pid].chunk_id for c in own[pid]):
+                    own[pid].append(abstracts[pid])  # also available as evidence
+            for c in own[pid]:
+                if len(picked) >= cfg.rerank_chunks_per_paper:
+                    break
+                if all(c.chunk_id != x.chunk_id for x in picked):
+                    picked.append(c)
+            scored.extend(picked)
         try:
             values = reranker.scores(idea_text, [c.text[: cfg.rerank_chars] for c in scored])
             rerank_chunk = {c.chunk_id: v for c, v in zip(scored, values, strict=True)}
             for c in scored:
                 rerank_paper[c.paper_id] = max(rerank_paper.get(c.paper_id, 0.0), rerank_chunk[c.chunk_id])
-            pool = sorted(pool, key=lambda p: (-rerank_paper.get(p, 0.0), fused.index(p)))
-            method = "reranked"
+            by_rerank = sorted(pool, key=lambda p: (-rerank_paper.get(p, 0.0), fused.index(p)))
+            rerank_rank = {p: i + 1 for i, p in enumerate(by_rerank)}
+            if cfg.order == "hybrid":
+                pool = sorted(
+                    pool,
+                    key=lambda p: (-(1 / (cfg.rrf_k + fused.index(p) + 1) + 1 / (cfg.rrf_k + rerank_rank[p])), rerank_rank[p]),
+                )
+                method = "hybrid"
+            else:
+                pool = by_rerank
+                method = "reranked"
         except RerankerError as exc:
             note = f"reranker failed, fused order kept: {str(exc)[:200]}"
     elif cfg.rerank and reranker is None:
@@ -199,6 +229,7 @@ def rank_candidates(
             "fused_rank": fused.index(pid) + 1,
             "fused_score": round(paper_score[pid], 6),
             "rerank_score": round(rerank_paper[pid], 6) if pid in rerank_paper else None,
+            "rerank_rank": rerank_rank.get(pid),
             "matched_queries": sorted(paper_queries[pid]),
         }
         for pid in pool
@@ -222,11 +253,23 @@ def rank_candidates(
     return {
         "queries": list(queries),
         "idea_as_query": cfg.idea_as_query,
+        "rerank_abstract": cfg.rerank_abstract,
         "ranking_method": method,
         "ranking_note": note,
         "pool": ranking,
         "candidates": candidates,
     }
+
+
+def _abstracts(retriever: Retriever, papers: list[str], strategy: str) -> dict[str, Any]:
+    """Each paper's abstract chunk, looked up by id (structured collection only)."""
+    if strategy != "structured":
+        return {}
+    hits = retriever.by_ids([f"{p}#abs" for p in papers] + [f"{p}#abs/p1" for p in papers], strategy)
+    out: dict[str, Any] = {}
+    for h in hits:
+        out.setdefault(h.paper_id, h)
+    return out
 
 
 def retrieve(

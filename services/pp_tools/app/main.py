@@ -389,6 +389,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             "pool_papers": settings.novelty_pool_papers,
             "rerank": settings.novelty_rerank,
             "idea_as_query": settings.novelty_idea_query,
+            "rerank_abstract": settings.novelty_rerank_abstract,
+            "order": settings.novelty_order,
         }
         values.update({k: v for k, v in overrides.items() if v is not None})
         return RetrievalConfig(**values)
@@ -403,12 +405,19 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         strategy = body.strategy or settings.novelty_strategy
         if not await run_in_threadpool(store.client.collection_exists, collection_name(strategy)):
             raise HTTPException(status_code=409, detail=f"no '{strategy}' collection yet; run a corpus build first")
-        cfg = _retrieval_config(strategy, rerank=body.rerank, idea_as_query=body.idea_as_query, pool_papers=body.pool_papers)
+        cfg = _retrieval_config(
+            strategy,
+            rerank=body.rerank,
+            idea_as_query=body.idea_as_query,
+            pool_papers=body.pool_papers,
+            rerank_abstract=body.rerank_abstract,
+            order=body.order,
+        )
         try:
             ranked = await run_in_threadpool(rank_candidates, retriever, reranker, body.idea_text, body.queries, cfg)
         except EmbedderError as exc:
             raise HTTPException(status_code=503, detail=f"embedder unavailable: {_short(exc)}") from exc
-        return {"strategy": strategy, "config": {k: getattr(cfg, k) for k in ("rerank", "idea_as_query", "pool_papers", "top_papers", "per_query_k")}, **ranked}
+        return {"strategy": strategy, "config": {k: getattr(cfg, k) for k in ("rerank", "idea_as_query", "rerank_abstract", "order", "pool_papers", "top_papers", "per_query_k")}, **ranked}
 
     @app.post("/novelty/{run_id}/judge-prompt", response_model=JudgePromptOut)
     async def novelty_judge_prompt(run_id: UUID) -> Any:

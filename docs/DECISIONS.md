@@ -225,3 +225,18 @@ The container registries were not reachable from the development sandbox, so the
 - **Why a cross-encoder:** the embedding model encodes the idea and a passage separately, so two passages sharing most words get similar scores even when one "always retrieves" and the other "decides whether to retrieve". A cross-encoder reads both together. It costs one model call per pair, which is why it only re-orders a small pool.
 - **Why bge-reranker-base and not bge-reranker-v2-m3 (the plan in D15):** on the team PC's CPU, BGE-M3 (an XLM-RoBERTa large model) embedded about one chunk per second; v2-m3 is the same size, so 60 pairs would add about a minute per run. The base model is about three times smaller (about 1 GB of RAM) and is listed by TEI as a supported reranker; v2-m3 is not listed. If E7 shows the base model is not good enough, v2-m3 is a one-line change (`RERANKER_MODEL`).
 - **How it is measured:** `scripts/retrieval_ab.py` replays the decomposer queries stored from E7 run 1 through `POST /novelty/rank` under four settings (fused, fused plus the idea as a query, reranked, both). No LLM is called, so every setting sees exactly the same queries.
+
+**E8 run 1 (2026-10-15, team PC, 25 stored query sets, 57 expected papers):**
+
+| Setting | Reaching the judge (top 6) | In the pool (top 30) | MRR | Seconds per ranking |
+| --- | --- | --- | --- | --- |
+| as run in E7 (20 chunks per query, no reranker) | 25 | - | - | - |
+| fused | 24 | 45 | 0.29 | 2.6 |
+| fused + idea as a query | 26 | 50 | 0.33 | 2.8 |
+| reranked | 30 | 45 | 0.40 | 18.7 |
+| reranked + idea as a query | **34** | **50** | **0.41** | 18.9 |
+
+- Reranking with the idea as an extra query raised expected papers reaching the judge from 25 to 34 of 57. Adding the idea as a query raised the pool ceiling from 45 to 50. Both are now defaults (`NOVELTY_IDEA_QUERY=true`).
+- Per idea, adaptive retrieval went from 7 to 18 of 30, Self-RAG and HyDE reached 3/3 and 6/6, but **iterative rewriting fell from 4 to 1 of 12**: IRCoT moved from ranks 2-6 to 7-10 and FLARE to 22-30. Their best vector matches were results and model sections, which do not say what the papers do; the reranker scored those passages, not the papers' contributions.
+- RAM: the reranker used 3.8 GB with `MAX_BATCH_TOKENS=4096`, the embedder 3.4 GB, about 8 GB of the 9.6 GB available. The default is now 2048.
+- **Follow-up (E8 run 2):** two options, measured from the same pools: the reranker also scores each paper's abstract (`NOVELTY_RERANK_ABSTRACT`), and a hybrid order, reciprocal rank fusion of the fused rank and the rerank rank (`NOVELTY_ORDER=hybrid`), so a paper both stages rank well stays high.

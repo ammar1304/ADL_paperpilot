@@ -84,7 +84,7 @@ services:
     environment:
       MODEL_ID: ${RERANKER_MODEL:-BAAI/bge-reranker-base}
       MAX_CLIENT_BATCH_SIZE: 64
-      MAX_BATCH_TOKENS: ${RERANKER_MAX_BATCH_TOKENS:-4096}
+      MAX_BATCH_TOKENS: ${RERANKER_MAX_BATCH_TOKENS:-2048}
     command: ["--json-output"]
     volumes:
       - reranker_data:/data
@@ -108,7 +108,9 @@ services:
       EMBEDDER_URL: http://embedder:80
       RERANKER_URL: ${RERANKER_URL-http://reranker:80}
       NOVELTY_RERANK: ${NOVELTY_RERANK:-true}
-      NOVELTY_IDEA_QUERY: ${NOVELTY_IDEA_QUERY:-false}
+      NOVELTY_IDEA_QUERY: ${NOVELTY_IDEA_QUERY:-true}
+      NOVELTY_RERANK_ABSTRACT: ${NOVELTY_RERANK_ABSTRACT:-false}
+      NOVELTY_ORDER: ${NOVELTY_ORDER:-rerank}
       NOVELTY_POOL_PAPERS: ${NOVELTY_POOL_PAPERS:-30}
       ARXIV_CONTACT_EMAIL: ${ARXIV_CONTACT_EMAIL:-}
       CHUNK_TOKENS: ${CHUNK_TOKENS:-512}

@@ -113,22 +113,16 @@ class Store:
             with_payload=True,
             query_filter=models.Filter(must=conditions) if conditions else None,
         )
-        hits = []
-        for p in result.points:
-            pl = p.payload or {}
-            hits.append(
-                Hit(
-                    chunk_id=pl.get("chunk_id", ""),
-                    paper_id=pl.get("paper_id", ""),
-                    score=float(p.score),
-                    chunk_type=pl.get("chunk_type", ""),
-                    section=pl.get("section"),
-                    title=pl.get("title", ""),
-                    year=int(pl.get("year") or 0),
-                    text=pl.get("text", ""),
-                )
-            )
-        return hits
+        return [_hit(p.payload or {}, float(p.score)) for p in result.points]
+
+    def get(self, strategy: str, chunk_ids: list[str]) -> list[Hit]:
+        """Chunks by id (point ids are derived from chunk ids); unknown ids are skipped."""
+        if not chunk_ids:
+            return []
+        points = self.client.retrieve(
+            collection_name(strategy), ids=[point_id(c, strategy) for c in chunk_ids], with_payload=True, with_vectors=False
+        )
+        return [_hit(p.payload or {}, 0.0) for p in points]
 
     def stats(self) -> dict[str, Any]:
         """Chunk and paper counts per strategy; papers are counted from payloads."""
@@ -162,3 +156,16 @@ class Store:
                 "chunk_types": types,
             }
         return out
+
+
+def _hit(pl: dict[str, Any], score: float) -> Hit:
+    return Hit(
+        chunk_id=pl.get("chunk_id", ""),
+        paper_id=pl.get("paper_id", ""),
+        score=score,
+        chunk_type=pl.get("chunk_type", ""),
+        section=pl.get("section"),
+        title=pl.get("title", ""),
+        year=int(pl.get("year") or 0),
+        text=pl.get("text", ""),
+    )
