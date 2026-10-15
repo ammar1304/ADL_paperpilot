@@ -199,3 +199,16 @@ class RetrieveRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     strategy: Strategy | None = None
+
+
+class RankRequest(BaseModel):
+    """Stateless ranking for retrieval experiments: no run, no LLM, nothing stored."""
+
+    model_config = ConfigDict(extra="forbid")
+
+    idea_text: str = Field(min_length=3, max_length=4000)
+    queries: list[str] = Field(min_length=1, max_length=8)
+    strategy: Strategy | None = None
+    rerank: bool | None = None
+    idea_as_query: bool | None = None
+    pool_papers: int | None = Field(default=None, ge=6, le=100)

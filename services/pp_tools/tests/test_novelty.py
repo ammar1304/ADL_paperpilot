@@ -268,6 +268,7 @@ def test_novelty_api_end_to_end(tmp_path, test_db_url, stub_url, db):
         CORPUS_DIR=tmp_path / "corpus",
         CACHE_DIR=tmp_path / "cache",
         PROMPTS_DIR=REPO / "prompts",
+        RERANKER_URL=stub_url,
         ARXIV_API_URL=f"{stub_url}/api/query",
         ARXIV_PDF_URL=f"{stub_url}/pdf",
         ARXIV_DELAY_S=0,
@@ -301,6 +302,14 @@ def test_novelty_api_end_to_end(tmp_path, test_db_url, stub_url, db):
         assert ok.status_code == 200
         ret = client.post(f"/novelty/{run_id}/retrieve", json={}).json()
         assert ret["coverage"]["papers_in_knowledge_base"] == 3
+        assert ret["ranking_method"] == "reranked" and ret["candidates"][0]["rerank_score"] is not None
+        assert client.get("/health").json()["checks"]["reranker"] == {"ok": True, "required": False}
+
+        ranked = client.post("/novelty/rank", json={"idea_text": IDEA, "queries": ["multi-hop query rewriting"], "rerank": False})
+        assert ranked.status_code == 200
+        body = ranked.json()
+        assert body["ranking_method"] == "fused" and body["config"]["rerank"] is False and len(body["pool"]) == 3
+        assert client.post("/novelty/rank", json={"idea_text": IDEA, "queries": []}).status_code == 422
         assert ret["coverage"]["papers_with_full_text"] == 1  # only 2101.00001 is full text here
         prompt = client.post(f"/novelty/{run_id}/judge-prompt").json()
         assert prompt["attempt"] == 1

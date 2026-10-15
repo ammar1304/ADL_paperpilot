@@ -213,3 +213,15 @@ The container registries were not reachable from the development sandbox, so the
 - **Decision:** before indexing, the build reads the vectors already in Qdrant for the same chunk ids and reuses those whose stored text is identical and whose `embedding_model` (from TEI's `/info`) matches. Only new or changed chunks are embedded. Points from earlier builds have no model recorded and are treated as BGE-M3, the only model used so far.
 - **Why:** adding 30 papers costs minutes, not an hour and a half. Reuse is exact (same text, same model), so results are identical to a full rebuild.
 - **Off switch:** `REUSE_VECTORS=false`.
+
+## D28. A cross-encoder reranker over a wider fused pool
+
+- **Context:** E7 run 1 (`prompts/failure_log.md`) showed that the judge places every expected paper it sees in closest work, but only 25 of 57 expected papers reached it (as run, over the 25 distinct query sets). For "adaptive retrieval", Self-RAG, SKR and Mallen et al. never did. Better decomposer queries (P1 v2) did not measurably help.
+- **Decision:**
+  - Each query retrieves 50 chunks instead of 20, and fusion keeps a pool of 30 papers.
+  - A cross-encoder, `BAAI/bge-reranker-base` on a second TEI container, scores the idea text against each pool paper's two best chunks (1,200 characters each). A paper's score is its best chunk's. The 6 best papers go to the judge, and their evidence is the chunks the reranker scored highest.
+  - If the reranker is down or fails, the fused order is kept and the step records why (`ranking_note`); a novelty run never fails because of it.
+  - `NOVELTY_RERANK`, `NOVELTY_POOL_PAPERS` and `NOVELTY_IDEA_QUERY` (also search with the idea text) are switches, so their effect can be measured.
+- **Why a cross-encoder:** the embedding model encodes the idea and a passage separately, so two passages sharing most words get similar scores even when one "always retrieves" and the other "decides whether to retrieve". A cross-encoder reads both together. It costs one model call per pair, which is why it only re-orders a small pool.
+- **Why bge-reranker-base and not bge-reranker-v2-m3 (the plan in D15):** on the team PC's CPU, BGE-M3 (an XLM-RoBERTa large model) embedded about one chunk per second; v2-m3 is the same size, so 60 pairs would add about a minute per run. The base model is about three times smaller (about 1 GB of RAM) and is listed by TEI as a supported reranker; v2-m3 is not listed. If E7 shows the base model is not good enough, v2-m3 is a one-line change (`RERANKER_MODEL`).
+- **How it is measured:** `scripts/retrieval_ab.py` replays the decomposer queries stored from E7 run 1 through `POST /novelty/rank` under four settings (fused, fused plus the idea as a query, reranked, both). No LLM is called, so every setting sees exactly the same queries.

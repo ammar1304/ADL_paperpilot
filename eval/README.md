@@ -10,6 +10,7 @@ Retrieval quality and answer quality are measured separately.
 | E4 gold claims | 3 | Audit judge accuracy on about 30 labelled claims | Not started |
 | E5 citation faithfulness | 3 | Faithful vs unfaithful citation pairs | Not started |
 | E6 verifier on/off | 3 | Invented citations and untraceable numbers per run | Not started |
+| E8 retrieval A/B | 2 | Same stored queries, four ranking settings (fused, plus idea query, reranked, both): expected papers reaching the judge, in the pool, MRR | Tooling ready (`scripts/retrieval_ab.py`); run on the team PC |
 | E7 prompt A/B | 2 | Per prompt version: expected papers found, query diversity, false overlap, LLM summary failures (F-002, F-003), label stability across repeats | Tooling ready (`scripts/prompt_ab.py`); run on the team PC |
 
 ## E1: chunking A vs B
@@ -74,3 +75,20 @@ python scripts/prompt_ab.py               # 6 ideas x 3 configurations x 2 repea
 The default configurations are `baseline` (P1 v1, P3 v1), `judge-v2` (P1 v1, P3 v2) and `full-v2` (P1 v2, P3 v2), so the effect of each prompt change is visible on its own. The script switches `prompts/active.json` between configurations and restores it at the end. Runs are 60 seconds apart because of Groq's free per-minute token limit; a rate-limited run is retried once.
 
 Output in `eval/results/<timestamp>-prompt-ab/`: `summary.md` (the table for the report), `runs.csv` (one row per run) and `runs.jsonl` (every result and step, for reading the actual LLM outputs). The scoring rules are unit-tested against the failures in `prompts/failure_log.md`.
+
+## E8: retrieval A/B
+
+Replays the decomposer queries stored in an E7 run through `POST /novelty/rank` under four ranking settings, with no LLM call, so every setting ranks exactly the same queries:
+
+| Setting | What it does |
+| --- | --- |
+| `fused` | Vector search per query (50 chunks), reciprocal rank fusion |
+| `fused+idea` | The same, plus the idea text itself as one more query |
+| `reranked` | The fused pool of 30 papers re-ordered by the cross-encoder (D28) |
+| `reranked+idea` | Both |
+
+```bash
+python scripts/retrieval_ab.py        # uses the latest eval/results/*-prompt-ab/runs.jsonl, about 10 minutes
+```
+
+It reports, per setting and per idea, how many expected papers reach the judge (top 6), how many are in the pool at all (top 30, the ceiling for any reranking), the MRR, and the time per ranking. The first row repeats what the judge actually saw in the stored runs. Output: `eval/results/<timestamp>-retrieval-ab/`.

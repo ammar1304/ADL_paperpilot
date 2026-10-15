@@ -4,6 +4,7 @@
 
 - /api/query       answers search_query and id_list like the arXiv Atom API
 - /pdf/<id>v<n>    returns a generated two-column paper PDF
+- /rerank          answers like TEI with a cross-encoder (word-overlap scores)
 - /embed, /health  answer like Text Embeddings Inference, with hashed
                    bag-of-words vectors (texts sharing words are similar)
 - /openai/v1/chat/completions
@@ -317,6 +318,8 @@ class Handler(BaseHTTPRequestHandler):
         if re.match(r"^/v1(beta)?/models/[^/]+:generateContent$", path):
             code, body = gemini_generate(payload)
             return self._send(code, json.dumps(body).encode(), "application/json")
+        if path == "/rerank":  # like TEI with a cross-encoder: best first, with the original index
+            return self._send(200, json.dumps(rerank(payload["query"], payload["texts"])).encode(), "application/json")
         if path != "/embed":
             return self._send(404, b"not found", "text/plain")
         inputs = payload["inputs"]
@@ -325,6 +328,23 @@ class Handler(BaseHTTPRequestHandler):
 
     def log_message(self, *args: object) -> None:
         pass
+
+
+def rerank(query: str, texts: list[str]) -> list[dict]:
+    """Stand-in cross-encoder: share of the query's words found in the text (0 to 1).
+
+    Unlike the hashed bag-of-words embedding, it ignores how long the text is,
+    so tests can tell reranked order from vector order. "RERANK_FAIL" in the
+    query makes it answer HTTP-500-like garbage to exercise the fallback.
+    """
+    if "RERANK_FAIL" in query:
+        return [{"bad": True}]
+    q = set(re.findall(r"[a-z0-9-]+", query.lower()))
+    out = []
+    for i, t in enumerate(texts):
+        words = set(re.findall(r"[a-z0-9-]+", t.lower()))
+        out.append({"index": i, "score": round(len(q & words) / max(1, len(q)), 6)})
+    return sorted(out, key=lambda x: -x["score"])
 
 
 def serve(port: int = 0) -> ThreadingHTTPServer:
