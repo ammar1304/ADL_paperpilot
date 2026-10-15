@@ -58,7 +58,7 @@ def test_semantic_scholar_client(s2):
 def test_planner_prompt_shows_state_and_budget(db, kb):  # noqa: F811
     run_id = start(db, kb)
     rendered = plan_prompt(db, LIB, run_id, max_rounds=2)
-    assert rendered["run"] is True and rendered["round"] == 1 and rendered["version"] == "v1"
+    assert rendered["run"] is True and rendered["round"] == 1 and rendered["version"] == "v2"
     assert "ROUND 1 of 2. Searches left after this one: 1." in rendered["user"]
     assert "source: local; relevance" in rendered["user"]  # candidates with where they came from
     assert "Decomposer queries (local library):" in rendered["user"]
@@ -94,7 +94,7 @@ def test_agent_searches_then_stops_and_the_judge_sees_web_papers(db, kb, s2):  #
     final = assemble(db, run_id)
     assert [r["decision"] for r in final["search_agent"]] == ["search", "stop"]
     assert final["coverage"]["web_queries"] and "Semantic Scholar" in final["summary"]
-    assert final["prompt_versions"]["P2-search-planner"] == "v1"
+    assert final["prompt_versions"]["P2-search-planner"] == "v2"
 
 
 def test_round_limit_repeated_queries_and_no_new_papers(db, kb, s2):  # noqa: F811
@@ -159,3 +159,24 @@ def test_agent_through_the_api(tmp_path, test_db_url, stub_url, db):  # noqa: F8
         assert out["continue"] is True and "results" not in out["queries"][1]  # raw results stay in the step
         steps = [s_["step_name"] for s_ in client.get(f"/runs/{run_id}/steps").json()]
         assert steps == ["decompose", "retrieve", "plan_prompt", "retrieve", "plan"]
+
+
+def test_agent_never_removes_candidates_and_admits_few_relevant_ones(db, kb, s2, stub_url):  # noqa: F811
+    """F-007: the first version re-ranked everything and lost Self-RAG and SKR on the team PC."""
+    from app.retrieval.reranker import Reranker
+
+    reranker = Reranker(stub_url)
+    run_id = new_run(db, IDEA)
+    save_facets(db, run_id, decompose(IDEA), "v2")
+    cfg = RetrievalConfig(top_papers=2, agent_extra_papers=1)
+    retrieve(db, kb, run_id, cfg, COVERAGE, reranker)
+    first = [c["paper_id"] for c in db.get_steps(run_id, "retrieve")[-1]["detail"]["candidates"]]
+
+    out = apply_plan(db, kb, reranker, s2, run_id, planner(plan_prompt(db, LIB, run_id, 2)), cfg, COVERAGE, 2)
+    latest = db.get_steps(run_id, "retrieve")[-1]["detail"]
+    now = [c["paper_id"] for c in latest["candidates"]]
+    assert now[: len(first)] == first  # every earlier candidate kept, in the same order
+    assert len(now) <= 2 + 1 and out["new_candidates"] == now[len(first):]
+    floor = latest["admission"]["floor_rerank_score"]
+    assert all(c["rerank_score"] >= floor for c in latest["candidates"][len(first):])
+    assert latest["admission"]["slots"] == 1

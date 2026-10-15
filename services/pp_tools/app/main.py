@@ -429,6 +429,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             "idea_as_query": settings.novelty_idea_query,
             "rerank_abstract": settings.novelty_rerank_abstract,
             "order": settings.novelty_order,
+            "agent_extra_papers": settings.novelty_agent_extra_papers,
         }
         values.update({k: v for k, v in overrides.items() if v is not None})
         return RetrievalConfig(**values)

@@ -15,7 +15,7 @@ n8n passes back.
 """
 
 from collections import defaultdict
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import Any, Literal
 from uuid import UUID
 
@@ -162,6 +162,8 @@ class RetrievalConfig:
     rerank_chunks_per_paper: int = 2  # a paper's best chunks scored by the reranker; its score is the max
     rerank_chars: int = 1200  # text per scored chunk (speed on CPU)
     idea_as_query: bool = False  # also search with the idea text itself, next to the decomposer's queries
+    # Papers the search agent may add to the judge's candidates over all its rounds (D29).
+    agent_extra_papers: int = 2
     # Score each pool paper's abstract as well as its best-matching chunk. A paper's best
     # vector matches can be results or related-work passages that do not say what the
     # paper does (IRCoT dropped from rank 2-6 to 7-10 when reranked on those, E8 run 1).
@@ -378,9 +380,10 @@ def plan_prompt(db: Database, library: PromptLibrary, run_id: UUID, max_rounds: 
     run = db.get_run(run_id) or {}
     idea = (run.get("input") or {}).get("idea_text") or decomposed.facets.method
     lines = []
-    for i, c in enumerate(retrieved.get("pool", retrieved["candidates"])[:PLAN_CANDIDATES_SHOWN], start=1):
-        ev = next((c2["evidence"] for c2 in retrieved["candidates"] if c2["paper_id"] == c["paper_id"]), [])
-        snippet = " ".join(ev[0]["text"].split())[:300] if ev else ""
+    # What the judge would see now: the planner decides whether that is enough.
+    for i, c in enumerate(retrieved["candidates"][:PLAN_CANDIDATES_SHOWN], start=1):
+        ev = sorted(c.get("evidence", []), key=lambda e: e.get("chunk_type") != "abstract")  # abstract first
+        snippet = " ".join(ev[0]["text"].split())[:500] if ev else ""
         score = f"{c['rerank_score']:.2f}" if c.get("rerank_score") is not None else "n/a"
         lines.append(f"{i}. {c['title']} ({c.get('year') or 'n.d.'}; source: {c.get('source', 'local')}; relevance {score})")
         if snippet:
@@ -467,22 +470,50 @@ def apply_plan(
         external = [[ExternalPaper.from_dict(d) for d in e["results"]] for e in web]
         run = db.get_run(run_id) or {}
         idea = (run.get("input") or {}).get("idea_text") or decomposed.facets.method
-        ranked = rank_candidates(retriever, reranker, idea, local_queries, cfg, external)
+        # Evidence for every pool paper, so a new paper can be added with its passages.
+        ranked = rank_candidates(retriever, reranker, idea, local_queries, replace(cfg, top_papers=cfg.pool_papers), external)
 
         old_pool = {c["paper_id"] for c in before.get("pool", before["candidates"])}
-        old_top = {c["paper_id"] for c in before["candidates"]}
         new_pool = [c["paper_id"] for c in ranked["pool"] if c["paper_id"] not in old_pool]
         for e in executed:
-            found = {r["paper_id"] for r in e.get("results", [])}
-            e["new_papers"] = len(found - old_pool) if e["where"] == "web" else None
+            if e["where"] == "web":
+                e["new_papers"] = len({r["paper_id"] for r in e.get("results", [])} - old_pool)
+            elif not e.get("skipped"):
+                qi = local_queries.index(e["text"])
+                e["new_papers"] = sum(1 for c in ranked["pool"] if qi in c["matched_queries"] and c["paper_id"] not in old_pool)
             if e.get("results"):
                 e["results_count"] = len(e["results"])
+
+        # D29 rule: searching more never loses what was already found. The judge keeps
+        # the previous candidates (same evidence) and gets at most cfg.agent_extra_papers
+        # new ones in total, each at least as relevant to the idea as the weakest paper
+        # already shown. (The first version re-ranked everything, and on the team PC the
+        # agent's queries pushed Self-RAG and SKR out of the judge's top 6: F-007.)
+        kept = list(before["candidates"])
+        kept_ids = {c["paper_id"] for c in kept}
+        slots = cfg.top_papers + cfg.agent_extra_papers - len(kept)
+        floor = min((c["rerank_score"] for c in kept if c.get("rerank_score") is not None), default=None)
+        fresh = [c for c in ranked["candidates"] if c["paper_id"] not in kept_ids]
+        if ranked["ranking_method"] != "fused" and floor is not None:
+            fresh = sorted(
+                (c for c in fresh if c.get("rerank_score") is not None and c["rerank_score"] >= floor),
+                key=lambda c: -c["rerank_score"],
+            )
+        added = fresh[: max(0, slots)]
         cov = {**coverage, "web_queries": len(web), "search_rounds": rnd}
         db.add_step(
             run_id, "retrieve", "done",
-            {"strategy": cfg.strategy, **ranked, "web_queries": [e["text"] for e in web], "round": rnd, "coverage": cov},
+            {
+                "strategy": cfg.strategy,
+                **ranked,
+                "candidates": kept + added,
+                "web_queries": [e["text"] for e in web],
+                "round": rnd,
+                "admission": {"floor_rerank_score": floor, "slots": max(0, slots), "admitted": [c["paper_id"] for c in added]},
+                "coverage": cov,
+            },
         )
-        added_top = [c["paper_id"] for c in ranked["candidates"] if c["paper_id"] not in old_top]
+        added_top = [c["paper_id"] for c in added]
         detail |= {"queries": executed, "new_in_pool": new_pool, "new_candidates": added_top}
         if not new_pool:
             detail |= {"continue": False, "stop_reason": "the round found no new paper"}

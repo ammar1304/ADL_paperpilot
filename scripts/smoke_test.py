@@ -138,6 +138,16 @@ def novelty_check(pp: str, webhook: str) -> None:
     for m in judged:
         check(all(e.startswith(m["paper_id"] + "#") for e in m["evidence"]), f"evidence of {m['paper_id']} cites its own chunks", m)
     check(str(result.get("summary", "")).startswith("Searched "), "report summary states what was searched", result.get("summary"))
+    agent_ran = "P2-search-planner" in (result.get("prompt_versions") or {})
+    if not agent_ran and not result.get("search_agent"):
+        raise SmokeFailure(
+            "the search agent did not run: n8n is probably still using an old 20-novelty workflow. "
+            "Workflows are imported only when n8n starts: run `docker compose restart n8n`, wait until it is healthy, "
+            "and try again (or NOVELTY_MAX_SEARCH_ROUNDS=0 turned the agent off)."
+        )
+    check(agent_ran, "the search agent's planner ran", result.get("prompt_versions"))
+    print(f"  ..  agent: " + "; ".join(f"round {a['round']} {a['decision']}" + (f" ({a['stop_reason']})" if a.get("stop_reason") else "")
+                                      for a in result.get("search_agent", [])))
     print(f"  ..  {len(result.get('closest_work', []))} overlapping, {len(result.get('checked_not_close', []))} checked and not close, "
           f"{len(result.get('unverified', []))} unverified, judge attempts: {result.get('judge_attempts')}, "
           f"prompts: {result.get('prompt_versions')}")
