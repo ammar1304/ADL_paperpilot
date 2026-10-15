@@ -378,9 +378,10 @@ Branch `eval/m2-final-runs`. Details in `prompts/failure_log.md` (section "M2 fi
 
 ### Next (last measurement round of milestone 2)
 
-- [ ] E2 gold from influential citations only
-- [ ] False overlap counts local closest work only (F-008)
-- [ ] 2 or 3 ideas whose closest work is outside the library, to measure what the web search adds
+- [x] E2 gold from influential citations, and from method citations (`build` re-fetches with the flags, `score` re-scores stored pools); branch `feat/m2-last-round`
+- [x] False overlap counts local closest work only (F-008); re-scored agent-on run: 0/12
+- [x] 3 ideas whose closest work is outside the library (speculative decoding, LoRA, Chain-of-Verification), with a check that those papers are absent
+- [ ] Team PC: E2 build + score; E7 agent off and on with the 9 ideas
 
 ## Next: milestone 2, part 2
 

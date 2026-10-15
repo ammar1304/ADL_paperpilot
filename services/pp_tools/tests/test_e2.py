@@ -1,6 +1,8 @@
 """scripts/e2_leave_one_out.py: reference matching, query selection, scoring without the paper itself."""
 
 import importlib.util
+import json
+from types import SimpleNamespace
 from pathlib import Path
 
 REPO = Path(__file__).resolve().parents[3]
@@ -58,3 +60,43 @@ def test_dropped_connections_are_retried_then_reported(monkeypatch):
     with pytest.raises(e2.TransientError, match="ConnectionResetError"):
         e2.s2_references("2310.11511", "key", retries=3)
     assert len(calls) == 3
+
+
+def test_gold_sets_from_cached_references():
+    refs = [
+        {"arxiv": "2005.11401", "influential": False, "intents": ["background"]},
+        {"arxiv": "2212.10509", "influential": True, "intents": ["methodology"]},
+        {"arxiv": "2401.15884", "influential": True, "intents": []},
+        {"arxiv": "9999.00001", "influential": True, "intents": ["methodology"]},  # not in the library
+    ]
+    library = {"arxiv:2005.11401", "arxiv:2212.10509", "arxiv:2401.15884"}
+    kinds = e2.cited_by_kind(refs, library, "arxiv:self")
+    assert kinds["cited"] == ["arxiv:2005.11401", "arxiv:2212.10509", "arxiv:2401.15884"]
+    assert kinds["cited_influential"] == ["arxiv:2212.10509", "arxiv:2401.15884"]
+    assert kinds["cited_method"] == ["arxiv:2212.10509"]
+
+
+def test_pool_rows_cover_every_order_and_only_golds_the_paper_has():
+    pool = [{"paper_id": p, "fused_rank": i, "rerank_rank": i, "rerank_score": 1 - i / 10}
+            for i, p in enumerate(["arxiv:self", "arxiv:a", "arxiv:b"], start=1)]
+    q = {"paper_id": "arxiv:self", "cited": ["arxiv:a", "arxiv:b"], "cited_influential": ["arxiv:b"], "cited_method": []}
+    rows = e2.pool_rows(q, pool)
+    assert {(r["gold"], r["method"]) for r in rows} == {(g, m) for g in ("all", "influential") for m in e2.ORDERS}
+    assert next(r for r in rows if r["gold"] == "influential" and r["method"] == "hybrid")["ranks"] == {"arxiv:b": 2}
+
+
+def test_score_stored_pools_against_new_golds(tmp_path, monkeypatch):
+    folder = tmp_path / "run"
+    folder.mkdir()
+    pool = [{"paper_id": p, "fused_rank": i, "rerank_rank": i, "rerank_score": 0.5} for i, p in enumerate(["arxiv:a", "arxiv:b"], start=1)]
+    (folder / "raw.jsonl").write_text(json.dumps({"paper_id": "arxiv:self", "pool": pool}) + "\n", encoding="utf-8")
+    queries = tmp_path / "queries.json"
+    queries.write_text(json.dumps({"meta": {}, "queries": [
+        {"paper_id": "arxiv:self", "cited": ["arxiv:a", "arxiv:b"], "cited_influential": ["arxiv:a"], "cited_method": ["arxiv:a"]}]}))
+    monkeypatch.setattr(e2, "REPO", tmp_path)
+    args = SimpleNamespace(queries=queries, folder=folder, label="t")
+    assert e2.score_stored(args) == 0
+    summary = next((tmp_path / "eval" / "results").glob("*-e2-rescored-t")) / "summary.md"
+    text = summary.read_text(encoding="utf-8")
+    assert "| influential | hybrid | 1/1 (100%) |" in text
+    assert "| all | fused | 2/2 (100%) |" in text

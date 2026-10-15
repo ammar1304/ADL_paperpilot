@@ -8,14 +8,16 @@ Failures are counted automatically from the stored run, never judged by eye:
 
   - retrieval:  expected papers among the judge's candidates and in closest_work,
                 and how similar the decomposer's queries are to each other
-  - report:     overlap claimed for an idea where nothing should overlap
+  - report:     overlap claimed from the local library for an idea where nothing in it
+                should overlap; closest work found on the web is counted separately
+                and checked by hand, because it can be real prior work (F-008)
   - LLM prose:  summary states the search scope (F-002); words that claim novelty
                 or coverage (F-003); discussion of facets the idea left unspecified
   - stability:  whether repeats give the same labels (gpt-oss varies at temperature 0)
 
 Usage (stack running, knowledge base built, GROQ_API_KEY set):
 
-    python scripts/prompt_ab.py                       # 6 ideas x 3 configs x 2 repeats, about 45 min
+    python scripts/prompt_ab.py                       # 9 ideas x 3 configs x 2 repeats, about 70 min
     python scripts/prompt_ab.py --repeats 1 --ideas adaptive-retrieval,out-of-domain
     python scripts/prompt_ab.py --config "base=P1-decomposer:v1,P3-novelty-judge:v1" --config "new=P1-decomposer:v2,P3-novelty-judge:v2"
 
@@ -119,6 +121,7 @@ def score(idea: dict, result: dict, candidates: list[str], queries: list[str]) -
     """One row of measurements from a finished run."""
     expected = set(idea.get("expected", []))
     closest = [m["paper_id"] for m in result.get("closest_work", [])]
+    web_closest = [m["paper_id"] for m in result.get("closest_work", []) if not is_local(m)]
     judged = closest + [m["paper_id"] for m in result.get("checked_not_close", [])]
     row = {
         "n_queries": len(queries),
@@ -127,7 +130,10 @@ def score(idea: dict, result: dict, candidates: list[str], queries: list[str]) -
         "expected_in_candidates": len(expected & set(candidates)),
         "expected_in_closest": len(expected & set(closest)),
         "overlap_found": result.get("overlap_found"),
-        "false_overlap": bool(idea.get("expect_no_overlap") and result.get("overlap_found")),
+        # F-008: only the local library is known to hold nothing for these ideas. A web
+        # paper in closest work can be genuine prior work, so it is counted apart.
+        "false_overlap": bool(idea.get("expect_no_overlap") and len(web_closest) < len(closest)),
+        "web_closest": len(web_closest),
         "n_closest": len(closest),
         "n_judged": len(judged),
         "unverified": len(result.get("unverified", [])),
@@ -139,6 +145,31 @@ def score(idea: dict, result: dict, candidates: list[str], queries: list[str]) -
     }
     row.update(summary_checks(result.get("summary_llm_written"), result.get("unspecified_facets", [])))
     return row
+
+
+def is_local(match: dict) -> bool:
+    """A closest-work entry the local library holds (source "local" or "local+<web provider>")."""
+    return "local" in (match.get("source") or "local").split("+")
+
+
+def library_check(pp: str, ideas: list[dict]) -> dict[str, bool]:
+    """For ideas marked outside_library, whether each expected paper is in fact in the library.
+
+    The abstract chunk is looked up by id (`#abs`, or `#abs/p1` for split abstracts).
+    """
+    import urllib.parse
+
+    found = {}
+    for idea in ideas:
+        if not idea.get("outside_library"):
+            continue
+        for pid in idea.get("expected", []):
+            hit = False
+            for suffix in ("#abs", "#abs/p1"):
+                status, _ = http("GET", f"{pp}/chunks/{urllib.parse.quote(pid + suffix, safe=':')}")
+                hit = hit or status == 200
+            found[pid] = hit
+    return found
 
 
 def label_agreement(runs: list[dict]) -> float | None:
@@ -168,8 +199,8 @@ def _mean(vals: list[float]) -> str:
 
 def summarize(rows: list[dict], agreements: dict[tuple[str, str], float | None], configs: list[str]) -> str:
     lines = [
-        "| Config | Runs ok | Expected papers in candidates | Expected in closest work | Query similarity | False overlap | LLM states scope | LLM overclaims | LLM calls unspecified facets (un)covered | LLM mentions unspecified facets | Label agreement across repeats | Judge attempts | Agent search rounds | Expected papers added by the agent |",
-        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
+        "| Config | Runs ok | Expected papers in candidates | Expected in closest work | Query similarity | False overlap | LLM states scope | LLM overclaims | LLM calls unspecified facets (un)covered | LLM mentions unspecified facets | Label agreement across repeats | Judge attempts | Agent search rounds | Expected papers added by the agent | Closest work from the web |",
+        "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |",
     ]
     for name in configs:
         rs = [r for r in rows if r["config"] == name]
@@ -183,7 +214,8 @@ def summarize(rows: list[dict], agreements: dict[tuple[str, str], float | None],
             f"| {_rate(ok, 'false_overlap')} | {_rate(ok, 'llm_states_scope')} | {_rate(ok, 'llm_overclaims')} "
             f"| {_rate(ok, 'llm_coverage_claim_unspecified')} | {_rate(ok, 'llm_discusses_unspecified')} "
             f"| {_mean(agree)} | {_mean([r['judge_attempts'] for r in ok])} "
-            f"| {_mean([r.get('search_rounds') for r in ok])} | {sum(r.get('expected_added_by_agent') or 0 for r in ok)} |"
+            f"| {_mean([r.get('search_rounds') for r in ok])} | {sum(r.get('expected_added_by_agent') or 0 for r in ok)} "
+            f"| {sum(r.get('web_closest') or 0 for r in ok)} |"
         )
     ideas = list(dict.fromkeys(r["idea"] for r in rows))
     lines += ["", "Expected papers among the judge's candidates, per idea (found / expected, summed over repeats):", "",
@@ -199,6 +231,7 @@ def summarize(rows: list[dict], agreements: dict[tuple[str, str], float | None],
         "Higher is better for: expected papers found, LLM states scope, label agreement.",
         "Lower is better for: query similarity (1.0 = paraphrases), false overlap, overclaims, coverage claims and mentions of unspecified facets, judge attempts.",
         "A coverage claim (\"data and results remain uncovered\") is the F-003 failure; a mention (\"no passage gives data or results\") is a milder rule breach.",
+        "False overlap counts closest work from the local library only; closest work from the web is real or not, and is checked by hand (F-008).",
         "Counts are over successful runs; the regular expressions are in scripts/prompt_ab.py.",
     ]
     return "\n".join(lines)
@@ -292,6 +325,11 @@ def main() -> int:
         wanted = set(args.ideas.split(","))
         ideas = [i for i in ideas if i["id"] in wanted]
     configs = [parse_config(c) for c in (args.config or DEFAULT_CONFIGS)]
+    in_library = library_check(args.pp_tools_url, ideas)
+    for pid, present in in_library.items():
+        if present:
+            print(f"warning: {pid} is expected outside the library but the library has it; "
+                  "that idea no longer measures the web search")
     original = ACTIVE.read_text(encoding="utf-8")
     base = json.loads(original)
 
@@ -335,7 +373,8 @@ def main() -> int:
         write_active(original)
         print(f"restored {ACTIVE.relative_to(REPO)}")
 
-    meta = {"ideas": [i["id"] for i in ideas], "configs": dict(configs), "repeats": args.repeats, "pause_s": args.pause}
+    meta = {"ideas": [i["id"] for i in ideas], "configs": dict(configs), "repeats": args.repeats, "pause_s": args.pause,
+            "outside_library_papers_found_in_library": sorted(p for p, v in in_library.items() if v)}
     table = write_outputs(out, rows, results, [name for name, _ in configs], meta)
     print("\n" + table)
     print(f"\nWrote {out.relative_to(REPO)}/ (summary.md, runs.csv, runs.jsonl)")
