@@ -68,3 +68,36 @@ Expected papers among the judge's candidates, per idea (found / expected over 2 
 - F-007 is fixed: the judge saw 8 candidates and 6 overlapped (Adaptive-RAG `same`/`same`, Self-RAG and 2604.07985 `partial` on the method), instead of 1.
 - F-006 is not fixed: P2 v2 again answered "None of the current candidates explicitly describe training a small model to decide whether retrieval is needed before answering". This time it chose the web, but Semantic Scholar refused the request (HTTP 429, no API key). Cause found in the planner's input: the passages were cut at 500 characters, and Adaptive-RAG's abstract states "a classifier, which is a smaller LM trained to predict the complexity level of incoming queries" after about 900 characters, so the planner never saw it (the same truncation as F-004, in a new place). Fix: the planner sees 1,200 characters, abstract first.
 - New finding, attribution: the round's web search failed, yet the result credited the agent with Self-RAG and 2606.29090 as new candidates. They were already in the pool (ranks 7 and 8) and were admitted because the agent's rule allowed 2 extra papers. Fix: the agent may only admit papers its own searches brought into the pool.
+
+## M2 final runs: agent off vs on, E2 (2026-10-15)
+
+Results: `eval/results/20261015-213516-agent-off`, `20261015-215304-agent-on`, `20261015-211913-e2-retrieval` (branch `eval/m2-final-runs`). Same 6 ideas, 2 repeats, P1 v2, P2 v2, P3 v2, hybrid order, idea as an extra query.
+
+| | Agent off | Agent on |
+| --- | --- | --- |
+| Expected papers among the judge's candidates | 16/22 | 15/22 |
+| False overlap (out-of-domain idea) | 0/12 | 1/12 |
+| Label agreement across repeats | 0.88 | 0.85 |
+| Rounds in which the agent searched | 0 | 6 in 12 runs |
+| Expected papers added by the agent | 0 | 0 |
+
+**The one-paper gap is not caused by the agent.** The only difference is reflection-tokens, repeat 1. Self-RAG was in that run's first pool with the highest reranker score (0.82) but fused rank 12, so the hybrid order put it just below the top 6. In the agent-off run of the same idea the decomposer's queries differed (Groq is not fully deterministic at temperature 0) and Self-RAG had fused rank 14 yet made the top 6. The agent only adds papers new to the pool (D29), so it could not promote Self-RAG; it admitted AB-RAG (2606.29090) instead. Offline replay of the ordering rules (`scripts/order_replay.py`, D30) shows that guaranteeing a slot to strongly reranked papers would fix this case but loses 3 of 57 expected papers elsewhere, so the order stays.
+
+**What the planner decided (P2 v2, 12 runs).**
+
+- **Stopped at once, correctly, in 6 runs:** adaptive-retrieval ×2 (citing 2604.07985 as matching), hypothetical-document ×2 (HyDE), iterative-rewrite #1 (EfficientRAG), retrieval-evaluator #2 (CRAG). F-006's "too literal" failure is gone for the idea that produced it.
+- **Searched although the matching paper was shown, in 2 runs (F-006, residual):** retrieval-evaluator #1 ("none mention triggering a web search fallback", although CRAG's abstract does) and reflection-tokens #2 ("none demonstrate fine-tuning ... both types of tokens", with Self-RAG at relevance 0.78). Both recognised the paper in round 2. Cost: one wasted local query each; the result was not harmed.
+- **Searched and added useful papers in 2 runs:** iterative-rewrite #2 added Reasoning in Trees (2601.11255, judged `same`/`same`) and EfficientRAG; reflection-tokens #1 added AB-RAG (`same` task, `different` method). None is in the idea's expected list, so the metric gives the agent 0 although the judge's evidence improved.
+- **Out-of-domain idea (protein structure prediction with diffusion): web search, both repeats.** The planner chose the web, as P2 asks for a topic outside the library. Repeat 1: 8 Semantic Scholar papers, none reached the admission floor. Repeat 2: three web queries, two papers admitted, both 2024 diffusion models for *inverse* protein folding (2412.07815, 2411.01737); the judge labelled task `partial` and method `partial`.
+
+**F-008 (metric, not system): "false overlap" assumes the out-of-domain idea has no prior work.** That holds for the local library, which is what the metric was designed for (F-001). With web search, the idea does have real prior work, and diffusion models for inverse folding are a defensible `partial` on both facets. The 1/12 counts a correct answer as an error. Fix: false overlap counts only closest work from the local library for ideas without expected papers; closest work found on the web is listed separately for manual review.
+
+**E2 leave-one-out (40 library papers, 273 cited library papers).**
+
+| Order | Cited papers in the top 6 | In the pool of 30 | MRR |
+| --- | --- | --- | --- |
+| fused | 14/273 (5%) | 46/273 | 0.033 |
+| reranked | 10/273 (4%) | 46/273 | 0.026 |
+| hybrid | 11/273 (4%) | 46/273 | 0.029 |
+
+A random choice of 6 of 530 papers would find about 1%, so retrieval is 3 to 5 times better than chance, but the gold is loose. For 30 of the 40 papers no cited paper reaches the top 6. The most-missed cited papers are background citations: RAG (2005.11401, missed 33 times), DPR (18), REALM (17), the HotpotQA dataset (13), FiD (12), a RAG survey (8). A paper's abstract does not describe the methods it cites as background, so the reranker scores them low, correctly for a novelty check. This is also why the reranker loses to the fused order here, unlike E8. Next: keep only the citations Semantic Scholar marks as influential (`isInfluential`, the cited work is used or extended), and compare.
