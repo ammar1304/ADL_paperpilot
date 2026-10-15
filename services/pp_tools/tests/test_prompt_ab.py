@@ -1,11 +1,13 @@
 """Scoring logic of scripts/prompt_ab.py (the runs themselves need the real stack)."""
 
 import importlib.util
+import json
 from pathlib import Path
 
 import pytest
 
-SCRIPT = Path(__file__).resolve().parents[3] / "scripts" / "prompt_ab.py"
+REPO = Path(__file__).resolve().parents[3]
+SCRIPT = REPO / "scripts" / "prompt_ab.py"
 spec = importlib.util.spec_from_file_location("prompt_ab", SCRIPT)
 ab = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(ab)
@@ -75,3 +77,22 @@ def test_score_and_label_agreement():
     changed = {**result, "closest_work": [{**match, "overlap": {**match["overlap"], "method": "unknown"}}]}
     assert ab.label_agreement([result, result]) == 1.0
     assert ab.label_agreement([result, changed]) == 7 / 8
+
+
+def test_false_overlap_counts_local_closest_work_only_f008():
+    idea = {"id": "out-of-domain", "expected": [], "expect_no_overlap": True}
+    web = {"paper_id": "arxiv:2412.07815", "source": "semantic_scholar", "overlap": {}}
+    local = {"paper_id": "arxiv:2310.11511", "source": "local", "overlap": {}}
+    both = {"paper_id": "arxiv:2212.10496", "source": "local+openalex", "overlap": {}}
+    row = ab.score(idea, {"closest_work": [web], "overlap_found": True}, [], [])
+    assert row["false_overlap"] is False and row["web_closest"] == 1
+    assert ab.score(idea, {"closest_work": [web, local], "overlap_found": True}, [], [])["false_overlap"] is True
+    assert ab.score(idea, {"closest_work": [both], "overlap_found": True}, [], [])["false_overlap"] is True
+    assert ab.score(idea, {"closest_work": [], "overlap_found": False}, [], [])["false_overlap"] is False
+
+
+def test_outside_library_ideas_are_well_formed():
+    ideas = json.loads((REPO / "eval" / "prompt_ab" / "ideas.json").read_text(encoding="utf-8"))
+    outside = [i for i in ideas if i.get("outside_library")]
+    assert len(outside) == 3 and len({i["id"] for i in ideas}) == len(ideas)
+    assert all(i["expected"] and all(p.startswith("arxiv:") for p in i["expected"]) for i in outside)

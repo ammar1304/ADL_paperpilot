@@ -293,7 +293,11 @@ class Handler(BaseHTTPRequestHandler):
             others = [p for p in PAPERS if p["id"] != m_refs.group(1)]
             if len(others) == len(PAPERS):
                 return self._send(404, b'{"error": "Paper not found"}', "application/json")
-            data = [{"citedPaper": {"externalIds": {"ArXiv": p["id"]}, "title": p["title"]}} for p in others]
+            data = [  # the first cited paper is "influential" and cited for its method, the other background
+                {"isInfluential": i == 0, "intents": ["methodology"] if i == 0 else ["background"],
+                 "citedPaper": {"externalIds": {"ArXiv": p["id"]}, "title": p["title"]}}
+                for i, p in enumerate(others)
+            ]
             data.append({"citedPaper": {"externalIds": {"DOI": "10.1/elsewhere"}, "title": "Not on arXiv"}})
             return self._send(200, json.dumps({"offset": 0, "data": data}).encode(), "application/json")
         if url.path == "/graph/v1/paper/search":  # like Semantic Scholar

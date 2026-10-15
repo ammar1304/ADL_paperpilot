@@ -66,10 +66,10 @@ eval/
 
 ## E7: prompt A/B
 
-Runs the same ideas through the real pipeline (n8n webhook, Groq models) once per prompt configuration and repeat, then counts failures automatically from the stored runs. The ideas, with the papers each should find, are in [prompt_ab/ideas.json](prompt_ab/ideas.json); one idea is out of domain and must find no overlap.
+Runs the same ideas through the real pipeline (n8n webhook, Groq models) once per prompt configuration and repeat, then counts failures automatically from the stored runs. The ideas, with the papers each should find, are in [prompt_ab/ideas.json](prompt_ab/ideas.json); one idea is out of domain and must find no overlap in the local library (closest work found on the web is counted apart and checked by hand, F-008), and three ideas (`outside_library`) have their closest work outside the library, so only the search agent's web search can find it. Before running, the script checks that those papers really are absent from the library and warns otherwise.
 
 ```bash
-python scripts/prompt_ab.py               # 6 ideas x 3 configurations x 2 repeats, about 45 minutes
+python scripts/prompt_ab.py               # 9 ideas x 3 configurations x 2 repeats, about 70 minutes
 ```
 
 The default configurations are `baseline` (P1 v1, P3 v1), `judge-v2` (P1 v1, P3 v2) and `full-v2` (P1 v2, P3 v2), so the effect of each prompt change is visible on its own. The script switches `prompts/active.json` between configurations and restores it at the end. Runs are 60 seconds apart because of Groq's free per-minute token limit; a rate-limited run is retried once.
@@ -102,10 +102,12 @@ A paper from the library plays the user: its own abstract is the idea, the paper
 python scripts/e2_leave_one_out.py build                 # needs SEMANTIC_SCHOLAR_API_KEY in .env; about 11 minutes the first time
 python scripts/e2_leave_one_out.py run                   # retrieval only, no LLM: fused vs reranked vs hybrid, about 15 minutes
 python scripts/e2_leave_one_out.py run --mode full --limit 15   # whole pipeline through n8n (decomposer, agent, judge)
+python scripts/e2_leave_one_out.py score eval/results/<folder>-e2-retrieval   # re-score stored pools against new gold sets, seconds
 ```
 
 - `build` fetches every library paper's reference list (cached in `eval/e2/s2_references.json`, not committed), keeps papers that cite at least 3 library papers, picks 40 of them with a fixed seed, and reads their abstracts from the library. It writes `eval/e2/queries.json`: **commit it**, so every later run uses the same queries.
-- `run` reports, per method: cited papers reaching the judge (top 6, micro and macro), in the pool (top 30), and MRR. Output in `eval/results/<timestamp>-e2-<mode>/`.
+- **Three gold sets** from the same reference lists: `all` cited library papers; `influential`, the citations Semantic Scholar marks as influential (the cited work is used or extended, not only mentioned); `method`, the citations whose intent is "methodology". Run 1 used `all` and its misses were mostly background citations (RAG, DPR, REALM, HotpotQA). A `build` after run 1 fetches the reference lists again (about 11 minutes) to get the influence flags; `score` then scores run 1's stored pools against all three, without ranking again.
+- `run` reports, per gold set and method: cited papers reaching the judge (top 6, micro and macro), in the pool (top 30), and MRR. Output in `eval/results/<timestamp>-e2-<mode>/`.
 - Limits: a paper cites what existed when it was written and what its authors chose to cite, so a "miss" can be a fair answer; the comparison between methods is what matters, not the absolute number.
 
 ## Agent on and off (E7)

@@ -35,5 +35,26 @@
     "expected": [],
     "expect_no_overlap": true,
     "why": "Nothing in a RAG-for-QA library overlaps. The report must say so instead of presenting unrelated papers (F-001)."
+  },
+  {
+    "id": "draft-and-verify-decoding",
+    "idea": "Speed up text generation by letting a small model propose several tokens that the large model then checks in a single parallel pass, without changing the output distribution.",
+    "expected": ["arxiv:2211.17192", "arxiv:2302.01318"],
+    "outside_library": true,
+    "why": "Speculative decoding and speculative sampling (two independent 2022-2023 papers). Outside a RAG-for-QA library: only the web search can find them."
+  },
+  {
+    "id": "low-rank-finetuning",
+    "idea": "Fine-tune a large language model by freezing its weights and training only small low-rank matrices added to each layer.",
+    "expected": ["arxiv:2106.09685"],
+    "outside_library": true,
+    "why": "LoRA. Outside the library; the idea is stated in the vocabulary of the paper, so a single web query should find it."
+  },
+  {
+    "id": "verify-own-answer",
+    "idea": "Reduce hallucination by having the model draft an answer, write verification questions about its own claims, answer them independently, and revise the draft.",
+    "expected": ["arxiv:2309.11495"],
+    "outside_library": true,
+    "why": "Chain-of-Verification. Adjacent to RAG (hallucination) but uses no retrieval, so the library may only hold papers that cite it; prompt_ab.py warns if it is in the library."
   }
 ]
