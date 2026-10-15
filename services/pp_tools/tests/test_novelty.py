@@ -310,6 +310,11 @@ def test_novelty_api_end_to_end(tmp_path, test_db_url, stub_url, db):
         body = ranked.json()
         assert body["ranking_method"] == "fused" and body["config"]["rerank"] is False and len(body["pool"]) == 3
         assert client.post("/novelty/rank", json={"idea_text": IDEA, "queries": []}).status_code == 422
+        hyb = client.post("/novelty/rank", json={"idea_text": IDEA, "queries": ["multi-hop query rewriting"],
+                                                 "rerank_abstract": True, "order": "hybrid"}).json()
+        assert hyb["ranking_method"] == "hybrid" and hyb["config"]["rerank_abstract"] is True
+        # every pool paper's abstract was found by id in Qdrant and offered as evidence
+        assert all(c["rerank_rank"] is not None for c in hyb["candidates"])
         assert ret["coverage"]["papers_with_full_text"] == 1  # only 2101.00001 is full text here
         prompt = client.post(f"/novelty/{run_id}/judge-prompt").json()
         assert prompt["attempt"] == 1
@@ -341,3 +346,9 @@ def test_abstracts_are_kept_whole_but_sections_are_cut(db):
     texts = {e["chunk_type"]: e["text"] for e in detail["candidates"][0]["evidence"]}
     assert texts["abstract"].endswith("smaller LM.")
     assert len(texts["section"]) == 900
+
+
+def test_chunks_can_be_fetched_by_id(kb):
+    hits = kb.by_ids(["arxiv:2101.00001#abs", "arxiv:2203.00002#abs", "arxiv:9999.99999#abs"], "structured")
+    assert sorted(h.paper_id for h in hits) == ["arxiv:2101.00001", "arxiv:2203.00002"]
+    assert all(h.chunk_type == "abstract" and h.text for h in hits)

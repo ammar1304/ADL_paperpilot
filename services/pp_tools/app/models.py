@@ -212,3 +212,5 @@ class RankRequest(BaseModel):
     rerank: bool | None = None
     idea_as_query: bool | None = None
     pool_papers: int | None = Field(default=None, ge=6, le=100)
+    rerank_abstract: bool | None = None
+    order: Literal["rerank", "hybrid"] | None = None

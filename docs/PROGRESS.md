@@ -268,11 +268,27 @@ Sandbox with stub models (a word-overlap stand-in for the cross-encoder):
 | Novelty run through real n8n 2.42.6 | `ranking_method: reranked`, 7 of 7 smoke steps |
 | E8 script end to end | 25 query sets x 4 settings; stored-run baseline 25/57 read from E7 run 1 |
 
+### Verified on the team PC (2026-10-15)
+
+- [x] TEI loads `BAAI/bge-reranker-base` on the CPU image (download and start: 9 minutes); reranker 3.8 GB, embedder 3.4 GB of 9.6 GB
+- [x] About 19 seconds per reranked ranking (60 pairs) on the team PC's CPU
+- [x] E8 run 1: expected papers reaching the judge 25 → 34 of 57 with reranking and the idea as a query; iterative rewriting got worse (4 → 1 of 12). Details in `docs/DECISIONS.md` D28.
+
+## Milestone 2, part 2b: reranker tuning (2026-10-15)
+
+Branch `feat/m2-rerank-tuning`.
+
+- `NOVELTY_IDEA_QUERY` on by default (E8 run 1).
+- **Abstract scoring** (`NOVELTY_RERANK_ABSTRACT`): the reranker scores each pool paper's abstract, fetched by id from Qdrant, plus its best chunk.
+- **Hybrid order** (`NOVELTY_ORDER=hybrid`): reciprocal rank fusion of the fused and rerank ranks.
+- `RERANKER_MAX_BATCH_TOKENS` default 4096 → 2048 (RAM).
+- E8 script: one pp-tools call per pool setting; fused, reranked and hybrid orders derived from the returned pool; every pool saved (`pools.jsonl`) for later analysis.
+- Sandbox: 115 tests pass; smoke test with real n8n passes.
+
 ### Not verified yet: needs the team PC
 
-- [ ] TEI loads `BAAI/bge-reranker-base` on the CPU image; RAM with both models
-- [ ] Time per reranked ranking on the team PC's CPU
-- [ ] `python scripts/retrieval_ab.py`: does reranking raise the 25/57 that reached the judge?
+- [ ] E8 run 2: do abstract scoring or the hybrid order recover iterative rewriting without losing adaptive retrieval?
+- [ ] Reranker RAM with 2048 batch tokens
 
 ## Next: milestone 2, part 2
 
