@@ -23,7 +23,8 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError, field_valida
 
 from .db import Database
 from .prompts import PromptLibrary, RenderedPrompt
-from .external.semantic_scholar import ExternalPaper, SemanticScholar, SemanticScholarError
+from .external.semantic_scholar import ExternalPaper
+from .external.web import SOURCE_NAMES, WebSearch, WebSearchError
 from .retrieval.reranker import Reranker, RerankerError
 from .retrieval.search import Retriever
 
@@ -222,7 +223,7 @@ def rank_candidates(
             chunks.setdefault(hit.chunk_id, hit)  # a local abstract with the same id wins
             paper_score[paper.paper_id] += 1.0 / (cfg.rrf_k + rank)
             paper_queries[paper.paper_id].add(qi)
-            sources[paper.paper_id].add("semantic_scholar")
+            sources[paper.paper_id].add(paper.source)
             external_meta.setdefault(paper.paper_id, paper)
 
     fused = sorted(paper_score, key=lambda p: paper_score[p], reverse=True)
@@ -361,6 +362,7 @@ def retrieve(
 # no repeated query, and a stop when a round finds no new paper.
 
 PLAN_CANDIDATES_SHOWN = 8
+PLAN_SNIPPET_CHARS = 1200
 
 
 def _plan_steps(db: Database, run_id: UUID) -> list[dict[str, Any]]:
@@ -383,7 +385,9 @@ def plan_prompt(db: Database, library: PromptLibrary, run_id: UUID, max_rounds: 
     # What the judge would see now: the planner decides whether that is enough.
     for i, c in enumerate(retrieved["candidates"][:PLAN_CANDIDATES_SHOWN], start=1):
         ev = sorted(c.get("evidence", []), key=lambda e: e.get("chunk_type") != "abstract")  # abstract first
-        snippet = " ".join(ev[0]["text"].split())[:500] if ev else ""
+        # 1,200 characters: at 500, Adaptive-RAG's abstract stopped before "a classifier,
+        # which is a smaller LM trained to predict ..." and the planner called the method uncovered (F-006).
+        snippet = " ".join(ev[0]["text"].split())[:PLAN_SNIPPET_CHARS] if ev else ""
         score = f"{c['rerank_score']:.2f}" if c.get("rerank_score") is not None else "n/a"
         lines.append(f"{i}. {c['title']} ({c.get('year') or 'n.d.'}; source: {c.get('source', 'local')}; relevance {score})")
         if snippet:
@@ -412,7 +416,7 @@ def apply_plan(
     db: Database,
     retriever: Retriever,
     reranker: "Reranker | None",
-    s2: "SemanticScholar | None",
+    web: "WebSearch | None",
     run_id: UUID,
     output: Any,
     cfg: RetrievalConfig,
@@ -452,13 +456,16 @@ def apply_plan(
             if q.text.lower() in used:
                 entry["skipped"] = "already searched"
             elif q.where == "web":
-                if s2 is None:
-                    entry["error"] = "Semantic Scholar not configured"
+                if web is None:
+                    entry["error"] = "no web search configured"
                 else:
                     try:
-                        entry["results"] = [p_.as_dict() for p_ in s2.search(q.text, results_per_query)]
-                    except SemanticScholarError as exc:
-                        entry["error"] = str(exc)[:200]
+                        papers, source, errors = web.search(q.text, results_per_query)
+                        entry |= {"results": [p_.as_dict() for p_ in papers], "source": SOURCE_NAMES.get(source, source)}
+                        if errors:
+                            entry["fallback_from"] = errors  # providers that failed before this one answered
+                    except WebSearchError as exc:
+                        entry["error"] = str(exc)[:300]
             used.add(q.text.lower())
             executed.append(entry)
 
@@ -466,8 +473,8 @@ def apply_plan(
             e["text"] for p_ in plans + [{"queries": executed}] for e in p_.get("queries", [])
             if e["where"] == "local" and not e.get("skipped")
         ]
-        web = [e for p_ in plans + [{"queries": executed}] for e in p_.get("queries", []) if e.get("results")]
-        external = [[ExternalPaper.from_dict(d) for d in e["results"]] for e in web]
+        web_done = [e for p_ in plans + [{"queries": executed}] for e in p_.get("queries", []) if e.get("results")]
+        external = [[ExternalPaper.from_dict(d) for d in e["results"]] for e in web_done]
         run = db.get_run(run_id) or {}
         idea = (run.get("input") or {}).get("idea_text") or decomposed.facets.method
         # Evidence for every pool paper, so a new paper can be added with its passages.
@@ -493,21 +500,24 @@ def apply_plan(
         kept_ids = {c["paper_id"] for c in kept}
         slots = cfg.top_papers + cfg.agent_extra_papers - len(kept)
         floor = min((c["rerank_score"] for c in kept if c.get("rerank_score") is not None), default=None)
-        fresh = [c for c in ranked["candidates"] if c["paper_id"] not in kept_ids]
+        # Only papers this round's searches brought into the pool: a paper that was
+        # already in the pool but below the top 6 is not something the agent found.
+        fresh = [c for c in ranked["candidates"] if c["paper_id"] not in kept_ids and c["paper_id"] in set(new_pool)]
         if ranked["ranking_method"] != "fused" and floor is not None:
             fresh = sorted(
                 (c for c in fresh if c.get("rerank_score") is not None and c["rerank_score"] >= floor),
                 key=lambda c: -c["rerank_score"],
             )
         added = fresh[: max(0, slots)]
-        cov = {**coverage, "web_queries": len(web), "search_rounds": rnd}
+        cov = {**coverage, "web_queries": len(web_done), "search_rounds": rnd}
         db.add_step(
             run_id, "retrieve", "done",
             {
                 "strategy": cfg.strategy,
                 **ranked,
                 "candidates": kept + added,
-                "web_queries": [e["text"] for e in web],
+                "web_queries": [e["text"] for e in web_done],
+                "web_sources": sorted({e.get("source", "Semantic Scholar") for e in web_done}),
                 "round": rnd,
                 "admission": {"floor_rerank_score": floor, "slots": max(0, slots), "admitted": [c["paper_id"] for c in added]},
                 "coverage": cov,
@@ -558,7 +568,7 @@ def _library_block(retrieved: dict[str, Any]) -> str:
     web = retrieved.get("web_queries") or []
     parts.append(
         f"Retrieval ran {len(retrieved.get('queries', []))} search queries in the knowledge base"
-        + (f" and {len(web)} on Semantic Scholar (about 200 million papers; titles and abstracts only)" if web else "")
+        + (f" and {len(web)} on the web ({', '.join(retrieved.get('web_sources') or ['Semantic Scholar'])}; titles and abstracts only)" if web else "")
         + f", and kept the {len(retrieved.get('candidates', []))} candidate papers below."
         + ("" if web else " Papers outside the knowledge base were not searched.")
     )
@@ -570,7 +580,8 @@ def _candidates_block(candidates: list[dict[str, Any]]) -> str:
         return "(no candidate papers were retrieved)"
     lines = []
     for i, c in enumerate(candidates, start=1):
-        source = " | found on Semantic Scholar" if c.get("source") == "semantic_scholar" else ""
+        src = c.get("source", "local")
+        source = f" | found on {SOURCE_NAMES.get(src, src)}" if src in SOURCE_NAMES else ""
         lines.append(f"[C{i}] paper_id: {c['paper_id']} | title: {c['title']} | year: {c['year']}{source}")
         if c["evidence"] and all(e.get("chunk_type") == "abstract" for e in c["evidence"]):
             lines.append("  Only the abstract of this paper is shown: its data and results are usually not visible.")
@@ -711,6 +722,7 @@ def assemble(db: Database, run_id: UUID) -> dict[str, Any]:
         "strategy": retrieved["strategy"],
         "queries": retrieved["queries"],
         "web_queries": retrieved.get("web_queries", []),
+        "web_sources": retrieved.get("web_sources", []),
         "candidates_considered": len(retrieved["candidates"]),
         "note": "Not found in this knowledge base does not mean novel.",
     }
@@ -765,7 +777,7 @@ def _summary(overlapping: list[dict[str, Any]], not_close: list[dict[str, Any]],
         searched += f" ({full} with full text)"
     checked = len(overlapping) + len(not_close)
     web = len(coverage.get("web_queries") or [])
-    also = f", plus {web} Semantic Scholar {'query' if web == 1 else 'queries'}" if web else ""
+    also = f", plus {web} web {'query' if web == 1 else 'queries'} ({', '.join(coverage.get('web_sources') or ['Semantic Scholar'])})" if web else ""
     lines = [f"{searched} with {len(coverage.get('queries', []))} queries{also}; {checked} candidate papers were judged."]
     if overlapping:
         parts = []

@@ -65,7 +65,9 @@ from .novelty import (
 )
 from .prompts import PromptError, PromptLibrary
 from .retrieval.embedder import Embedder, EmbedderError
+from .external.openalex import OpenAlex
 from .external.semantic_scholar import SemanticScholar
+from .external.web import WebSearch
 from .retrieval.reranker import Reranker
 from .retrieval.search import Retriever, hit_dict
 from .retrieval.store import Store, collection_name, make_client
@@ -83,11 +85,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     embedder = Embedder(settings.embedder_url, settings.embed_batch_size, settings.embed_timeout_s)
     retriever = Retriever(embedder, store)
     reranker = Reranker(settings.reranker_url, timeout_s=settings.rerank_timeout_s) if settings.reranker_url else None
-    s2 = (
-        SemanticScholar(settings.semantic_scholar_url, settings.semantic_scholar_api_key, settings.semantic_scholar_interval_s)
-        if settings.semantic_scholar_url
-        else None
-    )
+    web = _web_search(settings)
     library = PromptLibrary(settings.prompts_dir)
     # One worker: builds run one at a time, and never inside a request.
     jobs = ThreadPoolExecutor(max_workers=1, thread_name_prefix="pp-job")
@@ -105,8 +103,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         embedder.close()
         if reranker is not None:
             reranker.close()
-        if s2 is not None:
-            s2.close()
+        if web is not None:
+            web.close()
         db.close()
 
     app = FastAPI(title="pp-tools", version="0.2.0", lifespan=lifespan)
@@ -414,7 +412,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         coverage = await _coverage(cfg.strategy)
         try:
             return await run_in_threadpool(
-                _novelty_errors, apply_plan, db, retriever, reranker, s2, run_id, body.output, cfg, coverage,
+                _novelty_errors, apply_plan, db, retriever, reranker, web, run_id, body.output, cfg, coverage,
                 settings.novelty_max_search_rounds, settings.semantic_scholar_results,
             )
         except EmbedderError as exc:
@@ -479,6 +477,23 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         return await run_in_threadpool(db.get_steps, run_id)
 
     return app
+
+
+def _web_search(settings: Settings) -> WebSearch | None:
+    """Semantic Scholar first when it has a key; otherwise OpenAlex first (D29).
+
+    Without a key, Semantic Scholar's shared pool refused the agent's request on
+    the team PC (HTTP 429); OpenAlex answers keyless queries at 10 per second.
+    """
+    s2 = (
+        ("semantic_scholar", SemanticScholar(settings.semantic_scholar_url, settings.semantic_scholar_api_key,
+                                             settings.semantic_scholar_interval_s))
+        if settings.semantic_scholar_url else None
+    )
+    oa = ("openalex", OpenAlex(settings.openalex_url, settings.openalex_api_key)) if settings.openalex_url else None
+    order = [s2, oa] if settings.semantic_scholar_api_key else [oa, s2]
+    providers = [p for p in order if p is not None]
+    return WebSearch(providers) if providers else None
 
 
 def _loc(loc: tuple[Any, ...]) -> str:

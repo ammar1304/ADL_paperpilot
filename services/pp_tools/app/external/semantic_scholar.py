@@ -40,6 +40,7 @@ class ExternalPaper:
     venue: str
     url: str
     citation_count: int
+    source: str = "semantic_scholar"  # or "openalex"
 
     def as_hit(self) -> Hit:
         """The abstract as a chunk, so ranking and evidence treat it like a local abstract."""
@@ -50,11 +51,12 @@ class ExternalPaper:
         return {
             "paper_id": self.paper_id, "s2_id": self.s2_id, "title": self.title, "abstract": self.abstract,
             "year": self.year, "venue": self.venue, "url": self.url, "citation_count": self.citation_count,
+            "source": self.source,
         }
 
     @classmethod
     def from_dict(cls, d: dict) -> "ExternalPaper":
-        return cls(**{k: d[k] for k in cls.__dataclass_fields__})
+        return cls(**{k: d[k] for k in cls.__dataclass_fields__ if k in d})
 
 
 class SemanticScholar:
