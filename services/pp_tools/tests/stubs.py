@@ -288,6 +288,14 @@ class Handler(BaseHTTPRequestHandler):
             return self._send(200, b"", "text/plain")
         if url.path == "/info":  # like TEI
             return self._send(200, json.dumps({"model_id": "stub/hashed-bow"}).encode(), "application/json")
+        m_refs = re.match(r"^/graph/v1/paper/arXiv:([\d.]+)/references$", url.path)
+        if m_refs:  # like Semantic Scholar: each stub paper cites the other two
+            others = [p for p in PAPERS if p["id"] != m_refs.group(1)]
+            if len(others) == len(PAPERS):
+                return self._send(404, b'{"error": "Paper not found"}', "application/json")
+            data = [{"citedPaper": {"externalIds": {"ArXiv": p["id"]}, "title": p["title"]}} for p in others]
+            data.append({"citedPaper": {"externalIds": {"DOI": "10.1/elsewhere"}, "title": "Not on arXiv"}})
+            return self._send(200, json.dumps({"offset": 0, "data": data}).encode(), "application/json")
         if url.path == "/graph/v1/paper/search":  # like Semantic Scholar
             q = parse_qs(url.query).get("query", [""])[0]
             code, body = s2_search(q)

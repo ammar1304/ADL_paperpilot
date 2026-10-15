@@ -165,6 +165,10 @@ class RetrievalConfig:
     idea_as_query: bool = False  # also search with the idea text itself, next to the decomposer's queries
     # Papers the search agent may add to the judge's candidates over all its rounds (D29).
     agent_extra_papers: int = 2
+    # A paper the agent adds must also reach this reranker score. In E8 run 2's pools,
+    # 0.2 kept 62% of the expected papers and 10% of the others; the first real agent
+    # run admitted DPR (unrelated) because the weakest kept candidate scored lower.
+    agent_min_relevance: float = 0.2
     # Score each pool paper's abstract as well as its best-matching chunk. A paper's best
     # vector matches can be results or related-work passages that do not say what the
     # paper does (IRCoT dropped from rank 2-6 to 7-10 when reranked on those, E8 run 1).
@@ -499,7 +503,8 @@ def apply_plan(
         kept = list(before["candidates"])
         kept_ids = {c["paper_id"] for c in kept}
         slots = cfg.top_papers + cfg.agent_extra_papers - len(kept)
-        floor = min((c["rerank_score"] for c in kept if c.get("rerank_score") is not None), default=None)
+        weakest = min((c["rerank_score"] for c in kept if c.get("rerank_score") is not None), default=None)
+        floor = None if weakest is None else max(weakest, cfg.agent_min_relevance)
         # Only papers this round's searches brought into the pool: a paper that was
         # already in the pool but below the top 6 is not something the agent found.
         fresh = [c for c in ranked["candidates"] if c["paper_id"] not in kept_ids and c["paper_id"] in set(new_pool)]

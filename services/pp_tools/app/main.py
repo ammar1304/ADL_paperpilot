@@ -288,6 +288,18 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             pass
         return stats.get("structured", {}).get("papers_with_sections", 0)
 
+    @app.get("/chunks/{chunk_id:path}")
+    async def get_chunk(chunk_id: str, strategy: str = "structured") -> Any:
+        """One chunk by id, e.g. arxiv:2310.11511#abs (used by the E2 evaluation to read abstracts)."""
+        if strategy not in ("structured", "fixed"):
+            raise HTTPException(status_code=422, detail="strategy must be structured or fixed")
+        if not await run_in_threadpool(store.client.collection_exists, collection_name(strategy)):
+            raise HTTPException(status_code=409, detail=f"no '{strategy}' collection yet; run a corpus build first")
+        hits = await run_in_threadpool(store.get, strategy, [chunk_id])
+        if not hits:
+            raise HTTPException(status_code=404, detail=f"chunk {chunk_id} not found")
+        return hit_dict(hits[0])
+
     @app.get("/corpus/stats")
     async def corpus_stats() -> dict[str, Any]:
         """What the knowledge base contains. The novelty report quotes this as its coverage."""
@@ -428,6 +440,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             "rerank_abstract": settings.novelty_rerank_abstract,
             "order": settings.novelty_order,
             "agent_extra_papers": settings.novelty_agent_extra_papers,
+            "agent_min_relevance": settings.novelty_agent_min_relevance,
         }
         values.update({k: v for k, v in overrides.items() if v is not None})
         return RetrievalConfig(**values)

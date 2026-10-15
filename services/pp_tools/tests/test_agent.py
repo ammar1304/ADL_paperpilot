@@ -182,6 +182,7 @@ def test_agent_never_removes_candidates_and_admits_few_relevant_ones(db, kb, s2,
     assert now[: len(first)] == first  # every earlier candidate kept, in the same order
     assert len(now) <= 2 + 1 and out["new_candidates"] == now[len(first):]
     floor = latest["admission"]["floor_rerank_score"]
+    assert floor >= cfg.agent_min_relevance
     assert all(c["rerank_score"] >= floor for c in latest["candidates"][len(first):])
     assert set(out["new_candidates"]) <= set(out["new_in_pool"])  # only papers this round's searches brought in
     assert latest["admission"]["slots"] == 1

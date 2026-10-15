@@ -347,9 +347,24 @@ Branch `fix/agent-web-and-admission`.
 
 ### Not verified yet: needs the team PC
 
+- [x] Semantic Scholar key works from the PC (direct query returned results)
+- [x] The known-answer idea with the key and full abstracts (team PC): round 1 searched locally (4 new papers in the pool), round 2 stopped for a correct reason ("Candidate 2 explicitly proposes a predictor that decides whether retrieval is beneficial for each question"); 4 of 7 judged papers overlap, Adaptive-RAG `same`/`same`. The one paper the agent added was DPR (unrelated): fixed in part 2f.
 - [ ] OpenAlex from the PC (no key)
-- [ ] The known-answer idea: what does the planner decide when it can read the full abstracts?
-- [ ] E7 with the agent on and off
+
+## Milestone 2, part 2f: E2 leave-one-out, agent evaluation (2026-10-15)
+
+Branch `feat/m2-e2-and-agent-eval`.
+
+- **Agent admission floor:** papers the agent adds must also reach a reranker score of 0.2 (`NOVELTY_AGENT_MIN_RELEVANCE`). In E8 run 2's pools, 0.2 keeps 62% of the expected papers and 10% of the others.
+- **E2, `scripts/e2_leave_one_out.py`:** `build` (Semantic Scholar reference lists, 40 query papers, committed `eval/e2/queries.json`) and `run` (retrieval only, or the whole pipeline).
+- **`GET /chunks/{chunk_id}`:** one chunk by id (E2 reads abstracts from the library).
+- **Agent on/off** instructions for E7 (eval/README.md).
+- Sandbox: E2 `build` and both `run` modes end to end against stand-ins for Semantic Scholar, the models and n8n.
+
+### Not verified yet: needs the team PC
+
+- [ ] E2 build and retrieval run
+- [ ] E7 with the agent off and on
 
 ## Next: milestone 2, part 2
 
