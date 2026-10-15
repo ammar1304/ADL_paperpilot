@@ -213,12 +213,29 @@ Sandbox, stubs for arXiv, TEI and the LLMs:
 | Rebuild with no change embeds 0 chunks; adding a full-text paper embeds only its chunks; another model's vectors are not reused | Tests pass |
 | Smoke test with real n8n 2.42.6 | 7 of 7 steps, prompts `P3 v2` |
 
+### Verified on the team PC (2026-10-15)
+
+| What | Result |
+| --- | --- |
+| `app.corpus.add` against real arXiv | 33 of 33 ids found, every title accepted; 31 added, Adaptive-RAG upgraded to full text, 1 already present. Library: 531 papers, 61 full text |
+| Rebuild with vector reuse | 13 minutes instead of 88: 633 chunks embedded, 3,306 reused; TEI reported `BAAI/bge-m3` |
+| Known-answer idea, P3 v2 | F-001 and F-002 gone; Adaptive-RAG and 2604.07985 in closest work, 4 papers in `checked_not_close` |
+| Same idea, P3 v1 | Same candidates; summary without scope (F-002) |
+
+**Found:** F-004 (abstracts cut at 900 characters), F-005 (near-duplicate queries; Self-RAG and SKR not retrieved), and Groq rate limiting on back-to-back runs with no Gemini key to fall back on.
+
+## Milestone 2, part 1c: measured prompt comparison (2026-10-15)
+
+Branch `feat/prompt-ab-eval`.
+
+- **F-004 fix:** abstracts kept whole up to 2,000 characters.
+- **P1-decomposer v2:** query vocabulary diversity (F-005).
+- **`papers_with_full_text`** now comes from the build report (61), not from papers with detected sections (59).
+- **E7, `scripts/prompt_ab.py`:** 6 ideas with known answers (one out of domain) x 3 prompt configurations x repeats, failures counted automatically; scoring unit-tested on the logged failures. Verified in the sandbox against n8n with stub models (12 runs, plumbing only).
+
 ### Not verified yet: needs the team PC
 
-- [ ] `app.corpus.add` against real arXiv: every id found and every title accepted
-- [ ] Rebuild after the additions reuses the existing vectors (TEI `/info` gives the model id)
-- [ ] The known-answer idea with v2 on the bigger library: does Self-RAG appear, and do the report and summaries avoid F-001 to F-003?
-- [ ] Same idea with v1 (set `active.json` back) for the before/after record
+- [ ] `python scripts/prompt_ab.py` with real Groq: the summary table goes into `prompts/failure_log.md` and the report
 
 ## Next: milestone 2, part 2
 

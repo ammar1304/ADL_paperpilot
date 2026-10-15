@@ -1,0 +1,39 @@
+[
+  {
+    "id": "adaptive-retrieval",
+    "idea": "Train a small model to decide, for each question, whether retrieval is needed at all before answering.",
+    "expected": ["arxiv:2403.14403", "arxiv:2604.07985", "arxiv:2310.11511", "arxiv:2310.05002", "arxiv:2212.10511"],
+    "why": "The first known-answer test. Adaptive-RAG trains a small classifier; Self-RAG, SKR and Mallen et al. decide when to retrieve."
+  },
+  {
+    "id": "iterative-rewrite",
+    "idea": "Let the language model rewrite its search query after each retrieval step, so that it can answer multi-hop questions that need several documents.",
+    "expected": ["arxiv:2212.10509", "arxiv:2305.06983", "arxiv:2210.03350"],
+    "why": "IRCoT interleaves retrieval with reasoning steps; FLARE and Self-Ask generate follow-up queries."
+  },
+  {
+    "id": "retrieval-evaluator",
+    "idea": "Score the retrieved documents with a lightweight evaluator before generation, and when they look wrong, discard them and search the web instead.",
+    "expected": ["arxiv:2401.15884"],
+    "why": "This is Corrective RAG (CRAG), full text in the library."
+  },
+  {
+    "id": "reflection-tokens",
+    "idea": "Fine-tune the language model to output special tokens that decide when to retrieve and that critique whether its own answer is supported by the retrieved passages.",
+    "expected": ["arxiv:2310.11511"],
+    "why": "This is Self-RAG, full text in the library."
+  },
+  {
+    "id": "hypothetical-document",
+    "idea": "For zero-shot dense retrieval without relevance labels, have a language model write a hypothetical answer document and embed it to find real passages.",
+    "expected": ["arxiv:2212.10496"],
+    "why": "This is HyDE; only its abstract is in the library."
+  },
+  {
+    "id": "out-of-domain",
+    "idea": "Use a diffusion model to predict protein structures from amino-acid sequences, evaluated on CASP targets.",
+    "expected": [],
+    "expect_no_overlap": true,
+    "why": "Nothing in a RAG-for-QA library overlaps. The report must say so instead of presenting unrelated papers (F-001)."
+  }
+]

@@ -10,6 +10,7 @@ Retrieval quality and answer quality are measured separately.
 | E4 gold claims | 3 | Audit judge accuracy on about 30 labelled claims | Not started |
 | E5 citation faithfulness | 3 | Faithful vs unfaithful citation pairs | Not started |
 | E6 verifier on/off | 3 | Invented citations and untraceable numbers per run | Not started |
+| E7 prompt A/B | 2 | Per prompt version: expected papers found, query diversity, false overlap, LLM summary failures (F-002, F-003), label stability across repeats | Tooling ready (`scripts/prompt_ab.py`); run on the team PC |
 
 ## E1: chunking A vs B
 
@@ -61,3 +62,15 @@ eval/
   queries/      worksheet.csv (E1), later gold claims and mutation logs
   results/      one folder per evaluation run
 ```
+
+## E7: prompt A/B
+
+Runs the same ideas through the real pipeline (n8n webhook, Groq models) once per prompt configuration and repeat, then counts failures automatically from the stored runs. The ideas, with the papers each should find, are in [prompt_ab/ideas.json](prompt_ab/ideas.json); one idea is out of domain and must find no overlap.
+
+```bash
+python scripts/prompt_ab.py               # 6 ideas x 3 configurations x 2 repeats, about 45 minutes
+```
+
+The default configurations are `baseline` (P1 v1, P3 v1), `judge-v2` (P1 v1, P3 v2) and `full-v2` (P1 v2, P3 v2), so the effect of each prompt change is visible on its own. The script switches `prompts/active.json` between configurations and restores it at the end. Runs are 60 seconds apart because of Groq's free per-minute token limit; a rate-limited run is retried once.
+
+Output in `eval/results/<timestamp>-prompt-ab/`: `summary.md` (the table for the report), `runs.csv` (one row per run) and `runs.jsonl` (every result and step, for reading the actual LLM outputs). The scoring rules are unit-tested against the failures in `prompts/failure_log.md`.

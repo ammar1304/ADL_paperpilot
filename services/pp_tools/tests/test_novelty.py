@@ -277,9 +277,9 @@ def test_novelty_api_end_to_end(tmp_path, test_db_url, stub_url, db):
     )
     write_stub_manifest(settings, {"2101.00001"})
     with TestClient(create_app(settings)) as client:
-        assert client.get("/prompts").json() == {"active": {"P1-decomposer": "v1", "P3-novelty-judge": "v2"}, "problems": []}
+        assert client.get("/prompts").json() == {"active": {"P1-decomposer": "v2", "P3-novelty-judge": "v2"}, "problems": []}
         r = client.post("/prompts/P1-decomposer/render", json={"variables": {"idea_text": IDEA}})
-        assert r.status_code == 200 and IDEA in r.json()["user"] and r.json()["version"] == "v1"
+        assert r.status_code == 200 and IDEA in r.json()["user"] and r.json()["version"] == "v2"
         assert client.post("/prompts/P1-decomposer/render", json={"variables": {}}).status_code == 422
         assert client.post("/prompts/P7-nope/render", json={}).status_code == 404
 
@@ -310,3 +310,25 @@ def test_novelty_api_end_to_end(tmp_path, test_db_url, stub_url, db):
         assert result["branch"] == "novelty" and result["closest_work"]
         steps = client.get(f"/runs/{run_id}/steps").json()
         assert [s["step_name"] for s in steps] == ["decompose", "retrieve", "judge_prompt", "verify"]
+
+
+def test_abstracts_are_kept_whole_but_sections_are_cut(db):
+    """F-004: cutting abstracts at 900 characters hid Adaptive-RAG's method sentence."""
+    from app.retrieval.store import Hit
+
+    long_abstract = "A" * 1500 + " operationalized with a classifier, which is a smaller LM."
+    long_section = "S" * 1500
+
+    class FakeRetriever:
+        def chunks(self, query, strategy, k):
+            return [
+                Hit("arxiv:1#abs", "arxiv:1", 0.9, "abstract", "Abstract", "P1", 2024, long_abstract),
+                Hit("arxiv:1#sec:3", "arxiv:1", 0.8, "section", "3 Method", "P1", 2024, long_section),
+            ]
+
+    run_id = new_run(db)
+    save_facets(db, run_id, decompose(IDEA), "v1")
+    detail = retrieve(db, FakeRetriever(), run_id, RetrievalConfig(), {"papers_in_knowledge_base": 1})
+    texts = {e["chunk_type"]: e["text"] for e in detail["candidates"][0]["evidence"]}
+    assert texts["abstract"].endswith("smaller LM.")
+    assert len(texts["section"]) == 900
