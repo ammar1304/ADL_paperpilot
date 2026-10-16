@@ -170,6 +170,7 @@ def embed(text: str) -> list[float]:
 
 # ---- chat model ---------------------------------------------------------------
 
+DOCLING_CALLS: list[dict] = []  # conversions requested from the docling-serve stand-in
 LLM_CALLS: list[dict] = []  # every request received, for tests
 
 
@@ -286,6 +287,13 @@ class Handler(BaseHTTPRequestHandler):
         url = urlparse(self.path)
         if url.path == "/health":
             return self._send(200, b"", "text/plain")
+        if url.path == "/v1/status/poll/task-1":  # like docling-serve
+            return self._send(200, json.dumps({"task_id": "task-1", "task_status": "success"}).encode(), "application/json")
+        if url.path == "/v1/result/task-1":
+            from audit_fixtures import synthetic_doc
+
+            body = {"status": "success", "document": {"json_content": synthetic_doc()}, "errors": []}
+            return self._send(200, json.dumps(body).encode(), "application/json")
         if url.path == "/info":  # like TEI
             return self._send(200, json.dumps({"model_id": "stub/hashed-bow"}).encode(), "application/json")
         m_refs = re.match(r"^/graph/v1/paper/arXiv:([\d.]+)/references$", url.path)
@@ -333,7 +341,11 @@ class Handler(BaseHTTPRequestHandler):
     def do_POST(self) -> None:  # noqa: N802
         path = urlparse(self.path).path
         length = int(self.headers.get("Content-Length", 0))
-        payload = json.loads(self.rfile.read(length))
+        raw = self.rfile.read(length)
+        if path == "/v1/convert/file/async":  # like docling-serve: multipart upload, then poll
+            DOCLING_CALLS.append({"has_pdf": b"%PDF" in raw, "ocr_off": b'name="do_ocr"\r\n\r\nfalse' in raw})
+            return self._send(200, json.dumps({"task_id": "task-1", "task_status": "pending"}).encode(), "application/json")
+        payload = json.loads(raw)
         if path == "/openai/v1/chat/completions":
             code, body = chat_completion(payload)
             return self._send(code, json.dumps(body).encode(), "application/json")

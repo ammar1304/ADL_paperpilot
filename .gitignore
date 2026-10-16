@@ -29,3 +29,4 @@ eval/e2/s2_references.json
 eval/m3_spike/**/*.json
 eval/m3_spike/**/tables.md
 eval/m3_spike/**/pictures/
+eval/m3_spike/**/*.log

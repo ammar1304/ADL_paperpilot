@@ -325,3 +325,29 @@ The container registries were not reachable from the development sandbox, so the
   - **Some prompt boxes or appendix listings are labelled as tables, and some region crops overlap a table.** Harmless for the number check, which starts from the claims.
   - **CPU time.** An audit of a 15 to 30-page paper takes about 3 to 5 minutes. Acceptable for an asynchronous job with progress shown; the result is cached per PDF hash.
 - **Sources:** [MinerU vs Docling vs Marker](https://builderai.tools/blog/pdf-parsing-for-rag-mineru-docling-marker-compared), [docling-serve](https://github.com/docling-project/docling-serve) and its [usage options](https://github.com/docling-project/docling-serve/blob/main/docs/usage.md).
+
+## D32. The parsed paper: ids from captions, caption repair, cache by PDF hash
+
+- **Date:** 2026-10-16.
+- **Decision:** pp-tools turns Docling's document into a flat `Paper` (`app/audit/paper.py`), stored per SHA-256 of the PDF (`<cache>/audit/<sha>/`). It holds:
+  - blocks in reading order (`b:N`, with section and page);
+  - tables (`table:N`, with cell grid and header rows);
+  - figures (`figure:N`, with a PNG crop);
+  - the bibliography entries.
+- **Ids come from the paper's own caption numbers**, never from Docling's order: claims say "Table 3", and Docling's 7th table was CRAG's Table 11 (D31). An item whose number cannot be found gets `table:uN` rather than a guess.
+- **Caption repair**, most reliable source first:
+  1. Docling's own link, if it names the right kind ("Table" for a table).
+  2. The nearest unclaimed caption of the right kind on the same page, within 120 pt.
+  3. For a picture, a caption Docling put inside the picture region.
+  4. The PDF's text layer (pdfminer, already a dependency), used only when exactly one caption number of that kind is unused on that page.
+- **Split tables:** an uncaptioned table directly below a numbered one, as wide and with the same number of columns, is merged into it (Adaptive-RAG's Table 2 came out in two halves).
+- **Measured on the three spike papers** (37 tables and figures, numbers checked against the captions in the PDF text):
+
+  | | Numbered | Wrong number |
+  | --- | --- | --- |
+  | Docling's caption links only | 28 | 0 |
+  | With repair | 31 | 0 |
+
+  The 6 left unnumbered are uncaptioned in the PDF (appendix images) or Docling boxes that are not tables.
+- **Security:** the PDF URL comes from the user, so pp-tools refuses non-http(s) URLs and addresses that resolve to private, loopback or link-local IPs, which would include the stack's own services. It checks every redirect hop by hand, caps the size (`AUDIT_MAX_PDF_MB`, 30) and requires the `%PDF` signature.
+- **Why a cache:** parsing costs 2 to 5 CPU-minutes. An audit rerun, an evaluation, or two runs on the same draft must not pay that again.

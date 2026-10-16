@@ -19,9 +19,12 @@ from uuid import UUID
 import httpx
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.concurrency import run_in_threadpool
-from fastapi.responses import JSONResponse
+from fastapi.responses import JSONResponse, Response
 from pydantic import ValidationError
 
+from .audit.parse_job import parse_paper
+from .audit.parser import DoclingClient
+from .audit.store import PaperStore
 from .config import Settings, get_settings
 from .corpus.arxiv import ArxivClient
 from .corpus.build import CorpusBuilder
@@ -75,6 +78,7 @@ from .retrieval.store import Store, collection_name, make_client
 log = logging.getLogger("pp_tools")
 
 BUILD_JOB = "corpus_build"
+AUDIT_PARSE_JOB = "audit_parse"
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -87,6 +91,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     reranker = Reranker(settings.reranker_url, timeout_s=settings.rerank_timeout_s) if settings.reranker_url else None
     web = _web_search(settings)
     library = PromptLibrary(settings.prompts_dir)
+    parser = DoclingClient(settings.parser_url, settings.parser_timeout_s) if settings.parser_url else None
+    papers = PaperStore(settings.cache_dir / "audit")
     # One worker: builds run one at a time, and never inside a request.
     jobs = ThreadPoolExecutor(max_workers=1, thread_name_prefix="pp-job")
 
@@ -105,6 +111,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             reranker.close()
         if web is not None:
             web.close()
+        if parser is not None:
+            parser.close()
         db.close()
 
     app = FastAPI(title="pp-tools", version="0.2.0", lifespan=lifespan)
@@ -157,6 +165,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             checks["reranker"] = {"ok": await run_in_threadpool(reranker.healthy), "required": False}
         else:
             checks["reranker"] = {"ok": False, "required": False, "error": "RERANKER_URL not set; novelty uses fused order"}
+
+        if parser is not None:
+            checks["parser"] = {"ok": await run_in_threadpool(parser.healthy), "required": False}
+        else:
+            checks["parser"] = {"ok": False, "required": False, "error": "PARSER_URL not set; audits cannot parse PDFs"}
 
         ok = all(c["ok"] for c in checks.values() if c.get("required", True))
         body = {"status": "ok" if ok else "degraded", "service": "pp-tools", "checks": checks}
@@ -481,6 +494,73 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @app.post("/novelty/{run_id}/result")
     async def novelty_result(run_id: UUID) -> Any:
         return await run_in_threadpool(_novelty_errors, assemble, db, run_id)
+
+    # ---- audit branch (milestone 3) ------------------------------------------
+
+    @app.post("/audit/{run_id}/parse", status_code=202, response_model=JobAccepted)
+    async def start_audit_parse(run_id: UUID, n8n_execution_id: str | None = None) -> Any:
+        """Download the run's PDF and parse it with Docling in the background; poll GET /jobs/{job_id}."""
+        if parser is None:
+            raise HTTPException(status_code=503, detail="PARSER_URL is not set")
+        run = await run_in_threadpool(db.get_run, run_id)
+        if run is None:
+            raise HTTPException(status_code=404, detail="run not found")
+        url = (run.get("input") or {}).get("draft_pdf_url")
+        if run.get("mode") != "audit" or not url:
+            raise HTTPException(status_code=409, detail="not an audit run with a draft_pdf_url")
+        try:
+            job_id = await run_in_threadpool(db.create_job, AUDIT_PARSE_JOB, {"run_id": str(run_id), "url": url}, n8n_execution_id)
+        except JobConflict as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
+        jobs.submit(_run_audit_parse, job_id, run_id, url)
+        return JobAccepted(job_id=job_id, status="queued")
+
+    def _run_audit_parse(job_id: UUID, run_id: UUID, url: str) -> None:
+        last = [0.0]
+
+        def progress(info: dict[str, Any]) -> None:
+            now = time.monotonic()
+            if now - last[0] >= 1.0:
+                last[0] = now
+                db.update_job(job_id, progress=info)
+
+        try:
+            db.update_job(job_id, status="running", progress={"stage": "starting"})
+            result = parse_paper(url, parser, papers, settings.audit_max_pdf_mb * 1_000_000,
+                                 settings.audit_allow_private_urls, progress)
+            db.add_step(run_id, "parse", "done", result)
+            db.update_job(job_id, status="done", progress={"stage": "done"}, result=result)
+            log.info("audit parse done", extra={"job_id": str(job_id), "run_id": str(run_id), "cached": result["cached"]})
+        except Exception as exc:  # noqa: BLE001 - every failure must end in a failed job and step
+            log.exception("audit parse failed", extra={"job_id": str(job_id)})
+            error = {"message": _short(exc), "type": type(exc).__name__}
+            try:
+                db.add_step(run_id, "parse", "failed", {"error": error})
+                db.update_job(job_id, status="failed", error=error)
+            except Exception:  # noqa: BLE001
+                log.exception("could not record the failed parse", extra={"job_id": str(job_id)})
+
+    def _parsed_digest(run_id: UUID) -> str:
+        if db.get_run(run_id) is None:
+            raise HTTPException(status_code=404, detail="run not found")
+        steps = [s for s in db.get_steps(run_id, "parse") if s["status"] == "done"]
+        if not steps:
+            raise HTTPException(status_code=409, detail="the run's PDF has not been parsed yet")
+        return steps[-1]["detail"]["sha256"]
+
+    @app.get("/audit/{run_id}/paper")
+    async def audit_paper(run_id: UUID) -> Any:
+        """The parsed paper: blocks, tables (cell grids) and figures (captions; images separately)."""
+        digest = await run_in_threadpool(_parsed_digest, run_id)
+        return await run_in_threadpool(papers.paper, digest)
+
+    @app.get("/audit/{run_id}/figures/{figure_id}")
+    async def audit_figure(run_id: UUID, figure_id: str) -> Response:
+        digest = await run_in_threadpool(_parsed_digest, run_id)
+        png = await run_in_threadpool(papers.figure, digest, figure_id)
+        if png is None:
+            raise HTTPException(status_code=404, detail=f"no image for {figure_id}")
+        return Response(content=png, media_type="image/png")
 
     @app.get("/runs/{run_id}/steps")
     async def run_steps(run_id: UUID) -> Any:

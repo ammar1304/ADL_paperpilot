@@ -80,6 +80,15 @@ class Settings(BaseSettings):
     openalex_api_key: str = Field(default="", alias="OPENALEX_API_KEY")
     rerank_timeout_s: float = Field(default=120.0, alias="RERANK_TIMEOUT_S")
 
+    # ---- audit branch (milestone 3) -------------------------------------------------
+    # docling-serve (D31); empty disables parsing.
+    parser_url: str = Field(default="", alias="PARSER_URL")
+    # Seconds one PDF may take to parse (CPU: 2 to 5 minutes per paper in the spike).
+    parser_timeout_s: float = Field(default=1800.0, alias="PARSER_TIMEOUT_S")
+    audit_max_pdf_mb: int = Field(default=30, ge=1, le=200, alias="AUDIT_MAX_PDF_MB")
+    # Only for tests and local stand-ins: allow PDF URLs on private addresses.
+    audit_allow_private_urls: bool = Field(default=False, alias="AUDIT_ALLOW_PRIVATE_URLS")
+
     @property
     def manifest_path(self) -> Path:
         return self.corpus_dir / "manifest.csv"
