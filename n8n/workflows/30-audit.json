@@ -253,14 +253,172 @@
    }
   },
   {
-   "id": "c3f2e8f4-0017-4c9a-9c33-000000000017",
-   "name": "Assemble result",
-   "notes": "The audit result so far: parsed paper, claims and number checks. Steps 5 and 6 add the figure and citation checks.",
+   "id": "c3f2e8f4-0020-4c9a-9c33-000000000020",
+   "name": "Next figure",
+   "notes": "pp-tools serves the next figure with every claim that names it, P5 rendered and the image attached as a base64 data URL, or {done: true}. Same loop state as the claims (F-012, F-017); one vision model only, so a spent daily limit stops the figure checks and the result says so.",
    "type": "n8n-nodes-base.httpRequest",
    "typeVersion": 4.2,
    "position": [
     1760,
-    0
+    -220
+   ],
+   "retryOnFail": true,
+   "maxTries": 3,
+   "waitBetweenTries": 2000,
+   "parameters": {
+    "method": "POST",
+    "url": "={{ $env.PP_TOOLS_URL }}/audit/{{ $('Called by router').first().json.run_id }}/figures/next",
+    "options": {
+     "timeout": 60000
+    }
+   }
+  },
+  {
+   "id": "c3f2e8f4-0021-4c9a-9c33-000000000021",
+   "name": "More figures?",
+   "type": "n8n-nodes-base.if",
+   "typeVersion": 2.2,
+   "position": [
+    1980,
+    -220
+   ],
+   "parameters": {
+    "conditions": {
+     "options": {
+      "caseSensitive": true,
+      "leftValue": "",
+      "typeValidation": "loose",
+      "version": 2
+     },
+     "conditions": [
+      {
+       "id": "c3000021-0000-4000-8000-000000000021",
+       "leftValue": "={{ $json.done }}",
+       "rightValue": false,
+       "operator": {
+        "type": "boolean",
+        "operation": "false",
+        "singleValue": true
+       }
+      }
+     ],
+     "combinator": "and"
+    },
+    "options": {}
+   }
+  },
+  {
+   "id": "c3f2e8f4-0022-4c9a-9c33-000000000022",
+   "name": "Pause before figure",
+   "notes": "Before every vision call, for as long as pp-tools says (wait_s): normally 45 s, since a call is about 5,000 tokens counted (the image alone is a flat 2,048) against 8,000 a minute.",
+   "type": "n8n-nodes-base.wait",
+   "typeVersion": 1.1,
+   "position": [
+    2200,
+    -120
+   ],
+   "webhookId": "03000000-0000-0000-0000-000000000022",
+   "parameters": {
+    "resume": "timeInterval",
+    "amount": "={{ $json.wait_s }}",
+    "unit": "seconds"
+   }
+  },
+  {
+   "id": "c3f2e8f4-0023-4c9a-9c33-000000000023",
+   "name": "Check figure",
+   "notes": "The multimodal step: one call per figure to Groq's vision model (qwen/qwen3.8-27b), with the figure image, its caption and the claims that name it. P5 asks for a description of what the figure shows, then one verdict per claim (supported, contradicted, not shown), judged on the image, not the caption. Strict JSON schema, low hidden reasoning. Groq only (D12). Errors go to 'Record figure error', then the figure is served again.",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2,
+   "position": [
+    2420,
+    -120
+   ],
+   "onError": "continueErrorOutput",
+   "parameters": {
+    "method": "POST",
+    "url": "https://api.groq.com/openai/v1/chat/completions",
+    "authentication": "genericCredentialType",
+    "sendBody": true,
+    "specifyBody": "json",
+    "jsonBody": "={{ JSON.stringify($json.request) }}",
+    "options": {
+     "timeout": 120000
+    },
+    "genericAuthType": "httpHeaderAuth"
+   },
+   "credentials": {
+    "httpHeaderAuth": {
+     "id": "ppGroqHeader0001",
+     "name": "Groq API header (PaperPilot)"
+    }
+   }
+  },
+  {
+   "id": "c3f2e8f4-0024-4c9a-9c33-000000000024",
+   "name": "Save figure check",
+   "notes": "pp-tools validates the verdicts (one per claim, unknown claim numbers ignored, a skipped claim recorded as not answered). An invalid output (HTTP 409) does not stop the run: the figure is served again, up to 3 attempts.",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2,
+   "position": [
+    2640,
+    -120
+   ],
+   "maxTries": 3,
+   "waitBetweenTries": 2000,
+   "parameters": {
+    "method": "POST",
+    "url": "={{ $env.PP_TOOLS_URL }}/audit/{{ $('Called by router').first().json.run_id }}/figure-checks",
+    "sendBody": true,
+    "specifyBody": "json",
+    "jsonBody": "={{ JSON.stringify({ batch: $('Next figure').last().json.batch, output_text: $json.choices[0].message.content, usage: $json.usage }) }}",
+    "options": {
+     "timeout": 60000,
+     "response": {
+      "response": {
+       "fullResponse": true,
+       "neverError": true
+      }
+     }
+    }
+   }
+  },
+  {
+   "id": "c3f2e8f4-0025-4c9a-9c33-000000000025",
+   "name": "Record figure error",
+   "notes": "Stores why a vision call failed, with the HTTP status and Groq's retry-after, so a rate limit gives the attempt back and a failed figure is never silent.",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2,
+   "position": [
+    2640,
+    40
+   ],
+   "parameters": {
+    "method": "POST",
+    "url": "={{ $env.PP_TOOLS_URL }}/audit/{{ $('Called by router').first().json.run_id }}/figure-checks/error",
+    "sendBody": true,
+    "specifyBody": "json",
+    "jsonBody": "={{ JSON.stringify({ batch: $('Next figure').last().json.batch, model: $('Next figure').last().json.model, status: ($json.error || {}).status, retry_after: ((($json.error || {}).response || {}).headers || {})['retry-after'], error: String(($json.error || {}).message || $json.message || '').slice(0, 300) + ' ' + JSON.stringify((($json.error || {}).response || {}).data || '').slice(0, 1500) }) }}",
+    "options": {
+     "timeout": 30000,
+     "response": {
+      "response": {
+       "fullResponse": true,
+       "neverError": true
+      }
+     }
+    }
+   }
+  },
+  {
+   "id": "c3f2e8f4-0017-4c9a-9c33-000000000017",
+   "name": "Assemble result",
+   "notes": "The audit result so far: parsed paper, claims, number checks and figure checks. Step 6 adds the citation check.",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2,
+   "position": [
+    2200,
+    -320
    ],
    "retryOnFail": true,
    "maxTries": 3,
@@ -575,7 +733,87 @@
    "main": [
     [
      {
+      "node": "Next figure",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Next figure": {
+   "main": [
+    [
+     {
+      "node": "More figures?",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "More figures?": {
+   "main": [
+    [
+     {
+      "node": "Pause before figure",
+      "type": "main",
+      "index": 0
+     }
+    ],
+    [
+     {
       "node": "Assemble result",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Pause before figure": {
+   "main": [
+    [
+     {
+      "node": "Check figure",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Check figure": {
+   "main": [
+    [
+     {
+      "node": "Save figure check",
+      "type": "main",
+      "index": 0
+     }
+    ],
+    [
+     {
+      "node": "Record figure error",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Save figure check": {
+   "main": [
+    [
+     {
+      "node": "Next figure",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Record figure error": {
+   "main": [
+    [
+     {
+      "node": "Next figure",
       "type": "main",
       "index": 0
      }

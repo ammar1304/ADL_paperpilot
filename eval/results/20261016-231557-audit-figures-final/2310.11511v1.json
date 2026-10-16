@@ -1,0 +1,3833 @@
+{
+ "url": "https://arxiv.org/pdf/2310.11511v1",
+ "run_id": "72682636-790e-4983-ae98-aeab6075c1ca",
+ "result": {
+  "paper": {
+   "items": 14,
+   "pages": 30,
+   "title": "SELF-RAG: LEARNING TO RETRIEVE, GENERATE, AND CRITIQUE THROUGH SELF-REFLECTION",
+   "sha256": "d9eaa1398abac0df67a9d0933a5bf8b6d9d83d2e72da2a486073cd842dd52978",
+   "tables": [
+    "table:1",
+    "table:2",
+    "table:u1",
+    "table:u2",
+    "table:3",
+    "table:u3",
+    "table:u4",
+    "table:5"
+   ],
+   "figures": [
+    "figure:1",
+    "figure:2",
+    "figure:3",
+    "figure:4",
+    "figure:u1",
+    "figure:u2"
+   ],
+   "numbered": 8,
+   "references": 60
+  },
+  "branch": "audit",
+  "claims": [
+   {
+    "type": "comparison",
+    "cites": [],
+    "claim": "SELF-RAG outperforms retrieval-augmented ChatGPT on four tasks and on all tasks for Llama2-chat and Alpaca.",
+    "values": [],
+    "sentence": "In particular, SELF-RAG outperforms retrieval-augmented ChatGPT on four tasks, Llama2-chat (Touvron et al., 2023) and Alpaca (Dubois et al., 2023) on all tasks.",
+    "refers_to": [],
+    "comparison": {
+     "kind": "unspecified",
+     "system": "SELF-RAG",
+     "baseline": "retrieval-augmented ChatGPT",
+     "direction": "better",
+     "difference": ""
+    },
+    "sentence_id": "b:11/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Figure 1 and Algorithm 1 present an overview of SELF-RAG at inference.",
+    "values": [],
+    "sentence": "Figure 1 and Algorithm 1 present an overview of SELF-RAG at inference.",
+    "refers_to": [
+     "figure:1"
+    ],
+    "comparison": null,
+    "sentence_id": "b:24/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "citation",
+    "cites": [
+     "Wu et al., 2023"
+    ],
+    "claim": "Manual annotation of reflection tokens for each segment is expensive.",
+    "values": [],
+    "sentence": "Manual annotation of reflection tokens for each segment is expensive (Wu et al., 2023).",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:29/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "citation",
+    "cites": [
+     "Liu et al., 2023b"
+    ],
+    "claim": "A state-of-the-art LLM like GPT-4 can be effectively used to generate such feedback.",
+    "values": [],
+    "sentence": "A state-of-the-art LLM like GPT-4 (OpenAI, 2023) can be effectively used to generate such feedback (Liu et al., 2023b).",
+    "refers_to": [],
+    "comparison": null,
+    "repaired_id": "b:29/s/2",
+    "sentence_id": "b:29/s:2",
+    "unknown_refs": []
+   },
+   {
+    "type": "citation",
+    "cites": [
+     "Chen et al., 2023"
+    ],
+    "claim": "Depending on proprietary LMs can raise API costs and diminish reproducibility.",
+    "values": [],
+    "sentence": "However, depending on such proprietary LMs can raise API costs and diminish reproducibility (Chen et al., 2023).",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:29/s:3",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Table 1 shows different reflection token groups have their own definitions and input, and we use different instruction prompts for them.",
+    "values": [],
+    "sentence": "As different reflection token groups have their own definitions and input, as shown in Table 1, we use different instruction prompts for them.",
+    "refers_to": [
+     "table:1"
+    ],
+    "comparison": null,
+    "sentence_id": "b:29/s:6",
+    "unknown_refs": []
+   },
+   {
+    "type": "result",
+    "cites": [],
+    "claim": "The critic achieves a higher than 90% agreement with GPT-4-based predictions on most reflection token categories.",
+    "values": [
+     {
+      "role": "value",
+      "value": "90%",
+      "metric": "agreement",
+      "system": "critic",
+      "dataset": "",
+      "setting": ""
+     }
+    ],
+    "sentence": "The critic achieves a higher than 90% agreement with GPT-4-based predictions on most reflection token categories (Appendix Table 5).",
+    "refers_to": [
+     "table:5"
+    ],
+    "comparison": null,
+    "sentence_id": "b:32/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Figure 2 shows example training data.",
+    "values": [],
+    "sentence": "See the example training data in Figure 2.",
+    "refers_to": [
+     "figure:2"
+    ],
+    "comparison": null,
+    "sentence_id": "b:34/s:8",
+    "unknown_refs": []
+   },
+   {
+    "type": "citation",
+    "cites": [
+     "Ouyang et al. 2022"
+    ],
+    "claim": "Recent work incorporates additional critique (feedback) during training via RLHF (Ouyang et al. 2022) using PPO.",
+    "values": [],
+    "sentence": "Recent work incorporates additional critique (feedback) during training, e.g., RLHF (Ouyang et al. 2022) via PPO.",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:37/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "citation",
+    "cites": [
+     "Keskar et al., 2019",
+     "Lu et al., 2022",
+     "Korbak et al., 2023"
+    ],
+    "claim": "Prior work incorporates special tokens to control generation (Keskar et al., 2019; Lu et al., 2022; Korbak et al., 2023).",
+    "values": [],
+    "sentence": "Our work also relates to prior work that incorporates special tokens to control generation (Keskar et al., 2019; Lu et al., 2022; Korbak et al., 2023).",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:37/s:4",
+    "unknown_refs": []
+   },
+   {
+    "type": "citation",
+    "cites": [
+     "Touvron et al., 2023",
+     "Wu et al., 2023"
+    ],
+    "claim": "Balancing the trade-off between multiple preferences has been studied in RLHF (Touvron et al., 2023; Wu et al., 2023).",
+    "values": [],
+    "sentence": "Balancing the trade-off between multiple preferences has been studied in RLHF (Touvron et al., 2023; Wu et al., 2023), which often requires training to change models' behaviors.",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:42/s:5",
+    "unknown_refs": []
+   },
+   {
+    "type": "other",
+    "cites": [],
+    "claim": "The TriviaQA-unfiltered test set uses 11,313 test queries for evaluation.",
+    "values": [],
+    "sentence": "As the TriviaQA-unfiltered (open) test set is not publicly available, we follow prior work's validation and test split (Min et al., 2019; Guu et al., 2020), using 11,313 test queries for evaluation.",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:47/s:2",
+    "unknown_refs": []
+   },
+   {
+    "type": "other",
+    "cites": [],
+    "claim": "Performance is evaluated based on whether gold answers are included in the model generations rather than exact matching.",
+    "values": [],
+    "sentence": "We evaluate performance based on whether gold answers are included in the model generations instead of strictly requiring exact matching, following Mallen et al. (2023); Schick et al. (2023).",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:47/s:3",
+    "unknown_refs": []
+   },
+   {
+    "type": "other",
+    "cites": [],
+    "claim": "We evaluate strong publicly available pre-trained LLMs Llama2-7B, 13B, instruction-tuned Alpaca7B, 13B, and models trained with private data ChatGPT and Llama2-chat13B.",
+    "values": [],
+    "sentence": "We evaluate strong publicly available pre-trained LLMs, Llama27B , 13B (Touvron et al., 2023), instruction-tuned models, Alpaca7B , 13B (Dubois et al., 2023) (our replication based on Llama2); and models trained and reinforced using private data, ChatGPT (Ouyang et al., 2022) and Llama2-chat13B.",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:50/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Table 2 (top) presents the baselines without retrieval.",
+    "values": [],
+    "sentence": "Table 2 (top) presents the baselines without retrieval.",
+    "refers_to": [
+     "table:2"
+    ],
+    "comparison": null,
+    "sentence_id": "b:59/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "comparison",
+    "cites": [
+     "Dhuliawala et al., 2023"
+    ],
+    "claim": "Our 7B and 13B models outperform the concurrent CoVE on the bio generation task.",
+    "values": [],
+    "sentence": "Our approach also significantly outperforms a concurrent method that employs sophisticated prompt engineering; specifically, on the bio generation task, our 7B and 13B models outperform the concurrent CoVE (Dhuliawala et al., 2023), which iteratively prompts Llama265B to refine output.",
+    "refers_to": [],
+    "comparison": {
+     "kind": "unspecified",
+     "system": "our 7B and 13B models",
+     "baseline": "CoVE",
+     "direction": "better",
+     "difference": ""
+    },
+    "sentence_id": "b:59/s:3",
+    "unknown_refs": []
+   },
+   {
+    "type": "comparison",
+    "cites": [],
+    "claim": "SELF-RAG outperforms existing RAG in many tasks, achieving the best performance among non-proprietary LM-based models on all tasks.",
+    "values": [],
+    "sentence": "As shown in Tables 2 (bottom), our SELF-RAG also outperforms existing RAG in many tasks, obtaining the best performance among non-proprietary LM-based models on all tasks.",
+    "refers_to": [],
+    "comparison": {
+     "kind": "unspecified",
+     "system": "SELF-RAG",
+     "baseline": "existing RAG",
+     "direction": "better",
+     "difference": ""
+    },
+    "sentence_id": "b:60/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "citation",
+    "cites": [
+     "Gao et al., 2023"
+    ],
+    "claim": "Gao et al. (2023) found that ChatGPT consistently exhibits superior efficacy in this particular task, surpassing smaller LMs.",
+    "values": [],
+    "sentence": "Gao et al. (2023) found that ChatGPT consistently exhibits superior efficacy in this particular task, surpassing smaller LMs.",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:60/s:7",
+    "unknown_refs": []
+   },
+   {
+    "type": "citation",
+    "cites": [
+     "Luo et al., 2023",
+     "Dubois et al., 2023"
+    ],
+    "claim": "We use our instruction-output data instead of the Alpaca dataset, similar to SAIL.",
+    "values": [],
+    "sentence": "This is similar to SAIL (Luo et al., 2023), and we use our instruction-output data instead of using the Alpaca dataset (Dubois et al., 2023), as in SAIL.",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:62/s:3",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Figure 3b shows the effects of changing the weighting term for ISSUP.",
+    "values": [],
+    "sentence": "Figure 3b shows the effects of changing the weighting term for ISSUP , which criticizes how supported the output is by the text passage.",
+    "refers_to": [
+     "figure:3"
+    ],
+    "comparison": null,
+    "sentence_id": "b:64/s:3",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Figure 3c shows that the model's retrieval frequencies dramatically change on both datasets as δ varies.",
+    "values": [],
+    "sentence": "Figure 3c shows that the model's retrieval frequencies dramatically change on both datasets. as δ varies.",
+    "refers_to": [
+     "figure:3"
+    ],
+    "comparison": null,
+    "sentence_id": "b:65/s:3",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Figures 4a, 4b and 4c show the models' performance trained on different amounts of data.",
+    "values": [],
+    "sentence": "We also evaluate Figures 4a, 4b and 4c shows the models' performance trained on different amount of data.",
+    "refers_to": [
+     "figure:4"
+    ],
+    "comparison": null,
+    "sentence_id": "b:66/s:4",
+    "unknown_refs": []
+   },
+   {
+    "type": "result",
+    "cites": [],
+    "claim": "Assessments show high agreement with GPT-4 predictions for relevance (95%), retrieval necessity (95%), and degree of support (90%).",
+    "values": [
+     {
+      "role": "value",
+      "value": "95%",
+      "metric": "agreement",
+      "system": "our assessments",
+      "dataset": "",
+      "setting": "relevance"
+     },
+     {
+      "role": "value",
+      "value": "95%",
+      "metric": "agreement",
+      "system": "our assessments",
+      "dataset": "",
+      "setting": "retrieval necessity"
+     },
+     {
+      "role": "value",
+      "value": "90%",
+      "metric": "agreement",
+      "system": "our assessments",
+      "dataset": "",
+      "setting": "degree of support"
+     }
+    ],
+    "sentence": "We found our assessments show high agreement with GPT-4 predictions, especially for relevance (95%), retrieval necessity (95%), and the degree of support (90%).",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:84/s:2",
+    "unknown_refs": []
+   },
+   {
+    "type": "result",
+    "cites": [],
+    "claim": "Agreement was slightly lower in usefulness (80%).",
+    "values": [
+     {
+      "role": "value",
+      "value": "80%",
+      "metric": "agreement",
+      "system": "our assessments",
+      "dataset": "",
+      "setting": "usefulness"
+     }
+    ],
+    "sentence": "Agreement was slightly lower in usefulness (80%), mostly due to the disagreement between 1 and 2 or 4 and 5.",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:84/s:3",
+    "unknown_refs": []
+   },
+   {
+    "type": "other",
+    "cites": [
+     "Liu et al., 2023a"
+    ],
+    "claim": "A larger weight results in lower MAUVE scores, with longer and more fluent generations often containing more unsupported claims.",
+    "values": [],
+    "sentence": "On the contrary, a larger weight results in lower MAUVE scores: when generation gets longer and more fluent, there are often more claims that are not fully supported by citations, consistent with findings by Liu et al. (2023a).",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:64/s:5",
+    "unknown_refs": []
+   },
+   {
+    "type": "result",
+    "cites": [],
+    "claim": "In total, we use 145,619 training instances.",
+    "values": [
+     {
+      "role": "value",
+      "value": "145,619",
+      "metric": "instances",
+      "system": "training instances",
+      "dataset": "",
+      "setting": ""
+     }
+    ],
+    "sentence": "Table 3 shows the full list of training instances, and in total, we use 145,619 instances.",
+    "refers_to": [
+     "table:3"
+    ],
+    "comparison": null,
+    "sentence_id": "b:87/s:4",
+    "unknown_refs": []
+   },
+   {
+    "type": "result",
+    "cites": [],
+    "claim": "Our reward model shows higher than 80% accuracy.",
+    "values": [
+     {
+      "role": "value",
+      "value": "80%",
+      "metric": "accuracy",
+      "system": "reward model",
+      "dataset": "",
+      "setting": ""
+     }
+    ],
+    "sentence": "In most aspects, our reward model shows higher than 80% accuracy, indicating the powerful ability of fine-tuned specialized LMs to evaluate text.",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:89/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "result",
+    "cites": [],
+    "claim": "All models are trained for 3 epochs with a batch size of 128, a peak learning rate of 2e-5 and 3% warmup steps.",
+    "values": [
+     {
+      "role": "value",
+      "value": "3",
+      "metric": "epochs",
+      "system": "models",
+      "dataset": "",
+      "setting": ""
+     },
+     {
+      "role": "value",
+      "value": "128",
+      "metric": "batch size",
+      "system": "models",
+      "dataset": "",
+      "setting": ""
+     },
+     {
+      "role": "value",
+      "value": "2e-5",
+      "metric": "learning rate",
+      "system": "models",
+      "dataset": "",
+      "setting": ""
+     },
+     {
+      "role": "value",
+      "value": "3%",
+      "metric": "warmup steps",
+      "system": "models",
+      "dataset": "",
+      "setting": ""
+     }
+    ],
+    "sentence": "All models are trained for 3 epochs with a batch size of 128, a peak learning rate of 2e-5 with 3% warmup steps, and linear decay afterward.",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:102/s:2",
+    "unknown_refs": []
+   },
+   {
+    "type": "result",
+    "cites": [],
+    "claim": "For PopQA, SELF-RAG generates answers not included in the provided evidence only 2% of the time, compared to 20% for Alpaca 30B, 18% for Llama2-chat 13B, and 15% for Alpaca.",
+    "values": [
+     {
+      "role": "value",
+      "value": "2%",
+      "metric": "percentage of correct predictions not included in passages",
+      "system": "SELF-RAG",
+      "dataset": "PopQA",
+      "setting": ""
+     },
+     {
+      "role": "value",
+      "value": "20%",
+      "metric": "percentage of correct predictions not included in passages",
+      "system": "Alpaca 30B",
+      "dataset": "PopQA",
+      "setting": ""
+     },
+     {
+      "role": "value",
+      "value": "18%",
+      "metric": "percentage of correct predictions not included in passages",
+      "system": "Llama2-chat 13B",
+      "dataset": "PopQA",
+      "setting": ""
+     },
+     {
+      "role": "value",
+      "value": "15%",
+      "metric": "percentage of correct predictions not included in passages",
+      "system": "Alpaca",
+      "dataset": "PopQA",
+      "setting": ""
+     }
+    ],
+    "sentence": "We found that SELF-RAG significantly less frequently generates answers that are not included in the provided evidence; in particular, in Alpaca 30B, 20% of the correct predictions are not included in the provided passages, followed by Llama2-chat 13B (18%) and Alpaca (15%), while it is only 2% in SELF-RAG.",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:109/s:4",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Table 8 shows the instructions and demonstrations for the initial retrieval token.",
+    "values": [],
+    "sentence": "Table 8 shows the instructions and demonstrations for the initial retrieval token.",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:117/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Table 9 shows the instruction and demonstrations used to collect the three-way output tokens for Retrieve given instruction, preceding sentences, and previously retrieved passages.",
+    "values": [],
+    "sentence": "Table 9 shows the instruction and demonstrations used to collect the three-way output tokens for Retrieve given instruction, preceding sentences, and previously retrieved passages.",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:117/s:2",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Table 10 shows an instruction and demonstrations used to collect the three-way output tokens for ISREL.",
+    "values": [],
+    "sentence": "Table 10 shows an instruction and demonstrations used to collect the three-way output tokens for ISREL .",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:117/s:4",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Table 11 shows an instruction and demonstrations used to collect the three-way output tokens for ISREL.",
+    "values": [],
+    "sentence": "Table 11 shows an instruction and demonstrations used to collect the three-way output tokens for ISREL .",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:117/s:5",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Table 12 shows an instruction and demonstrations used to collect the five-way output tokens for ISUSE.",
+    "values": [],
+    "sentence": "Table 12 shows an instruction and demonstrations used to collect the five-way output tokens for ISUSE .",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:117/s:6",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Table 5 provides the full list of instructions used during zero-shot evaluations.",
+    "values": [],
+    "sentence": "Table 5: Full list of instructions used during zero-shot evaluations.",
+    "refers_to": [
+     "table:5"
+    ],
+    "comparison": null,
+    "sentence_id": "b:127/s:0",
+    "unknown_refs": []
+   },
+   {
+    "type": "other",
+    "cites": [],
+    "claim": "The output indicates Retrieve = Yes and ISREL = Relevant for a question about an astronomy book.",
+    "values": [],
+    "sentence": "Output [ Retrieve = Yes ] <p> Reference [1] <p> [ ISREL = Relevant ] A Question and Answer Guide to Astronomy is a non-fiction book that falls under the genre of Astronomy and Cosmology.",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:129/s:0",
+    "unknown_refs": []
+   },
+   {
+    "type": "other",
+    "cites": [],
+    "claim": "Reference [1] describes a book about astronomy and cosmology intended for a general audience.",
+    "values": [],
+    "sentence": "Reference [1] A Question and Answer Guide to Astronomy is a book about astronomy and cosmology, and is intended for a general audience.",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:130/s:0",
+    "unknown_refs": []
+   },
+   {
+    "type": "other",
+    "cites": [],
+    "claim": "Both ISREL and ISSUP are correct because the reference provides detailed information about the book.",
+    "values": [],
+    "sentence": "Correctness of ISREL and ISSUP : Both ISREL and ISSUP are correct, as the Reference [1] provides detailed information of the book including the genre, and the model output is fully supported by the reference.",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:132/s:0",
+    "unknown_refs": []
+   },
+   {
+    "type": "other",
+    "cites": [],
+    "claim": "The output shows Retrieve = Yes, ISREL = Relevant, and ISUSE = 5 for a statement about the author of The Lie.",
+    "values": [],
+    "sentence": "Output [ Retrieve = Yes ] <p> Reference [1] <p> [ ISREL = Relevant ] The author of The Lie is Sam Harris.[ ISSUP = Fully Supported ][ ISUSE =5]",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:134/s:0",
+    "unknown_refs": []
+   },
+   {
+    "type": "other",
+    "cites": [],
+    "claim": "Reference [1] states that Lying is a 2011 long-form essay book by Sam Harris.",
+    "values": [],
+    "sentence": "Reference [1] Lying is a 2011 long-form essay book by American author and neuroscience expert Sam Harris.",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:135/s:0",
+    "unknown_refs": []
+   },
+   {
+    "type": "other",
+    "cites": [],
+    "claim": "Both ISREL and ISSUP are incorrect because the reference is about a different book with a similar title.",
+    "values": [],
+    "sentence": "Correctness of ISREL and ISSUP Both ISREL and ISSUP are incorrect, as the Reference [1] is about a different book whose title is similar to The Lie.",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:137/s:0",
+    "unknown_refs": []
+   },
+   {
+    "type": "other",
+    "cites": [],
+    "claim": "The output indicates Retrieve = Yes, ISREL = Relevant, and ISUSE = 5 for a description of Ronaldinho, including his achievements and playing style.",
+    "values": [],
+    "sentence": "Output [ Retrieve = Yes ] <p> Reference [1] <p> [ ISREL = Relevant ] Ronaldinho is a retired professional footballer from Brazil.[ ISSUP = Fully Supported ][ Retrieve = Continue ]He played as an attacking midfielder and was known for his technical skills, creativity, dribbling ability, and accuracy from free kicks[ Retrieve = Continue ]He won two FIFA World Player of the Year awards and a Ballon d'Or.[ ISUSE =5] Reference [1] Ronaldo de Assis Moreira (born 21 March 1980), commonly known as Ronaldinho Ga´ ucho or simply Ronaldinho, is a Brazilian retired professional footballer who played mostly as an attacking midfielder, but was also deployed as a winger.",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:139/s:0",
+    "unknown_refs": []
+   }
+  ],
+  "run_id": "72682636-790e-4983-ae98-aeab6075c1ca",
+  "coverage": {
+   "models": [
+    "openai/gpt-oss-120b",
+    "openai/gpt-oss-20b"
+   ],
+   "batches": 10,
+   "by_type": {
+    "other": 11,
+    "figure": 13,
+    "result": 7,
+    "citation": 8,
+    "comparison": 3
+   },
+   "stopped": null,
+   "llm_errors": 3,
+   "batches_done": 10,
+   "rate_limited": 3,
+   "batches_skipped": [],
+   "total_sentences": 507,
+   "candidate_sentences": 123
+  },
+  "implemented": "parse+claims+numbers+figures",
+  "figure_checks": {
+   "checks": [],
+   "summary": {
+    "jobs": 4,
+    "checks": 0,
+    "figures": 4,
+    "skipped": [
+     0,
+     1,
+     2,
+     3
+    ],
+    "stopped": "Groq daily token limit reached on qwen/qwen3.8-27b",
+    "jobs_done": 0,
+    "not_shown": 0,
+    "supported": 0,
+    "llm_errors": 1,
+    "contradicted": 0,
+    "not_answered": 0,
+    "rate_limited": 1,
+    "missing_figure": 0
+   },
+   "figures_read": {},
+   "prompt_version": "v2"
+  },
+  "number_checks": {
+   "checks": [
+    {
+     "kind": "value",
+     "note": "no table cell matches the claim's system",
+     "claim": 6,
+     "metric": "agreement",
+     "system": "critic",
+     "claimed": "90%",
+     "dataset": "",
+     "setting": "",
+     "verdict": "unverifiable",
+     "sentence_id": "b:32/s:1"
+    },
+    {
+     "kind": "value",
+     "note": "no table cell matches the claim's system",
+     "claim": 22,
+     "metric": "agreement",
+     "system": "our assessments",
+     "claimed": "95%",
+     "dataset": "",
+     "setting": "relevance",
+     "verdict": "unverifiable",
+     "sentence_id": "b:84/s:2"
+    },
+    {
+     "kind": "value",
+     "note": "no table cell matches the claim's system",
+     "claim": 22,
+     "metric": "agreement",
+     "system": "our assessments",
+     "claimed": "95%",
+     "dataset": "",
+     "setting": "retrieval necessity",
+     "verdict": "unverifiable",
+     "sentence_id": "b:84/s:2"
+    },
+    {
+     "kind": "value",
+     "note": "no table cell matches the claim's system",
+     "claim": 22,
+     "metric": "agreement",
+     "system": "our assessments",
+     "claimed": "90%",
+     "dataset": "",
+     "setting": "degree of support",
+     "verdict": "unverifiable",
+     "sentence_id": "b:84/s:2"
+    },
+    {
+     "kind": "value",
+     "note": "no table cell matches the claim's system",
+     "claim": 23,
+     "metric": "agreement",
+     "system": "our assessments",
+     "claimed": "80%",
+     "dataset": "",
+     "setting": "usefulness",
+     "verdict": "unverifiable",
+     "sentence_id": "b:84/s:3"
+    },
+    {
+     "kind": "value",
+     "note": "no table cell matches the claim's system",
+     "claim": 25,
+     "metric": "instances",
+     "system": "training instances",
+     "claimed": "145,619",
+     "dataset": "",
+     "setting": "",
+     "verdict": "unverifiable",
+     "sentence_id": "b:87/s:4"
+    },
+    {
+     "kind": "value",
+     "note": "no table cell matches the claim's system",
+     "claim": 26,
+     "metric": "accuracy",
+     "system": "reward model",
+     "claimed": "80%",
+     "dataset": "",
+     "setting": "",
+     "verdict": "unverifiable",
+     "sentence_id": "b:89/s:1"
+    },
+    {
+     "kind": "value",
+     "note": "no table cell matches the claim's system",
+     "claim": 27,
+     "metric": "epochs",
+     "system": "models",
+     "claimed": "3",
+     "dataset": "",
+     "setting": "",
+     "verdict": "unverifiable",
+     "sentence_id": "b:102/s:2"
+    },
+    {
+     "kind": "value",
+     "note": "no table cell matches the claim's system",
+     "claim": 27,
+     "metric": "batch size",
+     "system": "models",
+     "claimed": "128",
+     "dataset": "",
+     "setting": "",
+     "verdict": "unverifiable",
+     "sentence_id": "b:102/s:2"
+    },
+    {
+     "kind": "value",
+     "note": "no table cell matches the claim's system",
+     "claim": 27,
+     "metric": "learning rate",
+     "system": "models",
+     "claimed": "2e-5",
+     "dataset": "",
+     "setting": "",
+     "verdict": "unverifiable",
+     "sentence_id": "b:102/s:2"
+    },
+    {
+     "kind": "value",
+     "note": "no table cell matches the claim's system",
+     "claim": 27,
+     "metric": "warmup steps",
+     "system": "models",
+     "claimed": "3%",
+     "dataset": "",
+     "setting": "",
+     "verdict": "unverifiable",
+     "sentence_id": "b:102/s:2"
+    },
+    {
+     "kind": "value",
+     "note": "no table cell matches the claim's system",
+     "claim": 28,
+     "metric": "percentage of correct predictions not included in passages",
+     "system": "SELF-RAG",
+     "claimed": "2%",
+     "dataset": "PopQA",
+     "setting": "",
+     "verdict": "unverifiable",
+     "sentence_id": "b:109/s:4"
+    },
+    {
+     "kind": "value",
+     "note": "no table cell matches the claim's system",
+     "claim": 28,
+     "metric": "percentage of correct predictions not included in passages",
+     "system": "Alpaca 30B",
+     "claimed": "20%",
+     "dataset": "PopQA",
+     "setting": "",
+     "verdict": "unverifiable",
+     "sentence_id": "b:109/s:4"
+    },
+    {
+     "kind": "value",
+     "note": "no table cell matches the claim's system",
+     "claim": 28,
+     "metric": "percentage of correct predictions not included in passages",
+     "system": "Llama2-chat 13B",
+     "claimed": "18%",
+     "dataset": "PopQA",
+     "setting": "",
+     "verdict": "unverifiable",
+     "sentence_id": "b:109/s:4"
+    },
+    {
+     "kind": "value",
+     "note": "no table cell matches the claim's system",
+     "claim": 28,
+     "metric": "percentage of correct predictions not included in passages",
+     "system": "Alpaca",
+     "claimed": "15%",
+     "dataset": "PopQA",
+     "setting": "",
+     "verdict": "unverifiable",
+     "sentence_id": "b:109/s:4"
+    }
+   ],
+   "summary": {
+    "checks": 15,
+    "supported": 0,
+    "contradicted": 0,
+    "unverifiable": 15,
+    "cells_indexed": 181
+   }
+  },
+  "claims_dropped": 0,
+  "prompt_versions": {
+   "P5-figure-checker": "v2",
+   "P4-claim-extractor": "v1"
+  }
+ },
+ "steps": [
+  {
+   "step_id": 1144,
+   "step_name": "parse",
+   "status": "done",
+   "detail": {
+    "items": 14,
+    "pages": 30,
+    "title": "SELF-RAG: LEARNING TO RETRIEVE, GENERATE, AND CRITIQUE THROUGH SELF-REFLECTION",
+    "blocks": 197,
+    "cached": true,
+    "sha256": "d9eaa1398abac0df67a9d0933a5bf8b6d9d83d2e72da2a486073cd842dd52978",
+    "tables": [
+     {
+      "id": "table:1",
+      "page": 4,
+      "rows": 2,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:2",
+      "page": 8,
+      "rows": 24,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:u1",
+      "page": 10,
+      "rows": 4,
+      "caption_source": "none"
+     },
+     {
+      "id": "table:u2",
+      "page": 16,
+      "rows": 11,
+      "caption_source": "none"
+     },
+     {
+      "id": "table:3",
+      "page": 18,
+      "rows": 15,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:u3",
+      "page": 18,
+      "rows": 12,
+      "caption_source": "none"
+     },
+     {
+      "id": "table:u4",
+      "page": 18,
+      "rows": 3,
+      "caption_source": "none"
+     },
+     {
+      "id": "table:5",
+      "page": 23,
+      "rows": 6,
+      "caption_source": "repaired"
+     }
+    ],
+    "figures": [
+     {
+      "id": "figure:1",
+      "page": 2,
+      "has_image": true,
+      "caption_source": "docling"
+     },
+     {
+      "id": "figure:2",
+      "page": 5,
+      "has_image": true,
+      "caption_source": "docling"
+     },
+     {
+      "id": "figure:3",
+      "page": 9,
+      "has_image": true,
+      "caption_source": "docling"
+     },
+     {
+      "id": "figure:4",
+      "page": 10,
+      "has_image": true,
+      "caption_source": "docling"
+     },
+     {
+      "id": "figure:u1",
+      "page": 26,
+      "has_image": true,
+      "caption_source": "none"
+     },
+     {
+      "id": "figure:u2",
+      "page": 28,
+      "has_image": true,
+      "caption_source": "none"
+     }
+    ],
+    "seconds": 1.0,
+    "numbered": 8,
+    "references": 60
+   },
+   "finished_at": "2026-10-16T23:21:19.814Z"
+  },
+  {
+   "step_id": 1145,
+   "step_name": "claim_prompts",
+   "status": "done",
+   "detail": {
+    "prompt": "P4-claim-extractor",
+    "batches": [
+     [
+      "b:7/s:0",
+      "b:7/s:1",
+      "b:7/s:2",
+      "b:7/s:3",
+      "b:7/s:6",
+      "b:7/s:11",
+      "b:9/s:2",
+      "b:9/s:5",
+      "b:11/s:1",
+      "b:13/s:1",
+      "b:13/s:2"
+     ],
+     [
+      "b:13/s:3",
+      "b:13/s:4",
+      "b:14/s:2",
+      "b:14/s:4",
+      "b:14/s:7",
+      "b:15/s:1",
+      "b:15/s:2",
+      "b:15/s:5",
+      "b:15/s:6",
+      "b:15/s:7",
+      "b:17/s:0",
+      "b:17/s:3",
+      "b:19/s:0"
+     ],
+     [
+      "b:24/s:1",
+      "b:24/s:5",
+      "b:24/s:6",
+      "b:25/s:3",
+      "b:25/s:5",
+      "b:27/s:0",
+      "b:29/s:1",
+      "b:29/s:2",
+      "b:29/s:3",
+      "b:29/s:6",
+      "b:32/s:0",
+      "b:32/s:1",
+      "b:34/s:1",
+      "b:34/s:8",
+      "b:36/s:1"
+     ],
+     [
+      "b:37/s:1",
+      "b:37/s:4",
+      "b:39/s:1",
+      "b:42/s:5",
+      "b:45/s:1",
+      "b:46/s:0",
+      "b:47/s:0",
+      "b:47/s:2",
+      "b:47/s:3",
+      "b:48/s:0",
+      "b:48/s:1",
+      "b:50/s:1"
+     ],
+     [
+      "b:50/s:3",
+      "b:51/s:5",
+      "b:53/s:2",
+      "b:53/s:4",
+      "b:53/s:5",
+      "b:54/s:1",
+      "b:54/s:2",
+      "b:54/s:3",
+      "b:54/s:6",
+      "b:59/s:1",
+      "b:59/s:3",
+      "b:60/s:1",
+      "b:60/s:7"
+     ],
+     [
+      "b:62/s:3",
+      "b:63/s:0",
+      "b:64/s:3",
+      "b:64/s:5",
+      "b:65/s:3",
+      "b:66/s:4",
+      "b:67/s:3",
+      "b:67/s:6",
+      "b:67/s:8",
+      "b:81/s:0",
+      "b:81/s:2",
+      "b:82/s:0",
+      "b:82/s:1",
+      "b:84/s:2",
+      "b:84/s:3",
+      "b:87/s:1"
+     ],
+     [
+      "b:87/s:3",
+      "b:87/s:4",
+      "b:88/s:3",
+      "b:89/s:0",
+      "b:89/s:1",
+      "b:94/s:1",
+      "b:102/s:2",
+      "b:102/s:4",
+      "b:102/s:5",
+      "b:104/s:3",
+      "b:104/s:5",
+      "b:106/s:1",
+      "b:109/s:4",
+      "b:113/s:0",
+      "b:115/s:0"
+     ],
+     [
+      "b:117/s:1",
+      "b:117/s:2",
+      "b:117/s:4",
+      "b:117/s:5",
+      "b:117/s:6",
+      "b:127/s:0",
+      "b:129/s:0",
+      "b:130/s:0",
+      "b:132/s:0",
+      "b:134/s:0",
+      "b:135/s:0",
+      "b:137/s:0",
+      "b:139/s:0"
+     ],
+     [
+      "b:143/s:0",
+      "b:144/s:0",
+      "b:145/s:1",
+      "b:149/s:0",
+      "b:149/s:1",
+      "b:150/s:0",
+      "b:151/s:0",
+      "b:153/s:0",
+      "b:154/s:0",
+      "b:155/s:0",
+      "b:157/s:0"
+     ],
+     [
+      "b:157/s:2",
+      "b:158/s:0",
+      "b:159/s:0",
+      "b:173/s:0"
+     ]
+    ],
+    "candidates": [
+     {
+      "id": "b:7/s:0",
+      "page": 1,
+      "text": "State-of-the-art LLMs continue to struggle with factual errors (Mallen et al., 2023; Min et al., 2023) despite their increased model and data scale (Ouyang et al., 2022).",
+      "block": "b:7",
+      "section": "1 INTRODUCTION",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:7/s:1",
+      "page": 1,
+      "text": "Retrieval-Augmented Generation (RAG) methods (Figure 1 left; Lewis et al. 2020; Guu et al. 2020) augment the input of LLMs with relevant retrieved passages, reducing factual errors in knowledge-intensive tasks (Ram et al., 2023; Asai et al., 2023a).",
+      "block": "b:7",
+      "section": "1 INTRODUCTION",
+      "signals": [
+       "table_figure",
+       "citation"
+      ]
+     },
+     {
+      "id": "b:7/s:2",
+      "page": 1,
+      "text": "However, these methods may hinder the versatility of LLMs or introduce unnecessary or off-topic passages that lead to low-quality generations (Shi et al., 2023) since they retrieve passages indiscriminately regardless of whether the factual grounding is helpful.",
+      "block": "b:7",
+      "section": "1 INTRODUCTION",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:7/s:3",
+      "page": 1,
+      "text": "Moreover, the output is not guaranteed to be consistent with retrieved relevant passages (Gao et al., 2023) since the models are not explicitly trained to leverage and follow facts from provided passages.",
+      "block": "b:7",
+      "section": "1 INTRODUCTION",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:7/s:6",
+      "page": 1,
+      "text": "Reflection tokens are categorized into retrieval and critique tokens to indicate the need for retrieval and its generation quality respectively (Figure 1 right).",
+      "block": "b:7",
+      "section": "1 INTRODUCTION",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:7/s:11",
+      "page": 1,
+      "text": "This process differs from conventional RAG (Figure 1 left), which consistently retrieves a fixed number of documents for generation regardless of the retrieval necessity (e.g., the bottom figure example does not require factual knowledge) and never second visits the generation quality.",
+      "block": "b:7",
+      "section": "1 INTRODUCTION",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:9/s:2",
+      "page": 2,
+      "text": "Reflection tokens, inspired by reward models used in reinforcement learning (Ziegler et al., 2019; Ouyang et al., 2022), are inserted offline into the original corpus by a trained critic model.",
+      "block": "b:9",
+      "section": "1 INTRODUCTION",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:9/s:5",
+      "page": 2,
+      "text": "While we draw inspiration from studies that use control tokens to start and guide text generation (Lu et al., 2022; Keskar et al., 2019), our trained LM uses critique tokens to assess its own predictions after each generated segment as an integral part of the generation output.",
+      "block": "b:9",
+      "section": "1 INTRODUCTION",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:11/s:1",
+      "page": 2,
+      "text": "In particular, SELF-RAG outperforms retrieval-augmented ChatGPT on four tasks, Llama2-chat (Touvron et al., 2023) and Alpaca (Dubois et al., 2023) on all tasks.",
+      "block": "b:11",
+      "section": "1 INTRODUCTION",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:13/s:1",
+      "page": 2,
+      "text": "Retrieval-Augmented Generation (RAG) augments the input space of LMs with retrieved text passages (Guu et al., 2020; Lewis et al., 2020), leading to large improvements in knowledge-intensive tasks after fine-tuning or used with off-the-shelf LMs (Ram et al., 2023).",
+      "block": "b:13",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:13/s:2",
+      "page": 2,
+      "text": "A more recent work (Luo et al., 2023) instruction-tunes an LM with a fixed number of retrieved passages prepended to input, or pre-train a retriever and LM jointly, followed by fewshot fine-tuning on task datasets (Izacard et al., 2022b).",
+      "block": "b:13",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:13/s:3",
+      "page": 2,
+      "text": "While prior work often retrieves only once at the beginning, Jiang et al. (2023) propose to adaptively retrieve passages for generation on top of a proprietary LLM or Schick et al. (2023) train an LM to generate API calls for named entities.",
+      "block": "b:13",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:13/s:4",
+      "page": 2,
+      "text": "Yet, the improved task performance of such approaches often comes at the expense of runtime efficiency (Mallen et al., 2023), robustness to irrelevant context (Shi et al., 2023), and lack of attributions (Liu et al., 2023a; Gao et al., 2023).",
+      "block": "b:13",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:14/s:2",
+      "page": 3,
+      "text": "Lin et al. (2023) fine-tune both the retriever and LM on instruction-tuning datasets in two steps.",
+      "block": "b:14",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:14/s:4",
+      "page": 3,
+      "text": "Yoran et al. (2023) use a natural language inference model and Xu et al. (2023) use a summarization model to filter out or compress retrieved passages before using them to prompt the LMto generate the output.",
+      "block": "b:14",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:14/s:7",
+      "page": 3,
+      "text": "LATS (Zhou et al., 2023) prompt off-the-shelf LMs to search for relevant information for question answering tasks and to generate with tree search, guided by LM-generated value scores.",
+      "block": "b:14",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:15/s:1",
+      "page": 3,
+      "text": "Training LLMs with reinforcement learning (e.g., Proximal Policy Optimization or PPO; Schulman et al. 2017) from human feedback (RLHF) has proven effective in aligning LLMs with human preferences (Ouyang et al., 2022).",
+      "block": "b:15",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:15/s:2",
+      "page": 3,
+      "text": "Wu et al. (2023) introduce fine-grained RLHF with multiple reward models.",
+      "block": "b:15",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:15/s:5",
+      "page": 3,
+      "text": "Other works use general control tokens to guide LM generation (Lu et al., 2022; Korbak et al., 2023), while SELF-RAG uses reflection tokens to decide the need for retrieval and to self-evaluate generation quality.",
+      "block": "b:15",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:15/s:6",
+      "page": 3,
+      "text": "Xie et al. (2023) propose a self-evaluationguided decoding framework, but they focus only on reasoning tasks with one evaluation dimension (reasoning path consistency) and without retrieval.",
+      "block": "b:15",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:15/s:7",
+      "page": 3,
+      "text": "Recent work on LLM refinement (Dhuliawala et al., 2023; Madaan et al., 2023; Paul et al., 2023) prompts a model to generate task output, natural language feedback and refined task output iteratively, but at the cost of inference efficiency.",
+      "block": "b:15",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:17/s:0",
+      "page": 3,
+      "text": "We introduce Self-Reflective Retrieval-Augmented Generation (SELF-RAG), shown in Figure 1.",
+      "block": "b:17",
+      "section": "3 SELF-RAG: LEARNING TO RETRIEVE, GENERATE AND CRITIQUE",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:17/s:3",
+      "page": 3,
+      "text": "These reflection tokens (Table 1) signal the need for retrieval or confirm the output's relevance, support, or completeness.",
+      "block": "b:17",
+      "section": "3 SELF-RAG: LEARNING TO RETRIEVE, GENERATE AND CRITIQUE",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:19/s:0",
+      "page": 3,
+      "text": "Formally, given input x , we train M to sequentially generate textual outputs y consisting of multiple segments y = [ y 1 , . . . , y T ] , where y t indicates a sequence of tokens for the t -th segment. 3 Generated tokens in y t include text from the original vocabulary as well as the reflection tokens (Table 1).",
+      "block": "b:19",
+      "section": "3.1 PROBLEM FORMALIZATION AND OVERVIEW",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:24/s:1",
+      "page": 4,
+      "text": "Figure 1 and Algorithm 1 present an overview of SELF-RAG at inference.",
+      "block": "b:24",
+      "section": "Algorithm 1 SELF-RAG Inference",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:24/s:5",
+      "page": 4,
+      "text": "Finally, a new critique token evaluates the overall utility of the response. 4 To generate each segment, SELF-RAG processes multiple passages in parallel and uses its own generated reflection tokens to enforce soft constraints (Section 3.3) or hard control (Algorithm 1) over the generated task output.",
+      "block": "b:24",
+      "section": "Algorithm 1 SELF-RAG Inference",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:24/s:6",
+      "page": 4,
+      "text": "For instance, in Figure 1 (right), the retrieved passages d 1 is selected at the first time step since d 2 does not provide direct evidence ( ISREL is Irrelevant) and d 3 output is only partially supported while d 1 are fully supported.",
+      "block": "b:24",
+      "section": "Algorithm 1 SELF-RAG Inference",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:25/s:3",
+      "page": 4,
+      "text": "We train C to generate reflection tokens for evaluating retrieved passages and the quality of a given task output (Section 3.2.1).",
+      "block": "b:25",
+      "section": "Algorithm 1 SELF-RAG Inference",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:25/s:5",
+      "page": 4,
+      "text": "Subsequently, we train the final generator model ( M ) using the conventional LM objective (Section 3.2.2) to enable M to generate reflection tokens by itself without relying on the critic at inference time.",
+      "block": "b:25",
+      "section": "Algorithm 1 SELF-RAG Inference",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:27/s:0",
+      "page": 4,
+      "text": "Here, we describe the supervised data collection and training of two models, the critic C (Section 3.2.1) and the generator M (Section 3.2.2).",
+      "block": "b:27",
+      "section": "3.2 SELF-RAG TRAINING",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:29/s:1",
+      "page": 4,
+      "text": "Manual annotation of reflection tokens for each segment is expensive (Wu et al., 2023).",
+      "block": "b:29",
+      "section": "3.2.1 TRAINING THE CRITIC MODEL",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:29/s:2",
+      "page": 4,
+      "text": "A state-of-the-art LLM like GPT-4 (OpenAI, 2023) can be effectively used to generate such feedback (Liu et al., 2023b).",
+      "block": "b:29",
+      "section": "3.2.1 TRAINING THE CRITIC MODEL",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:29/s:3",
+      "page": 4,
+      "text": "However, depending on such proprietary LMs can raise API costs and diminish reproducibility (Chen et al., 2023).",
+      "block": "b:29",
+      "section": "3.2.1 TRAINING THE CRITIC MODEL",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:29/s:6",
+      "page": 4,
+      "text": "As different reflection token groups have their own definitions and input, as shown in Table 1, we use different instruction prompts for them.",
+      "block": "b:29",
+      "section": "3.2.1 TRAINING THE CRITIC MODEL",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:32/s:0",
+      "page": 5,
+      "text": "Though the initial model can be any pre-trained LM, we use the same one as the generator LM (i.e., Llama 2-7B; Touvron et al. 2023) for C initialization.",
+      "block": "b:32",
+      "section": "3.2.1 TRAINING THE CRITIC MODEL",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:32/s:1",
+      "page": 5,
+      "text": "The critic achieves a higher than 90% agreement with GPT-4-based predictions on most reflection token categories (Appendix Table 5).",
+      "block": "b:32",
+      "section": "3.2.1 TRAINING THE CRITIC MODEL",
+      "signals": [
+       "number",
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:34/s:1",
+      "page": 5,
+      "text": "Given an input-output pair ( x, y ) , we augment the original output y using the retrieval and critic models to create supervised data that precisely mimics the SELFRAG inference-time process (Section 3.1).",
+      "block": "b:34",
+      "section": "3.2.2 TRAINING THE GENERATOR MODEL",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:34/s:8",
+      "page": 5,
+      "text": "See the example training data in Figure 2.",
+      "block": "b:34",
+      "section": "3.2.2 TRAINING THE GENERATOR MODEL",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:36/s:1",
+      "page": 5,
+      "text": "During training, we mask out the retrieved text chunks (surrounded by <p> and </p> in Figure 2) for loss calculation and expand the original vocabulary V with a set of reflection tokens { Critique , Retrieve } .",
+      "block": "b:36",
+      "section": "3.2.2 TRAINING THE GENERATOR MODEL",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:37/s:1",
+      "page": 5,
+      "text": "Recent work incorporates additional critique (feedback) during training, e.g., RLHF (Ouyang et al. 2022) via PPO.",
+      "block": "b:37",
+      "section": "3.2.2 TRAINING THE GENERATOR MODEL",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:37/s:4",
+      "page": 5,
+      "text": "Our work also relates to prior work that incorporates special tokens to control generation (Keskar et al., 2019; Lu et al., 2022; Korbak et al., 2023).",
+      "block": "b:37",
+      "section": "3.2.2 TRAINING THE GENERATOR MODEL",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:39/s:1",
+      "page": 6,
+      "text": "For tasks demanding factual accuracy (Min et al., 2023), we aim for the model to retrieve passages more frequently to ensure that the output aligns closely with the available evidence.",
+      "block": "b:39",
+      "section": "3.3 SELF-RAG INFERENCE",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:42/s:5",
+      "page": 6,
+      "text": "Balancing the trade-off between multiple preferences has been studied in RLHF (Touvron et al., 2023; Wu et al., 2023), which often requires training to change models' behaviors.",
+      "block": "b:42",
+      "section": "3.3 SELF-RAG INFERENCE",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:45/s:1",
+      "page": 6,
+      "text": "Throughout these experiments, we conduct zero-shot evaluations, where we provide instructions describing tasks without few-shot demonstrations (Wei et al., 2022; Sanh et al., 2022).",
+      "block": "b:45",
+      "section": "4.1 TASKS AND DATASETS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:46/s:0",
+      "page": 6,
+      "text": "Closed-set tasks include two datasets, i.e., a fact verification dataset about public health ( PubHealth ; Zhang et al. 2023) and a multiple-choice reasoning dataset created from scientific exams ( ARC- Challenge ; Clark et al. 2018).",
+      "block": "b:46",
+      "section": "4.1 TASKS AND DATASETS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:47/s:0",
+      "page": 7,
+      "text": "Short-form generations tasks include two open-domain question answering (QA) datasets, PopQA (Mallen et al., 2023) and TriviaQA-unfiltered (Joshi et al., 2017), where systems need to answer arbitrary questions about factual knowledge.",
+      "block": "b:47",
+      "section": "4.1 TASKS AND DATASETS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:47/s:2",
+      "page": 7,
+      "text": "As the TriviaQA-unfiltered (open) test set is not publicly available, we follow prior work's validation and test split (Min et al., 2019; Guu et al., 2020), using 11,313 test queries for evaluation.",
+      "block": "b:47",
+      "section": "4.1 TASKS AND DATASETS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:47/s:3",
+      "page": 7,
+      "text": "We evaluate performance based on whether gold answers are included in the model generations instead of strictly requiring exact matching, following Mallen et al. (2023); Schick et al. (2023).",
+      "block": "b:47",
+      "section": "4.1 TASKS AND DATASETS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:48/s:0",
+      "page": 7,
+      "text": "Long-form generation tasks include a biography generation task (Min et al., 2023) and a long-form QA task ALCE-ASQA Gao et al. (2023); Stelmakh et al. (2022).",
+      "block": "b:48",
+      "section": "4.1 TASKS AND DATASETS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:48/s:1",
+      "page": 7,
+      "text": "We use FactScore (Min et al., 2023) to evaluate biographies, and we use official metrics of correctness (str-em), fluency based on MAUVE (Pillutla et al., 2021), and citation precision and recall (Gao et al., 2023) for ASQA. 5",
+      "block": "b:48",
+      "section": "4.1 TASKS AND DATASETS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:50/s:1",
+      "page": 7,
+      "text": "We evaluate strong publicly available pre-trained LLMs, Llama27B , 13B (Touvron et al., 2023), instruction-tuned models, Alpaca7B , 13B (Dubois et al., 2023) (our replication based on Llama2); and models trained and reinforced using private data, ChatGPT (Ouyang et al., 2022) and Llama2-chat13B.",
+      "block": "b:50",
+      "section": "4.2 BASELINES",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:50/s:3",
+      "page": 7,
+      "text": "We also compare our method to concurrent work, CoVE65B (Dhuliawala et al., 2023), which introduces iterative prompt engineering to improve the factuality of LLM generations.",
+      "block": "b:50",
+      "section": "4.2 BASELINES",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:51/s:5",
+      "page": 7,
+      "text": "The second category includes concurrent methods that are trained with retrieved text passages, i.e., SAIL (Luo et al., 2023) to instruction-tune an LM on the Alpaca instruction-tuning data with top retrieved documents inserted before instructions, and Toolformer (Schick et al., 2023) to pre-train an LM with API calls (e.g., Wikipedia APIs). 6",
+      "block": "b:51",
+      "section": "4.2 BASELINES",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:53/s:2",
+      "page": 7,
+      "text": "In particular, we sample instances from Open-Instruct processed data (Wang et al., 2023) and knowledge-intensive datasets (Petroni et al., 2021; Stelmakh et al., 2022; Mihaylov et al., 2018).",
+      "block": "b:53",
+      "section": "4.3 EXPERIMENTAL SETTINGS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:53/s:4",
+      "page": 7,
+      "text": "We use Llama2 7B and 13B (Touvron et al., 2023) as our generator base LM, and we use Llama2 7B as our base critic LM.",
+      "block": "b:53",
+      "section": "4.3 EXPERIMENTAL SETTINGS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:53/s:5",
+      "page": 7,
+      "text": "For the retriever model R , we use off-the-shelf Contriever-MS MARCO (Izacard et al., 2022a) by default and retrieve up to ten documents for each input.",
+      "block": "b:53",
+      "section": "4.3 EXPERIMENTAL SETTINGS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:54/s:1",
+      "page": 7,
+      "text": "As a default configuration, we assign the weight terms ISREL , ISSUP , ISUSE values of 1.0, 1.0 and 0.5, respectively.",
+      "block": "b:54",
+      "section": "4.3 EXPERIMENTAL SETTINGS",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:54/s:2",
+      "page": 7,
+      "text": "To encourage frequent retrieval, we set the retrieval threshold to 0.2 for most tasks and to 0 for ALCE (Gao et al., 2023) due to citation requirements.",
+      "block": "b:54",
+      "section": "4.3 EXPERIMENTAL SETTINGS",
+      "signals": [
+       "number",
+       "citation"
+      ]
+     },
+     {
+      "id": "b:54/s:3",
+      "page": 7,
+      "text": "We speed up inference using vllm (Kwon et al., 2023).",
+      "block": "b:54",
+      "section": "4.3 EXPERIMENTAL SETTINGS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:54/s:6",
+      "page": 7,
+      "text": "By default, we use the top five documents from Contriever-MS MARCO (Izacard et al., 2022a); for biographies and open-domain QA, we use additional top five documents retrieved by a web search engine, following Luo et al. (2023); for ASQA, we use the author-provided top 5 documents by GTR-XXL (Ni et al., 2022) across all baselines for a fair comparison.",
+      "block": "b:54",
+      "section": "4.3 EXPERIMENTAL SETTINGS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:59/s:1",
+      "page": 8,
+      "text": "Table 2 (top) presents the baselines without retrieval.",
+      "block": "b:59",
+      "section": "5.1 MAIN RESULTS",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:59/s:3",
+      "page": 8,
+      "text": "Our approach also significantly outperforms a concurrent method that employs sophisticated prompt engineering; specifically, on the bio generation task, our 7B and 13B models outperform the concurrent CoVE (Dhuliawala et al., 2023), which iteratively prompts Llama265B to refine output.",
+      "block": "b:59",
+      "section": "5.1 MAIN RESULTS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:60/s:1",
+      "page": 8,
+      "text": "As shown in Tables 2 (bottom), our SELF-RAG also outperforms existing RAG in many tasks, obtaining the best performance among non-proprietary LM-based models on all tasks.",
+      "block": "b:60",
+      "section": "5.1 MAIN RESULTS",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:60/s:7",
+      "page": 8,
+      "text": "Gao et al. (2023) found that ChatGPT consistently exhibits superior efficacy in this particular task, surpassing smaller LMs.",
+      "block": "b:60",
+      "section": "5.1 MAIN RESULTS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:62/s:3",
+      "page": 9,
+      "text": "This is similar to SAIL (Luo et al., 2023), and we use our instruction-output data instead of using the Alpaca dataset (Dubois et al., 2023), as in SAIL.",
+      "block": "b:62",
+      "section": "5.2 ANALYSIS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:63/s:0",
+      "page": 9,
+      "text": "We show in Table 3a the ablation results.",
+      "block": "b:63",
+      "section": "5.2 ANALYSIS",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:64/s:3",
+      "page": 9,
+      "text": "Figure 3b shows the effects of changing the weighting term for ISSUP , which criticizes how supported the output is by the text passage.",
+      "block": "b:64",
+      "section": "5.2 ANALYSIS",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:64/s:5",
+      "page": 9,
+      "text": "On the contrary, a larger weight results in lower MAUVE scores: when generation gets longer and more fluent, there are often more claims that are not fully supported by citations, consistent with findings by Liu et al. (2023a).",
+      "block": "b:64",
+      "section": "5.2 ANALYSIS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:65/s:3",
+      "page": 10,
+      "text": "Figure 3c shows that the model's retrieval frequencies dramatically change on both datasets. as δ varies.",
+      "block": "b:65",
+      "section": "5.2 ANALYSIS",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:66/s:4",
+      "page": 10,
+      "text": "We also evaluate Figures 4a, 4b and 4c shows the models' performance trained on different amount of data.",
+      "block": "b:66",
+      "section": "5.2 ANALYSIS",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:67/s:3",
+      "page": 10,
+      "text": "Following Menick et al. (2022), human annotators evaluate S&P , which indicates whether the model output is plausible (i.e., the output is a reasonable and on-topic response to the question as if it were occurring in a conversation) and supported (i.e., the provided evidence is sufficient to verify the validity of the answer).",
+      "block": "b:67",
+      "section": "5.2 ANALYSIS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:67/s:6",
+      "page": 10,
+      "text": "Human annotators find SELF-RAG answers are often plausible and supported by relevant passages with higher S&P scores on short-form PopQA, which is consistent with Menick et al. (2022).",
+      "block": "b:67",
+      "section": "5.2 ANALYSIS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:67/s:8",
+      "page": 10,
+      "text": "Appendix Table 6 shows several annotated examples and explanations on assessments.",
+      "block": "b:67",
+      "section": "5.2 ANALYSIS",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:81/s:0",
+      "page": 17,
+      "text": "Supported ( ISSUP ): Attribution is the concept of whether the output is fully supported by certain evidence (Menick et al., 2022; Bohnet et al., 2022).",
+      "block": "b:81",
+      "section": "A.1 REFLECTION TOKENS.",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:81/s:2",
+      "page": 17,
+      "text": "We evaluate attributions in three scale, Fully supported , Partially supported , and No support / Contradictory , following Yue et al. (2023); Nakano et al. (2021).",
+      "block": "b:81",
+      "section": "A.1 REFLECTION TOKENS.",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:82/s:0",
+      "page": 17,
+      "text": "Useful ( ISUSE ): Following the definitions from Liu et al. (2023a), we define the perceived utility as whether the response is a helpful and informative answer to the query, independently from whether it is in fact factual or not.",
+      "block": "b:82",
+      "section": "A.1 REFLECTION TOKENS.",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:82/s:1",
+      "page": 17,
+      "text": "This can be also viewed as plausibility in Menick et al. (2022).",
+      "block": "b:82",
+      "section": "A.1 REFLECTION TOKENS.",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:84/s:2",
+      "page": 17,
+      "text": "We found our assessments show high agreement with GPT-4 predictions, especially for relevance (95%), retrieval necessity (95%), and the degree of support (90%).",
+      "block": "b:84",
+      "section": "A.1 REFLECTION TOKENS.",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:84/s:3",
+      "page": 17,
+      "text": "Agreement was slightly lower in usefulness (80%), mostly due to the disagreement between 1 and 2 or 4 and 5.",
+      "block": "b:84",
+      "section": "A.1 REFLECTION TOKENS.",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:87/s:1",
+      "page": 17,
+      "text": "To sample diverse input-output pairs, we sample instances of the OpenInstruct (Wang et al., 2023) dataset.",
+      "block": "b:87",
+      "section": "A.2 SELF-RAG TRAINING",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:87/s:3",
+      "page": 17,
+      "text": "We also sample instances from a couple of knowledgeintensive datasets, Natural Questions (Kwiatkowski et al., 2019), Wizard of Wikipedia (Dinan et al., 2019) and FEVER (Thorne et al., 2018) from the KILT benchmark (Petroni et al., 2021), ASQA (Stelmakh et al., 2022) and multiple QA datasets including ARC-Easy and OpenBookQA (Mihaylov et al., 2018).",
+      "block": "b:87",
+      "section": "A.2 SELF-RAG TRAINING",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:87/s:4",
+      "page": 17,
+      "text": "Table 3 shows the full list of training instances, and in total, we use 145,619 instances.",
+      "block": "b:87",
+      "section": "A.2 SELF-RAG TRAINING",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:88/s:3",
+      "page": 17,
+      "text": "Table 5 shows the model performance of predicting GPT-4 judgments.",
+      "block": "b:88",
+      "section": "A.2 SELF-RAG TRAINING",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:89/s:0",
+      "page": 18,
+      "text": "While our final model uses Llama2-7B as a base LM, we also train and compare FLAN-3B (Wei et al., 2022) model on the same data, to investigate the effectiveness of different data sizes affect final reward predictions.",
+      "block": "b:89",
+      "section": "A.2 SELF-RAG TRAINING",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:89/s:1",
+      "page": 18,
+      "text": "In most aspects, our reward model shows higher than 80% accuracy, indicating the powerful ability of fine-tuned specialized LMs to evaluate text.",
+      "block": "b:89",
+      "section": "A.2 SELF-RAG TRAINING",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:94/s:1",
+      "page": 19,
+      "text": "Table 4 show several training examples used for M training.",
+      "block": "b:94",
+      "section": "Algorithm 3 M gen Data creation",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:102/s:2",
+      "page": 19,
+      "text": "All models are trained for 3 epochs with a batch size of 128, a peak learning rate of 2e-5 with 3% warmup steps, and linear decay afterward.",
+      "block": "b:102",
+      "section": "B.1 MORE DETAILS OF TRAINING",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:102/s:4",
+      "page": 19,
+      "text": "We use Deepspeed stage 3 (Rajbhandari et al., 2020) to conduct multi-GPU distributed training, with training precision Bfloat16 enabled.",
+      "block": "b:102",
+      "section": "B.1 MORE DETAILS OF TRAINING",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:102/s:5",
+      "page": 19,
+      "text": "FlashAttention (Dao et al., 2022) is used to make the long-context training more efficient.",
+      "block": "b:102",
+      "section": "B.1 MORE DETAILS OF TRAINING",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:104/s:3",
+      "page": 20,
+      "text": "Therefore, for PopQA, we used the December 2020 preprocessed Wikipedia corpus provided by Izacard et al. (2022b) and generated document embeddings. 8 The issues of performance variance from different Wikipedia dumps have been reported by prior work (Asai et al., 2020; Izacard et al., 2022b).",
+      "block": "b:104",
+      "section": "B.2 MORE DETAILS OF EVALUATIONS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:104/s:5",
+      "page": 20,
+      "text": "Recent or concurrent work studies instruction-tuning of retrieval systems (Asai et al., 2023b) or joint training of retrieval and LM components (Lin et al., 2023), while we leave exploring the effectivess of such appraoches for future work.",
+      "block": "b:104",
+      "section": "B.2 MORE DETAILS OF EVALUATIONS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:106/s:1",
+      "page": 20,
+      "text": "Table 5 shows the list of the instructions used during evaluations.",
+      "block": "b:106",
+      "section": "B.2 MORE DETAILS OF EVALUATIONS",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:109/s:4",
+      "page": 20,
+      "text": "We found that SELF-RAG significantly less frequently generates answers that are not included in the provided evidence; in particular, in Alpaca 30B, 20% of the correct predictions are not included in the provided passages, followed by Llama2-chat 13B (18%) and Alpaca (15%), while it is only 2% in SELF-RAG.",
+      "block": "b:109",
+      "section": "C.1 ANALYSIS",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:113/s:0",
+      "page": 21,
+      "text": "Table 6 shows examples with human evaluations on S&P and correctness of ISREL and ISSUP reflection tokens.",
+      "block": "b:113",
+      "section": "C.2 HUMAN EVALUATION EXAMPLES",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:115/s:0",
+      "page": 21,
+      "text": "Table 7 shows several examples predicted by our SELF-RAG (13B).",
+      "block": "b:115",
+      "section": "C.3 QUALITATIVE EXAMPLES",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:117/s:1",
+      "page": 21,
+      "text": "Table 8 shows the instructions and demonstrations for the initial retrieval token.",
+      "block": "b:117",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:117/s:2",
+      "page": 21,
+      "text": "Table 9 shows the instruction and demonstrations used to collect the three-way output tokens for Retrieve given instruction, preceding sentences, and previously retrieved passages.",
+      "block": "b:117",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:117/s:4",
+      "page": 21,
+      "text": "Table 10 shows an instruction and demonstrations used to collect the three-way output tokens for ISREL .",
+      "block": "b:117",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:117/s:5",
+      "page": 21,
+      "text": "Table 11 shows an instruction and demonstrations used to collect the three-way output tokens for ISREL .",
+      "block": "b:117",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:117/s:6",
+      "page": 21,
+      "text": "Table 12 shows an instruction and demonstrations used to collect the five-way output tokens for ISUSE .",
+      "block": "b:117",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:127/s:0",
+      "page": 23,
+      "text": "Table 5: Full list of instructions used during zero-shot evaluations.",
+      "block": "b:127",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:129/s:0",
+      "page": 24,
+      "text": "Output [ Retrieve = Yes ] <p> Reference [1] <p> [ ISREL = Relevant ] A Question and Answer Guide to Astronomy is a non-fiction book that falls under the genre of Astronomy and Cosmology.",
+      "block": "b:129",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:130/s:0",
+      "page": 24,
+      "text": "Reference [1] A Question and Answer Guide to Astronomy is a book about astronomy and cosmology, and is intended for a general audience.",
+      "block": "b:130",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:132/s:0",
+      "page": 24,
+      "text": "Correctness of ISREL and ISSUP : Both ISREL and ISSUP are correct, as the Reference [1] provides detailed information of the book including the genre, and the model output is fully supported by the reference.",
+      "block": "b:132",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:134/s:0",
+      "page": 24,
+      "text": "Output [ Retrieve = Yes ] <p> Reference [1] <p> [ ISREL = Relevant ] The author of The Lie is Sam Harris.[ ISSUP = Fully Supported ][ ISUSE =5]",
+      "block": "b:134",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:135/s:0",
+      "page": 24,
+      "text": "Reference [1] Lying is a 2011 long-form essay book by American author and neuroscience expert Sam Harris.",
+      "block": "b:135",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:137/s:0",
+      "page": 24,
+      "text": "Correctness of ISREL and ISSUP Both ISREL and ISSUP are incorrect, as the Reference [1] is about a different book whose title is similar to The Lie.",
+      "block": "b:137",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:139/s:0",
+      "page": 24,
+      "text": "Output [ Retrieve = Yes ] <p> Reference [1] <p> [ ISREL = Relevant ] Ronaldinho is a retired professional footballer from Brazil.[ ISSUP = Fully Supported ][ Retrieve = Continue ]He played as an attacking midfielder and was known for his technical skills, creativity, dribbling ability, and accuracy from free kicks[ Retrieve = Continue ]He won two FIFA World Player of the Year awards and a Ballon d'Or.[ ISUSE =5] Reference [1] Ronaldo de Assis Moreira (born 21 March 1980), commonly known as Ronaldinho Ga´ ucho or simply Ronaldinho, is a Brazilian retired professional footballer who played mostly as an attacking midfielder, but was also deployed as a winger.",
+      "block": "b:139",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:143/s:0",
+      "page": 24,
+      "text": "Output [ Retrieve = Yes ] <p> Reference [1] <p> [ ISREL = Relevant ] Sergei Vladimirovich Bodrov (born June 28, 1948) is a Russian film director, screenwriter, and producer.[ ISSUP = Fully Supported ][ Retrieve = Continue ]He was born in Moscow, Russia.[ Retrieve = Continue ]He is the president of the Russian Guild of Film Producers.[ ISUSE =5]",
+      "block": "b:143",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:144/s:0",
+      "page": 24,
+      "text": "Reference [1] Sergei Vladimirovich Bodrov (born June 28, 1948) is a Russian film director, screenwriter, and producer.",
+      "block": "b:144",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:145/s:1",
+      "page": 24,
+      "text": "The the Reference [1] does not explicitly mention the person is born in Moscow and there is no description about the Russian Guild of Film Producers.",
+      "block": "b:145",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:149/s:0",
+      "page": 25,
+      "text": "Output [ Retrieve = Yes ] <p> Reference [1] <p> [ ISREL = Relevant ] In 321 AD, the Roman Emperor Constantine the Great made Sunday a day of rest from labor, stating: 'On the venerable Day of the Sun let the magistrates and people residing in cities rest, and let all workshops be closed'.[ ISSUP = Fully Supported ] [ Retrieve = Yes ] <p> Reference [2] <p> [ ISREL = Relevant ] The official adoption of Sunday as a day of rest by Constantine the Great in AD 321 made Sunday the seventh day of the week.",
+      "block": "b:149",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:149/s:1",
+      "page": 25,
+      "text": "[2] [ ISSUP = Fully Supported ][ ISUSE =5]",
+      "block": "b:149",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:150/s:0",
+      "page": 25,
+      "text": "Reference [1] Emperor Constantine then enacted the first Sunday Laws, for 'the venerable Day of the Sun' in 321 A.D.",
+      "block": "b:150",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:151/s:0",
+      "page": 25,
+      "text": "Reference [2] Despite the official adoption of Sunday as a day of rest by Constantine, the seven-day week and the nundial cycle continued to be used side-by-side until at least the Calendar of 354 and probably later. ...",
+      "block": "b:151",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:153/s:0",
+      "page": 25,
+      "text": "Output <p> Reference [1] <p> [ ISREL = Relevant ] Rory Tapner is a British businessman who has served as the Chief Executive Officer of Coutts, a private banking and wealth management company, since 2010.[ ISSUP = Contradictory ], Reference [2] <p> [ ISREL = Relevant ] Rory Tapner was born on 30 September 1959 in London, England.[ ISSUP = Fully Supported ]",
+      "block": "b:153",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:154/s:0",
+      "page": 25,
+      "text": "Reference [1] Rory Tapner Rory Tapner is a UK businessman who, in September 2010 was appointed CEO of Coutts, the Wealth Management division of Royal Bank of Scotland Group.",
+      "block": "b:154",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:155/s:0",
+      "page": 25,
+      "text": "Reference [2] Holdings (from August 2016); and the Council of the University of Buckingham (from July 2017).",
+      "block": "b:155",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:157/s:0",
+      "page": 25,
+      "text": "Output (ranked 1) [ Retrieve = Yes ] <p> Reference [1] <p> [ ISREL = Relevant ] G.",
+      "block": "b:157",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:157/s:2",
+      "page": 25,
+      "text": "[ Retrieve = Continue ] He has sung over 300 songs in Malayalam, Tamil, and Hindi movies.[ ISSUP = Partially Supported ] [ Retrieve = Yes ] <p> Reference [2] <p> G.",
+      "block": "b:157",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:158/s:0",
+      "page": 25,
+      "text": "Reference [1] 'G.",
+      "block": "b:158",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:159/s:0",
+      "page": 25,
+      "text": "Reference [2] Kerala State Film Awards: Kerala Film Critics Award Kerala State Government Award (Professional Drama): Asianet Film Awards: Kerala Kaumadi Gallup Poll Award: Academic G.",
+      "block": "b:159",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:173/s:0",
+      "page": 27,
+      "text": "Table 9: Instructions and demonstrations for Retrieve aspect given the input, preceding generations, and retrieved passages.",
+      "block": "b:173",
+      "section": "Instruction Explain the use of word embeddings in Natural Language Processing.",
+      "signals": [
+       "table_figure"
+      ]
+     }
+    ],
+    "prompt_version": "v1",
+    "total_sentences": 507
+   },
+   "finished_at": "2026-10-16T23:21:28.925Z"
+  },
+  {
+   "step_id": 1146,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 0,
+    "model": "openai/gpt-oss-20b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T23:21:28.946Z"
+  },
+  {
+   "step_id": 1147,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "kind": "daily",
+    "batch": 0,
+    "error": "Try spacing your requests out using the batching settings under 'Options' \"\"",
+    "model": "openai/gpt-oss-20b",
+    "until": 1792193018.525418,
+    "status": 429,
+    "rate_limited": true,
+    "retry_after_s": 99.0
+   },
+   "finished_at": "2026-10-16T23:21:59.525Z"
+  },
+  {
+   "step_id": 1148,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 0,
+    "model": "openai/gpt-oss-120b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T23:21:59.555Z"
+  },
+  {
+   "step_id": 1149,
+   "step_name": "claims_batch",
+   "status": "done",
+   "detail": {
+    "kept": [
+     {
+      "type": "comparison",
+      "cites": [],
+      "claim": "SELF-RAG outperforms retrieval-augmented ChatGPT on four tasks and on all tasks for Llama2-chat and Alpaca.",
+      "values": [],
+      "sentence": "In particular, SELF-RAG outperforms retrieval-augmented ChatGPT on four tasks, Llama2-chat (Touvron et al., 2023) and Alpaca (Dubois et al., 2023) on all tasks.",
+      "refers_to": [],
+      "comparison": {
+       "kind": "unspecified",
+       "system": "SELF-RAG",
+       "baseline": "retrieval-augmented ChatGPT",
+       "direction": "better",
+       "difference": ""
+      },
+      "sentence_id": "b:11/s:1",
+      "unknown_refs": []
+     }
+    ],
+    "batch": 0,
+    "usage": {
+     "queue_time": 0.094781599,
+     "total_time": 0.906167598,
+     "prompt_time": 0.090311042,
+     "total_tokens": 2716,
+     "prompt_tokens": 2323,
+     "completion_time": 0.815856556,
+     "completion_tokens": 393,
+     "completion_tokens_details": {
+      "reasoning_tokens": 248
+     }
+    },
+    "dropped": []
+   },
+   "finished_at": "2026-10-16T23:22:31.172Z"
+  },
+  {
+   "step_id": 1150,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 1,
+    "model": "openai/gpt-oss-20b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T23:22:31.215Z"
+  },
+  {
+   "step_id": 1151,
+   "step_name": "claims_batch",
+   "status": "done",
+   "detail": {
+    "kept": [],
+    "batch": 1,
+    "usage": {
+     "queue_time": 0.088261347,
+     "total_time": 1.745547867,
+     "prompt_time": 1.697924006,
+     "total_tokens": 2437,
+     "prompt_tokens": 2396,
+     "completion_time": 0.047623861,
+     "completion_tokens": 41,
+     "prompt_tokens_details": {
+      "cached_tokens": 1280
+     },
+     "completion_tokens_details": {
+      "reasoning_tokens": 27
+     }
+    },
+    "dropped": []
+   },
+   "finished_at": "2026-10-16T23:23:41.829Z"
+  },
+  {
+   "step_id": 1152,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 2,
+    "model": "openai/gpt-oss-20b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T23:23:41.875Z"
+  },
+  {
+   "step_id": 1153,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "kind": "per-minute",
+    "batch": 2,
+    "error": "Try spacing your requests out using the batching settings under 'Options' \"\"",
+    "model": "openai/gpt-oss-20b",
+    "until": 1792193070.3468406,
+    "status": 429,
+    "rate_limited": true,
+    "retry_after_s": 18.0
+   },
+   "finished_at": "2026-10-16T23:24:12.347Z"
+  },
+  {
+   "step_id": 1154,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 2,
+    "model": "openai/gpt-oss-20b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T23:24:12.404Z"
+  },
+  {
+   "step_id": 1155,
+   "step_name": "claims_batch",
+   "status": "done",
+   "detail": {
+    "kept": [
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Figure 1 and Algorithm 1 present an overview of SELF-RAG at inference.",
+      "values": [],
+      "sentence": "Figure 1 and Algorithm 1 present an overview of SELF-RAG at inference.",
+      "refers_to": [
+       "figure:1"
+      ],
+      "comparison": null,
+      "sentence_id": "b:24/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "citation",
+      "cites": [
+       "Wu et al., 2023"
+      ],
+      "claim": "Manual annotation of reflection tokens for each segment is expensive.",
+      "values": [],
+      "sentence": "Manual annotation of reflection tokens for each segment is expensive (Wu et al., 2023).",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:29/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "citation",
+      "cites": [
+       "Liu et al., 2023b"
+      ],
+      "claim": "A state-of-the-art LLM like GPT-4 can be effectively used to generate such feedback.",
+      "values": [],
+      "sentence": "A state-of-the-art LLM like GPT-4 (OpenAI, 2023) can be effectively used to generate such feedback (Liu et al., 2023b).",
+      "refers_to": [],
+      "comparison": null,
+      "repaired_id": "b:29/s/2",
+      "sentence_id": "b:29/s:2",
+      "unknown_refs": []
+     },
+     {
+      "type": "citation",
+      "cites": [
+       "Chen et al., 2023"
+      ],
+      "claim": "Depending on proprietary LMs can raise API costs and diminish reproducibility.",
+      "values": [],
+      "sentence": "However, depending on such proprietary LMs can raise API costs and diminish reproducibility (Chen et al., 2023).",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:29/s:3",
+      "unknown_refs": []
+     },
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Table 1 shows different reflection token groups have their own definitions and input, and we use different instruction prompts for them.",
+      "values": [],
+      "sentence": "As different reflection token groups have their own definitions and input, as shown in Table 1, we use different instruction prompts for them.",
+      "refers_to": [
+       "table:1"
+      ],
+      "comparison": null,
+      "sentence_id": "b:29/s:6",
+      "unknown_refs": []
+     },
+     {
+      "type": "result",
+      "cites": [],
+      "claim": "The critic achieves a higher than 90% agreement with GPT-4-based predictions on most reflection token categories.",
+      "values": [
+       {
+        "role": "value",
+        "value": "90%",
+        "metric": "agreement",
+        "system": "critic",
+        "dataset": "",
+        "setting": ""
+       }
+      ],
+      "sentence": "The critic achieves a higher than 90% agreement with GPT-4-based predictions on most reflection token categories (Appendix Table 5).",
+      "refers_to": [
+       "table:5"
+      ],
+      "comparison": null,
+      "sentence_id": "b:32/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Figure 2 shows example training data.",
+      "values": [],
+      "sentence": "See the example training data in Figure 2.",
+      "refers_to": [
+       "figure:2"
+      ],
+      "comparison": null,
+      "sentence_id": "b:34/s:8",
+      "unknown_refs": []
+     }
+    ],
+    "batch": 2,
+    "usage": {
+     "queue_time": 0.206242014,
+     "total_time": 1.166735065,
+     "prompt_time": 0.147327271,
+     "total_tokens": 3439,
+     "prompt_tokens": 2441,
+     "completion_time": 1.019407794,
+     "completion_tokens": 998,
+     "completion_tokens_details": {
+      "reasoning_tokens": 586
+     }
+    },
+    "dropped": []
+   },
+   "finished_at": "2026-10-16T23:24:45.628Z"
+  },
+  {
+   "step_id": 1156,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 3,
+    "model": "openai/gpt-oss-20b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T23:24:45.688Z"
+  },
+  {
+   "step_id": 1157,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "kind": "daily",
+    "batch": 3,
+    "error": "Try spacing your requests out using the batching settings under 'Options' \"\"",
+    "model": "openai/gpt-oss-20b",
+    "until": 1792194238.4298604,
+    "status": 429,
+    "rate_limited": true,
+    "retry_after_s": 1122.0
+   },
+   "finished_at": "2026-10-16T23:25:16.430Z"
+  },
+  {
+   "step_id": 1158,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 3,
+    "model": "openai/gpt-oss-120b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T23:25:16.481Z"
+  },
+  {
+   "step_id": 1159,
+   "step_name": "claims_batch",
+   "status": "done",
+   "detail": {
+    "kept": [
+     {
+      "type": "citation",
+      "cites": [
+       "Ouyang et al. 2022"
+      ],
+      "claim": "Recent work incorporates additional critique (feedback) during training via RLHF (Ouyang et al. 2022) using PPO.",
+      "values": [],
+      "sentence": "Recent work incorporates additional critique (feedback) during training, e.g., RLHF (Ouyang et al. 2022) via PPO.",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:37/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "citation",
+      "cites": [
+       "Keskar et al., 2019",
+       "Lu et al., 2022",
+       "Korbak et al., 2023"
+      ],
+      "claim": "Prior work incorporates special tokens to control generation (Keskar et al., 2019; Lu et al., 2022; Korbak et al., 2023).",
+      "values": [],
+      "sentence": "Our work also relates to prior work that incorporates special tokens to control generation (Keskar et al., 2019; Lu et al., 2022; Korbak et al., 2023).",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:37/s:4",
+      "unknown_refs": []
+     },
+     {
+      "type": "citation",
+      "cites": [
+       "Touvron et al., 2023",
+       "Wu et al., 2023"
+      ],
+      "claim": "Balancing the trade-off between multiple preferences has been studied in RLHF (Touvron et al., 2023; Wu et al., 2023).",
+      "values": [],
+      "sentence": "Balancing the trade-off between multiple preferences has been studied in RLHF (Touvron et al., 2023; Wu et al., 2023), which often requires training to change models' behaviors.",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:42/s:5",
+      "unknown_refs": []
+     },
+     {
+      "type": "other",
+      "cites": [],
+      "claim": "The TriviaQA-unfiltered test set uses 11,313 test queries for evaluation.",
+      "values": [],
+      "sentence": "As the TriviaQA-unfiltered (open) test set is not publicly available, we follow prior work's validation and test split (Min et al., 2019; Guu et al., 2020), using 11,313 test queries for evaluation.",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:47/s:2",
+      "unknown_refs": []
+     },
+     {
+      "type": "other",
+      "cites": [],
+      "claim": "Performance is evaluated based on whether gold answers are included in the model generations rather than exact matching.",
+      "values": [],
+      "sentence": "We evaluate performance based on whether gold answers are included in the model generations instead of strictly requiring exact matching, following Mallen et al. (2023); Schick et al. (2023).",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:47/s:3",
+      "unknown_refs": []
+     },
+     {
+      "type": "other",
+      "cites": [],
+      "claim": "We evaluate strong publicly available pre-trained LLMs Llama2-7B, 13B, instruction-tuned Alpaca7B, 13B, and models trained with private data ChatGPT and Llama2-chat13B.",
+      "values": [],
+      "sentence": "We evaluate strong publicly available pre-trained LLMs, Llama27B , 13B (Touvron et al., 2023), instruction-tuned models, Alpaca7B , 13B (Dubois et al., 2023) (our replication based on Llama2); and models trained and reinforced using private data, ChatGPT (Ouyang et al., 2022) and Llama2-chat13B.",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:50/s:1",
+      "unknown_refs": []
+     }
+    ],
+    "batch": 3,
+    "usage": {
+     "queue_time": 0.297563775,
+     "total_time": 2.078447686,
+     "prompt_time": 0.239528718,
+     "total_tokens": 3308,
+     "prompt_tokens": 2420,
+     "completion_time": 1.838918968,
+     "completion_tokens": 888,
+     "completion_tokens_details": {
+      "reasoning_tokens": 311
+     }
+    },
+    "dropped": []
+   },
+   "finished_at": "2026-10-16T23:25:50.557Z"
+  },
+  {
+   "step_id": 1160,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 4,
+    "model": "openai/gpt-oss-120b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T23:25:50.618Z"
+  },
+  {
+   "step_id": 1161,
+   "step_name": "claims_batch",
+   "status": "done",
+   "detail": {
+    "kept": [
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Table 2 (top) presents the baselines without retrieval.",
+      "values": [],
+      "sentence": "Table 2 (top) presents the baselines without retrieval.",
+      "refers_to": [
+       "table:2"
+      ],
+      "comparison": null,
+      "sentence_id": "b:59/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "comparison",
+      "cites": [
+       "Dhuliawala et al., 2023"
+      ],
+      "claim": "Our 7B and 13B models outperform the concurrent CoVE on the bio generation task.",
+      "values": [],
+      "sentence": "Our approach also significantly outperforms a concurrent method that employs sophisticated prompt engineering; specifically, on the bio generation task, our 7B and 13B models outperform the concurrent CoVE (Dhuliawala et al., 2023), which iteratively prompts Llama265B to refine output.",
+      "refers_to": [],
+      "comparison": {
+       "kind": "unspecified",
+       "system": "our 7B and 13B models",
+       "baseline": "CoVE",
+       "direction": "better",
+       "difference": ""
+      },
+      "sentence_id": "b:59/s:3",
+      "unknown_refs": []
+     },
+     {
+      "type": "comparison",
+      "cites": [],
+      "claim": "SELF-RAG outperforms existing RAG in many tasks, achieving the best performance among non-proprietary LM-based models on all tasks.",
+      "values": [],
+      "sentence": "As shown in Tables 2 (bottom), our SELF-RAG also outperforms existing RAG in many tasks, obtaining the best performance among non-proprietary LM-based models on all tasks.",
+      "refers_to": [],
+      "comparison": {
+       "kind": "unspecified",
+       "system": "SELF-RAG",
+       "baseline": "existing RAG",
+       "direction": "better",
+       "difference": ""
+      },
+      "sentence_id": "b:60/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "citation",
+      "cites": [
+       "Gao et al., 2023"
+      ],
+      "claim": "Gao et al. (2023) found that ChatGPT consistently exhibits superior efficacy in this particular task, surpassing smaller LMs.",
+      "values": [],
+      "sentence": "Gao et al. (2023) found that ChatGPT consistently exhibits superior efficacy in this particular task, surpassing smaller LMs.",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:60/s:7",
+      "unknown_refs": []
+     }
+    ],
+    "batch": 4,
+    "usage": {
+     "queue_time": 0.29935771,
+     "total_time": 2.286824543,
+     "prompt_time": 0.113052206,
+     "total_tokens": 3469,
+     "prompt_tokens": 2422,
+     "completion_time": 2.173772337,
+     "completion_tokens": 1047,
+     "completion_tokens_details": {
+      "reasoning_tokens": 617
+     }
+    },
+    "dropped": []
+   },
+   "finished_at": "2026-10-16T23:26:23.650Z"
+  },
+  {
+   "step_id": 1162,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 5,
+    "model": "openai/gpt-oss-120b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T23:26:23.693Z"
+  },
+  {
+   "step_id": 1163,
+   "step_name": "claims_batch",
+   "status": "done",
+   "detail": {
+    "kept": [
+     {
+      "type": "citation",
+      "cites": [
+       "Luo et al., 2023",
+       "Dubois et al., 2023"
+      ],
+      "claim": "We use our instruction-output data instead of the Alpaca dataset, similar to SAIL.",
+      "values": [],
+      "sentence": "This is similar to SAIL (Luo et al., 2023), and we use our instruction-output data instead of using the Alpaca dataset (Dubois et al., 2023), as in SAIL.",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:62/s:3",
+      "unknown_refs": []
+     },
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Figure 3b shows the effects of changing the weighting term for ISSUP.",
+      "values": [],
+      "sentence": "Figure 3b shows the effects of changing the weighting term for ISSUP , which criticizes how supported the output is by the text passage.",
+      "refers_to": [
+       "figure:3"
+      ],
+      "comparison": null,
+      "sentence_id": "b:64/s:3",
+      "unknown_refs": []
+     },
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Figure 3c shows that the model's retrieval frequencies dramatically change on both datasets as δ varies.",
+      "values": [],
+      "sentence": "Figure 3c shows that the model's retrieval frequencies dramatically change on both datasets. as δ varies.",
+      "refers_to": [
+       "figure:3"
+      ],
+      "comparison": null,
+      "sentence_id": "b:65/s:3",
+      "unknown_refs": []
+     },
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Figures 4a, 4b and 4c show the models' performance trained on different amounts of data.",
+      "values": [],
+      "sentence": "We also evaluate Figures 4a, 4b and 4c shows the models' performance trained on different amount of data.",
+      "refers_to": [
+       "figure:4"
+      ],
+      "comparison": null,
+      "sentence_id": "b:66/s:4",
+      "unknown_refs": []
+     },
+     {
+      "type": "result",
+      "cites": [],
+      "claim": "Assessments show high agreement with GPT-4 predictions for relevance (95%), retrieval necessity (95%), and degree of support (90%).",
+      "values": [
+       {
+        "role": "value",
+        "value": "95%",
+        "metric": "agreement",
+        "system": "our assessments",
+        "dataset": "",
+        "setting": "relevance"
+       },
+       {
+        "role": "value",
+        "value": "95%",
+        "metric": "agreement",
+        "system": "our assessments",
+        "dataset": "",
+        "setting": "retrieval necessity"
+       },
+       {
+        "role": "value",
+        "value": "90%",
+        "metric": "agreement",
+        "system": "our assessments",
+        "dataset": "",
+        "setting": "degree of support"
+       }
+      ],
+      "sentence": "We found our assessments show high agreement with GPT-4 predictions, especially for relevance (95%), retrieval necessity (95%), and the degree of support (90%).",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:84/s:2",
+      "unknown_refs": []
+     },
+     {
+      "type": "result",
+      "cites": [],
+      "claim": "Agreement was slightly lower in usefulness (80%).",
+      "values": [
+       {
+        "role": "value",
+        "value": "80%",
+        "metric": "agreement",
+        "system": "our assessments",
+        "dataset": "",
+        "setting": "usefulness"
+       }
+      ],
+      "sentence": "Agreement was slightly lower in usefulness (80%), mostly due to the disagreement between 1 and 2 or 4 and 5.",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:84/s:3",
+      "unknown_refs": []
+     },
+     {
+      "type": "other",
+      "cites": [
+       "Liu et al., 2023a"
+      ],
+      "claim": "A larger weight results in lower MAUVE scores, with longer and more fluent generations often containing more unsupported claims.",
+      "values": [],
+      "sentence": "On the contrary, a larger weight results in lower MAUVE scores: when generation gets longer and more fluent, there are often more claims that are not fully supported by citations, consistent with findings by Liu et al. (2023a).",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:64/s:5",
+      "unknown_refs": []
+     }
+    ],
+    "batch": 5,
+    "usage": {
+     "queue_time": 0.091485019,
+     "total_time": 3.416154177,
+     "prompt_time": 0.093704258,
+     "total_tokens": 3989,
+     "prompt_tokens": 2399,
+     "completion_time": 3.322449919,
+     "completion_tokens": 1590,
+     "completion_tokens_details": {
+      "reasoning_tokens": 856
+     }
+    },
+    "dropped": []
+   },
+   "finished_at": "2026-10-16T23:26:59.070Z"
+  },
+  {
+   "step_id": 1164,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 6,
+    "model": "openai/gpt-oss-120b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T23:26:59.129Z"
+  },
+  {
+   "step_id": 1165,
+   "step_name": "claims_batch",
+   "status": "done",
+   "detail": {
+    "kept": [
+     {
+      "type": "result",
+      "cites": [],
+      "claim": "In total, we use 145,619 training instances.",
+      "values": [
+       {
+        "role": "value",
+        "value": "145,619",
+        "metric": "instances",
+        "system": "training instances",
+        "dataset": "",
+        "setting": ""
+       }
+      ],
+      "sentence": "Table 3 shows the full list of training instances, and in total, we use 145,619 instances.",
+      "refers_to": [
+       "table:3"
+      ],
+      "comparison": null,
+      "sentence_id": "b:87/s:4",
+      "unknown_refs": []
+     },
+     {
+      "type": "result",
+      "cites": [],
+      "claim": "Our reward model shows higher than 80% accuracy.",
+      "values": [
+       {
+        "role": "value",
+        "value": "80%",
+        "metric": "accuracy",
+        "system": "reward model",
+        "dataset": "",
+        "setting": ""
+       }
+      ],
+      "sentence": "In most aspects, our reward model shows higher than 80% accuracy, indicating the powerful ability of fine-tuned specialized LMs to evaluate text.",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:89/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "result",
+      "cites": [],
+      "claim": "All models are trained for 3 epochs with a batch size of 128, a peak learning rate of 2e-5 and 3% warmup steps.",
+      "values": [
+       {
+        "role": "value",
+        "value": "3",
+        "metric": "epochs",
+        "system": "models",
+        "dataset": "",
+        "setting": ""
+       },
+       {
+        "role": "value",
+        "value": "128",
+        "metric": "batch size",
+        "system": "models",
+        "dataset": "",
+        "setting": ""
+       },
+       {
+        "role": "value",
+        "value": "2e-5",
+        "metric": "learning rate",
+        "system": "models",
+        "dataset": "",
+        "setting": ""
+       },
+       {
+        "role": "value",
+        "value": "3%",
+        "metric": "warmup steps",
+        "system": "models",
+        "dataset": "",
+        "setting": ""
+       }
+      ],
+      "sentence": "All models are trained for 3 epochs with a batch size of 128, a peak learning rate of 2e-5 with 3% warmup steps, and linear decay afterward.",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:102/s:2",
+      "unknown_refs": []
+     },
+     {
+      "type": "result",
+      "cites": [],
+      "claim": "For PopQA, SELF-RAG generates answers not included in the provided evidence only 2% of the time, compared to 20% for Alpaca 30B, 18% for Llama2-chat 13B, and 15% for Alpaca.",
+      "values": [
+       {
+        "role": "value",
+        "value": "2%",
+        "metric": "percentage of correct predictions not included in passages",
+        "system": "SELF-RAG",
+        "dataset": "PopQA",
+        "setting": ""
+       },
+       {
+        "role": "value",
+        "value": "20%",
+        "metric": "percentage of correct predictions not included in passages",
+        "system": "Alpaca 30B",
+        "dataset": "PopQA",
+        "setting": ""
+       },
+       {
+        "role": "value",
+        "value": "18%",
+        "metric": "percentage of correct predictions not included in passages",
+        "system": "Llama2-chat 13B",
+        "dataset": "PopQA",
+        "setting": ""
+       },
+       {
+        "role": "value",
+        "value": "15%",
+        "metric": "percentage of correct predictions not included in passages",
+        "system": "Alpaca",
+        "dataset": "PopQA",
+        "setting": ""
+       }
+      ],
+      "sentence": "We found that SELF-RAG significantly less frequently generates answers that are not included in the provided evidence; in particular, in Alpaca 30B, 20% of the correct predictions are not included in the provided passages, followed by Llama2-chat 13B (18%) and Alpaca (15%), while it is only 2% in SELF-RAG.",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:109/s:4",
+      "unknown_refs": []
+     }
+    ],
+    "batch": 6,
+    "usage": {
+     "queue_time": 0.092400693,
+     "total_time": 3.075306392,
+     "prompt_time": 0.097908852,
+     "total_tokens": 3897,
+     "prompt_tokens": 2470,
+     "completion_time": 2.97739754,
+     "completion_tokens": 1427,
+     "completion_tokens_details": {
+      "reasoning_tokens": 654
+     }
+    },
+    "dropped": []
+   },
+   "finished_at": "2026-10-16T23:27:33.730Z"
+  },
+  {
+   "step_id": 1166,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 7,
+    "model": "openai/gpt-oss-120b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T23:27:33.768Z"
+  },
+  {
+   "step_id": 1167,
+   "step_name": "claims_batch",
+   "status": "done",
+   "detail": {
+    "kept": [
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Table 8 shows the instructions and demonstrations for the initial retrieval token.",
+      "values": [],
+      "sentence": "Table 8 shows the instructions and demonstrations for the initial retrieval token.",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:117/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Table 9 shows the instruction and demonstrations used to collect the three-way output tokens for Retrieve given instruction, preceding sentences, and previously retrieved passages.",
+      "values": [],
+      "sentence": "Table 9 shows the instruction and demonstrations used to collect the three-way output tokens for Retrieve given instruction, preceding sentences, and previously retrieved passages.",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:117/s:2",
+      "unknown_refs": []
+     },
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Table 10 shows an instruction and demonstrations used to collect the three-way output tokens for ISREL.",
+      "values": [],
+      "sentence": "Table 10 shows an instruction and demonstrations used to collect the three-way output tokens for ISREL .",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:117/s:4",
+      "unknown_refs": []
+     },
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Table 11 shows an instruction and demonstrations used to collect the three-way output tokens for ISREL.",
+      "values": [],
+      "sentence": "Table 11 shows an instruction and demonstrations used to collect the three-way output tokens for ISREL .",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:117/s:5",
+      "unknown_refs": []
+     },
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Table 12 shows an instruction and demonstrations used to collect the five-way output tokens for ISUSE.",
+      "values": [],
+      "sentence": "Table 12 shows an instruction and demonstrations used to collect the five-way output tokens for ISUSE .",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:117/s:6",
+      "unknown_refs": []
+     },
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Table 5 provides the full list of instructions used during zero-shot evaluations.",
+      "values": [],
+      "sentence": "Table 5: Full list of instructions used during zero-shot evaluations.",
+      "refers_to": [
+       "table:5"
+      ],
+      "comparison": null,
+      "sentence_id": "b:127/s:0",
+      "unknown_refs": []
+     },
+     {
+      "type": "other",
+      "cites": [],
+      "claim": "The output indicates Retrieve = Yes and ISREL = Relevant for a question about an astronomy book.",
+      "values": [],
+      "sentence": "Output [ Retrieve = Yes ] <p> Reference [1] <p> [ ISREL = Relevant ] A Question and Answer Guide to Astronomy is a non-fiction book that falls under the genre of Astronomy and Cosmology.",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:129/s:0",
+      "unknown_refs": []
+     },
+     {
+      "type": "other",
+      "cites": [],
+      "claim": "Reference [1] describes a book about astronomy and cosmology intended for a general audience.",
+      "values": [],
+      "sentence": "Reference [1] A Question and Answer Guide to Astronomy is a book about astronomy and cosmology, and is intended for a general audience.",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:130/s:0",
+      "unknown_refs": []
+     },
+     {
+      "type": "other",
+      "cites": [],
+      "claim": "Both ISREL and ISSUP are correct because the reference provides detailed information about the book.",
+      "values": [],
+      "sentence": "Correctness of ISREL and ISSUP : Both ISREL and ISSUP are correct, as the Reference [1] provides detailed information of the book including the genre, and the model output is fully supported by the reference.",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:132/s:0",
+      "unknown_refs": []
+     },
+     {
+      "type": "other",
+      "cites": [],
+      "claim": "The output shows Retrieve = Yes, ISREL = Relevant, and ISUSE = 5 for a statement about the author of The Lie.",
+      "values": [],
+      "sentence": "Output [ Retrieve = Yes ] <p> Reference [1] <p> [ ISREL = Relevant ] The author of The Lie is Sam Harris.[ ISSUP = Fully Supported ][ ISUSE =5]",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:134/s:0",
+      "unknown_refs": []
+     },
+     {
+      "type": "other",
+      "cites": [],
+      "claim": "Reference [1] states that Lying is a 2011 long-form essay book by Sam Harris.",
+      "values": [],
+      "sentence": "Reference [1] Lying is a 2011 long-form essay book by American author and neuroscience expert Sam Harris.",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:135/s:0",
+      "unknown_refs": []
+     },
+     {
+      "type": "other",
+      "cites": [],
+      "claim": "Both ISREL and ISSUP are incorrect because the reference is about a different book with a similar title.",
+      "values": [],
+      "sentence": "Correctness of ISREL and ISSUP Both ISREL and ISSUP are incorrect, as the Reference [1] is about a different book whose title is similar to The Lie.",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:137/s:0",
+      "unknown_refs": []
+     },
+     {
+      "type": "other",
+      "cites": [],
+      "claim": "The output indicates Retrieve = Yes, ISREL = Relevant, and ISUSE = 5 for a description of Ronaldinho, including his achievements and playing style.",
+      "values": [],
+      "sentence": "Output [ Retrieve = Yes ] <p> Reference [1] <p> [ ISREL = Relevant ] Ronaldinho is a retired professional footballer from Brazil.[ ISSUP = Fully Supported ][ Retrieve = Continue ]He played as an attacking midfielder and was known for his technical skills, creativity, dribbling ability, and accuracy from free kicks[ Retrieve = Continue ]He won two FIFA World Player of the Year awards and a Ballon d'Or.[ ISUSE =5] Reference [1] Ronaldo de Assis Moreira (born 21 March 1980), commonly known as Ronaldinho Ga´ ucho or simply Ronaldinho, is a Brazilian retired professional footballer who played mostly as an attacking midfielder, but was also deployed as a winger.",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:139/s:0",
+      "unknown_refs": []
+     }
+    ],
+    "batch": 7,
+    "usage": {
+     "queue_time": 0.302236479,
+     "total_time": 2.563189547,
+     "prompt_time": 0.091238623,
+     "total_tokens": 3612,
+     "prompt_tokens": 2423,
+     "completion_time": 2.471950924,
+     "completion_tokens": 1189,
+     "prompt_tokens_details": {
+      "cached_tokens": 1536
+     },
+     "completion_tokens_details": {
+      "reasoning_tokens": 200
+     }
+    },
+    "dropped": []
+   },
+   "finished_at": "2026-10-16T23:28:08.670Z"
+  },
+  {
+   "step_id": 1168,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 8,
+    "model": "openai/gpt-oss-120b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T23:28:08.707Z"
+  },
+  {
+   "step_id": 1169,
+   "step_name": "claims_batch",
+   "status": "done",
+   "detail": {
+    "kept": [],
+    "batch": 8,
+    "usage": {
+     "queue_time": 0.05384459,
+     "total_time": 0.197951529,
+     "prompt_time": 0.108527747,
+     "total_tokens": 2492,
+     "prompt_tokens": 2449,
+     "completion_time": 0.089423782,
+     "completion_tokens": 43,
+     "completion_tokens_details": {
+      "reasoning_tokens": 24
+     }
+    },
+    "dropped": []
+   },
+   "finished_at": "2026-10-16T23:28:40.013Z"
+  },
+  {
+   "step_id": 1170,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 9,
+    "model": "openai/gpt-oss-120b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T23:28:40.053Z"
+  },
+  {
+   "step_id": 1171,
+   "step_name": "claims_batch",
+   "status": "done",
+   "detail": {
+    "kept": [],
+    "batch": 9,
+    "usage": {
+     "queue_time": 0.300798564,
+     "total_time": 0.175166553,
+     "prompt_time": 0.076167652,
+     "total_tokens": 1871,
+     "prompt_tokens": 1824,
+     "completion_time": 0.098998901,
+     "completion_tokens": 47,
+     "completion_tokens_details": {
+      "reasoning_tokens": 28
+     }
+    },
+    "dropped": []
+   },
+   "finished_at": "2026-10-16T23:29:11.164Z"
+  },
+  {
+   "step_id": 1172,
+   "step_name": "number_check",
+   "status": "done",
+   "detail": {
+    "checks": [
+     {
+      "kind": "value",
+      "note": "no table cell matches the claim's system",
+      "claim": 6,
+      "metric": "agreement",
+      "system": "critic",
+      "claimed": "90%",
+      "dataset": "",
+      "setting": "",
+      "verdict": "unverifiable",
+      "sentence_id": "b:32/s:1"
+     },
+     {
+      "kind": "value",
+      "note": "no table cell matches the claim's system",
+      "claim": 22,
+      "metric": "agreement",
+      "system": "our assessments",
+      "claimed": "95%",
+      "dataset": "",
+      "setting": "relevance",
+      "verdict": "unverifiable",
+      "sentence_id": "b:84/s:2"
+     },
+     {
+      "kind": "value",
+      "note": "no table cell matches the claim's system",
+      "claim": 22,
+      "metric": "agreement",
+      "system": "our assessments",
+      "claimed": "95%",
+      "dataset": "",
+      "setting": "retrieval necessity",
+      "verdict": "unverifiable",
+      "sentence_id": "b:84/s:2"
+     },
+     {
+      "kind": "value",
+      "note": "no table cell matches the claim's system",
+      "claim": 22,
+      "metric": "agreement",
+      "system": "our assessments",
+      "claimed": "90%",
+      "dataset": "",
+      "setting": "degree of support",
+      "verdict": "unverifiable",
+      "sentence_id": "b:84/s:2"
+     },
+     {
+      "kind": "value",
+      "note": "no table cell matches the claim's system",
+      "claim": 23,
+      "metric": "agreement",
+      "system": "our assessments",
+      "claimed": "80%",
+      "dataset": "",
+      "setting": "usefulness",
+      "verdict": "unverifiable",
+      "sentence_id": "b:84/s:3"
+     },
+     {
+      "kind": "value",
+      "note": "no table cell matches the claim's system",
+      "claim": 25,
+      "metric": "instances",
+      "system": "training instances",
+      "claimed": "145,619",
+      "dataset": "",
+      "setting": "",
+      "verdict": "unverifiable",
+      "sentence_id": "b:87/s:4"
+     },
+     {
+      "kind": "value",
+      "note": "no table cell matches the claim's system",
+      "claim": 26,
+      "metric": "accuracy",
+      "system": "reward model",
+      "claimed": "80%",
+      "dataset": "",
+      "setting": "",
+      "verdict": "unverifiable",
+      "sentence_id": "b:89/s:1"
+     },
+     {
+      "kind": "value",
+      "note": "no table cell matches the claim's system",
+      "claim": 27,
+      "metric": "epochs",
+      "system": "models",
+      "claimed": "3",
+      "dataset": "",
+      "setting": "",
+      "verdict": "unverifiable",
+      "sentence_id": "b:102/s:2"
+     },
+     {
+      "kind": "value",
+      "note": "no table cell matches the claim's system",
+      "claim": 27,
+      "metric": "batch size",
+      "system": "models",
+      "claimed": "128",
+      "dataset": "",
+      "setting": "",
+      "verdict": "unverifiable",
+      "sentence_id": "b:102/s:2"
+     },
+     {
+      "kind": "value",
+      "note": "no table cell matches the claim's system",
+      "claim": 27,
+      "metric": "learning rate",
+      "system": "models",
+      "claimed": "2e-5",
+      "dataset": "",
+      "setting": "",
+      "verdict": "unverifiable",
+      "sentence_id": "b:102/s:2"
+     },
+     {
+      "kind": "value",
+      "note": "no table cell matches the claim's system",
+      "claim": 27,
+      "metric": "warmup steps",
+      "system": "models",
+      "claimed": "3%",
+      "dataset": "",
+      "setting": "",
+      "verdict": "unverifiable",
+      "sentence_id": "b:102/s:2"
+     },
+     {
+      "kind": "value",
+      "note": "no table cell matches the claim's system",
+      "claim": 28,
+      "metric": "percentage of correct predictions not included in passages",
+      "system": "SELF-RAG",
+      "claimed": "2%",
+      "dataset": "PopQA",
+      "setting": "",
+      "verdict": "unverifiable",
+      "sentence_id": "b:109/s:4"
+     },
+     {
+      "kind": "value",
+      "note": "no table cell matches the claim's system",
+      "claim": 28,
+      "metric": "percentage of correct predictions not included in passages",
+      "system": "Alpaca 30B",
+      "claimed": "20%",
+      "dataset": "PopQA",
+      "setting": "",
+      "verdict": "unverifiable",
+      "sentence_id": "b:109/s:4"
+     },
+     {
+      "kind": "value",
+      "note": "no table cell matches the claim's system",
+      "claim": 28,
+      "metric": "percentage of correct predictions not included in passages",
+      "system": "Llama2-chat 13B",
+      "claimed": "18%",
+      "dataset": "PopQA",
+      "setting": "",
+      "verdict": "unverifiable",
+      "sentence_id": "b:109/s:4"
+     },
+     {
+      "kind": "value",
+      "note": "no table cell matches the claim's system",
+      "claim": 28,
+      "metric": "percentage of correct predictions not included in passages",
+      "system": "Alpaca",
+      "claimed": "15%",
+      "dataset": "PopQA",
+      "setting": "",
+      "verdict": "unverifiable",
+      "sentence_id": "b:109/s:4"
+     }
+    ],
+    "summary": {
+     "checks": 15,
+     "supported": 0,
+     "contradicted": 0,
+     "unverifiable": 15,
+     "cells_indexed": 181
+    }
+   },
+   "finished_at": "2026-10-16T23:29:11.639Z"
+  },
+  {
+   "step_id": 1173,
+   "step_name": "figure_plan",
+   "status": "done",
+   "detail": {
+    "jobs": [
+     {
+      "claims": [
+       1
+      ],
+      "figure": "figure:1"
+     },
+     {
+      "claims": [
+       7
+      ],
+      "figure": "figure:2"
+     },
+     {
+      "claims": [
+       19,
+       20
+      ],
+      "figure": "figure:3"
+     },
+     {
+      "claims": [
+       21
+      ],
+      "figure": "figure:4"
+     }
+    ],
+    "prompt": "P5-figure-checker",
+    "findings": [],
+    "prompt_version": "v2"
+   },
+   "finished_at": "2026-10-16T23:29:11.799Z"
+  },
+  {
+   "step_id": 1174,
+   "step_name": "figures_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 0,
+    "model": "qwen/qwen3.8-27b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T23:29:11.814Z"
+  },
+  {
+   "step_id": 1175,
+   "step_name": "figures_llm_error",
+   "status": "failed",
+   "detail": {
+    "kind": "daily",
+    "batch": 0,
+    "error": "Try spacing your requests out using the batching settings under 'Options' \"\"",
+    "model": "qwen/qwen3.8-27b",
+    "until": 1792193896.0343792,
+    "status": 429,
+    "rate_limited": true,
+    "retry_after_s": 498.0
+   },
+   "finished_at": "2026-10-16T23:29:58.034Z"
+  },
+  {
+   "step_id": 1176,
+   "step_name": "figures_batch",
+   "status": "skipped",
+   "detail": {
+    "batch": 0,
+    "reason": "Groq daily token limit reached on qwen/qwen3.8-27b"
+   },
+   "finished_at": "2026-10-16T23:29:58.065Z"
+  },
+  {
+   "step_id": 1177,
+   "step_name": "figures_batch",
+   "status": "skipped",
+   "detail": {
+    "batch": 1,
+    "reason": "Groq daily token limit reached on qwen/qwen3.8-27b"
+   },
+   "finished_at": "2026-10-16T23:29:58.069Z"
+  },
+  {
+   "step_id": 1178,
+   "step_name": "figures_batch",
+   "status": "skipped",
+   "detail": {
+    "batch": 2,
+    "reason": "Groq daily token limit reached on qwen/qwen3.8-27b"
+   },
+   "finished_at": "2026-10-16T23:29:58.072Z"
+  },
+  {
+   "step_id": 1179,
+   "step_name": "figures_batch",
+   "status": "skipped",
+   "detail": {
+    "batch": 3,
+    "reason": "Groq daily token limit reached on qwen/qwen3.8-27b"
+   },
+   "finished_at": "2026-10-16T23:29:58.076Z"
+  },
+  {
+   "step_id": 1180,
+   "step_name": "figures_stopped",
+   "status": "done",
+   "detail": {
+    "reason": "Groq daily token limit reached on qwen/qwen3.8-27b",
+    "retry_in_s": 498,
+    "batches_left": [
+     0,
+     1,
+     2,
+     3
+    ]
+   },
+   "finished_at": "2026-10-16T23:29:58.080Z"
+  }
+ ]
+}

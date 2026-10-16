@@ -410,3 +410,27 @@ The container registries were not reachable from the development sandbox, so the
 
   The second row is the only blind measurement; the third is no longer blind (the fixes came from it). FLARE produced no claim with a numeric value and a system, so its real-claim part is empty.
 - **What this means:** on numbers that are clearly located, the check is reliable in both directions (no false alarm, no planted error accepted in any run). Its weakness is coverage on real prose: on RAPTOR, 13 of 16 numbers stay unverifiable because the text says "RAPTOR" where the table says "RAPTOR + GPT-4", refers to "it" from the previous sentence, gives ranges ("1.7 to 5.8"), or because the parser swapped two captions (F-019). An LLM locator, or giving the extractor the previous sentence, are the next steps if coverage matters more than the remaining milestone-3 steps.
+
+## D36. The figure check: one vision call per figure, the image as evidence
+
+- **Date:** 2026-10-16. Milestone 3, step 5: the audit's multimodal step.
+- **Context:** papers say things about their figures ("accuracy drops as retrieval gets worse, Figure 3"). Text alone cannot check that; the figure has to be looked at. Groq's only generally available vision model is `qwen/qwen3.8-27b`: at most 3 images per request, each billed at a flat 2,048 input tokens, 8,000 tokens a minute and 200K a day on the free tier ([Groq vision](https://console.groq.com/docs/vision), [rate limits](https://console.groq.com/docs/rate-limits)).
+- **Decision:**
+  - code groups the extracted claims by the figure they name and sends one request per figure (the image is paid once), split by measured tokens so a request stays under the per-minute limit (1,500 counted tokens of claims, at most 8);
+  - the figure image as the parser cropped it, as a base64 data URL; its caption; the numbered claims with their original sentences;
+  - P5 asks the model to describe the figure first (type, axes, legend, readable values), then to give one verdict per claim: supported, contradicted, or not shown. The image is the evidence; the caption only identifies the figure (otherwise every claim that restates the caption would pass);
+  - hidden reasoning, output budget 900 tokens (qwen allows 1,000 output tokens a minute, F-021); reasoning off or low and strict schema or plain JSON mode are chosen by E4 (`FIGURE_VARIANT` in `app/audit/figures.py`); pp-tools builds the request, n8n posts it (the D34 pattern), with the same loop state and rate-limit handling as the claims (F-012, F-017). There is no second vision model, so a spent daily limit stops the figure checks and the result says so;
+  - claims about a figure the parser kept no image of, or about a figure the paper does not contain, are reported without a model call.
+- **Images:** Docling's crops (400 to 900 pixels wide) were checked by eye: axis labels, legends and point labels are readable, so no re-parse at a higher resolution was needed.
+- **First measurement (P5 v1, strict schema, low reasoning):** every verdict that came back was right (E4 22/22: 12 true claims supported, 9 false claims contradicted, 1 not shown; audits of CRAG and Self-RAG: 9 claims about 6 figures supported), but 7 of 14 calls failed to produce valid JSON (F-021).
+- **Request settings chosen by E4** (`eval/results/20261016-233441-e4-figures-comparison.md`, P5 v2, one attempt per figure):
+
+  | Variant | Figures answered | Verdicts right | False alarms | Errors accepted | Output tokens |
+  | --- | --- | --- | --- | --- | --- |
+  | A: reasoning off, strict schema | 10 of 14 (2 refused by Groq, 2 with an empty verdict list) | 34/34 | 0 | 0 | 342 |
+  | B: reasoning off, plain JSON | 10 of 10 (then the daily limit) | 33/35 | 1 | 1 | 554 |
+  | C: reasoning low, plain JSON | not run (daily limit) | | | | |
+
+  A is used. Its failures are visible (a refused answer, an empty list) and the loop serves the figure again, up to 3 attempts: at about 30% failures per attempt, a figure fails all three about 3% of the time. B's two errors were silent wrong verdicts; one came from the model reasoning in its evidence field ("68.6 ... higher than 72.9. Wait, looking closer") and keeping the wrong answer. A wrong answer nobody can see is worse than a failure that is retried. An empty verdict list now counts as a failed answer. The samples are small (34 and 35 verdicts); the final E4 run uses A with retries, as the workflow does.
+- **Evaluation (E4, `scripts/e4_figure_check.py`):** 48 gold claims about 14 figures of 5 papers, written by looking at the figures: 25 true, 19 false (reversed trend, wrong order, wrong value), 4 that neither the image nor the caption answers. Measured: accuracy, false alarms on true claims, errors caught, errors accepted.
+

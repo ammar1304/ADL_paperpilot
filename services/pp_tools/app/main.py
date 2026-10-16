@@ -29,10 +29,13 @@ from .audit.steps import (
     audit_result,
     claim_prompts,
     claims as audit_claims,
+    figure_checks,
     next_claim_batch,
+    next_figure_check,
     number_check,
     record_llm_error,
     save_claims,
+    save_figure_check,
 )
 from .audit.store import PaperStore
 from .config import Settings, get_settings
@@ -550,6 +553,13 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             except Exception:  # noqa: BLE001
                 log.exception("could not record the failed parse", extra={"job_id": str(job_id)})
 
+    def _num(body: dict[str, Any], key: str) -> float | None:
+        """A number n8n may send as a string ("1009") or leave empty."""
+        try:
+            return float(body[key]) if body.get(key) not in (None, "") else None
+        except (TypeError, ValueError):
+            return None
+
     def _audit_errors(fn, *args):
         try:
             return fn(*args)
@@ -583,21 +593,40 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     async def audit_llm_error(run_id: UUID, body: dict[str, Any]) -> Any:
         if not isinstance(body.get("batch"), int):
             raise HTTPException(status_code=422, detail="batch (integer) is required")
-        def num(key: str) -> float | None:
-            try:
-                return float(body[key]) if body.get(key) not in (None, "") else None
-            except (TypeError, ValueError):
-                return None
-
-        status = num("status")
+        status = _num(body, "status")
         return await run_in_threadpool(
             _audit_errors, record_llm_error, db, run_id, body["batch"], str(body.get("error", "")),
-            int(status) if status is not None else None, num("retry_after"), body.get("model") or None,
+            int(status) if status is not None else None, _num(body, "retry_after"), body.get("model") or None,
         )
 
     @app.get("/audit/{run_id}/claims")
     async def audit_get_claims(run_id: UUID) -> Any:
         return await run_in_threadpool(_audit_errors, audit_claims, db, run_id)
+
+    @app.post("/audit/{run_id}/figures/next")
+    async def audit_next_figure(run_id: UUID) -> Any:
+        return await run_in_threadpool(_audit_errors, next_figure_check, db, library, papers, run_id)
+
+    @app.post("/audit/{run_id}/figure-checks")
+    async def audit_save_figure_check(run_id: UUID, body: dict[str, Any]) -> Any:
+        if not isinstance(body.get("batch"), int):
+            raise HTTPException(status_code=422, detail="batch (integer) is required")
+        return await run_in_threadpool(_audit_errors, save_figure_check, db, run_id, body["batch"], body.get("output"),
+                                       body.get("output_text"), body.get("usage"))
+
+    @app.post("/audit/{run_id}/figure-checks/error")
+    async def audit_figure_error(run_id: UUID, body: dict[str, Any]) -> Any:
+        if not isinstance(body.get("batch"), int):
+            raise HTTPException(status_code=422, detail="batch (integer) is required")
+        status, retry = _num(body, "status"), _num(body, "retry_after")
+        return await run_in_threadpool(
+            _audit_errors, record_llm_error, db, run_id, body["batch"], str(body.get("error", "")),
+            int(status) if status is not None else None, retry, body.get("model") or None, None, "figures",
+        )
+
+    @app.get("/audit/{run_id}/figure-checks")
+    async def audit_get_figure_checks(run_id: UUID) -> Any:
+        return await run_in_threadpool(_audit_errors, figure_checks, db, run_id)
 
     @app.post("/audit/{run_id}/check-numbers")
     async def audit_check_numbers(run_id: UUID) -> Any:
