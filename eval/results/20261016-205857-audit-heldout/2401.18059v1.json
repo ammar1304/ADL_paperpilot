@@ -1,0 +1,3262 @@
+{
+ "url": "https://arxiv.org/pdf/2401.18059v1",
+ "run_id": "6815839c-0e3b-4c7e-b943-2e74d79bcc51",
+ "result": {
+  "paper": {
+   "items": 28,
+   "pages": 23,
+   "title": "RAPTOR: RECURSIVE ABSTRACTIVE PROCESSING FOR TREE-ORGANIZED RETRIEVAL",
+   "sha256": "01319e2e6e6ecfd504ee1bbda41d023f9e060bd3505ab3c161baa1d6d696cf75",
+   "tables": [
+    "table:1",
+    "table:2",
+    "table:3",
+    "table:5",
+    "table:4",
+    "table:6",
+    "table:7",
+    "table:8",
+    "table:9",
+    "table:10",
+    "table:11",
+    "table:12",
+    "table:13",
+    "table:14",
+    "table:15",
+    "table:16",
+    "table:17",
+    "table:18",
+    "table:19",
+    "table:20",
+    "table:21"
+   ],
+   "figures": [
+    "figure:1",
+    "figure:2",
+    "figure:3",
+    "figure:4",
+    "figure:5",
+    "figure:6",
+    "figure:7"
+   ],
+   "numbered": 28,
+   "references": 64
+  },
+  "branch": "audit",
+  "claims": [
+   {
+    "type": "result",
+    "cites": [],
+    "claim": "RAPTOR with GPT-4 improves QuALITY accuracy by 20% absolute.",
+    "values": [
+     {
+      "role": "value",
+      "value": "20%",
+      "metric": "accuracy",
+      "system": "RAPTOR",
+      "dataset": "QuALITY",
+      "setting": "GPT-4"
+     }
+    ],
+    "sentence": "On question-answering tasks that involve complex, multi-step reasoning, we show state-of-the-art results; for example, by coupling RAPTOR retrieval with the use of GPT-4, we can improve the best performance on the QuALITY benchmark by 20% in absolute accuracy.",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:3/s:5",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Figure 1 shows RAPTOR clustering chunks, summarizing, and building a tree bottom-up.",
+    "values": [],
+    "sentence": "As shown in Figure 1, our system, RAPTOR, clusters chunks of text, generates text summaries of those clusters, and then repeats, generating a tree from the bottom up.",
+    "refers_to": [
+     "figure:1"
+    ],
+    "comparison": null,
+    "sentence_id": "b:7/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "comparison",
+    "cites": [],
+    "claim": "RAPTOR outperforms current retrieval augmentation.",
+    "values": [],
+    "sentence": "Controlled experiments with three language models (UnifiedQA (Khashabi et al., 2020), GPT-3 (Brown et al., 2020) and GPT-4 (OpenAI, 2023)) show that RAPTOR outperforms current retrieval augmentation.",
+    "refers_to": [],
+    "comparison": {
+     "kind": "unspecified",
+     "system": "RAPTOR",
+     "baseline": "current retrieval augmentation",
+     "direction": "better",
+     "difference": ""
+    },
+    "sentence_id": "b:8/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "result",
+    "cites": [],
+    "claim": "RAPTOR with GPT-4 achieves new state-of-the-art on NarrativeQA, QASPER, and QuALITY.",
+    "values": [],
+    "sentence": "Moreover, RAPTOR coupled with GPT-4, and sometimes even with UnifiedQA, gives new state-of-the-art results on three QA tasks: free text response questions on books and movies (NarrativeQA, Koˇ cisk` y et al. 2018), full-text NLP papers (QASPER, Dasigi et al. 2021), and multiple-choice questions based on medium-length passages (QuALITY, Pang et al. 2022). 1",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:8/s:2",
+    "unknown_refs": []
+   },
+   {
+    "type": "result",
+    "cites": [],
+    "claim": "About 4% of the summaries contained minor hallucinations.",
+    "values": [
+     {
+      "role": "value",
+      "value": "4%",
+      "metric": "percentage",
+      "system": "summarization model",
+      "dataset": "",
+      "setting": ""
+     }
+    ],
+    "sentence": "While the summarization model generally produces reliable summaries, a focused annotation study revealed that about 4% of the summaries contained minor hallucinations.",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:31/s:0",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Figure 2 depicts the collapsed tree approach as a simpler way to search for relevant information by considering all nodes simultaneously.",
+    "values": [],
+    "sentence": "The collapsed tree approach offers a simpler way to search for relevant information by considering all nodes in the tree simultaneously, as depicted in Figure 2.",
+    "refers_to": [
+     "figure:2"
+    ],
+    "comparison": null,
+    "sentence_id": "b:41/s:0",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Figure 3 shows the performance of tree traversal with different top-sizes and collapsed tree with different maximum token numbers.",
+    "values": [],
+    "sentence": "Figure 3 shows the performance of tree traversal with different top- sizes and collapsed tree with different maximum token numbers.",
+    "refers_to": [
+     "figure:3"
+    ],
+    "comparison": null,
+    "sentence_id": "b:45/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Figure 4 illustrates that RAPTOR's tree-based retrieval can choose nodes from different tree layers to match the question's detail level.",
+    "values": [],
+    "sentence": "in Figure 4, RAPTOR's tree-based retrieval allows it to choose nodes from different tree layers, matching the question's detail level.",
+    "refers_to": [
+     "figure:4"
+    ],
+    "comparison": null,
+    "sentence_id": "b:49/s:0",
+    "unknown_refs": []
+   },
+   {
+    "type": "other",
+    "cites": [
+     "Dasigi et al., 2021"
+    ],
+    "claim": "The QASPER dataset includes 5,049 questions across 1,585 NLP papers.",
+    "values": [
+     {
+      "role": "value",
+      "value": "5,049",
+      "metric": "questions",
+      "system": "",
+      "dataset": "QASPER",
+      "setting": ""
+     }
+    ],
+    "sentence": "The QASPER dataset includes 5,049 questions across 1,585 NLP papers, with each question probing for information embedded within the full text (Dasigi et al., 2021).",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:53/s:0",
+    "unknown_refs": []
+   },
+   {
+    "type": "other",
+    "cites": [
+     "Pang et al., 2022"
+    ],
+    "claim": "The QuALITY dataset consists of multiple-choice questions with context passages averaging approximately 5,000 tokens in length.",
+    "values": [
+     {
+      "role": "value",
+      "value": "5,000",
+      "metric": "tokens",
+      "system": "",
+      "dataset": "QuALITY",
+      "setting": "context passages"
+     }
+    ],
+    "sentence": "Lastly, the QuALITY dataset consists of multiple-choice questions, each accompanied by context passages averaging approximately 5,000 tokens in length (Pang et al., 2022).",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:54/s:0",
+    "unknown_refs": []
+   },
+   {
+    "type": "comparison",
+    "cites": [],
+    "claim": "RAPTOR combined with any retriever consistently outperforms the respective retriever across all datasets.",
+    "values": [],
+    "sentence": "As shown in Tables 1 and 2, our results demonstrate that RAPTOR, when combined with any retriever, consistently outperforms the respective retriever across all datasets. 2",
+    "refers_to": [
+     "table:1",
+     "table:2"
+    ],
+    "comparison": {
+     "kind": "unspecified",
+     "system": "RAPTOR",
+     "baseline": "retriever alone",
+     "direction": "better",
+     "difference": ""
+    },
+    "sentence_id": "b:55/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "result",
+    "cites": [],
+    "claim": "RAPTOR achieves an accuracy of 62.4% on QuALITY, a 2% improvement over DPR and a 5.1% improvement over BM25.",
+    "values": [
+     {
+      "role": "value",
+      "value": "62.4%",
+      "metric": "accuracy",
+      "system": "RAPTOR",
+      "dataset": "QuALITY",
+      "setting": ""
+     }
+    ],
+    "sentence": "Likewise, in the QuALITY dataset as shown in Table 4, RAPTOR achieves an accuracy of 62.4%, which is a 2% and 5.1% improvement over DPR and BM25.",
+    "refers_to": [
+     "table:4"
+    ],
+    "comparison": null,
+    "sentence_id": "b:57/s:0",
+    "unknown_refs": []
+   },
+   {
+    "type": "comparison",
+    "cites": [],
+    "claim": "RAPTOR outperforms DPR by 2.7% and BM25 by 6.7% when UnifiedQA is employed on QuALITY.",
+    "values": [],
+    "sentence": "Similar trends are observed when UnifiedQA is employed, with RAPTOR outperforming DPR and BM25 by 2.7% and 6.7%, respectively.",
+    "refers_to": [],
+    "comparison": {
+     "kind": "absolute",
+     "system": "RAPTOR",
+     "baseline": "DPR",
+     "direction": "better",
+     "difference": "2.7%"
+    },
+    "sentence_id": "b:57/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "comparison",
+    "cites": [],
+    "claim": "For ROUGE-L on NarrativeQA, RAPTOR surpasses BM25 by 7.3 points and DPR by 2.7 points.",
+    "values": [],
+    "sentence": "For ROUGE-L, it surpasses BM25 and DPR by 7.3 and 2.7 points, respectively.",
+    "refers_to": [
+     "table:6"
+    ],
+    "comparison": {
+     "kind": "absolute",
+     "system": "RAPTOR",
+     "baseline": "BM25",
+     "direction": "better",
+     "difference": "7.3"
+    },
+    "sentence_id": "b:58/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "comparison",
+    "cites": [],
+    "claim": "RAPTOR outperforms BM25 and DPR on BLEU-1, BLEU-4, and METEOR by margins ranging from 1.7 to 5.8 points and 0.7 to 2.1 points, respectively.",
+    "values": [],
+    "sentence": "In other metrics like BLEU-1, BLEU-4, and METEOR, RAPTOR outperforms BM25 and DPR by margins ranging from 1.7 to 5.8 and 0.7 to 2.1 points, respectively.",
+    "refers_to": [
+     "table:6"
+    ],
+    "comparison": {
+     "kind": "absolute",
+     "system": "RAPTOR",
+     "baseline": "BM25",
+     "direction": "better",
+     "difference": "1.7 to 5.8"
+    },
+    "sentence_id": "b:58/s:2",
+    "unknown_refs": []
+   },
+   {
+    "type": "result",
+    "cites": [],
+    "claim": "RAPTOR with GPT-4 achieves a 55.7% F-1 score on QASPER, surpassing CoLT5 XL's 53.9% score.",
+    "values": [
+     {
+      "role": "value",
+      "value": "55.7%",
+      "metric": "F-1",
+      "system": "RAPTOR",
+      "dataset": "QASPER",
+      "setting": "GPT-4"
+     },
+     {
+      "role": "value",
+      "value": "53.9%",
+      "metric": "F-1",
+      "system": "CoLT5 XL",
+      "dataset": "QASPER",
+      "setting": ""
+     }
+    ],
+    "sentence": "As shown in Table 5, RAPTOR with GPT-4 sets a new benchmark on QASPER, with a 55.7% F-1 score, surpassing the CoLT5 XL's score of 53.9%.",
+    "refers_to": [
+     "table:5"
+    ],
+    "comparison": null,
+    "sentence_id": "b:60/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "result",
+    "cites": [],
+    "claim": "RAPTOR paired with GPT-4 achieves an accuracy of 82.6% on QuALITY, surpassing the previous best result of 62.3%.",
+    "values": [
+     {
+      "role": "value",
+      "value": "82.6%",
+      "metric": "accuracy",
+      "system": "RAPTOR",
+      "dataset": "QuALITY",
+      "setting": "GPT-4"
+     },
+     {
+      "role": "value",
+      "value": "62.3%",
+      "metric": "accuracy",
+      "system": "previous best",
+      "dataset": "QuALITY",
+      "setting": ""
+     }
+    ],
+    "sentence": "In the QuALITY dataset, as shown in Table 7, RAPTOR paired with GPT-4 sets a new stateof-the-art with an accuracy of 82.6%, surpassing the previous best result of 62.3%.",
+    "refers_to": [
+     "table:7"
+    ],
+    "comparison": null,
+    "sentence_id": "b:61/s:0",
+    "unknown_refs": []
+   },
+   {
+    "type": "comparison",
+    "cites": [],
+    "claim": "RAPTOR outperforms CoLISA by 21.5% on QuALITY-HARD.",
+    "values": [],
+    "sentence": "In particular, it outperforms CoLISA by 21.5% on QuALITY-HARD, which represents questions that humans took unusually long to correctly answer, requiring rereading parts of the text, difficult reasoning, or both.",
+    "refers_to": [],
+    "comparison": {
+     "kind": "absolute",
+     "system": "RAPTOR",
+     "baseline": "CoLISA",
+     "direction": "better",
+     "difference": "21.5"
+    },
+    "sentence_id": "b:61/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "comparison",
+    "cites": [],
+    "claim": "RAPTOR outperforms BM25 by at least 2.0% in accuracy.",
+    "values": [],
+    "sentence": "RAPTOR outperforms the baselines of BM25 and DPR by at least 2.0% in accuracy.",
+    "refers_to": [],
+    "comparison": {
+     "kind": "absolute",
+     "system": "RAPTOR",
+     "baseline": "BM25",
+     "direction": "better",
+     "difference": "2.0"
+    },
+    "sentence_id": "b:62/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "comparison",
+    "cites": [],
+    "claim": "RAPTOR outperforms DPR by at least 2.0% in accuracy.",
+    "values": [],
+    "sentence": "RAPTOR outperforms the baselines of BM25 and DPR by at least 2.0% in accuracy.",
+    "refers_to": [],
+    "comparison": {
+     "kind": "absolute",
+     "system": "RAPTOR",
+     "baseline": "DPR",
+     "direction": "better",
+     "difference": "2.0"
+    },
+    "sentence_id": "b:62/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "comparison",
+    "cites": [
+     "Wu et al., 2021"
+    ],
+    "claim": "RAPTOR outperforms the recursively summarizing model by Wu et al. (2021) on all metrics.",
+    "values": [],
+    "sentence": "When compared to the recursively summarizing model by Wu et al. (2021), which also employs UnifiedQA, RAPTOR outperforms it on all metrics.",
+    "refers_to": [],
+    "comparison": {
+     "kind": "unspecified",
+     "system": "RAPTOR",
+     "baseline": "Wu et al. (2021) model",
+     "direction": "better",
+     "difference": ""
+    },
+    "sentence_id": "b:64/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "comparison",
+    "cites": [],
+    "claim": "A full-tree search using all layers outperformed retrieval strategies that focused only on specific layers.",
+    "values": [],
+    "sentence": "We show findings specific to one story in Table 8, revealing that a full-tree search, utilizing all layers, outperformed retrieval strategies that focused only on specific layers.",
+    "refers_to": [
+     "table:8"
+    ],
+    "comparison": {
+     "kind": "unspecified",
+     "system": "full-tree search",
+     "baseline": "layer‑specific retrieval strategies",
+     "direction": "better",
+     "difference": ""
+    },
+    "sentence_id": "b:68/s:6",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Figure 5 shows a clear linear correlation between initial document length and total token expenditure.",
+    "values": [],
+    "sentence": "Figure 5 illustrates a clear linear correlation between the initial document length and the total token expenditure, emphasizing that RAPTOR maintains a linear token scaling regardless of document complexity or length.",
+    "refers_to": [
+     "figure:5"
+    ],
+    "comparison": null,
+    "sentence_id": "b:79/s:2",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Figure 6 shows a consistent linear trend between document length and build time.",
+    "values": [],
+    "sentence": "Build Time We also empirically observed a consistent linear trend between the document length and the build time, as shown in Figure 6.",
+    "refers_to": [
+     "figure:6"
+    ],
+    "comparison": null,
+    "sentence_id": "b:80/s:0",
+    "unknown_refs": []
+   },
+   {
+    "type": "result",
+    "cites": [],
+    "claim": "The window size for this setup is approximately 6.7 nodes.",
+    "values": [
+     {
+      "role": "value",
+      "value": "6.7",
+      "metric": "window size",
+      "system": "RAPTOR",
+      "dataset": "",
+      "setting": ""
+     }
+    ],
+    "sentence": "We determined the window size for this setup based on the average cluster size observed in RAPTOR, which is approximately 6.7 nodes.",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:85/s:3",
+    "unknown_refs": []
+   },
+   {
+    "type": "result",
+    "cites": [],
+    "claim": "The average ratio of summary length to the sum of child node lengths across all datasets is 0.28, indicating a 72% compression rate.",
+    "values": [
+     {
+      "role": "value",
+      "value": "0.28",
+      "metric": "summary‑to‑child‑node length ratio",
+      "system": "",
+      "dataset": "all datasets",
+      "setting": ""
+     },
+     {
+      "role": "value",
+      "value": "72%",
+      "metric": "compression rate",
+      "system": "",
+      "dataset": "all datasets",
+      "setting": ""
+     }
+    ],
+    "sentence": "The average ratio of the summary length to the sum of child node lengths across all datasets is 0.28, indicating a 72% compression rate.",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:89/s:0",
+    "unknown_refs": []
+   },
+   {
+    "type": "result",
+    "cites": [],
+    "claim": "Out of 150 sampled nodes, 4% (6 nodes) contained some form of hallucination.",
+    "values": [
+     {
+      "role": "value",
+      "value": "4%",
+      "metric": "hallucination rate",
+      "system": "gpt-3.5-turbo",
+      "dataset": "sampled nodes",
+      "setting": ""
+     }
+    ],
+    "sentence": "Out of the 150 nodes sampled, 4% (6 nodes) contained some form of hallucination.",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:97/s:0",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Figure 4 details the retrieval process within RAPTOR's tree structure for two questions.",
+    "values": [],
+    "sentence": "Figure 4 in the main paper details the retrieval process within RAPTOR's tree structure for two questions.",
+    "refers_to": [
+     "figure:4"
+    ],
+    "comparison": null,
+    "sentence_id": "b:110/s:2",
+    "unknown_refs": []
+   },
+   {
+    "type": "result",
+    "cites": [],
+    "claim": "Between 18.5% to 57% of the retrieved nodes come from non-leaf nodes.",
+    "values": [
+     {
+      "role": "value",
+      "value": "18.5% to 57%",
+      "metric": "percentage of retrieved nodes from non-leaf nodes",
+      "system": "RAPTOR",
+      "dataset": "",
+      "setting": ""
+     }
+    ],
+    "sentence": "We observe that between 18.5% to 57% of the retrieved nodes come from non-leaf nodes.",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:132/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Figure 7 illustrates the retrieval pattern across layers, revealing the importance of RAPTOR's multi-layered tree structure.",
+    "values": [],
+    "sentence": "As illustrated in Figure 7, the retrieval pattern across layers reveals the importance of RAPTOR's multi-layered tree structure.",
+    "refers_to": [
+     "figure:7"
+    ],
+    "comparison": null,
+    "sentence_id": "b:132/s:2",
+    "unknown_refs": []
+   },
+   {
+    "type": "other",
+    "cites": [],
+    "claim": "The evaluation script evenly distributes weight across all n-gram levels, changing the BLEU-4 weights to (0.25, 0.25, 0.25, 0.25).",
+    "values": [],
+    "sentence": "To provide a more balanced evaluation, we evenly distributed the weight across all n-gram levels, changing the weights for the BLEU-4 calculation to (0.25, 0.25, 0.25, 0.25).",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:125/s:2",
+    "unknown_refs": []
+   }
+  ],
+  "run_id": "6815839c-0e3b-4c7e-b943-2e74d79bcc51",
+  "coverage": {
+   "models": [
+    "openai/gpt-oss-120b",
+    "openai/gpt-oss-20b"
+   ],
+   "batches": 6,
+   "by_type": {
+    "other": 3,
+    "figure": 8,
+    "result": 10,
+    "comparison": 10
+   },
+   "stopped": null,
+   "llm_errors": 1,
+   "batches_done": 6,
+   "rate_limited": 1,
+   "batches_skipped": [],
+   "total_sentences": 294,
+   "candidate_sentences": 71
+  },
+  "implemented": "parse+claims+numbers",
+  "number_checks": {
+   "checks": [
+    {
+     "cell": {
+      "row": "RAPTOR",
+      "text": "55.7",
+      "table": "table:3",
+      "column": "GPT-4 F-1 Match",
+      "section": ""
+     },
+     "kind": "value",
+     "note": "the table gives 55.7",
+     "claim": 0,
+     "metric": "accuracy",
+     "system": "RAPTOR",
+     "claimed": "20%",
+     "dataset": "QuALITY",
+     "setting": "GPT-4",
+     "verdict": "contradicted",
+     "table_says": "55.7",
+     "sentence_id": "b:3/s:5"
+    },
+    {
+     "kind": "value",
+     "note": "no table cell matches the claim's system",
+     "claim": 4,
+     "metric": "percentage",
+     "system": "summarization model",
+     "claimed": "4%",
+     "dataset": "",
+     "setting": "",
+     "verdict": "unverifiable",
+     "sentence_id": "b:31/s:0"
+    },
+    {
+     "cell": {
+      "row": "RAPTOR + GPT-4",
+      "text": "55.7",
+      "table": "table:4",
+      "column": "F-1 Match",
+      "section": ""
+     },
+     "kind": "value",
+     "note": "the table gives 55.7",
+     "claim": 11,
+     "metric": "accuracy",
+     "system": "RAPTOR",
+     "claimed": "62.4%",
+     "dataset": "QuALITY",
+     "setting": "",
+     "verdict": "contradicted",
+     "table_says": "55.7",
+     "sentence_id": "b:57/s:0"
+    },
+    {
+     "cell": {
+      "row": "RAPTOR",
+      "text": "55.7",
+      "table": "table:3",
+      "column": "GPT-4 F-1 Match",
+      "section": ""
+     },
+     "kind": "difference",
+     "note": "55.7 vs 53.0: absolute difference",
+     "claim": 12,
+     "pairs": 5,
+     "metric": "",
+     "system": "RAPTOR",
+     "claimed": "2.7%",
+     "dataset": "",
+     "setting": "",
+     "verdict": "supported",
+     "absolute": 2.7,
+     "baseline": "DPR",
+     "relative": 5.09,
+     "direction": "better",
+     "matched_as": "absolute",
+     "sentence_id": "b:57/s:1",
+     "baseline_cell": {
+      "row": "DPR",
+      "text": "53.0",
+      "table": "table:3",
+      "column": "GPT-4 F-1 Match",
+      "section": ""
+     }
+    },
+    {
+     "kind": "difference",
+     "note": "the system and the baseline could not both be located in one column",
+     "claim": 13,
+     "metric": "",
+     "system": "RAPTOR",
+     "claimed": "7.3",
+     "dataset": "",
+     "setting": "",
+     "verdict": "unverifiable",
+     "baseline": "BM25",
+     "direction": "better",
+     "sentence_id": "b:58/s:1"
+    },
+    {
+     "kind": "difference",
+     "note": "the system and the baseline could not both be located in one column",
+     "claim": 14,
+     "metric": "",
+     "system": "RAPTOR",
+     "claimed": "1.7 to 5.8",
+     "dataset": "",
+     "setting": "",
+     "verdict": "unverifiable",
+     "baseline": "BM25",
+     "direction": "better",
+     "sentence_id": "b:58/s:2"
+    },
+    {
+     "kind": "value",
+     "note": "2 cells fit and none shows 55.7%",
+     "claim": 15,
+     "metric": "F-1",
+     "system": "RAPTOR",
+     "claimed": "55.7%",
+     "dataset": "QASPER",
+     "setting": "GPT-4",
+     "verdict": "unverifiable",
+     "candidates": [
+      {
+       "row": "RAPTOR",
+       "text": "62.4",
+       "table": "table:5",
+       "column": "GPT-3 Acc.",
+       "section": ""
+      },
+      {
+       "row": "RAPTOR",
+       "text": "56.6",
+       "table": "table:5",
+       "column": "UnifiedQA Acc.",
+       "section": ""
+      }
+     ],
+     "sentence_id": "b:60/s:1"
+    },
+    {
+     "kind": "value",
+     "note": "no table cell matches the claim's system",
+     "claim": 15,
+     "metric": "F-1",
+     "system": "CoLT5 XL",
+     "claimed": "53.9%",
+     "dataset": "QASPER",
+     "setting": "",
+     "verdict": "unverifiable",
+     "sentence_id": "b:60/s:1"
+    },
+    {
+     "cell": {
+      "row": "RAPTOR + GPT-4",
+      "text": "82.6",
+      "table": "table:7",
+      "column": "Accuracy / Test Set / 39 . 5 / 55 . 4 / 62 . 3",
+      "section": ""
+     },
+     "kind": "value",
+     "claim": 16,
+     "metric": "accuracy",
+     "system": "RAPTOR",
+     "claimed": "82.6%",
+     "dataset": "QuALITY",
+     "setting": "GPT-4",
+     "verdict": "supported",
+     "candidates": 1,
+     "sentence_id": "b:61/s:0"
+    },
+    {
+     "kind": "value",
+     "note": "no table cell matches the claim's system",
+     "claim": 16,
+     "metric": "accuracy",
+     "system": "previous best",
+     "claimed": "62.3%",
+     "dataset": "QuALITY",
+     "setting": "",
+     "verdict": "unverifiable",
+     "sentence_id": "b:61/s:0"
+    },
+    {
+     "kind": "difference",
+     "note": "the system and the baseline could not both be located in one column",
+     "claim": 17,
+     "metric": "",
+     "system": "RAPTOR",
+     "claimed": "21.5",
+     "dataset": "",
+     "setting": "",
+     "verdict": "unverifiable",
+     "baseline": "CoLISA",
+     "direction": "better",
+     "sentence_id": "b:61/s:1"
+    },
+    {
+     "cell": {
+      "row": "RAPTOR",
+      "text": "53.1",
+      "table": "table:3",
+      "column": "GPT-3 F-1 Match",
+      "section": ""
+     },
+     "kind": "difference",
+     "note": "5 column pairs fit and none gives 2.0",
+     "claim": 18,
+     "pairs": 5,
+     "metric": "",
+     "system": "RAPTOR",
+     "claimed": "2.0",
+     "dataset": "",
+     "setting": "",
+     "verdict": "unverifiable",
+     "absolute": 6.5,
+     "baseline": "BM25",
+     "relative": 13.95,
+     "direction": "better",
+     "sentence_id": "b:62/s:1",
+     "baseline_cell": {
+      "row": "BM25",
+      "text": "46.6",
+      "table": "table:3",
+      "column": "GPT-3 F-1 Match",
+      "section": ""
+     }
+    },
+    {
+     "cell": {
+      "row": "RAPTOR",
+      "text": "62.4",
+      "table": "table:5",
+      "column": "GPT-3 Acc.",
+      "section": ""
+     },
+     "kind": "difference",
+     "note": "62.4 vs 60.4: absolute difference",
+     "claim": 19,
+     "pairs": 5,
+     "metric": "",
+     "system": "RAPTOR",
+     "claimed": "2.0",
+     "dataset": "",
+     "setting": "",
+     "verdict": "supported",
+     "absolute": 2,
+     "baseline": "DPR",
+     "relative": 3.31,
+     "direction": "better",
+     "matched_as": "absolute",
+     "sentence_id": "b:62/s:1",
+     "baseline_cell": {
+      "row": "DPR",
+      "text": "60.4",
+      "table": "table:5",
+      "column": "GPT-3 Acc.",
+      "section": ""
+     }
+    },
+    {
+     "kind": "value",
+     "note": "5 cells fit and none shows 6.7",
+     "claim": 24,
+     "metric": "window size",
+     "system": "RAPTOR",
+     "claimed": "6.7",
+     "dataset": "",
+     "setting": "",
+     "verdict": "unverifiable",
+     "candidates": [
+      {
+       "row": "RAPTOR",
+       "text": "53.1",
+       "table": "table:3",
+       "column": "GPT-3 F-1 Match",
+       "section": ""
+      },
+      {
+       "row": "RAPTOR",
+       "text": "55.7",
+       "table": "table:3",
+       "column": "GPT-4 F-1 Match",
+       "section": ""
+      },
+      {
+       "row": "RAPTOR",
+       "text": "36.6",
+       "table": "table:3",
+       "column": "UnifiedQA F-1 Match",
+       "section": ""
+      },
+      {
+       "row": "RAPTOR",
+       "text": "62.4",
+       "table": "table:5",
+       "column": "GPT-3 Acc.",
+       "section": ""
+      },
+      {
+       "row": "RAPTOR",
+       "text": "56.6",
+       "table": "table:5",
+       "column": "UnifiedQA Acc.",
+       "section": ""
+      }
+     ],
+     "sentence_id": "b:85/s:3"
+    },
+    {
+     "kind": "value",
+     "note": "no table cell matches the claim's system",
+     "claim": 26,
+     "metric": "hallucination rate",
+     "system": "gpt-3.5-turbo",
+     "claimed": "4%",
+     "dataset": "sampled nodes",
+     "setting": "",
+     "verdict": "unverifiable",
+     "sentence_id": "b:97/s:0"
+    },
+    {
+     "kind": "value",
+     "note": "5 cells fit and none shows 18.5% to 57%",
+     "claim": 28,
+     "metric": "percentage of retrieved nodes from non-leaf nodes",
+     "system": "RAPTOR",
+     "claimed": "18.5% to 57%",
+     "dataset": "",
+     "setting": "",
+     "verdict": "unverifiable",
+     "candidates": [
+      {
+       "row": "RAPTOR",
+       "text": "53.1",
+       "table": "table:3",
+       "column": "GPT-3 F-1 Match",
+       "section": ""
+      },
+      {
+       "row": "RAPTOR",
+       "text": "55.7",
+       "table": "table:3",
+       "column": "GPT-4 F-1 Match",
+       "section": ""
+      },
+      {
+       "row": "RAPTOR",
+       "text": "36.6",
+       "table": "table:3",
+       "column": "UnifiedQA F-1 Match",
+       "section": ""
+      },
+      {
+       "row": "RAPTOR",
+       "text": "62.4",
+       "table": "table:5",
+       "column": "GPT-3 Acc.",
+       "section": ""
+      },
+      {
+       "row": "RAPTOR",
+       "text": "56.6",
+       "table": "table:5",
+       "column": "UnifiedQA Acc.",
+       "section": ""
+      }
+     ],
+     "sentence_id": "b:132/s:1"
+    }
+   ],
+   "summary": {
+    "checks": 16,
+    "supported": 3,
+    "contradicted": 2,
+    "unverifiable": 11,
+    "cells_indexed": 157
+   }
+  },
+  "claims_dropped": 2,
+  "prompt_versions": {
+   "P4-claim-extractor": "v1"
+  }
+ },
+ "steps": [
+  {
+   "step_id": 1014,
+   "step_name": "parse",
+   "status": "done",
+   "detail": {
+    "items": 28,
+    "pages": 23,
+    "title": "RAPTOR: RECURSIVE ABSTRACTIVE PROCESSING FOR TREE-ORGANIZED RETRIEVAL",
+    "blocks": 134,
+    "cached": false,
+    "sha256": "01319e2e6e6ecfd504ee1bbda41d023f9e060bd3505ab3c161baa1d6d696cf75",
+    "tables": [
+     {
+      "id": "table:1",
+      "page": 7,
+      "rows": 7,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:2",
+      "page": 8,
+      "rows": 7,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:3",
+      "page": 8,
+      "rows": 5,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:5",
+      "page": 8,
+      "rows": 4,
+      "caption_source": "repaired"
+     },
+     {
+      "id": "table:4",
+      "page": 8,
+      "rows": 4,
+      "caption_source": "pdf-text"
+     },
+     {
+      "id": "table:6",
+      "page": 9,
+      "rows": 6,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:7",
+      "page": 9,
+      "rows": 6,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:8",
+      "page": 9,
+      "rows": 4,
+      "caption_source": "repaired"
+     },
+     {
+      "id": "table:9",
+      "page": 17,
+      "rows": 3,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:10",
+      "page": 17,
+      "rows": 5,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:11",
+      "page": 17,
+      "rows": 3,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:12",
+      "page": 19,
+      "rows": 6,
+      "caption_source": "repaired"
+     },
+     {
+      "id": "table:13",
+      "page": 21,
+      "rows": 6,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:14",
+      "page": 21,
+      "rows": 4,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:15",
+      "page": 22,
+      "rows": 4,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:16",
+      "page": 22,
+      "rows": 3,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:17",
+      "page": 22,
+      "rows": 3,
+      "caption_source": "repaired"
+     },
+     {
+      "id": "table:18",
+      "page": 22,
+      "rows": 4,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:19",
+      "page": 23,
+      "rows": 6,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:20",
+      "page": 23,
+      "rows": 5,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:21",
+      "page": 23,
+      "rows": 5,
+      "caption_source": "repaired"
+     }
+    ],
+    "figures": [
+     {
+      "id": "figure:1",
+      "page": 2,
+      "has_image": true,
+      "caption_source": "docling"
+     },
+     {
+      "id": "figure:2",
+      "page": 5,
+      "has_image": true,
+      "caption_source": "docling"
+     },
+     {
+      "id": "figure:3",
+      "page": 6,
+      "has_image": true,
+      "caption_source": "docling"
+     },
+     {
+      "id": "figure:4",
+      "page": 7,
+      "has_image": true,
+      "caption_source": "docling"
+     },
+     {
+      "id": "figure:5",
+      "page": 15,
+      "has_image": true,
+      "caption_source": "docling"
+     },
+     {
+      "id": "figure:6",
+      "page": 16,
+      "has_image": true,
+      "caption_source": "docling"
+     },
+     {
+      "id": "figure:7",
+      "page": 22,
+      "has_image": true,
+      "caption_source": "docling"
+     }
+    ],
+    "seconds": 51.1,
+    "numbered": 28,
+    "references": 64
+   },
+   "finished_at": "2026-10-16T20:59:49.230Z"
+  },
+  {
+   "step_id": 1015,
+   "step_name": "claim_prompts",
+   "status": "done",
+   "detail": {
+    "prompt": "P4-claim-extractor",
+    "batches": [
+     [
+      "b:3/s:5",
+      "b:5/s:1",
+      "b:5/s:3",
+      "b:5/s:4",
+      "b:5/s:5",
+      "b:6/s:2",
+      "b:7/s:1",
+      "b:8/s:1",
+      "b:8/s:2"
+     ],
+     [
+      "b:10/s:1",
+      "b:10/s:2",
+      "b:11/s:1",
+      "b:11/s:2",
+      "b:11/s:3",
+      "b:12/s:0",
+      "b:12/s:1",
+      "b:12/s:2",
+      "b:14/s:1",
+      "b:14/s:3",
+      "b:15/s:0"
+     ],
+     [
+      "b:15/s:1",
+      "b:15/s:2",
+      "b:15/s:4",
+      "b:17/s:0",
+      "b:18/s:3",
+      "b:25/s:0",
+      "b:25/s:1",
+      "b:27/s:1",
+      "b:30/s:2",
+      "b:31/s:0",
+      "b:41/s:0",
+      "b:45/s:1",
+      "b:46/s:1",
+      "b:49/s:0",
+      "b:52/s:0"
+     ],
+     [
+      "b:53/s:0",
+      "b:54/s:0",
+      "b:55/s:0",
+      "b:55/s:1",
+      "b:56/s:2",
+      "b:56/s:3",
+      "b:56/s:4",
+      "b:57/s:0",
+      "b:57/s:1",
+      "b:58/s:0",
+      "b:58/s:1",
+      "b:58/s:2",
+      "b:60/s:1",
+      "b:61/s:0"
+     ],
+     [
+      "b:61/s:1",
+      "b:62/s:0",
+      "b:62/s:1",
+      "b:64/s:1",
+      "b:64/s:2",
+      "b:68/s:6",
+      "b:73/s:0",
+      "b:73/s:1",
+      "b:79/s:2",
+      "b:80/s:0",
+      "b:85/s:3",
+      "b:87/s:0",
+      "b:89/s:0",
+      "b:91/s:0",
+      "b:93/s:1",
+      "b:97/s:0"
+     ],
+     [
+      "b:110/s:2",
+      "b:114/s:2",
+      "b:115/s:1",
+      "b:125/s:2",
+      "b:132/s:1",
+      "b:132/s:2"
+     ]
+    ],
+    "candidates": [
+     {
+      "id": "b:3/s:5",
+      "page": 1,
+      "text": "On question-answering tasks that involve complex, multi-step reasoning, we show state-of-the-art results; for example, by coupling RAPTOR retrieval with the use of GPT-4, we can improve the best performance on the QuALITY benchmark by 20% in absolute accuracy.",
+      "block": "b:3",
+      "section": "ABSTRACT",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:5/s:1",
+      "page": 1,
+      "text": "With the growing size of LLMs, they can serve standalone as very effective knowledge stores, with facts encoded within their parameters (Petroni et al., 2019; Jiang et al., 2020; Talmor et al., 2020; Rae et al., 2021; Hoffmann et al., 2022; Chowdhery et al., 2022; Bubeck et al., 2023; Kandpal et al., 2023) and models can be further improved with fine-tuning on downstream tasks (Roberts et al., 2020).",
+      "block": "b:5",
+      "section": "1 INTRODUCTION",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:5/s:3",
+      "page": 1,
+      "text": "Updating the knowledge of these models through additional fine-tuning or editing is difficult, particularly when dealing with vast text corpora (Lewis et al., 2020; Mitchell et al., 2022).",
+      "block": "b:5",
+      "section": "1 INTRODUCTION",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:5/s:4",
+      "page": 1,
+      "text": "An alternative approach, pioneered in open domain question answering systems (Chen et al., 2017; Yu et al., 2018), is to index large quantities of text, after splitting it into chunks (paragraphs), in a separate information retrieval system.",
+      "block": "b:5",
+      "section": "1 INTRODUCTION",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:5/s:5",
+      "page": 1,
+      "text": "Retrieved information is then presented to the LLM along with the question as context ('retrieval augmentation', Lewis et al., 2020; Izacard et al., 2022; Min et al., 2023; Ram et al., 2023), making it easy to provide a system with current knowledge particular to some domain and enabling easy interpretability and provenance tracking, whereas the parametric knowledge of LLMs is opaque and difficult to trace back to its source (Akyurek et al., 2022).",
+      "block": "b:5",
+      "section": "1 INTRODUCTION",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:6/s:2",
+      "page": 1,
+      "text": "This is particularly relevant for thematic questions that require integrating knowledge from multiple parts of a text, such as understanding an entire book, as in the NarrativeQA dataset (Koˇ cisk` y et al., 2018).",
+      "block": "b:6",
+      "section": "1 INTRODUCTION",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:7/s:1",
+      "page": 1,
+      "text": "As shown in Figure 1, our system, RAPTOR, clusters chunks of text, generates text summaries of those clusters, and then repeats, generating a tree from the bottom up.",
+      "block": "b:7",
+      "section": "1 INTRODUCTION",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:8/s:1",
+      "page": 2,
+      "text": "Controlled experiments with three language models (UnifiedQA (Khashabi et al., 2020), GPT-3 (Brown et al., 2020) and GPT-4 (OpenAI, 2023)) show that RAPTOR outperforms current retrieval augmentation.",
+      "block": "b:8",
+      "section": "1 INTRODUCTION",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:8/s:2",
+      "page": 2,
+      "text": "Moreover, RAPTOR coupled with GPT-4, and sometimes even with UnifiedQA, gives new state-of-the-art results on three QA tasks: free text response questions on books and movies (NarrativeQA, Koˇ cisk` y et al. 2018), full-text NLP papers (QASPER, Dasigi et al. 2021), and multiple-choice questions based on medium-length passages (QuALITY, Pang et al. 2022). 1",
+      "block": "b:8",
+      "section": "1 INTRODUCTION",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:10/s:1",
+      "page": 2,
+      "text": "Recent advances in hardware and algorithms have indeed expanded the context lengths that models can handle, leading to questions about the need for retrieval systems (Dai et al., 2019; Dao et al., 2022; Liu et al., 2023).",
+      "block": "b:10",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:10/s:2",
+      "page": 2,
+      "text": "However, as Liu et al. (2023) and Sun et al. (2021) have noted, models tend to underutilize long-range context and see diminishing performance as context length increases, especially when pertinent information is embedded within a lengthy context.",
+      "block": "b:10",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:11/s:1",
+      "page": 2,
+      "text": "Retrieval methods have transitioned from traditional term-based techniques like TF-IDF (Sp¨ arck Jones, 1972) and BM25 (Robertson et al., 1995; Roberts et al., 2020) to deep learning-based strategies (Karpukhin et al., 2020; Khattab & Zaharia, 2020; Sachan et al., 2023).",
+      "block": "b:11",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:11/s:2",
+      "page": 2,
+      "text": "Some recent work proposes using large language models as retrievers due to their ability to memorize extensive knowledge (Yu et al., 2022; Sun et al., 2022).",
+      "block": "b:11",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:11/s:3",
+      "page": 2,
+      "text": "Research on the reader component includes Fusion-in-Decoder (FiD) (Izacard & Grave, 2022), which employs both DPR and BM25 for retrieval and processes passages independently in the encoder and RETRO (Borgeaud et al., 2022; Wang et al., 2023), which utilizes cross-chunked attention and chunkwise retrieval to generate text grounded on retrieved context.",
+      "block": "b:11",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:12/s:0",
+      "page": 2,
+      "text": "End-to-end system training work includes Atlas (Izacard et al., 2022), which fine-tunes an encoderdecoder model in conjunction with the retriever; REALM (Guu et al., 2020), a bidirectional, masked LM fine-tuned for open-domain question answering; and RAG (Retrieval-Augmented Generation) (Lewis et al., 2020), which integrates pre-trained sequence-to-sequence models with a neural retriever.",
+      "block": "b:12",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:12/s:1",
+      "page": 2,
+      "text": "Min et al. (2021) introduced Joint Passage Retrieval (JPR) model which uses a treedecoding algorithm to handle passage diversity and relevance in multi-answer retrieval.",
+      "block": "b:12",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:12/s:2",
+      "page": 2,
+      "text": "Dense Hierarchical Retrieval (DHR) and Hybrid Hierarchical Retrieval (HHR) represent advancements in retrieval accuracy by combining document and passage level retrievals and integrating sparse and dense retrieval methods, respectively (Liu et al., 2021; Arivazhagan et al., 2023).",
+      "block": "b:12",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:14/s:1",
+      "page": 3,
+      "text": "Although this approach is widely adopted, Nair et al. (2023) highlights a potential shortcoming: contiguous segmentation might not capture the complete semantic depth of the text.",
+      "block": "b:14",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:14/s:3",
+      "page": 3,
+      "text": "(Cohan & Goharian, 2017; Newman et al., 2023; Zhang et al., 2023).",
+      "block": "b:14",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:15/s:0",
+      "page": 3,
+      "text": "Recursive summarization as Context Summarization techniques provide a condensed view of documents, enabling more focused engagement with the content (Angelidis & Lapata, 2018).",
+      "block": "b:15",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:15/s:1",
+      "page": 3,
+      "text": "The summarization/snippet model by Gao et al. (2023) uses summarizations and snippets of passages, which improves correctness on most datasets but can sometimes be a lossy means of compression.",
+      "block": "b:15",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:15/s:2",
+      "page": 3,
+      "text": "The recursive-abstractive summarization model by Wu et al. (2021) employs task decomposition to summarize smaller text chunks, which are later integrated to form summaries of larger sections.",
+      "block": "b:15",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:15/s:4",
+      "page": 3,
+      "text": "LlamaIndex (Liu, 2022) mitigates this issue by similarly summarizing adjacent text chunks but also retaining intermediate nodes thus storing varying levels of detail, keeping granular details.",
+      "block": "b:15",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:17/s:0",
+      "page": 3,
+      "text": "Overview of RAPTOR Building on the idea that long texts often present subtopics and hierarchical structures (Cao & Wang, 2022; Dong et al., 2023b), RAPTOR addresses the issue of semantic depth and connection in reading by building a recursive tree structure that balances broader thematic comprehension with granular details and which allows nodes to be grouped based on semantic similarity not just order in the text.",
+      "block": "b:17",
+      "section": "3 METHODS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:18/s:3",
+      "page": 3,
+      "text": "These texts are then embedded using SBERT, a BERT-based encoder ( multi-qa-mpnet-base-cos-v1 ) (Reimers & Gurevych, 2019).",
+      "block": "b:18",
+      "section": "3 METHODS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:25/s:0",
+      "page": 4,
+      "text": "The high dimensionality of vector embeddings presents a challenge for traditional GMMs, as distance metrics may behave poorly when used to measure similarity in high-dimensional spaces (Aggarwal et al., 2001).",
+      "block": "b:25",
+      "section": "3 METHODS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:25/s:1",
+      "page": 4,
+      "text": "To mitigate this, we employ Uniform Manifold Approximation and Projection (UMAP), a manifold learning technique for dimensionality reduction (McInnes et al., 2018).",
+      "block": "b:25",
+      "section": "3 METHODS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:27/s:1",
+      "page": 4,
+      "text": "BIC not only penalizes model complexity but also rewards goodness of fit (Schwarz, 1978).",
+      "block": "b:27",
+      "section": "3 METHODS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:30/s:2",
+      "page": 4,
+      "text": "For our experiments, we use gpt-3.5-turbo to generate the summaries.",
+      "block": "b:30",
+      "section": "3 METHODS",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:31/s:0",
+      "page": 4,
+      "text": "While the summarization model generally produces reliable summaries, a focused annotation study revealed that about 4% of the summaries contained minor hallucinations.",
+      "block": "b:31",
+      "section": "3 METHODS",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:41/s:0",
+      "page": 5,
+      "text": "The collapsed tree approach offers a simpler way to search for relevant information by considering all nodes in the tree simultaneously, as depicted in Figure 2.",
+      "block": "b:41",
+      "section": "3 METHODS",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:45/s:1",
+      "page": 5,
+      "text": "Figure 3 shows the performance of tree traversal with different top- sizes and collapsed tree with different maximum token numbers.",
+      "block": "b:45",
+      "section": "3 METHODS",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:46/s:1",
+      "page": 6,
+      "text": "However, this can be made more efficient with fast k -nearest neighbor libraries such as FAISS (Johnson et al., 2019).",
+      "block": "b:46",
+      "section": "3 METHODS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:49/s:0",
+      "page": 6,
+      "text": "in Figure 4, RAPTOR's tree-based retrieval allows it to choose nodes from different tree layers, matching the question's detail level.",
+      "block": "b:49",
+      "section": "3 METHODS",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:52/s:0",
+      "page": 6,
+      "text": "NarrativeQA is a dataset that comprises question-answer pairs based on the full texts of books and movie transcripts, totaling 1,572 documents (Koˇ cisk` y et al., 2018; Wu et al., 2021).",
+      "block": "b:52",
+      "section": "4 EXPERIMENTS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:53/s:0",
+      "page": 6,
+      "text": "The QASPER dataset includes 5,049 questions across 1,585 NLP papers, with each question probing for information embedded within the full text (Dasigi et al., 2021).",
+      "block": "b:53",
+      "section": "4 EXPERIMENTS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:54/s:0",
+      "page": 6,
+      "text": "Lastly, the QuALITY dataset consists of multiple-choice questions, each accompanied by context passages averaging approximately 5,000 tokens in length (Pang et al., 2022).",
+      "block": "b:54",
+      "section": "4 EXPERIMENTS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:55/s:0",
+      "page": 6,
+      "text": "Controlled Baseline Comparisons We first present controlled comparisons using the UnifiedQA 3B as the reader, with SBERT (Reimers & Gurevych, 2019), BM25 (Robertson et al., 1995; 2009), and DPR (Karpukhin et al., 2020) as the embedding models with and without the RAPTOR tree structure, on three datasets: QASPER, NarrativeQA, and QuALITY.",
+      "block": "b:55",
+      "section": "4 EXPERIMENTS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:55/s:1",
+      "page": 6,
+      "text": "As shown in Tables 1 and 2, our results demonstrate that RAPTOR, when combined with any retriever, consistently outperforms the respective retriever across all datasets. 2",
+      "block": "b:55",
+      "section": "4 EXPERIMENTS",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:56/s:2",
+      "page": 7,
+      "text": "As shown in Table 3, RAPTOR consistently outperforms BM25 and DPR across all three Language Models on the QASPER dataset.",
+      "block": "b:56",
+      "section": "4 EXPERIMENTS",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:56/s:3",
+      "page": 7,
+      "text": "RAPTOR's F-1 Match scores are 53.1%, 55.7%, and 36.6% when using GPT-3, GPT-4, and UnifiedQA, respectively.",
+      "block": "b:56",
+      "section": "4 EXPERIMENTS",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:56/s:4",
+      "page": 7,
+      "text": "These scores surpass DPR by margins of 1.8, 2.7, and 4.5 points, and outdo BM25 by 6.5, 5.5, and 10.2 points across the respective LLMs.",
+      "block": "b:56",
+      "section": "4 EXPERIMENTS",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:57/s:0",
+      "page": 7,
+      "text": "Likewise, in the QuALITY dataset as shown in Table 4, RAPTOR achieves an accuracy of 62.4%, which is a 2% and 5.1% improvement over DPR and BM25.",
+      "block": "b:57",
+      "section": "4 EXPERIMENTS",
+      "signals": [
+       "number",
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:57/s:1",
+      "page": 7,
+      "text": "Similar trends are observed when UnifiedQA is employed, with RAPTOR outperforming DPR and BM25 by 2.7% and 6.7%, respectively.",
+      "block": "b:57",
+      "section": "4 EXPERIMENTS",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:58/s:0",
+      "page": 7,
+      "text": "Finally, in the NarrativeQA dataset, as presented in Table 6, RAPTOR excels across multiple metrics.",
+      "block": "b:58",
+      "section": "4 EXPERIMENTS",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:58/s:1",
+      "page": 7,
+      "text": "For ROUGE-L, it surpasses BM25 and DPR by 7.3 and 2.7 points, respectively.",
+      "block": "b:58",
+      "section": "4 EXPERIMENTS",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:58/s:2",
+      "page": 7,
+      "text": "In other metrics like BLEU-1, BLEU-4, and METEOR, RAPTOR outperforms BM25 and DPR by margins ranging from 1.7 to 5.8 and 0.7 to 2.1 points, respectively.",
+      "block": "b:58",
+      "section": "4 EXPERIMENTS",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:60/s:1",
+      "page": 8,
+      "text": "As shown in Table 5, RAPTOR with GPT-4 sets a new benchmark on QASPER, with a 55.7% F-1 score, surpassing the CoLT5 XL's score of 53.9%.",
+      "block": "b:60",
+      "section": "4 EXPERIMENTS",
+      "signals": [
+       "number",
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:61/s:0",
+      "page": 8,
+      "text": "In the QuALITY dataset, as shown in Table 7, RAPTOR paired with GPT-4 sets a new stateof-the-art with an accuracy of 82.6%, surpassing the previous best result of 62.3%.",
+      "block": "b:61",
+      "section": "4 EXPERIMENTS",
+      "signals": [
+       "number",
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:61/s:1",
+      "page": 8,
+      "text": "In particular, it outperforms CoLISA by 21.5% on QuALITY-HARD, which represents questions that humans took unusually long to correctly answer, requiring rereading parts of the text, difficult reasoning, or both.",
+      "block": "b:61",
+      "section": "4 EXPERIMENTS",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:62/s:0",
+      "page": 8,
+      "text": "For the NarrativeQA dataset, as represented in Table 6, RAPTOR paired with UnifiedQA sets Table 4: Comparison of accuracies on the QuALITY dev dataset for two different language models (GPT-3, UnifiedQA 3B) using various retrieval methods.",
+      "block": "b:62",
+      "section": "4 EXPERIMENTS",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:62/s:1",
+      "page": 8,
+      "text": "RAPTOR outperforms the baselines of BM25 and DPR by at least 2.0% in accuracy.",
+      "block": "b:62",
+      "section": "4 EXPERIMENTS",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:64/s:1",
+      "page": 8,
+      "text": "When compared to the recursively summarizing model by Wu et al. (2021), which also employs UnifiedQA, RAPTOR outperforms it on all metrics.",
+      "block": "b:64",
+      "section": "4 EXPERIMENTS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:64/s:2",
+      "page": 8,
+      "text": "While Wu et al. (2021) rely solely on the summary in the top root node of the tree structure, RAPTOR benefits from its intermediate layers and clustering approaches, which allows it to capture a range of information, from general themes to specific details, contributing to its overall strong performance.",
+      "block": "b:64",
+      "section": "4 EXPERIMENTS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:68/s:6",
+      "page": 9,
+      "text": "We show findings specific to one story in Table 8, revealing that a full-tree search, utilizing all layers, outperformed retrieval strategies that focused only on specific layers.",
+      "block": "b:68",
+      "section": "4.1 CONTRIBUTION OF THE TREE STRUCTURE",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:73/s:0",
+      "page": 10,
+      "text": "Language Models for QA and Summarization Four language models are used in our RAPTOR experiments: GPT-3 and GPT-4 for QA tasks, and GPT-3.5-turbo for summarization.",
+      "block": "b:73",
+      "section": "6 REPRODUCIBILITY STATEMENT",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:73/s:1",
+      "page": 10,
+      "text": "The gpt-3 , gpt-4 , and gpt-3.5-turbo models can be accessed via API calls (OpenAI API).",
+      "block": "b:73",
+      "section": "6 REPRODUCIBILITY STATEMENT",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:79/s:2",
+      "page": 15,
+      "text": "Figure 5 illustrates a clear linear correlation between the initial document length and the total token expenditure, emphasizing that RAPTOR maintains a linear token scaling regardless of document complexity or length.",
+      "block": "b:79",
+      "section": "A SCALABILITY AND COMPUTATIONAL EFFICIENCY OF THE TREE-BUILDING PROCESS",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:80/s:0",
+      "page": 16,
+      "text": "Build Time We also empirically observed a consistent linear trend between the document length and the build time, as shown in Figure 6.",
+      "block": "b:80",
+      "section": "A SCALABILITY AND COMPUTATIONAL EFFICIENCY OF THE TREE-BUILDING PROCESS",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:85/s:3",
+      "page": 16,
+      "text": "We determined the window size for this setup based on the average cluster size observed in RAPTOR, which is approximately 6.7 nodes.",
+      "block": "b:85",
+      "section": "B.1 METHODOLOGY",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:87/s:0",
+      "page": 16,
+      "text": "The results of the ablation study are presented in table 9.",
+      "block": "b:87",
+      "section": "B.2 RESULTS & DISCUSSION",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:89/s:0",
+      "page": 17,
+      "text": "The average ratio of the summary length to the sum of child node lengths across all datasets is 0.28, indicating a 72% compression rate.",
+      "block": "b:89",
+      "section": "C DATASET STATISTICS AND COMPRESSION RATIOS",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:91/s:0",
+      "page": 17,
+      "text": "Table 11 shows the prompt used for summarization.",
+      "block": "b:91",
+      "section": "D SUMMARIZATION PROMPT",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:93/s:1",
+      "page": 17,
+      "text": "The summaries were generated by gpt-3.5-turbo and subsequently annotated to quantify the rates of hallucinations, to examine whether such inaccuracies propagate to parent nodes, and to evaluate their impact on questionanswering (QA) tasks.",
+      "block": "b:93",
+      "section": "E HALLUCINATION ANALYSIS",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:97/s:0",
+      "page": 17,
+      "text": "Out of the 150 nodes sampled, 4% (6 nodes) contained some form of hallucination.",
+      "block": "b:97",
+      "section": "E.2 FINDINGS",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:110/s:2",
+      "page": 18,
+      "text": "Figure 4 in the main paper details the retrieval process within RAPTOR's tree structure for two questions.",
+      "block": "b:110",
+      "section": "G QUALITATIVE ANALYSIS",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:114/s:2",
+      "page": 19,
+      "text": "Table 13 shows the text retrieved by both RAPTOR and DPR for this question.",
+      "block": "b:114",
+      "section": "G QUALITATIVE ANALYSIS",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:115/s:1",
+      "page": 20,
+      "text": "The text retrieved by RAPTOR and DPR for this question is shown in Table 13.",
+      "block": "b:115",
+      "section": "G QUALITATIVE ANALYSIS",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:125/s:2",
+      "page": 21,
+      "text": "To provide a more balanced evaluation, we evenly distributed the weight across all n-gram levels, changing the weights for the BLEU-4 calculation to (0.25, 0.25, 0.25, 0.25).",
+      "block": "b:125",
+      "section": "H NARRATIVEQA EVALUATION SCRIPT",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:132/s:1",
+      "page": 22,
+      "text": "We observe that between 18.5% to 57% of the retrieved nodes come from non-leaf nodes.",
+      "block": "b:132",
+      "section": "I.2 WHICH LAYERS DO RETRIEVED NODES COME FROM ?",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:132/s:2",
+      "page": 22,
+      "text": "As illustrated in Figure 7, the retrieval pattern across layers reveals the importance of RAPTOR's multi-layered tree structure.",
+      "block": "b:132",
+      "section": "I.2 WHICH LAYERS DO RETRIEVED NODES COME FROM ?",
+      "signals": [
+       "table_figure"
+      ]
+     }
+    ],
+    "prompt_version": "v1",
+    "total_sentences": 294
+   },
+   "finished_at": "2026-10-16T20:59:58.343Z"
+  },
+  {
+   "step_id": 1016,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 0,
+    "model": "openai/gpt-oss-20b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T20:59:58.355Z"
+  },
+  {
+   "step_id": 1017,
+   "step_name": "claims_batch",
+   "status": "done",
+   "detail": {
+    "kept": [
+     {
+      "type": "result",
+      "cites": [],
+      "claim": "RAPTOR with GPT-4 improves QuALITY accuracy by 20% absolute.",
+      "values": [
+       {
+        "role": "value",
+        "value": "20%",
+        "metric": "accuracy",
+        "system": "RAPTOR",
+        "dataset": "QuALITY",
+        "setting": "GPT-4"
+       }
+      ],
+      "sentence": "On question-answering tasks that involve complex, multi-step reasoning, we show state-of-the-art results; for example, by coupling RAPTOR retrieval with the use of GPT-4, we can improve the best performance on the QuALITY benchmark by 20% in absolute accuracy.",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:3/s:5",
+      "unknown_refs": []
+     },
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Figure 1 shows RAPTOR clustering chunks, summarizing, and building a tree bottom-up.",
+      "values": [],
+      "sentence": "As shown in Figure 1, our system, RAPTOR, clusters chunks of text, generates text summaries of those clusters, and then repeats, generating a tree from the bottom up.",
+      "refers_to": [
+       "figure:1"
+      ],
+      "comparison": null,
+      "sentence_id": "b:7/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "comparison",
+      "cites": [],
+      "claim": "RAPTOR outperforms current retrieval augmentation.",
+      "values": [],
+      "sentence": "Controlled experiments with three language models (UnifiedQA (Khashabi et al., 2020), GPT-3 (Brown et al., 2020) and GPT-4 (OpenAI, 2023)) show that RAPTOR outperforms current retrieval augmentation.",
+      "refers_to": [],
+      "comparison": {
+       "kind": "unspecified",
+       "system": "RAPTOR",
+       "baseline": "current retrieval augmentation",
+       "direction": "better",
+       "difference": ""
+      },
+      "sentence_id": "b:8/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "result",
+      "cites": [],
+      "claim": "RAPTOR with GPT-4 achieves new state-of-the-art on NarrativeQA, QASPER, and QuALITY.",
+      "values": [],
+      "sentence": "Moreover, RAPTOR coupled with GPT-4, and sometimes even with UnifiedQA, gives new state-of-the-art results on three QA tasks: free text response questions on books and movies (NarrativeQA, Koˇ cisk` y et al. 2018), full-text NLP papers (QASPER, Dasigi et al. 2021), and multiple-choice questions based on medium-length passages (QuALITY, Pang et al. 2022). 1",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:8/s:2",
+      "unknown_refs": []
+     }
+    ],
+    "batch": 0,
+    "usage": {
+     "queue_time": 0.047015554,
+     "total_time": 1.104804591,
+     "prompt_time": 0.175397575,
+     "total_tokens": 3600,
+     "prompt_tokens": 2776,
+     "completion_time": 0.929407016,
+     "completion_tokens": 824,
+     "completion_tokens_details": {
+      "reasoning_tokens": 555
+     }
+    },
+    "dropped": []
+   },
+   "finished_at": "2026-10-16T21:00:29.912Z"
+  },
+  {
+   "step_id": 1018,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 1,
+    "model": "openai/gpt-oss-20b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T21:00:29.931Z"
+  },
+  {
+   "step_id": 1019,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "kind": "daily",
+    "batch": 1,
+    "error": "Try spacing your requests out using the batching settings under 'Options' \"\"",
+    "model": "openai/gpt-oss-20b",
+    "until": 1792185360.3952756,
+    "status": 429,
+    "rate_limited": true,
+    "retry_after_s": 899.0
+   },
+   "finished_at": "2026-10-16T21:01:01.395Z"
+  },
+  {
+   "step_id": 1020,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 1,
+    "model": "openai/gpt-oss-120b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T21:01:01.414Z"
+  },
+  {
+   "step_id": 1021,
+   "step_name": "claims_batch",
+   "status": "done",
+   "detail": {
+    "kept": [],
+    "batch": 1,
+    "usage": {
+     "queue_time": 0.300902733,
+     "total_time": 0.226744607,
+     "prompt_time": 0.114379104,
+     "total_tokens": 2830,
+     "prompt_tokens": 2776,
+     "completion_time": 0.112365503,
+     "completion_tokens": 54,
+     "completion_tokens_details": {
+      "reasoning_tokens": 35
+     }
+    },
+    "dropped": []
+   },
+   "finished_at": "2026-10-16T21:01:32.383Z"
+  },
+  {
+   "step_id": 1022,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 2,
+    "model": "openai/gpt-oss-120b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T21:01:32.402Z"
+  },
+  {
+   "step_id": 1023,
+   "step_name": "claims_batch",
+   "status": "done",
+   "detail": {
+    "kept": [
+     {
+      "type": "result",
+      "cites": [],
+      "claim": "About 4% of the summaries contained minor hallucinations.",
+      "values": [
+       {
+        "role": "value",
+        "value": "4%",
+        "metric": "percentage",
+        "system": "summarization model",
+        "dataset": "",
+        "setting": ""
+       }
+      ],
+      "sentence": "While the summarization model generally produces reliable summaries, a focused annotation study revealed that about 4% of the summaries contained minor hallucinations.",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:31/s:0",
+      "unknown_refs": []
+     },
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Figure 2 depicts the collapsed tree approach as a simpler way to search for relevant information by considering all nodes simultaneously.",
+      "values": [],
+      "sentence": "The collapsed tree approach offers a simpler way to search for relevant information by considering all nodes in the tree simultaneously, as depicted in Figure 2.",
+      "refers_to": [
+       "figure:2"
+      ],
+      "comparison": null,
+      "sentence_id": "b:41/s:0",
+      "unknown_refs": []
+     },
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Figure 3 shows the performance of tree traversal with different top-sizes and collapsed tree with different maximum token numbers.",
+      "values": [],
+      "sentence": "Figure 3 shows the performance of tree traversal with different top- sizes and collapsed tree with different maximum token numbers.",
+      "refers_to": [
+       "figure:3"
+      ],
+      "comparison": null,
+      "sentence_id": "b:45/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Figure 4 illustrates that RAPTOR's tree-based retrieval can choose nodes from different tree layers to match the question's detail level.",
+      "values": [],
+      "sentence": "in Figure 4, RAPTOR's tree-based retrieval allows it to choose nodes from different tree layers, matching the question's detail level.",
+      "refers_to": [
+       "figure:4"
+      ],
+      "comparison": null,
+      "sentence_id": "b:49/s:0",
+      "unknown_refs": []
+     }
+    ],
+    "batch": 2,
+    "usage": {
+     "queue_time": 0.212448202,
+     "total_time": 2.165719524,
+     "prompt_time": 0.068124811,
+     "total_tokens": 3605,
+     "prompt_tokens": 2764,
+     "completion_time": 2.097594713,
+     "completion_tokens": 841,
+     "prompt_tokens_details": {
+      "cached_tokens": 1280
+     },
+     "completion_tokens_details": {
+      "reasoning_tokens": 472
+     }
+    },
+    "dropped": []
+   },
+   "finished_at": "2026-10-16T21:02:05.164Z"
+  },
+  {
+   "step_id": 1024,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 3,
+    "model": "openai/gpt-oss-120b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T21:02:05.185Z"
+  },
+  {
+   "step_id": 1025,
+   "step_name": "claims_batch",
+   "status": "done",
+   "detail": {
+    "kept": [
+     {
+      "type": "other",
+      "cites": [
+       "Dasigi et al., 2021"
+      ],
+      "claim": "The QASPER dataset includes 5,049 questions across 1,585 NLP papers.",
+      "values": [
+       {
+        "role": "value",
+        "value": "5,049",
+        "metric": "questions",
+        "system": "",
+        "dataset": "QASPER",
+        "setting": ""
+       }
+      ],
+      "sentence": "The QASPER dataset includes 5,049 questions across 1,585 NLP papers, with each question probing for information embedded within the full text (Dasigi et al., 2021).",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:53/s:0",
+      "unknown_refs": []
+     },
+     {
+      "type": "other",
+      "cites": [
+       "Pang et al., 2022"
+      ],
+      "claim": "The QuALITY dataset consists of multiple-choice questions with context passages averaging approximately 5,000 tokens in length.",
+      "values": [
+       {
+        "role": "value",
+        "value": "5,000",
+        "metric": "tokens",
+        "system": "",
+        "dataset": "QuALITY",
+        "setting": "context passages"
+       }
+      ],
+      "sentence": "Lastly, the QuALITY dataset consists of multiple-choice questions, each accompanied by context passages averaging approximately 5,000 tokens in length (Pang et al., 2022).",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:54/s:0",
+      "unknown_refs": []
+     },
+     {
+      "type": "comparison",
+      "cites": [],
+      "claim": "RAPTOR combined with any retriever consistently outperforms the respective retriever across all datasets.",
+      "values": [],
+      "sentence": "As shown in Tables 1 and 2, our results demonstrate that RAPTOR, when combined with any retriever, consistently outperforms the respective retriever across all datasets. 2",
+      "refers_to": [
+       "table:1",
+       "table:2"
+      ],
+      "comparison": {
+       "kind": "unspecified",
+       "system": "RAPTOR",
+       "baseline": "retriever alone",
+       "direction": "better",
+       "difference": ""
+      },
+      "sentence_id": "b:55/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "result",
+      "cites": [],
+      "claim": "RAPTOR achieves an accuracy of 62.4% on QuALITY, a 2% improvement over DPR and a 5.1% improvement over BM25.",
+      "values": [
+       {
+        "role": "value",
+        "value": "62.4%",
+        "metric": "accuracy",
+        "system": "RAPTOR",
+        "dataset": "QuALITY",
+        "setting": ""
+       }
+      ],
+      "sentence": "Likewise, in the QuALITY dataset as shown in Table 4, RAPTOR achieves an accuracy of 62.4%, which is a 2% and 5.1% improvement over DPR and BM25.",
+      "refers_to": [
+       "table:4"
+      ],
+      "comparison": null,
+      "sentence_id": "b:57/s:0",
+      "unknown_refs": []
+     },
+     {
+      "type": "comparison",
+      "cites": [],
+      "claim": "RAPTOR outperforms DPR by 2.7% and BM25 by 6.7% when UnifiedQA is employed on QuALITY.",
+      "values": [],
+      "sentence": "Similar trends are observed when UnifiedQA is employed, with RAPTOR outperforming DPR and BM25 by 2.7% and 6.7%, respectively.",
+      "refers_to": [],
+      "comparison": {
+       "kind": "absolute",
+       "system": "RAPTOR",
+       "baseline": "DPR",
+       "direction": "better",
+       "difference": "2.7%"
+      },
+      "sentence_id": "b:57/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "comparison",
+      "cites": [],
+      "claim": "For ROUGE-L on NarrativeQA, RAPTOR surpasses BM25 by 7.3 points and DPR by 2.7 points.",
+      "values": [],
+      "sentence": "For ROUGE-L, it surpasses BM25 and DPR by 7.3 and 2.7 points, respectively.",
+      "refers_to": [
+       "table:6"
+      ],
+      "comparison": {
+       "kind": "absolute",
+       "system": "RAPTOR",
+       "baseline": "BM25",
+       "direction": "better",
+       "difference": "7.3"
+      },
+      "sentence_id": "b:58/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "comparison",
+      "cites": [],
+      "claim": "RAPTOR outperforms BM25 and DPR on BLEU-1, BLEU-4, and METEOR by margins ranging from 1.7 to 5.8 points and 0.7 to 2.1 points, respectively.",
+      "values": [],
+      "sentence": "In other metrics like BLEU-1, BLEU-4, and METEOR, RAPTOR outperforms BM25 and DPR by margins ranging from 1.7 to 5.8 and 0.7 to 2.1 points, respectively.",
+      "refers_to": [
+       "table:6"
+      ],
+      "comparison": {
+       "kind": "absolute",
+       "system": "RAPTOR",
+       "baseline": "BM25",
+       "direction": "better",
+       "difference": "1.7 to 5.8"
+      },
+      "sentence_id": "b:58/s:2",
+      "unknown_refs": []
+     },
+     {
+      "type": "result",
+      "cites": [],
+      "claim": "RAPTOR with GPT-4 achieves a 55.7% F-1 score on QASPER, surpassing CoLT5 XL's 53.9% score.",
+      "values": [
+       {
+        "role": "value",
+        "value": "55.7%",
+        "metric": "F-1",
+        "system": "RAPTOR",
+        "dataset": "QASPER",
+        "setting": "GPT-4"
+       },
+       {
+        "role": "value",
+        "value": "53.9%",
+        "metric": "F-1",
+        "system": "CoLT5 XL",
+        "dataset": "QASPER",
+        "setting": ""
+       }
+      ],
+      "sentence": "As shown in Table 5, RAPTOR with GPT-4 sets a new benchmark on QASPER, with a 55.7% F-1 score, surpassing the CoLT5 XL's score of 53.9%.",
+      "refers_to": [
+       "table:5"
+      ],
+      "comparison": null,
+      "sentence_id": "b:60/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "result",
+      "cites": [],
+      "claim": "RAPTOR paired with GPT-4 achieves an accuracy of 82.6% on QuALITY, surpassing the previous best result of 62.3%.",
+      "values": [
+       {
+        "role": "value",
+        "value": "82.6%",
+        "metric": "accuracy",
+        "system": "RAPTOR",
+        "dataset": "QuALITY",
+        "setting": "GPT-4"
+       },
+       {
+        "role": "value",
+        "value": "62.3%",
+        "metric": "accuracy",
+        "system": "previous best",
+        "dataset": "QuALITY",
+        "setting": ""
+       }
+      ],
+      "sentence": "In the QuALITY dataset, as shown in Table 7, RAPTOR paired with GPT-4 sets a new stateof-the-art with an accuracy of 82.6%, surpassing the previous best result of 62.3%.",
+      "refers_to": [
+       "table:7"
+      ],
+      "comparison": null,
+      "sentence_id": "b:61/s:0",
+      "unknown_refs": []
+     }
+    ],
+    "batch": 3,
+    "usage": {
+     "queue_time": 0.326077206,
+     "total_time": 5.148720954,
+     "prompt_time": 0.210800898,
+     "total_tokens": 5220,
+     "prompt_tokens": 2862,
+     "completion_time": 4.937920056,
+     "completion_tokens": 2358,
+     "completion_tokens_details": {
+      "reasoning_tokens": 632
+     }
+    },
+    "dropped": [
+     {
+      "type": "result",
+      "cites": [],
+      "claim": "RAPTOR's F-1 Match scores are 53.1% with GPT-3, 55.7% with GPT-4, and 36.6% with UnifiedQA.",
+      "reason": "values not in the sentence: ['53.1%', '55.7%', '36.6%']",
+      "values": [
+       {
+        "value": "53.1%",
+        "metric": "F-1 Match",
+        "system": "RAPTOR",
+        "dataset": "QASPER",
+        "setting": "GPT-3"
+       },
+       {
+        "value": "55.7%",
+        "metric": "F-1 Match",
+        "system": "RAPTOR",
+        "dataset": "QASPER",
+        "setting": "GPT-4"
+       },
+       {
+        "value": "36.6%",
+        "metric": "F-1 Match",
+        "system": "RAPTOR",
+        "dataset": "QASPER",
+        "setting": "UnifiedQA"
+       }
+      ],
+      "refers_to": [
+       "table:3"
+      ],
+      "comparison": null,
+      "sentence_id": "b:56/s:2"
+     },
+     {
+      "type": "comparison",
+      "cites": [],
+      "claim": "RAPTOR's scores surpass DPR by margins of 1.8, 2.7, and 4.5 points, and outdo BM25 by 6.5, 5.5, and 10.2 points across the respective LLMs.",
+      "reason": "values not in the sentence: ['1.8, 2.7, 4.5']",
+      "values": [],
+      "refers_to": [
+       "table:3"
+      ],
+      "comparison": {
+       "kind": "absolute",
+       "system": "RAPTOR",
+       "baseline": "DPR",
+       "direction": "better",
+       "difference": "1.8, 2.7, 4.5"
+      },
+      "sentence_id": "b:56/s:3"
+     }
+    ]
+   },
+   "finished_at": "2026-10-16T21:02:41.021Z"
+  },
+  {
+   "step_id": 1026,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 4,
+    "model": "openai/gpt-oss-120b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T21:02:41.045Z"
+  },
+  {
+   "step_id": 1027,
+   "step_name": "claims_batch",
+   "status": "done",
+   "detail": {
+    "kept": [
+     {
+      "type": "comparison",
+      "cites": [],
+      "claim": "RAPTOR outperforms CoLISA by 21.5% on QuALITY-HARD.",
+      "values": [],
+      "sentence": "In particular, it outperforms CoLISA by 21.5% on QuALITY-HARD, which represents questions that humans took unusually long to correctly answer, requiring rereading parts of the text, difficult reasoning, or both.",
+      "refers_to": [],
+      "comparison": {
+       "kind": "absolute",
+       "system": "RAPTOR",
+       "baseline": "CoLISA",
+       "direction": "better",
+       "difference": "21.5"
+      },
+      "sentence_id": "b:61/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "comparison",
+      "cites": [],
+      "claim": "RAPTOR outperforms BM25 by at least 2.0% in accuracy.",
+      "values": [],
+      "sentence": "RAPTOR outperforms the baselines of BM25 and DPR by at least 2.0% in accuracy.",
+      "refers_to": [],
+      "comparison": {
+       "kind": "absolute",
+       "system": "RAPTOR",
+       "baseline": "BM25",
+       "direction": "better",
+       "difference": "2.0"
+      },
+      "sentence_id": "b:62/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "comparison",
+      "cites": [],
+      "claim": "RAPTOR outperforms DPR by at least 2.0% in accuracy.",
+      "values": [],
+      "sentence": "RAPTOR outperforms the baselines of BM25 and DPR by at least 2.0% in accuracy.",
+      "refers_to": [],
+      "comparison": {
+       "kind": "absolute",
+       "system": "RAPTOR",
+       "baseline": "DPR",
+       "direction": "better",
+       "difference": "2.0"
+      },
+      "sentence_id": "b:62/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "comparison",
+      "cites": [
+       "Wu et al., 2021"
+      ],
+      "claim": "RAPTOR outperforms the recursively summarizing model by Wu et al. (2021) on all metrics.",
+      "values": [],
+      "sentence": "When compared to the recursively summarizing model by Wu et al. (2021), which also employs UnifiedQA, RAPTOR outperforms it on all metrics.",
+      "refers_to": [],
+      "comparison": {
+       "kind": "unspecified",
+       "system": "RAPTOR",
+       "baseline": "Wu et al. (2021) model",
+       "direction": "better",
+       "difference": ""
+      },
+      "sentence_id": "b:64/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "comparison",
+      "cites": [],
+      "claim": "A full-tree search using all layers outperformed retrieval strategies that focused only on specific layers.",
+      "values": [],
+      "sentence": "We show findings specific to one story in Table 8, revealing that a full-tree search, utilizing all layers, outperformed retrieval strategies that focused only on specific layers.",
+      "refers_to": [
+       "table:8"
+      ],
+      "comparison": {
+       "kind": "unspecified",
+       "system": "full-tree search",
+       "baseline": "layer‑specific retrieval strategies",
+       "direction": "better",
+       "difference": ""
+      },
+      "sentence_id": "b:68/s:6",
+      "unknown_refs": []
+     },
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Figure 5 shows a clear linear correlation between initial document length and total token expenditure.",
+      "values": [],
+      "sentence": "Figure 5 illustrates a clear linear correlation between the initial document length and the total token expenditure, emphasizing that RAPTOR maintains a linear token scaling regardless of document complexity or length.",
+      "refers_to": [
+       "figure:5"
+      ],
+      "comparison": null,
+      "sentence_id": "b:79/s:2",
+      "unknown_refs": []
+     },
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Figure 6 shows a consistent linear trend between document length and build time.",
+      "values": [],
+      "sentence": "Build Time We also empirically observed a consistent linear trend between the document length and the build time, as shown in Figure 6.",
+      "refers_to": [
+       "figure:6"
+      ],
+      "comparison": null,
+      "sentence_id": "b:80/s:0",
+      "unknown_refs": []
+     },
+     {
+      "type": "result",
+      "cites": [],
+      "claim": "The window size for this setup is approximately 6.7 nodes.",
+      "values": [
+       {
+        "role": "value",
+        "value": "6.7",
+        "metric": "window size",
+        "system": "RAPTOR",
+        "dataset": "",
+        "setting": ""
+       }
+      ],
+      "sentence": "We determined the window size for this setup based on the average cluster size observed in RAPTOR, which is approximately 6.7 nodes.",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:85/s:3",
+      "unknown_refs": []
+     },
+     {
+      "type": "result",
+      "cites": [],
+      "claim": "The average ratio of summary length to the sum of child node lengths across all datasets is 0.28, indicating a 72% compression rate.",
+      "values": [
+       {
+        "role": "value",
+        "value": "0.28",
+        "metric": "summary‑to‑child‑node length ratio",
+        "system": "",
+        "dataset": "all datasets",
+        "setting": ""
+       },
+       {
+        "role": "value",
+        "value": "72%",
+        "metric": "compression rate",
+        "system": "",
+        "dataset": "all datasets",
+        "setting": ""
+       }
+      ],
+      "sentence": "The average ratio of the summary length to the sum of child node lengths across all datasets is 0.28, indicating a 72% compression rate.",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:89/s:0",
+      "unknown_refs": []
+     },
+     {
+      "type": "result",
+      "cites": [],
+      "claim": "Out of 150 sampled nodes, 4% (6 nodes) contained some form of hallucination.",
+      "values": [
+       {
+        "role": "value",
+        "value": "4%",
+        "metric": "hallucination rate",
+        "system": "gpt-3.5-turbo",
+        "dataset": "sampled nodes",
+        "setting": ""
+       }
+      ],
+      "sentence": "Out of the 150 nodes sampled, 4% (6 nodes) contained some form of hallucination.",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:97/s:0",
+      "unknown_refs": []
+     }
+    ],
+    "batch": 4,
+    "usage": {
+     "queue_time": 0.202457223,
+     "total_time": 4.204257232,
+     "prompt_time": 0.179421435,
+     "total_tokens": 4778,
+     "prompt_tokens": 2866,
+     "completion_time": 4.024835797,
+     "completion_tokens": 1912,
+     "completion_tokens_details": {
+      "reasoning_tokens": 755
+     }
+    },
+    "dropped": []
+   },
+   "finished_at": "2026-10-16T21:03:15.802Z"
+  },
+  {
+   "step_id": 1028,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 5,
+    "model": "openai/gpt-oss-120b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T21:03:15.824Z"
+  },
+  {
+   "step_id": 1029,
+   "step_name": "claims_batch",
+   "status": "done",
+   "detail": {
+    "kept": [
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Figure 4 details the retrieval process within RAPTOR's tree structure for two questions.",
+      "values": [],
+      "sentence": "Figure 4 in the main paper details the retrieval process within RAPTOR's tree structure for two questions.",
+      "refers_to": [
+       "figure:4"
+      ],
+      "comparison": null,
+      "sentence_id": "b:110/s:2",
+      "unknown_refs": []
+     },
+     {
+      "type": "result",
+      "cites": [],
+      "claim": "Between 18.5% to 57% of the retrieved nodes come from non-leaf nodes.",
+      "values": [
+       {
+        "role": "value",
+        "value": "18.5% to 57%",
+        "metric": "percentage of retrieved nodes from non-leaf nodes",
+        "system": "RAPTOR",
+        "dataset": "",
+        "setting": ""
+       }
+      ],
+      "sentence": "We observe that between 18.5% to 57% of the retrieved nodes come from non-leaf nodes.",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:132/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Figure 7 illustrates the retrieval pattern across layers, revealing the importance of RAPTOR's multi-layered tree structure.",
+      "values": [],
+      "sentence": "As illustrated in Figure 7, the retrieval pattern across layers reveals the importance of RAPTOR's multi-layered tree structure.",
+      "refers_to": [
+       "figure:7"
+      ],
+      "comparison": null,
+      "sentence_id": "b:132/s:2",
+      "unknown_refs": []
+     },
+     {
+      "type": "other",
+      "cites": [],
+      "claim": "The evaluation script evenly distributes weight across all n-gram levels, changing the BLEU-4 weights to (0.25, 0.25, 0.25, 0.25).",
+      "values": [],
+      "sentence": "To provide a more balanced evaluation, we evenly distributed the weight across all n-gram levels, changing the weights for the BLEU-4 calculation to (0.25, 0.25, 0.25, 0.25).",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:125/s:2",
+      "unknown_refs": []
+     }
+    ],
+    "batch": 5,
+    "usage": {
+     "queue_time": 0.054525659,
+     "total_time": 2.344755228,
+     "prompt_time": 0.272780217,
+     "total_tokens": 3162,
+     "prompt_tokens": 2320,
+     "completion_time": 2.071975011,
+     "completion_tokens": 842,
+     "prompt_tokens_details": {
+      "cached_tokens": 1280
+     },
+     "completion_tokens_details": {
+      "reasoning_tokens": 445
+     }
+    },
+    "dropped": []
+   },
+   "finished_at": "2026-10-16T21:03:49.094Z"
+  },
+  {
+   "step_id": 1030,
+   "step_name": "number_check",
+   "status": "done",
+   "detail": {
+    "checks": [
+     {
+      "cell": {
+       "row": "RAPTOR",
+       "text": "55.7",
+       "table": "table:3",
+       "column": "GPT-4 F-1 Match",
+       "section": ""
+      },
+      "kind": "value",
+      "note": "the table gives 55.7",
+      "claim": 0,
+      "metric": "accuracy",
+      "system": "RAPTOR",
+      "claimed": "20%",
+      "dataset": "QuALITY",
+      "setting": "GPT-4",
+      "verdict": "contradicted",
+      "table_says": "55.7",
+      "sentence_id": "b:3/s:5"
+     },
+     {
+      "kind": "value",
+      "note": "no table cell matches the claim's system",
+      "claim": 4,
+      "metric": "percentage",
+      "system": "summarization model",
+      "claimed": "4%",
+      "dataset": "",
+      "setting": "",
+      "verdict": "unverifiable",
+      "sentence_id": "b:31/s:0"
+     },
+     {
+      "cell": {
+       "row": "RAPTOR + GPT-4",
+       "text": "55.7",
+       "table": "table:4",
+       "column": "F-1 Match",
+       "section": ""
+      },
+      "kind": "value",
+      "note": "the table gives 55.7",
+      "claim": 11,
+      "metric": "accuracy",
+      "system": "RAPTOR",
+      "claimed": "62.4%",
+      "dataset": "QuALITY",
+      "setting": "",
+      "verdict": "contradicted",
+      "table_says": "55.7",
+      "sentence_id": "b:57/s:0"
+     },
+     {
+      "cell": {
+       "row": "RAPTOR",
+       "text": "55.7",
+       "table": "table:3",
+       "column": "GPT-4 F-1 Match",
+       "section": ""
+      },
+      "kind": "difference",
+      "note": "55.7 vs 53.0: absolute difference",
+      "claim": 12,
+      "pairs": 5,
+      "metric": "",
+      "system": "RAPTOR",
+      "claimed": "2.7%",
+      "dataset": "",
+      "setting": "",
+      "verdict": "supported",
+      "absolute": 2.7,
+      "baseline": "DPR",
+      "relative": 5.09,
+      "direction": "better",
+      "matched_as": "absolute",
+      "sentence_id": "b:57/s:1",
+      "baseline_cell": {
+       "row": "DPR",
+       "text": "53.0",
+       "table": "table:3",
+       "column": "GPT-4 F-1 Match",
+       "section": ""
+      }
+     },
+     {
+      "kind": "difference",
+      "note": "the system and the baseline could not both be located in one column",
+      "claim": 13,
+      "metric": "",
+      "system": "RAPTOR",
+      "claimed": "7.3",
+      "dataset": "",
+      "setting": "",
+      "verdict": "unverifiable",
+      "baseline": "BM25",
+      "direction": "better",
+      "sentence_id": "b:58/s:1"
+     },
+     {
+      "kind": "difference",
+      "note": "the system and the baseline could not both be located in one column",
+      "claim": 14,
+      "metric": "",
+      "system": "RAPTOR",
+      "claimed": "1.7 to 5.8",
+      "dataset": "",
+      "setting": "",
+      "verdict": "unverifiable",
+      "baseline": "BM25",
+      "direction": "better",
+      "sentence_id": "b:58/s:2"
+     },
+     {
+      "kind": "value",
+      "note": "2 cells fit and none shows 55.7%",
+      "claim": 15,
+      "metric": "F-1",
+      "system": "RAPTOR",
+      "claimed": "55.7%",
+      "dataset": "QASPER",
+      "setting": "GPT-4",
+      "verdict": "unverifiable",
+      "candidates": [
+       {
+        "row": "RAPTOR",
+        "text": "62.4",
+        "table": "table:5",
+        "column": "GPT-3 Acc.",
+        "section": ""
+       },
+       {
+        "row": "RAPTOR",
+        "text": "56.6",
+        "table": "table:5",
+        "column": "UnifiedQA Acc.",
+        "section": ""
+       }
+      ],
+      "sentence_id": "b:60/s:1"
+     },
+     {
+      "kind": "value",
+      "note": "no table cell matches the claim's system",
+      "claim": 15,
+      "metric": "F-1",
+      "system": "CoLT5 XL",
+      "claimed": "53.9%",
+      "dataset": "QASPER",
+      "setting": "",
+      "verdict": "unverifiable",
+      "sentence_id": "b:60/s:1"
+     },
+     {
+      "cell": {
+       "row": "RAPTOR + GPT-4",
+       "text": "82.6",
+       "table": "table:7",
+       "column": "Accuracy / Test Set / 39 . 5 / 55 . 4 / 62 . 3",
+       "section": ""
+      },
+      "kind": "value",
+      "claim": 16,
+      "metric": "accuracy",
+      "system": "RAPTOR",
+      "claimed": "82.6%",
+      "dataset": "QuALITY",
+      "setting": "GPT-4",
+      "verdict": "supported",
+      "candidates": 1,
+      "sentence_id": "b:61/s:0"
+     },
+     {
+      "kind": "value",
+      "note": "no table cell matches the claim's system",
+      "claim": 16,
+      "metric": "accuracy",
+      "system": "previous best",
+      "claimed": "62.3%",
+      "dataset": "QuALITY",
+      "setting": "",
+      "verdict": "unverifiable",
+      "sentence_id": "b:61/s:0"
+     },
+     {
+      "kind": "difference",
+      "note": "the system and the baseline could not both be located in one column",
+      "claim": 17,
+      "metric": "",
+      "system": "RAPTOR",
+      "claimed": "21.5",
+      "dataset": "",
+      "setting": "",
+      "verdict": "unverifiable",
+      "baseline": "CoLISA",
+      "direction": "better",
+      "sentence_id": "b:61/s:1"
+     },
+     {
+      "cell": {
+       "row": "RAPTOR",
+       "text": "53.1",
+       "table": "table:3",
+       "column": "GPT-3 F-1 Match",
+       "section": ""
+      },
+      "kind": "difference",
+      "note": "5 column pairs fit and none gives 2.0",
+      "claim": 18,
+      "pairs": 5,
+      "metric": "",
+      "system": "RAPTOR",
+      "claimed": "2.0",
+      "dataset": "",
+      "setting": "",
+      "verdict": "unverifiable",
+      "absolute": 6.5,
+      "baseline": "BM25",
+      "relative": 13.95,
+      "direction": "better",
+      "sentence_id": "b:62/s:1",
+      "baseline_cell": {
+       "row": "BM25",
+       "text": "46.6",
+       "table": "table:3",
+       "column": "GPT-3 F-1 Match",
+       "section": ""
+      }
+     },
+     {
+      "cell": {
+       "row": "RAPTOR",
+       "text": "62.4",
+       "table": "table:5",
+       "column": "GPT-3 Acc.",
+       "section": ""
+      },
+      "kind": "difference",
+      "note": "62.4 vs 60.4: absolute difference",
+      "claim": 19,
+      "pairs": 5,
+      "metric": "",
+      "system": "RAPTOR",
+      "claimed": "2.0",
+      "dataset": "",
+      "setting": "",
+      "verdict": "supported",
+      "absolute": 2.0,
+      "baseline": "DPR",
+      "relative": 3.31,
+      "direction": "better",
+      "matched_as": "absolute",
+      "sentence_id": "b:62/s:1",
+      "baseline_cell": {
+       "row": "DPR",
+       "text": "60.4",
+       "table": "table:5",
+       "column": "GPT-3 Acc.",
+       "section": ""
+      }
+     },
+     {
+      "kind": "value",
+      "note": "5 cells fit and none shows 6.7",
+      "claim": 24,
+      "metric": "window size",
+      "system": "RAPTOR",
+      "claimed": "6.7",
+      "dataset": "",
+      "setting": "",
+      "verdict": "unverifiable",
+      "candidates": [
+       {
+        "row": "RAPTOR",
+        "text": "53.1",
+        "table": "table:3",
+        "column": "GPT-3 F-1 Match",
+        "section": ""
+       },
+       {
+        "row": "RAPTOR",
+        "text": "55.7",
+        "table": "table:3",
+        "column": "GPT-4 F-1 Match",
+        "section": ""
+       },
+       {
+        "row": "RAPTOR",
+        "text": "36.6",
+        "table": "table:3",
+        "column": "UnifiedQA F-1 Match",
+        "section": ""
+       },
+       {
+        "row": "RAPTOR",
+        "text": "62.4",
+        "table": "table:5",
+        "column": "GPT-3 Acc.",
+        "section": ""
+       },
+       {
+        "row": "RAPTOR",
+        "text": "56.6",
+        "table": "table:5",
+        "column": "UnifiedQA Acc.",
+        "section": ""
+       }
+      ],
+      "sentence_id": "b:85/s:3"
+     },
+     {
+      "kind": "value",
+      "note": "no table cell matches the claim's system",
+      "claim": 26,
+      "metric": "hallucination rate",
+      "system": "gpt-3.5-turbo",
+      "claimed": "4%",
+      "dataset": "sampled nodes",
+      "setting": "",
+      "verdict": "unverifiable",
+      "sentence_id": "b:97/s:0"
+     },
+     {
+      "kind": "value",
+      "note": "5 cells fit and none shows 18.5% to 57%",
+      "claim": 28,
+      "metric": "percentage of retrieved nodes from non-leaf nodes",
+      "system": "RAPTOR",
+      "claimed": "18.5% to 57%",
+      "dataset": "",
+      "setting": "",
+      "verdict": "unverifiable",
+      "candidates": [
+       {
+        "row": "RAPTOR",
+        "text": "53.1",
+        "table": "table:3",
+        "column": "GPT-3 F-1 Match",
+        "section": ""
+       },
+       {
+        "row": "RAPTOR",
+        "text": "55.7",
+        "table": "table:3",
+        "column": "GPT-4 F-1 Match",
+        "section": ""
+       },
+       {
+        "row": "RAPTOR",
+        "text": "36.6",
+        "table": "table:3",
+        "column": "UnifiedQA F-1 Match",
+        "section": ""
+       },
+       {
+        "row": "RAPTOR",
+        "text": "62.4",
+        "table": "table:5",
+        "column": "GPT-3 Acc.",
+        "section": ""
+       },
+       {
+        "row": "RAPTOR",
+        "text": "56.6",
+        "table": "table:5",
+        "column": "UnifiedQA Acc.",
+        "section": ""
+       }
+      ],
+      "sentence_id": "b:132/s:1"
+     }
+    ],
+    "summary": {
+     "checks": 16,
+     "supported": 3,
+     "contradicted": 2,
+     "unverifiable": 11,
+     "cells_indexed": 157
+    }
+   },
+   "finished_at": "2026-10-16T21:03:49.189Z"
+  }
+ ]
+}
