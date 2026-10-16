@@ -423,5 +423,14 @@ The container registries were not reachable from the development sandbox, so the
   - claims about a figure the parser kept no image of, or about a figure the paper does not contain, are reported without a model call.
 - **Images:** Docling's crops (400 to 900 pixels wide) were checked by eye: axis labels, legends and point labels are readable, so no re-parse at a higher resolution was needed.
 - **First measurement (P5 v1, strict schema, low reasoning):** every verdict that came back was right (E4 22/22: 12 true claims supported, 9 false claims contradicted, 1 not shown; audits of CRAG and Self-RAG: 9 claims about 6 figures supported), but 7 of 14 calls failed to produce valid JSON (F-021).
+- **Request settings chosen by E4** (`eval/results/20261016-233441-e4-figures-comparison.md`, P5 v2, one attempt per figure):
+
+  | Variant | Figures answered | Verdicts right | False alarms | Errors accepted | Output tokens |
+  | --- | --- | --- | --- | --- | --- |
+  | A: reasoning off, strict schema | 10 of 14 (2 refused by Groq, 2 with an empty verdict list) | 34/34 | 0 | 0 | 342 |
+  | B: reasoning off, plain JSON | 10 of 10 (then the daily limit) | 33/35 | 1 | 1 | 554 |
+  | C: reasoning low, plain JSON | not run (daily limit) | | | | |
+
+  A is used. Its failures are visible (a refused answer, an empty list) and the loop serves the figure again, up to 3 attempts: at about 30% failures per attempt, a figure fails all three about 3% of the time. B's two errors were silent wrong verdicts; one came from the model reasoning in its evidence field ("68.6 ... higher than 72.9. Wait, looking closer") and keeping the wrong answer. A wrong answer nobody can see is worse than a failure that is retried. An empty verdict list now counts as a failed answer. The samples are small (34 and 35 verdicts); the final E4 run uses A with retries, as the workflow does.
 - **Evaluation (E4, `scripts/e4_figure_check.py`):** 48 gold claims about 14 figures of 5 papers, written by looking at the figures: 25 true, 19 false (reversed trend, wrong order, wrong value), 4 that neither the image nor the caption answers. Measured: accuracy, false alarms on true claims, errors caught, errors accepted.
 

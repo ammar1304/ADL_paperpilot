@@ -64,7 +64,7 @@ def call_groq(body: dict, key: str) -> tuple[int, dict | str, dict]:
         return 0, f"network: {type(exc).__name__}: {exc}", {}
 
 
-def run_pass(figures: list[dict], prompt, key: str, cache: Path, variant: str, out: Path) -> dict:
+def run_pass(figures: list[dict], prompt, key: str, cache: Path, variant: str, out: Path, attempts: int = 1) -> dict:
     """One pass over the gold figures with one request variant; writes its files to out/."""
     out.mkdir(parents=True)
     rows, calls = [], []
@@ -85,44 +85,52 @@ def run_pass(figures: list[dict], prompt, key: str, cache: Path, variant: str, o
                                   "caption": fig.figure_caption(paper, item["figure"]),
                                   "claims_block": fig.claims_block(item["claims"])})
         body = fig.figure_request(rendered.system, rendered.user, image.read_bytes(), variant=variant)
-        if n:
-            time.sleep(fig.FIGURE_PACE_S)
-        stop = False
-        for _ in range(4):
-            started = time.monotonic()
-            status, answer, headers = call_groq(body, key)
-            secs = round(time.monotonic() - started, 1)
-            if status == 0:
-                print(f"  {answer}; retrying in 30 s")
-                time.sleep(30)
+        stop, checks, used = False, None, 0
+        for attempt in range(1, attempts + 1):  # like the workflow: a failed or empty answer is served again
+            if n or attempt > 1:
+                time.sleep(fig.FIGURE_PACE_S)
+            used = attempt
+            for _ in range(4):
+                started = time.monotonic()
+                status, answer, headers = call_groq(body, key)
+                secs = round(time.monotonic() - started, 1)
+                if status == 0:
+                    print(f"  {answer}; retrying in 30 s")
+                    time.sleep(30)
+                    continue
+                if status != 429:
+                    break
+                wait = float(headers.get("retry-after") or headers.get("Retry-After") or 60)
+                if wait > 900:
+                    print(f"Groq daily limit for {fig.FIGURE_MODEL}: retry in {wait:.0f} s. Stopping; results so far are saved.")
+                    stop = True
+                    break
+                print(f"  429, waiting {wait:.0f} s")
+                time.sleep(wait + 1)
+            if status != 200 or not isinstance(answer, dict):
+                print(f"{item['paper']} {item['figure']} attempt {attempt}: HTTP {status}: {str(answer)[:200]}")
+                keep_call({"paper": item["paper"], "figure": item["figure"], "attempt": attempt, "status": status, "error": str(answer)[:2000]})
+                if stop:
+                    break
                 continue
-            if status != 429:
-                break
-            wait = float(headers.get("retry-after") or headers.get("Retry-After") or 60)
-            if wait > 900:
-                print(f"Groq daily limit for {fig.FIGURE_MODEL}: retry in {wait:.0f} s. Stopping; results so far are saved.")
-                stop = True
-                break
-            print(f"  429, waiting {wait:.0f} s")
-            time.sleep(wait + 1)
-        if status != 200 or not isinstance(answer, dict):
-            print(f"{item['paper']} {item['figure']}: HTTP {status}: {str(answer)[:300]}")
-            keep_call({"paper": item["paper"], "figure": item["figure"], "status": status, "error": str(answer)[:2000]})
-            if stop:
-                break
+            content = answer["choices"][0]["message"].get("content") or ""
+            usage = answer.get("usage", {})
+            try:
+                description, checks = fig.validate(content, list(range(len(item["claims"]))))
+            except ValueError as exc:
+                print(f"{item['paper']} {item['figure']} attempt {attempt}: invalid output ({exc}): {content[:200]}")
+                keep_call({"paper": item["paper"], "figure": item["figure"], "attempt": attempt, "status": status, "error": f"invalid: {exc}",
+                           "content": content[:2000], "usage": usage})
+                checks = None
+                continue
+            keep_call({"paper": item["paper"], "figure": item["figure"], "attempt": attempt, "status": status, "seconds": secs,
+                       "usage": usage, "description": description})
+            print(f"{item['paper']} {item['figure']} (attempt {attempt}, {secs} s, {usage.get('completion_tokens')} output tokens): {description[:120]}")
+            break
+        if stop and checks is None:
+            break
+        if checks is None:
             continue
-        content = answer["choices"][0]["message"].get("content") or ""
-        usage = answer.get("usage", {})
-        try:
-            description, checks = fig.validate(content, list(range(len(item["claims"]))))
-        except ValueError as exc:
-            print(f"{item['paper']} {item['figure']}: invalid output ({exc}): {content[:300]}")
-            keep_call({"paper": item["paper"], "figure": item["figure"], "status": status, "error": f"invalid: {exc}",
-                       "content": content[:2000], "usage": usage})
-            continue
-        keep_call({"paper": item["paper"], "figure": item["figure"], "status": status, "seconds": secs, "usage": usage,
-                   "description": description})
-        print(f"{item['paper']} {item['figure']} ({secs} s, {usage.get('completion_tokens')} output tokens): {description[:140]}")
         for c, check in zip(item["claims"], checks):
             ok = check["verdict"] == c["expected"]
             row = {"paper": item["paper"], "figure": item["figure"], "claim": c["claim"], "expected": c["expected"],
@@ -136,15 +144,19 @@ def run_pass(figures: list[dict], prompt, key: str, cache: Path, variant: str, o
     calls_file.close()
     reasoning, mode = fig.VARIANTS[variant]
     answered = [c for c in calls if c.get("description") is not None]
+    figures_tried = len({(c["paper"], c["figure"]) for c in calls})
+    first_try = sum(1 for c in answered if c.get("attempt", 1) == 1)
     tokens = [c["usage"].get("completion_tokens", 0) for c in answered if c.get("usage")]
     true_claims = [r for r in rows if r["expected"] == "supported"]
     false_claims = [r for r in rows if r["expected"] == "contradicted"]
     stats = {"variant": variant, "reasoning": reasoning, "mode": mode, "calls": len(calls), "answered": len(answered),
+             "figures": figures_tried, "first_try": first_try,
              "claims": len(rows), "correct": sum(r["correct"] for r in rows),
              "false_alarms": sum(r["got"] == "contradicted" for r in true_claims), "true_claims": len(true_claims),
              "caught": sum(r["got"] == "contradicted" for r in false_claims), "accepted": sum(r["got"] == "supported" for r in false_claims),
              "false_claims": len(false_claims), "output_tokens_mean": round(sum(tokens) / len(tokens)) if tokens else None}
-    lines = [f"# E4 figure check, variant {variant} (reasoning {reasoning}, {mode}): {len(answered)}/{len(calls)} calls answered, "
+    lines = [f"# E4 figure check, variant {variant} (reasoning {reasoning}, {mode}), up to {attempts} attempt(s) per figure: "
+             f"{len(answered)}/{figures_tried} figures answered ({first_try} at the first attempt), {len(calls)} calls, "
              f"{len(rows)} claims, {fig.FIGURE_MODEL}, P5 {prompt.version}", "",
              "| Expected \\ got | " + " | ".join(LABELS + ("not_answered",)) + " |", "| --- |" + " --- |" * 4]
     for e in LABELS:
@@ -172,6 +184,7 @@ def main() -> int:
     ap.add_argument("--cache", type=Path, default=REPO / ".cache" / "pp-tools")
     ap.add_argument("--limit", type=int, default=0, help="only the first N figures")
     ap.add_argument("--variants", default=fig.FIGURE_VARIANT, help="comma-separated request variants, e.g. A,B,C")
+    ap.add_argument("--attempts", type=int, default=3, help="attempts per figure, as in the workflow (1 = first-attempt reliability)")
     ap.add_argument("--label", default="e4-figures")
     args = ap.parse_args()
     key = dotenv().get("GROQ_API_KEY")
@@ -185,7 +198,8 @@ def main() -> int:
     results = []
     for variant in [v.strip() for v in args.variants.split(",") if v.strip()]:
         print(f"===== variant {variant}: reasoning {fig.VARIANTS[variant][0]}, {fig.VARIANTS[variant][1]}")
-        results.append(run_pass(figures, prompt, key, args.cache, variant, REPO / "eval" / "results" / f"{stamp}-{args.label}-{variant}"))
+        results.append(run_pass(figures, prompt, key, args.cache, variant, REPO / "eval" / "results" / f"{stamp}-{args.label}-{variant}",
+                                args.attempts))
         time.sleep(fig.FIGURE_PACE_S)
     if len(results) > 1:
         lines = ["| Variant | Reasoning | Format | Calls answered | Correct verdicts | False alarms | Errors caught | Errors accepted | Output tokens (mean) |",

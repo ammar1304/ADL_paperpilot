@@ -79,6 +79,8 @@ def test_validation_keeps_one_verdict_per_claim():
     assert [(c["claim"], c["verdict"]) for c in checks] == [(40, "not_shown"), (41, "contradicted"), (42, "not_answered")]
     with pytest.raises(ValueError):
         fig.validate({"nope": 1}, [1])
+    with pytest.raises(ValueError):  # E4: `"checks": []` is a failed call, retried, not "nothing to say"
+        fig.validate({"figure": "A diagram.", "checks": []}, [1, 2])
 
 
 # ---- through the API --------------------------------------------------------------------------

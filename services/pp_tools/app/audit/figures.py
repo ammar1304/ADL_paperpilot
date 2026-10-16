@@ -21,6 +21,9 @@ FIGURE_MAX_OUTPUT = 900
 # Request settings, chosen by E4 (scripts/e4_figure_check.py --variants): reasoning "none"
 # or "low", and the answer as a strict JSON schema ("schema") or plain JSON mode ("json").
 VARIANTS = {"A": ("none", "schema"), "B": ("none", "json"), "C": ("low", "json")}
+# E4 (eval/results/20261016-233441-e4-figures-comparison.md): A answered 10 of 14 calls and got
+# all 34 verdicts right; B answered every call but got 2 of 35 wrong (one false alarm, one error
+# accepted). A's failures are visible and retried (3 attempts); B's are silent. So A (D36).
 FIGURE_VARIANT = "A"
 MAX_CLAIMS_PER_FIGURE = 8
 # Groq counts input + output budget against 8,000 tokens a minute. An image is a flat 2,048,
@@ -169,6 +172,10 @@ def validate(output: Any, job_claims: list[int]) -> tuple[str, list[dict[str, An
         verdict = c.get("verdict") if c.get("verdict") in VERDICTS else "not_shown"
         by_pos[pos] = {"claim": job_claims[pos - 1], "verdict": verdict, "evidence": str(c.get("evidence") or "")[:600],
                        "read_values": [str(v)[:60] for v in (c.get("read_values") or [])][:12]}
+    if not by_pos:
+        # E4: with the strict schema the model sometimes answers `"checks": []`; that is a failed
+        # call to retry, not a figure with nothing to say
+        raise ValueError("the answer has no verdict for any claim")
     checks = [by_pos.get(k) or {"claim": job_claims[k - 1], "verdict": "not_answered", "evidence": "", "read_values": []}
               for k in range(1, len(job_claims) + 1)]
     return description, checks

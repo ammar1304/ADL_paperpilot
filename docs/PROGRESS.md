@@ -423,5 +423,6 @@ Branch `feat/m3-parser-spike`. Decision D31: Docling (CPU) instead of MinerU.
 - [x] E4 gold set: 48 claims about 14 figures (`eval/e4/figure_claims.json`), `scripts/e4_figure_check.py` (the workflow's own prompt, request and validation)
 - [x] Team PC, first run: E4 22/22 verdicts right but 7 of 14 calls failed (F-021); audits of CRAG (3/3 figures) and Self-RAG (3/4) through n8n with the figure check, end to end
 - [x] P5 v2 (output shape in the prompt), output budget 900, request variants A/B/C; 195 tests
-- [ ] Team PC: E4 on variants A, B, C; choose the variant; final audits
+- [x] Team PC: E4 on variants A and B (C not reached: daily limit). A chosen (D36): 34/34 verdicts right, failures retried; empty answers now count as failures
+- [ ] Team PC: final E4 with variant A and 3 attempts; final audits of CRAG and Self-RAG; then merge PR #27
 
