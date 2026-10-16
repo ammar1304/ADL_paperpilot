@@ -24,6 +24,7 @@ from pydantic import ValidationError
 
 from .audit.parse_job import parse_paper
 from .audit.parser import DoclingClient
+from .audit.steps import AuditError, audit_result, claim_prompts, claims as audit_claims, save_claims
 from .audit.store import PaperStore
 from .config import Settings, get_settings
 from .corpus.arxiv import ArxivClient
@@ -539,6 +540,36 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 db.update_job(job_id, status="failed", error=error)
             except Exception:  # noqa: BLE001
                 log.exception("could not record the failed parse", extra={"job_id": str(job_id)})
+
+    def _audit_errors(fn, *args):
+        try:
+            return fn(*args)
+        except LookupError as exc:
+            raise HTTPException(status_code=404, detail=str(exc)) from exc
+        except AuditError as exc:
+            raise HTTPException(status_code=409, detail=str(exc)) from exc
+        except PromptError as exc:
+            raise HTTPException(status_code=500, detail=f"prompt library: {exc}") from exc
+
+    @app.post("/audit/{run_id}/claim-prompts")
+    async def audit_claim_prompts(run_id: UUID) -> Any:
+        """P4 rendered once per batch of candidate sentences (step 3)."""
+        return await run_in_threadpool(_audit_errors, claim_prompts, db, library, papers, run_id)
+
+    @app.post("/audit/{run_id}/claims")
+    async def audit_save_claims(run_id: UUID, body: dict[str, Any]) -> Any:
+        """Validate and store one batch of P4 output: {"batch": 0, "output": {...}}."""
+        if not isinstance(body.get("batch"), int):
+            raise HTTPException(status_code=422, detail="batch (integer) is required")
+        return await run_in_threadpool(_audit_errors, save_claims, db, papers, run_id, body["batch"], body.get("output"))
+
+    @app.get("/audit/{run_id}/claims")
+    async def audit_get_claims(run_id: UUID) -> Any:
+        return await run_in_threadpool(_audit_errors, audit_claims, db, run_id)
+
+    @app.post("/audit/{run_id}/result")
+    async def audit_assemble(run_id: UUID) -> Any:
+        return await run_in_threadpool(_audit_errors, audit_result, db, papers, run_id)
 
     def _parsed_digest(run_id: UUID) -> str:
         if db.get_run(run_id) is None:

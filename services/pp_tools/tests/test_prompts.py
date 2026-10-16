@@ -68,7 +68,7 @@ def test_library_rejects_path_tricks():
 
 def test_every_active_prompt_loads():
     assert LIBRARY.check_all() == []
-    assert set(LIBRARY.active_versions()) == {"P1-decomposer", "P2-search-planner", "P3-novelty-judge"}
+    assert set(LIBRARY.active_versions()) == {"P1-decomposer", "P2-search-planner", "P3-novelty-judge", "P4-claim-extractor"}
 
 
 def test_prompt_variables_are_the_ones_pp_tools_provides():

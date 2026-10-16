@@ -351,3 +351,23 @@ The container registries were not reachable from the development sandbox, so the
   The 6 left unnumbered are uncaptioned in the PDF (appendix images) or Docling boxes that are not tables.
 - **Security:** the PDF URL comes from the user, so pp-tools refuses non-http(s) URLs and addresses that resolve to private, loopback or link-local IPs, which would include the stack's own services. It checks every redirect hop by hand, caps the size (`AUDIT_MAX_PDF_MB`, 30) and requires the `%PDF` signature.
 - **Why a cache:** parsing costs 2 to 5 CPU-minutes. An audit rerun, an evaluation, or two runs on the same draft must not pay that again.
+
+## D33. Claim extraction: code picks the sentences, the LLM structures them, code checks the numbers
+
+- **Date:** 2026-10-16. Audit step 3.
+- **Decision:** a claim is extracted in three stages (`app/audit/claims.py`, prompt `P4-claim-extractor`).
+  1. **Code selects the candidate sentences:** those with a decimal or percent number, a table or figure reference, or a citation, outside References, Acknowledgements and Limitations.
+     - On the spike papers: CRAG 79 of 304 sentences, Adaptive-RAG 71 of 212, Self-RAG 123 of 507.
+     - That is about 3,000 to 4,700 tokens, so 3 or 4 calls per paper.
+  2. **The LLM (gpt-oss-20b) turns each batch of about 1,800 tokens into typed claims:**
+     - five types: `result`, `comparison`, `figure`, `citation`, `other`;
+     - values copied as written, with their system, dataset, metric and setting;
+     - table and figure references only when the sentence names them;
+     - citation markers as written.
+  3. **Code validates the output:**
+     - a claim whose numbers (values or stated difference) do not appear in its sentence is dropped, because an extractor that rounds or computes would hide exactly the errors the audit looks for;
+     - unknown sentence ids are dropped;
+     - references to tables or figures the paper does not contain are kept but flagged.
+- **Why this split:** finding "is there a number here" is exact and free in code. Deciding which system and dataset a number belongs to, and whether a sentence is a comparison, needs reading. Validating the reading against the source text stops the LLM from being the weak link.
+- **Rate limits:** n8n loops over the batches one at a time, with a 20-second pause after each, to stay under Groq's free-tier tokens per minute.
+- **Privacy:** the audit's LLM nodes are Groq only, with no Gemini fallback. A draft is unpublished work, and the Gemini free tier uses content to improve Google's products (D12). If Groq is down, the audit fails visibly instead of sending the draft elsewhere.
