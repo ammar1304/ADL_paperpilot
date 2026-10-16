@@ -39,7 +39,7 @@ fs.writeFileSync(process.argv[1], JSON.stringify([
     data: { apiKey: key("GROQ_API_KEY") } },
   // The same Groq key as a generic header credential, for HTTP Request nodes that
   // call Groq directly (the audit extractor, D34): the groqApi type only works in
-  // n8n's Groq chat-model node (F-014).
+  // the Groq chat-model node of n8n (F-014). No apostrophes here: this is inside a single-quoted shell string.
   { id: "ppGroqHeader0001", name: "Groq API header (PaperPilot)", type: "httpHeaderAuth",
     data: { name: "Authorization", value: "Bearer " + key("GROQ_API_KEY") } },
   { id: "ppGeminiCredent1", name: "Gemini (PaperPilot)", type: "googlePalmApi",

@@ -186,3 +186,5 @@ So Groq, the settings and the schema were right; n8n's HTTP Request node could n
 
 With real usage measured (about 2,600 tokens per call, not the 6,000 to 7,000 seen with default reasoning), the pause between calls is 30 s and the output budget 2,500 tokens.
 
+**F-015 (my bug, deployment): n8n stopped starting.** The F-014 change added a comment containing an apostrophe inside the single-quoted `node -e '...'` block of `n8n/entrypoint.sh`. The shell ended the string there, n8n restarted in a loop ("syntax error: unexpected '('"), and the audit request found nothing on port 5678. Fix: the apostrophe removed. `tests/test_n8n_entrypoint.py` now checks the script with `sh -n` and runs it with a stand-in n8n to check that every credential is written.
+
