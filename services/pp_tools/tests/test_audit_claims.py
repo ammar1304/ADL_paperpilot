@@ -151,9 +151,10 @@ def _node(name):
 
 
 def _groq_body():
-    body = _node("Extract claims")["parameters"]["jsonBody"]
-    schema_text = body.split("strict: true, schema: ", 1)[1].rsplit(" } } }) }}", 1)[0]
-    return body, json.loads(schema_text)
+    from app.audit.claims import claims_request
+
+    body = claims_request("system", "user")
+    return body, body["response_format"]["json_schema"]["schema"]
 
 
 def test_claims_schema_matches_the_pydantic_contract_and_groq_strict_rules():
@@ -177,7 +178,8 @@ def test_claims_schema_matches_the_pydantic_contract_and_groq_strict_rules():
                 yield from objects(v)
 
     assert all(o.get("additionalProperties") is False for o in objects(schema))
-    assert "reasoning_effort: 'low'" in body and "strict: true" in body  # F-013
+    assert body["reasoning_effort"] == "low" and body["include_reasoning"] is False  # F-013
+    assert body["response_format"]["json_schema"]["strict"] is True
 
 
 def test_p4_example_satisfies_the_contract():
@@ -194,7 +196,9 @@ def test_audit_llm_calls_never_use_gemini():
     assert "lmChatGoogleGemini" not in text and "generativelanguage.googleapis.com" not in text
     node = _node("Extract claims")
     assert node["parameters"]["url"] == "https://api.groq.com/openai/v1/chat/completions"
-    assert node["parameters"]["genericAuthType"] == "httpHeaderAuth" and "openai/gpt-oss-20b" in node["parameters"]["jsonBody"]
+    assert node["parameters"]["genericAuthType"] == "httpHeaderAuth"
+    assert node["parameters"]["jsonBody"] == "={{ JSON.stringify($json.request) }}"  # built by pp-tools (F-016)
+    assert _groq_body()[0]["model"].startswith("openai/gpt-oss")
     assert node["credentials"]["httpHeaderAuth"]["id"] == "ppGroqHeader0001"  # created by n8n/entrypoint.sh (F-014)
     assert "ppGroqHeader0001" in (REPO / "n8n" / "entrypoint.sh").read_text(encoding="utf-8")
 
@@ -214,13 +218,12 @@ def test_audit_workflow_asks_pp_tools_for_each_batch_and_recovers_from_llm_error
 
 def test_one_claims_request_fits_groqs_per_request_limit():
     """F-011: Groq refused every first-version request: input + max output came to 8,069-8,213 > 8,000 tokens."""
-    import re
 
     from app.audit.steps import BATCH_TOKENS
     from app.prompts import PromptLibrary
     from app.textutil import count_tokens
 
-    max_out = int(re.search(r"max_completion_tokens: (\d+)", _node("Extract claims")["parameters"]["jsonBody"]).group(1))
+    max_out = _groq_body()[0]["max_completion_tokens"]
     p4 = PromptLibrary(REPO / "prompts").load("P4-claim-extractor")
     schema_tokens = count_tokens(json.dumps(_groq_body()[1]))
     tables_and_title = 500
@@ -267,3 +270,36 @@ def test_next_batch_serves_each_batch_until_saved_or_three_attempts(tmp_path, te
         assert client.post(f"/audit/{run2}/claims/next").json()["done"] is True
         result = client.post(f"/audit/{run2}/result").json()
         assert result["coverage"]["batches_skipped"] == [0] and result["claims"] == []
+
+
+def test_no_n8n_expression_hides_a_closing_brace_pair():
+    """F-016: n8n ends an expression at the first "}}"; an inline JSON schema broke every Groq call."""
+    import re
+
+    bad = []
+    for wf in sorted((REPO / "n8n" / "workflows").glob("*.json")):
+        def walk(value, where):
+            if isinstance(value, dict):
+                for k, v in value.items():
+                    walk(v, f"{where}.{k}")
+            elif isinstance(value, list):
+                for i, v in enumerate(value):
+                    walk(v, f"{where}[{i}]")
+            elif isinstance(value, str) and value.startswith("="):
+                for expr in re.findall(r"\{\{(.*?)\}\}", value, flags=re.S):
+                    if "{{" in expr:
+                        bad.append(where)
+                if value.count("}}") != value.count("{{"):
+                    bad.append(where)
+        for node in json.loads(wf.read_text(encoding="utf-8"))["nodes"]:
+            walk(node["parameters"], f"{wf.name}:{node['name']}")
+    assert bad == []
+
+
+def test_next_batch_hands_n8n_a_ready_groq_request():
+    from app.audit.claims import CLAIMS_SCHEMA, claims_request
+
+    body = claims_request("S", "U")
+    assert body["messages"] == [{"role": "system", "content": "S"}, {"role": "user", "content": "U"}]
+    assert body["response_format"]["json_schema"]["schema"] is CLAIMS_SCHEMA
+    json.dumps(body)  # serialisable as is

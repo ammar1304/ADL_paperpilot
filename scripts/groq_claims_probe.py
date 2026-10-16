@@ -2,16 +2,14 @@
 """One P4 call to Groq with exactly the workflow's request body, in about 30 seconds.
 
 Creates an audit run for a PDF (parsed from the cache if seen before), renders
-the first batch of candidate sentences, sends it to Groq the way the 30-audit
-"Extract claims" node does (model, reasoning effort, strict JSON schema taken
-from the workflow file), prints Groq's answer and saves it through pp-tools so
+the first batch of candidate sentences, sends it to Groq with the request body
+pp-tools hands the 30-audit "Extract claims" node, prints Groq's answer and saves it through pp-tools so
 the number guardrail runs too. Needs GROQ_API_KEY in .env.
 
     python scripts/groq_claims_probe.py
 """
 
 import json
-import re
 import sys
 import time
 import urllib.error
@@ -22,22 +20,6 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from smoke_test import _dotenv, http  # noqa: E402
 
 REPO = Path(__file__).resolve().parents[1]
-
-
-def workflow_body(system: str, user: str) -> dict:
-    node = next(n for n in json.loads((REPO / "n8n/workflows/30-audit.json").read_text(encoding="utf-8"))["nodes"]
-                if n["name"] == "Extract claims")
-    text = node["parameters"]["jsonBody"]
-    schema = json.loads(text.split("strict: true, schema: ", 1)[1].rsplit(" } } }) }}", 1)[0])
-    return {
-        "model": re.search(r"model: '([^']+)'", text).group(1),
-        "temperature": 0,
-        "reasoning_effort": re.search(r"reasoning_effort: '(\w+)'", text).group(1),
-        "include_reasoning": False,
-        "max_completion_tokens": int(re.search(r"max_completion_tokens: (\d+)", text).group(1)),
-        "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
-        "response_format": {"type": "json_schema", "json_schema": {"name": "claims", "strict": True, "schema": schema}},
-    }
 
 
 def main() -> int:
@@ -60,7 +42,7 @@ def main() -> int:
             break
         time.sleep(3)
     batch = http("POST", f"{pp}/audit/{run_id}/claims/next")[1]
-    body = workflow_body(batch["system"], batch["user"])
+    body = batch["request"]  # exactly what the n8n node posts
     print(f"run {run_id}, batch {batch['batch']} of {batch['batches']}, model {body['model']}, reasoning {body['reasoning_effort']}, "
           f"max {body['max_completion_tokens']}")
     req = urllib.request.Request("https://api.groq.com/openai/v1/chat/completions", data=json.dumps(body).encode(),

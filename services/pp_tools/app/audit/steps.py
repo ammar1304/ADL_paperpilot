@@ -7,7 +7,7 @@ from uuid import UUID
 
 from ..db import Database
 from ..prompts import PromptLibrary
-from .claims import as_dicts, batches, candidate_sentences, objects_block, sentences_block, validate
+from .claims import as_dicts, batches, claims_request, candidate_sentences, objects_block, sentences_block, validate
 from .store import PaperStore
 
 EXTRACTOR = "P4-claim-extractor"
@@ -83,7 +83,8 @@ def next_claim_batch(db: Database, library: PromptLibrary, papers: PaperStore, r
             "sentences_block": "\n".join(f"[{c['id']}] ({(c['section'] or 'no section')[:60]}) {c['text']}" for c in group),
         })
         return {"done": False, "batch": i, "batches": len(detail["batches"]), "attempt": attempts.get(i, 0) + 1,
-                "system": rendered.system, "user": rendered.user, "version": rendered.version}
+                "system": rendered.system, "user": rendered.user, "version": rendered.version,
+                "request": claims_request(rendered.system, rendered.user)}
     return {"done": True, "batches": len(detail["batches"]), "finished": len(finished)}
 
 

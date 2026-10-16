@@ -171,5 +171,161 @@ def validate(output: Any, batch_ids: set[str], sentences: dict[str, str], paper:
     return kept, dropped
 
 
+# ---- the Groq request n8n sends --------------------------------------------------------------
+# pp-tools builds the whole request body and n8n posts it unchanged. The schema
+# used to be written inline in the n8n node, but n8n ends an expression at the
+# first "}}", and a JSON schema is full of them: every call failed with
+# "invalid syntax" before reaching Groq (F-016). Keeping it here also puts the
+# schema next to the Pydantic models it mirrors.
+
+CLAIMS_MODEL = "openai/gpt-oss-20b"
+CLAIMS_MAX_OUTPUT = 2500  # Groq counts input + this budget against 8,000 tokens per minute (F-011)
+CLAIMS_SCHEMA: dict[str, Any] = {
+    "type": "object",
+    "properties": {
+        "claims": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "sentence_id": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "result",
+                            "comparison",
+                            "figure",
+                            "citation",
+                            "other"
+                        ]
+                    },
+                    "claim": {
+                        "type": "string"
+                    },
+                    "values": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "value": {
+                                    "type": "string"
+                                },
+                                "metric": {
+                                    "type": "string"
+                                },
+                                "dataset": {
+                                    "type": "string"
+                                },
+                                "system": {
+                                    "type": "string"
+                                },
+                                "setting": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "value",
+                                "metric",
+                                "dataset",
+                                "system",
+                                "setting"
+                            ],
+                            "additionalProperties": False
+                        }
+                    },
+                    "comparison": {
+                        "type": [
+                            "object",
+                            "null"
+                        ],
+                        "properties": {
+                            "system": {
+                                "type": "string"
+                            },
+                            "baseline": {
+                                "type": "string"
+                            },
+                            "difference": {
+                                "type": "string"
+                            },
+                            "kind": {
+                                "type": "string",
+                                "enum": [
+                                    "absolute",
+                                    "relative",
+                                    "unspecified"
+                                ]
+                            },
+                            "direction": {
+                                "type": "string",
+                                "enum": [
+                                    "better",
+                                    "worse",
+                                    "equal"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "system",
+                            "baseline",
+                            "difference",
+                            "kind",
+                            "direction"
+                        ],
+                        "additionalProperties": False
+                    },
+                    "refers_to": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "cites": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "sentence_id",
+                    "type",
+                    "claim",
+                    "values",
+                    "comparison",
+                    "refers_to",
+                    "cites"
+                ],
+                "additionalProperties": False
+            }
+        }
+    },
+    "required": [
+        "claims"
+    ],
+    "additionalProperties": False
+}
+
+
+def claims_request(system: str, user: str) -> dict[str, Any]:
+    """Body for POST https://api.groq.com/openai/v1/chat/completions (D34).
+
+    Low reasoning effort and hidden reasoning, or gpt-oss spends the whole
+    budget thinking and answers with nothing (F-013); a strict schema so the
+    answer is always parseable JSON.
+    """
+    return {
+        "model": CLAIMS_MODEL,
+        "temperature": 0,
+        "reasoning_effort": "low",
+        "include_reasoning": False,
+        "max_completion_tokens": CLAIMS_MAX_OUTPUT,
+        "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
+        "response_format": {"type": "json_schema", "json_schema": {"name": "claims", "strict": True, "schema": CLAIMS_SCHEMA}},
+    }
+
+
 def as_dicts(sentences: list[Sentence]) -> list[dict[str, Any]]:
     return [asdict(s) for s in sentences]
