@@ -406,6 +406,9 @@ Branch `feat/m3-parser-spike`. Decision D31: Docling (CPU) instead of MinerU.
 - [x] `parser` service in docker-compose (docling-serve CPU v1.30.0), pp-tools client, audit parse job with progress, cache by PDF hash (D32); branch `feat/m3-parser-service`
 - [x] Caption repair and split-table merge: 28 → 31 of 37 tables and figures numbered, 0 wrong (D32)
 - [x] `POST /audit/{run_id}/parse`, `GET /audit/{run_id}/paper`, `GET /audit/{run_id}/figures/{figure_id}`; SSRF guard on the PDF URL; tests against a docling-serve stand-in (153 passed)
-- [ ] Team PC: `scripts/audit_parse_check.py` (CRAG from arXiv through the stack, then the cache)
-- [ ] Claim extraction (P4) and the table-number check, with E3 (planted errors)
+- [x] Team PC: `scripts/audit_parse_check.py`. CRAG fetched from arXiv and parsed through the stack in 179 s; 10/10 tables and figures numbered (Table 6's caption recovered from the PDF text layer); figure PNG served; the second run came from the cache in 2.7 s
+- [x] Claim extraction (D33): candidate sentences in code, P4-claim-extractor v1 (gpt-oss-20b, Groq only), validation that drops invented numbers; `POST /audit/{run}/claim-prompts`, `POST|GET /audit/{run}/claims`, `POST /audit/{run}/result`; branch `feat/m3-claims`
+- [x] n8n `30-audit` v1: parse job polling → claim prompts → loop over batches (20 s pause) → result (the router stores it)
+- [ ] Team PC: `scripts/audit_run.py` on CRAG, Adaptive-RAG and Self-RAG; read the claims by hand (precision, missed claims)
+- [ ] Table-number check, with E3 (planted errors)
 

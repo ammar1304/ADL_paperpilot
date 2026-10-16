@@ -12,7 +12,9 @@ This folder is a graded deliverable (20% of the grade).
 | [P2-search-planner](P2-search-planner/v2.md) | v2 (v1 kept) | The search agent: each round, stop or search again (local library or Semantic Scholar) with new queries | gpt-oss-20b (Groq), Gemini fallback | Decision criteria, tool descriptions, state (round budget, history), one worked example, JSON output; limits enforced in code | 20-novelty "Plan search" |
 | [P3-novelty-judge](P3-novelty-judge/v2.md) | v2 (v1 kept) | Compares the idea with each retrieved paper per facet, citing chunk ids | gpt-oss-120b (Groq), Gemini fallback | Fixed taxonomy with definitions, search scope, unknown versus not covered, counter-example from a real failure, evidence guardrail, JSON output, verifier feedback on retry | 20-novelty "Judge novelty" |
 
-P4 to P9 come with the audit branch.
+| [P4-claim-extractor](P4-claim-extractor/v1.md) | v1 | Audit: turns candidate sentences of a draft into typed, checkable claims (values, comparisons, table/figure references, citations) | gpt-oss-20b (Groq), **no fallback** (drafts never go to the Gemini free tier) | Closed claim taxonomy with definitions, copy-numbers-exactly rule, explicit-reference-only rule, skip rules, one worked example, JSON output; code pre-selects sentences and drops claims whose numbers are not in the sentence | 30-audit "Extract claims" |
+
+The remaining audit prompts (figure check, citation check) come with steps 5 and 6 of milestone 3.
 
 ## How the prompts are protected
 
@@ -32,6 +34,7 @@ prompts/
   P2-search-planner/v2.md
   P3-novelty-judge/v1.md
   P3-novelty-judge/v2.md
+  P4-claim-extractor/v1.md
   failure_log.md         every observed failure
 ```
 
