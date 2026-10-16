@@ -278,7 +278,7 @@ def test_novelty_api_end_to_end(tmp_path, test_db_url, stub_url, db):
     )
     write_stub_manifest(settings, {"2101.00001"})
     with TestClient(create_app(settings)) as client:
-        assert client.get("/prompts").json() == {"active": {"P1-decomposer": "v2", "P2-search-planner": "v2", "P3-novelty-judge": "v2", "P4-claim-extractor": "v1"}, "problems": []}
+        assert client.get("/prompts").json() == {"active": {"P1-decomposer": "v2", "P2-search-planner": "v2", "P3-novelty-judge": "v2", "P4-claim-extractor": "v1", "P5-figure-checker": "v1"}, "problems": []}
         r = client.post("/prompts/P1-decomposer/render", json={"variables": {"idea_text": IDEA}})
         assert r.status_code == 200 and IDEA in r.json()["user"] and r.json()["version"] == "v2"
         assert client.post("/prompts/P1-decomposer/render", json={"variables": {}}).status_code == 422

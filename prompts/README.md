@@ -14,7 +14,9 @@ This folder is a graded deliverable (20% of the grade).
 
 | [P4-claim-extractor](P4-claim-extractor/v1.md) | v1 | Audit: turns candidate sentences of a draft into typed, checkable claims (values, comparisons, table/figure references, citations) | gpt-oss-20b (Groq API, `reasoning_effort: low`, strict JSON schema, D34), **no fallback** (drafts never go to the Gemini free tier) | Closed claim taxonomy with definitions, copy-numbers-exactly rule, explicit-reference-only rule, skip rules, one worked example, JSON output; code pre-selects sentences and drops claims whose numbers are not in the sentence | 30-audit "Extract claims" |
 
-The remaining audit prompts (figure check, citation check) come with steps 5 and 6 of milestone 3.
+| [P5-figure-checker](P5-figure-checker/v1.md) | v1 | Audit, multimodal: checks the claims about a figure against the figure image (supported, contradicted, not shown), after describing what the figure shows | qwen/qwen3.8-27b (Groq vision, `reasoning_effort: low`, hidden reasoning, strict JSON schema, D36), **no fallback** | Image-as-evidence rule (the caption identifies, it does not prove), read-before-judge, explicit "not shown", tolerance for approximate plot reading, numbered claims, JSON output; code groups claims per figure and validates | 30-audit "Check figure" |
+
+The citation-check prompt comes with step 6 of milestone 3.
 
 ## How the prompts are protected
 

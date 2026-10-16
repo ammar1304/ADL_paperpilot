@@ -214,7 +214,7 @@ def test_audit_workflow_asks_pp_tools_for_each_batch_and_recovers_from_llm_error
     conns = AUDIT_WF["connections"]
     assert [o[0]["node"] for o in conns["Parse status"]["main"]] == ["Next claim batch", "Parse failed", "Polled too long?"]
     assert [o[0]["node"] for o in conns["More batches?"]["main"]] == ["Pause before call", "Check numbers"]
-    assert conns["Check numbers"]["main"][0][0]["node"] == "Assemble result"
+    assert conns["Check numbers"]["main"][0][0]["node"] == "Next figure"  # step 5 follows (test_audit_figures.py)
     assert _node("Check numbers")["parameters"]["url"].endswith("/check-numbers")
     assert conns["Pause before call"]["main"][0][0]["node"] == "Extract claims"
     assert _node("Pause before call")["parameters"]["amount"] == "={{ $json.wait_s }}"  # pp-tools decides (F-017)

@@ -410,3 +410,17 @@ The container registries were not reachable from the development sandbox, so the
 
   The second row is the only blind measurement; the third is no longer blind (the fixes came from it). FLARE produced no claim with a numeric value and a system, so its real-claim part is empty.
 - **What this means:** on numbers that are clearly located, the check is reliable in both directions (no false alarm, no planted error accepted in any run). Its weakness is coverage on real prose: on RAPTOR, 13 of 16 numbers stay unverifiable because the text says "RAPTOR" where the table says "RAPTOR + GPT-4", refers to "it" from the previous sentence, gives ranges ("1.7 to 5.8"), or because the parser swapped two captions (F-019). An LLM locator, or giving the extractor the previous sentence, are the next steps if coverage matters more than the remaining milestone-3 steps.
+
+## D36. The figure check: one vision call per figure, the image as evidence
+
+- **Date:** 2026-10-16. Milestone 3, step 5: the audit's multimodal step.
+- **Context:** papers say things about their figures ("accuracy drops as retrieval gets worse, Figure 3"). Text alone cannot check that; the figure has to be looked at. Groq's only generally available vision model is `qwen/qwen3.8-27b`: at most 3 images per request, each billed at a flat 2,048 input tokens, 8,000 tokens a minute and 200K a day on the free tier ([Groq vision](https://console.groq.com/docs/vision), [rate limits](https://console.groq.com/docs/rate-limits)).
+- **Decision:**
+  - code groups the extracted claims by the figure they name and sends one request per figure (the image is paid once), split by measured tokens so a request stays under the per-minute limit (1,500 counted tokens of claims, at most 8);
+  - the figure image as the parser cropped it, as a base64 data URL; its caption; the numbered claims with their original sentences;
+  - P5 asks the model to describe the figure first (type, axes, legend, readable values), then to give one verdict per claim: supported, contradicted, or not shown. The image is the evidence; the caption only identifies the figure (otherwise every claim that restates the caption would pass);
+  - `reasoning_effort: low` with hidden reasoning, strict JSON schema; pp-tools builds the request, n8n posts it (the D34 pattern), with the same loop state and rate-limit handling as the claims (F-012, F-017). There is no second vision model, so a spent daily limit stops the figure checks and the result says so;
+  - claims about a figure the parser kept no image of, or about a figure the paper does not contain, are reported without a model call.
+- **Images:** Docling's crops (400 to 900 pixels wide) were checked by eye: axis labels, legends and point labels are readable, so no re-parse at a higher resolution was needed.
+- **Evaluation (E4, `scripts/e4_figure_check.py`):** 48 gold claims about 14 figures of 5 papers, written by looking at the figures: 25 true, 19 false (reversed trend, wrong order, wrong value), 4 that neither the image nor the caption answers. Measured: accuracy, false alarms on true claims, errors caught, errors accepted.
+

@@ -1,0 +1,364 @@
+{
+ "description": "E4 gold claims for the figure check (D36). Written by looking at each figure as the parser cropped it; labels are what the image shows. 'expected' is the verdict a correct checker gives. A 'not_shown' claim is about something neither the image nor the caption states.",
+ "papers": {
+  "RAPTOR": "2401.18059v1",
+  "FLARE": "2305.06983v2",
+  "Adaptive-RAG": "2403.14403v2",
+  "Self-RAG": "2310.11511v1",
+  "CRAG": "2401.15884v3"
+ },
+ "figures": [
+  {
+   "paper": "RAPTOR",
+   "sha256": "01319e2e6e6ecfd504ee1bbda41d023f9e060bd3505ab3c161baa1d6d696cf75",
+   "figure": "figure:3",
+   "kind": "line plot",
+   "claims": [
+    {
+     "claim": "The collapsed tree reaches a higher F1 than tree traversal at a context length of 1000.",
+     "expected": "supported",
+     "note": "about 58 vs about 53"
+    },
+    {
+     "claim": "Tree traversal outperforms the collapsed tree at every context length.",
+     "expected": "contradicted",
+     "note": "collapsed tree is higher from 500 to 2000"
+    },
+    {
+     "claim": "The collapsed tree's F1 peaks at a context length of about 2000, around 59, and then declines.",
+     "expected": "supported",
+     "note": "59 at 2000, then about 56 and 55.5"
+    },
+    {
+     "claim": "The collapsed tree's F1 keeps increasing up to a context length of 2500.",
+     "expected": "contradicted",
+     "note": "it declines after 2000"
+    },
+    {
+     "claim": "In this figure, GPT-4 is the model that reads the retrieved context.",
+     "expected": "not_shown",
+     "note": "the image and the caption name no reader model"
+    }
+   ]
+  },
+  {
+   "paper": "RAPTOR",
+   "sha256": "01319e2e6e6ecfd504ee1bbda41d023f9e060bd3505ab3c161baa1d6d696cf75",
+   "figure": "figure:5",
+   "kind": "line plots, three panels",
+   "claims": [
+    {
+     "claim": "Prompt and completion tokens grow roughly linearly with document length on all three datasets.",
+     "expected": "supported",
+     "note": ""
+    },
+    {
+     "claim": "On NarrativeQA, even the longest documents use fewer than 100,000 prompt and completion tokens.",
+     "expected": "contradicted",
+     "note": "about 650,000 at the longest"
+    },
+    {
+     "claim": "Building the tree for QASPER costs less money than for QuALITY.",
+     "expected": "not_shown",
+     "note": "no cost in money is shown"
+    }
+   ]
+  },
+  {
+   "paper": "RAPTOR",
+   "sha256": "01319e2e6e6ecfd504ee1bbda41d023f9e060bd3505ab3c161baa1d6d696cf75",
+   "figure": "figure:6",
+   "kind": "line plot",
+   "claims": [
+    {
+     "claim": "Building the tree for a document of about 78,000 tokens takes about 1,750 seconds.",
+     "expected": "supported",
+     "note": "last point near 1,740 s"
+    },
+    {
+     "claim": "Build time decreases steadily as document length grows.",
+     "expected": "contradicted",
+     "note": "it rises overall"
+    },
+    {
+     "claim": "Build time drops between documents of about 29,000 and 42,000 tokens.",
+     "expected": "supported",
+     "note": "about 830 s, then about 600 s"
+    }
+   ]
+  },
+  {
+   "paper": "RAPTOR",
+   "sha256": "01319e2e6e6ecfd504ee1bbda41d023f9e060bd3505ab3c161baa1d6d696cf75",
+   "figure": "figure:7",
+   "kind": "grouped bar charts, three panels",
+   "claims": [
+    {
+     "claim": "On QuALITY, most retrieved nodes come from layer 0 for all three retrievers.",
+     "expected": "supported",
+     "note": "about 67-75% in layer 0"
+    },
+    {
+     "claim": "On NarrativeQA, DPR retrieves a larger share of layer-0 nodes than SBERT.",
+     "expected": "contradicted",
+     "note": "DPR about 42%, SBERT about 63%"
+    },
+    {
+     "claim": "On NarrativeQA, DPR retrieves a larger share of layer-1 nodes than SBERT and BM25.",
+     "expected": "supported",
+     "note": "about 45% vs 31% and 28%"
+    },
+    {
+     "claim": "On QASPER, more than 30% of retrieved nodes come from layer 2.",
+     "expected": "contradicted",
+     "note": "about 1%"
+    }
+   ]
+  },
+  {
+   "paper": "RAPTOR",
+   "sha256": "01319e2e6e6ecfd504ee1bbda41d023f9e060bd3505ab3c161baa1d6d696cf75",
+   "figure": "figure:1",
+   "kind": "diagram",
+   "claims": [
+    {
+     "claim": "The figure shows text chunks being clustered and each cluster summarized by an LLM to form a tree layer.",
+     "expected": "supported",
+     "note": ""
+    },
+    {
+     "claim": "A node stores an index, its child nodes, a summary text and a text embedding.",
+     "expected": "supported",
+     "note": ""
+    },
+    {
+     "claim": "The RAPTOR tree drawn in the figure has three nodes in its root layer.",
+     "expected": "contradicted",
+     "note": "two: 9 and 10"
+    },
+    {
+     "claim": "RAPTOR's clustering step uses Gaussian mixture models.",
+     "expected": "not_shown",
+     "note": "the diagram does not say which clustering"
+    }
+   ]
+  },
+  {
+   "paper": "FLARE",
+   "sha256": "2425bd04de6e082512ef576298ec24df770a7f576bb2c23d09b3fd498f716c52",
+   "figure": "figure:3",
+   "kind": "diagram",
+   "claims": [
+    {
+     "claim": "The figure shows two ways to form queries: implicit, by masking, and explicit, by question generation.",
+     "expected": "supported",
+     "note": ""
+    },
+    {
+     "claim": "In the figure, the explicit questions are generated by a BM25 retriever.",
+     "expected": "contradicted",
+     "note": "an LM such as ChatGPT"
+    }
+   ]
+  },
+  {
+   "paper": "FLARE",
+   "sha256": "2425bd04de6e082512ef576298ec24df770a7f576bb2c23d09b3fd498f716c52",
+   "figure": "figure:4",
+   "kind": "grouped bar chart",
+   "claims": [
+    {
+     "claim": "FLARE achieves the highest score on all five datasets.",
+     "expected": "supported",
+     "note": "51.0, 77.3, 41.3, 46.2, 53.4"
+    },
+    {
+     "claim": "On 2WikiMultihopQA, FLARE scores 51.0 against 28.2 without retrieval.",
+     "expected": "supported",
+     "note": ""
+    },
+    {
+     "claim": "On StrategyQA, single-time retrieval outperforms no retrieval.",
+     "expected": "contradicted",
+     "note": "68.6 vs 72.9"
+    },
+    {
+     "claim": "On WikiAsp, FLARE scores 58.4.",
+     "expected": "contradicted",
+     "note": "53.4"
+    },
+    {
+     "claim": "On ASQA, previous-window retrieval scores slightly below single-time retrieval.",
+     "expected": "supported",
+     "note": "39.9 vs 40.0"
+    }
+   ]
+  },
+  {
+   "paper": "FLARE",
+   "sha256": "2425bd04de6e082512ef576298ec24df770a7f576bb2c23d09b3fd498f716c52",
+   "figure": "figure:5",
+   "kind": "line plot",
+   "claims": [
+    {
+     "claim": "On 2WikiMultihopQA, performance rises from 28.2 with no retrieval to 51.0 when every step retrieves.",
+     "expected": "supported",
+     "note": ""
+    },
+    {
+     "claim": "StrategyQA performance increases steadily as the share of steps with retrieval goes from 0 to 100%.",
+     "expected": "contradicted",
+     "note": "peaks at 77.3, ends at 73.4"
+    },
+    {
+     "claim": "StrategyQA peaks at 77.3 when about 40% of the steps retrieve.",
+     "expected": "supported",
+     "note": ""
+    }
+   ]
+  },
+  {
+   "paper": "Adaptive-RAG",
+   "sha256": "12d262c682626c26a98bdafc7ec5dc6af3fae8247d26d4f2c712b1599dafce62",
+   "figure": "figure:4",
+   "kind": "scatter plot",
+   "claims": [
+    {
+     "claim": "The multi-step approach takes the most time per query, close to 9.",
+     "expected": "supported",
+     "note": "about 8.8"
+    },
+    {
+     "claim": "Adaptive-RAG reaches an F1 close to the multi-step approach in well under half its time per query.",
+     "expected": "supported",
+     "note": "about 47 at 3.6 vs 49 at 8.8"
+    },
+    {
+     "claim": "No Retrieval achieves a higher F1 than Adaptive Retrieval.",
+     "expected": "contradicted",
+     "note": "about 21 vs 32"
+    },
+    {
+     "claim": "Adaptive-RAG is the fastest of the methods shown.",
+     "expected": "contradicted",
+     "note": "No Retrieval, Adaptive Retrieval and Single-step are faster"
+    }
+   ]
+  },
+  {
+   "paper": "Adaptive-RAG",
+   "sha256": "12d262c682626c26a98bdafc7ec5dc6af3fae8247d26d4f2c712b1599dafce62",
+   "figure": "figure:2",
+   "kind": "diagram",
+   "claims": [
+    {
+     "claim": "In the adaptive approach, a classifier routes straightforward, simple and complex queries to different strategies.",
+     "expected": "supported",
+     "note": ""
+    },
+    {
+     "claim": "In the multi-step approach panel, the complex query is answered after a single retrieval step.",
+     "expected": "contradicted",
+     "note": "retrieval is repeated k times"
+    }
+   ]
+  },
+  {
+   "paper": "Adaptive-RAG",
+   "sha256": "12d262c682626c26a98bdafc7ec5dc6af3fae8247d26d4f2c712b1599dafce62",
+   "figure": "figure:1",
+   "kind": "scatter plot",
+   "claims": [
+    {
+     "claim": "The single-step approach has the lowest F1 of the methods shown, about 47.",
+     "expected": "supported",
+     "note": ""
+    },
+    {
+     "claim": "No Retrieval takes more time per query than the multi-step approach.",
+     "expected": "contradicted",
+     "note": "about 0.7 vs 3.3"
+    }
+   ]
+  },
+  {
+   "paper": "Self-RAG",
+   "sha256": "d9eaa1398abac0df67a9d0933a5bf8b6d9d83d2e72da2a486073cd842dd52978",
+   "figure": "figure:3",
+   "kind": "three panels: a table image, line plots",
+   "claims": [
+    {
+     "claim": "In the ablation, removing the retriever lowers PQA accuracy from 45.5 to 43.6.",
+     "expected": "supported",
+     "note": ""
+    },
+    {
+     "claim": "Increasing the weight for IsSupport increases Mauve.",
+     "expected": "contradicted",
+     "note": "Mauve falls from about 96 to 86"
+    },
+    {
+     "claim": "Precision rises as the IsSupport weight goes from 0 to 1 and then stays flat.",
+     "expected": "supported",
+     "note": ""
+    },
+    {
+     "claim": "Removing the critic lowers the AS em score to 28.6.",
+     "expected": "contradicted",
+     "note": "18.1"
+    }
+   ]
+  },
+  {
+   "paper": "Self-RAG",
+   "sha256": "d9eaa1398abac0df67a9d0933a5bf8b6d9d83d2e72da2a486073cd842dd52978",
+   "figure": "figure:4",
+   "kind": "line plots and a small table",
+   "claims": [
+    {
+     "claim": "PopQA performance increases as the number of training examples grows to 150k.",
+     "expected": "supported",
+     "note": ""
+    },
+    {
+     "claim": "PubHealth performance is highest at 150k training examples.",
+     "expected": "contradicted",
+     "note": "it peaks near 50k"
+    },
+    {
+     "claim": "In the human evaluation, IsRel reaches 95.0 on PopQA.",
+     "expected": "supported",
+     "note": ""
+    },
+    {
+     "claim": "The training examples were annotated by GPT-4.",
+     "expected": "not_shown",
+     "note": "not in the image"
+    }
+   ]
+  },
+  {
+   "paper": "CRAG",
+   "sha256": "975aa1fd3c1b603126e93ff99d6504858b61301bf1d34c9df88ebe53a0b026cb",
+   "figure": "figure:3",
+   "kind": "line plot",
+   "claims": [
+    {
+     "claim": "Self-CRAG stays above Self-RAG at every level of retrieval accuracy shown.",
+     "expected": "supported",
+     "note": ""
+    },
+    {
+     "claim": "As retrieval accuracy drops from 69.8 to 10, Self-RAG's generation accuracy falls from about 55 to about 33.",
+     "expected": "supported",
+     "note": ""
+    },
+    {
+     "claim": "Self-CRAG falls below the no-retrieval line when retrieval accuracy is low.",
+     "expected": "contradicted",
+     "note": "about 52 vs 28"
+    }
+   ]
+  }
+ ]
+}
