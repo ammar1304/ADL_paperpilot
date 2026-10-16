@@ -1,0 +1,1780 @@
+{
+ "url": "https://arxiv.org/pdf/2403.14403v2",
+ "run_id": "3fc9de61-4fa5-4489-9c18-dedb7bddf2d0",
+ "result": {
+  "paper": {
+   "items": 13,
+   "pages": 15,
+   "title": "Adaptive-RAG: Learning to Adapt Retrieval-Augmented Large Language Models through Question Complexity",
+   "sha256": "12d262c682626c26a98bdafc7ec5dc6af3fae8247d26d4f2c712b1599dafce62",
+   "tables": [
+    "table:1",
+    "table:2",
+    "table:3",
+    "table:4",
+    "table:5",
+    "table:6",
+    "table:7",
+    "table:8"
+   ],
+   "figures": [
+    "figure:1",
+    "figure:2",
+    "figure:3",
+    "figure:4",
+    "figure:5"
+   ],
+   "numbered": 13,
+   "references": 50
+  },
+  "branch": "audit",
+  "claims": [
+   {
+    "type": "other",
+    "cites": [],
+    "claim": "Table 2 shows simple adaptive strategies are inadequate for handling complex queries in multi-hop datasets.",
+    "values": [],
+    "sentence": "Also, as shown in Table 2, such simple adaptive strategies are particularly inadequate for handling complex queries in multi-hop datasets, which require aggregated information and reasoning over multiple documents.",
+    "refers_to": [
+     "table:2"
+    ],
+    "comparison": null,
+    "sentence_id": "b:60/s:3",
+    "unknown_refs": []
+   },
+   {
+    "type": "comparison",
+    "cites": [],
+    "claim": "Our adaptive strategy is more efficient than the complex multi-step strategy across all model sizes.",
+    "values": [],
+    "sentence": "As shown in Table 1, compared to the complex multi-step strategy, our proposed adaptive strategy is significantly more efficient across all model sizes.",
+    "refers_to": [
+     "table:1"
+    ],
+    "comparison": {
+     "kind": "unspecified",
+     "system": "our adaptive strategy",
+     "baseline": "complex multi-step strategy",
+     "direction": "better",
+     "difference": ""
+    },
+    "sentence_id": "b:60/s:6",
+    "unknown_refs": []
+   },
+   {
+    "type": "comparison",
+    "cites": [],
+    "claim": "The classification accuracy of our Adaptive-RAG is better than other adaptive retrieval baselines, leading to overall QA performance improvements.",
+    "values": [],
+    "sentence": "As Figure 3 (Left and Center) shows, the classification accuracy of our Adaptive-RAG is better than those of the other adaptive retrieval baselines, which leads to overall QA performance improvements.",
+    "refers_to": [
+     "figure:3"
+    ],
+    "comparison": {
+     "kind": "unspecified",
+     "system": "our Adaptive-RAG",
+     "baseline": "other adaptive retrieval baselines",
+     "direction": "better",
+     "difference": ""
+    },
+    "sentence_id": "b:61/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Figure 3 (Right) shows the confusion matrix of our classifier.",
+    "values": [],
+    "sentence": "In addition to the true positive performance of our classifier averaged over all those three labels in Figure 3 (Left and Center), we further report its confusion matrix in Figure 3 (Right).",
+    "refers_to": [
+     "figure:3"
+    ],
+    "comparison": null,
+    "sentence_id": "b:61/s:3",
+    "unknown_refs": []
+   },
+   {
+    "type": "result",
+    "cites": [],
+    "claim": "The confusion matrix shows misclassification rates: 'C (Multi)' as 'B (One)' 31%, 'B (One)' as 'C (Multi)' 23%, 'A (No)' as 'B (One)' 47%, and 'A (No)' as 'C (Multi)' 22%.",
+    "values": [
+     {
+      "value": "31%",
+      "metric": "misclassification rate",
+      "system": "our classifier",
+      "dataset": "",
+      "setting": "C (Multi) as B (One)"
+     },
+     {
+      "value": "23%",
+      "metric": "misclassification rate",
+      "system": "our classifier",
+      "dataset": "",
+      "setting": "B (One) as C (Multi)"
+     },
+     {
+      "value": "47%",
+      "metric": "misclassification rate",
+      "system": "our classifier",
+      "dataset": "",
+      "setting": "A (No) as B (One)"
+     },
+     {
+      "value": "22%",
+      "metric": "misclassification rate",
+      "system": "our classifier",
+      "dataset": "",
+      "setting": "A (No) as C (Multi)"
+     }
+    ],
+    "sentence": "We note that the confusion matrix reveals some notable trends: 'C (Multi)' is sometimes misclassified as 'B (One)' (about 31%) and 'B (One)' as 'C (Multi)' (about 23%); 'A (No)' is misclassified often as 'B (One)' (about 47%) and less frequently as 'C (Multi)' (about 22%).",
+    "refers_to": [
+     "figure:3"
+    ],
+    "comparison": null,
+    "sentence_id": "b:61/s:4",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Table 1 shows relative elapsed time for each RAG strategy, and Table 3 provides exact elapsed time per query for Adaptive-RAG and label distribution.",
+    "values": [],
+    "sentence": "Analyses on Efficiency for Classifier While Table 1 shows the relative elapsed time for each of the three different RAG strategies, we further provide the exact elapsed time per query for our AdaptiveRAG and the distribution for predicted labels from our query-complexity classifier in Table 3.",
+    "refers_to": [
+     "table:1",
+     "table:3"
+    ],
+    "comparison": null,
+    "sentence_id": "b:62/s:0",
+    "unknown_refs": []
+   },
+   {
+    "type": "other",
+    "cites": [],
+    "claim": "Table 1 (relative time) and Table 3 (exact time) show that efficiency can be substantially improved by identifying simple or straightforward queries.",
+    "values": [],
+    "sentence": "Similar to the results of the elapsed time in Table 1 (relative time), Table 3 (exact time) shows that efficiency can be substantially improved by identifying simple or straightforward queries.",
+    "refers_to": [
+     "table:1",
+     "table:3"
+    ],
+    "comparison": null,
+    "sentence_id": "b:62/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "other",
+    "cites": [],
+    "claim": "We analyze different strategies for training the classifier by ablating our full training strategy, which includes generating silver data and utilizing inductive bias.",
+    "values": [],
+    "sentence": "Here, we further analyze the different strategies for training the classifier by ablating our full training strategy, which includes two approaches: generating silver data from predicted outcomes of models and utilizing inductive bias in datasets (see Section 3.2).",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:63/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "comparison",
+    "cites": [],
+    "claim": "Our training strategy is significantly more efficient than the strategy relying solely on inductive bias.",
+    "values": [],
+    "sentence": "As Table 4 shows, compared to the training strategy relying solely on the data derived from inductive bias, ours is significantly more efficient.",
+    "refers_to": [
+     "table:4"
+    ],
+    "comparison": {
+     "kind": "unspecified",
+     "system": "our training strategy",
+     "baseline": "inductive bias only strategy",
+     "direction": "better",
+     "difference": ""
+    },
+    "sentence_id": "b:63/s:2",
+    "unknown_refs": []
+   },
+   {
+    "type": "result",
+    "cites": [],
+    "claim": "Table 6 shows no significant performance differences among classifiers of various sizes.",
+    "values": [],
+    "sentence": "As shown in Table 6, we observe no significant performance differences among classifiers of various sizes, even with reduced complexity and fewer parameters in smaller classifiers.",
+    "refers_to": [
+     "table:6"
+    ],
+    "comparison": null,
+    "sentence_id": "b:64/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Table 5 shows the classified complexity and query handling patterns for both simple and complex questions.",
+    "values": [],
+    "sentence": "Table 5 shows the classified complexity and the query handling patterns for both simple and complex questions.",
+    "refers_to": [
+     "table:5"
+    ],
+    "comparison": null,
+    "sentence_id": "b:65/s:1",
+    "unknown_refs": []
+   }
+  ],
+  "run_id": "3fc9de61-4fa5-4489-9c18-dedb7bddf2d0",
+  "coverage": {
+   "batches": 6,
+   "by_type": {
+    "other": 3,
+    "figure": 3,
+    "result": 2,
+    "comparison": 3
+   },
+   "llm_errors": 16,
+   "batches_done": 1,
+   "batches_skipped": [
+    0,
+    1,
+    2,
+    3,
+    5
+   ],
+   "total_sentences": 212,
+   "candidate_sentences": 71
+  },
+  "implemented": "parse+claims",
+  "claims_dropped": 1,
+  "prompt_versions": {
+   "P4-claim-extractor": "v1"
+  }
+ },
+ "steps": [
+  {
+   "step_id": 844,
+   "step_name": "parse",
+   "status": "done",
+   "detail": {
+    "items": 13,
+    "pages": 15,
+    "title": "Adaptive-RAG: Learning to Adapt Retrieval-Augmented Large Language Models through Question Complexity",
+    "blocks": 103,
+    "cached": true,
+    "sha256": "12d262c682626c26a98bdafc7ec5dc6af3fae8247d26d4f2c712b1599dafce62",
+    "tables": [
+     {
+      "id": "table:1",
+      "page": 6,
+      "rows": 9,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:2",
+      "page": 7,
+      "rows": 18,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:3",
+      "page": 8,
+      "rows": 4,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:4",
+      "page": 8,
+      "rows": 5,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:5",
+      "page": 9,
+      "rows": 3,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:6",
+      "page": 9,
+      "rows": 5,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:7",
+      "page": 15,
+      "rows": 18,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:8",
+      "page": 15,
+      "rows": 18,
+      "caption_source": "docling"
+     }
+    ],
+    "figures": [
+     {
+      "id": "figure:1",
+      "page": 1,
+      "has_image": true,
+      "caption_source": "docling"
+     },
+     {
+      "id": "figure:2",
+      "page": 2,
+      "has_image": true,
+      "caption_source": "docling"
+     },
+     {
+      "id": "figure:3",
+      "page": 7,
+      "has_image": true,
+      "caption_source": "pdf-text"
+     },
+     {
+      "id": "figure:4",
+      "page": 14,
+      "has_image": true,
+      "caption_source": "docling"
+     },
+     {
+      "id": "figure:5",
+      "page": 14,
+      "has_image": true,
+      "caption_source": "docling"
+     }
+    ],
+    "seconds": 0.7,
+    "numbered": 13,
+    "references": 50
+   },
+   "finished_at": "2026-10-16T19:46:57.889Z"
+  },
+  {
+   "step_id": 845,
+   "step_name": "claim_prompts",
+   "status": "done",
+   "detail": {
+    "prompt": "P4-claim-extractor",
+    "batches": [
+     [
+      "b:10/s:0",
+      "b:10/s:1",
+      "b:10/s:3",
+      "b:12/s:1",
+      "b:12/s:4",
+      "b:13/s:3",
+      "b:13/s:4",
+      "b:13/s:6",
+      "b:14/s:3",
+      "b:14/s:5"
+     ],
+     [
+      "b:15/s:0",
+      "b:15/s:1",
+      "b:21/s:0",
+      "b:21/s:1",
+      "b:21/s:2",
+      "b:22/s:0",
+      "b:22/s:2",
+      "b:22/s:3",
+      "b:22/s:4"
+     ],
+     [
+      "b:23/s:1",
+      "b:23/s:3",
+      "b:23/s:5",
+      "b:29/s:3",
+      "b:36/s:1",
+      "b:47/s:0",
+      "b:49/s:0",
+      "b:51/s:0",
+      "b:51/s:2",
+      "b:51/s:3"
+     ],
+     [
+      "b:53/s:2",
+      "b:55/s:0",
+      "b:55/s:1",
+      "b:55/s:2",
+      "b:55/s:3",
+      "b:55/s:4",
+      "b:55/s:5",
+      "b:55/s:6",
+      "b:56/s:0",
+      "b:59/s:0",
+      "b:59/s:1",
+      "b:60/s:1"
+     ],
+     [
+      "b:60/s:3",
+      "b:60/s:6",
+      "b:60/s:9",
+      "b:61/s:1",
+      "b:61/s:3",
+      "b:61/s:4",
+      "b:61/s:5",
+      "b:62/s:0",
+      "b:62/s:1",
+      "b:63/s:1",
+      "b:63/s:2",
+      "b:64/s:1",
+      "b:65/s:1"
+     ],
+     [
+      "b:78/s:0",
+      "b:79/s:0",
+      "b:80/s:0",
+      "b:82/s:0",
+      "b:83/s:0",
+      "b:84/s:0",
+      "b:85/s:0",
+      "b:90/s:1",
+      "b:90/s:2",
+      "b:91/s:1",
+      "b:94/s:1",
+      "b:95/s:0",
+      "b:98/s:2",
+      "b:100/s:0",
+      "b:100/s:1",
+      "b:102/s:0",
+      "b:102/s:2"
+     ]
+    ],
+    "candidates": [
+     {
+      "id": "b:10/s:0",
+      "page": 1,
+      "text": "Recent Large Language Models (LLMs) (Brown et al., 2020; OpenAI, 2023; Touvron et al., 2023; Anil et al., 2023) have shown overwhelming performances across diverse tasks, including questionanswering (QA) (Yang et al., 2018; Kwiatkowski et al., 2019).",
+      "block": "b:10",
+      "section": "1 Introduction",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:10/s:1",
+      "page": 1,
+      "text": "However, they still generate factually incorrect answers since their knowledge solely relies on their parametric memory (Kasai et al., 2022; Mallen et al., 2023).",
+      "block": "b:10",
+      "section": "1 Introduction",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:10/s:3",
+      "page": 1,
+      "text": "To address this problem, retrievalaugmented LLMs (Borgeaud et al., 2022; Izacard et al., 2023; Shi et al., 2023), which incorporate non-parametric knowledge into LLMs with additional retrieval modules, have gained much increasing attention.",
+      "block": "b:10",
+      "section": "1 Introduction",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:12/s:1",
+      "page": 1,
+      "text": "Early work on retrieval-augmented LLMs focuses primarily on single-hop queries (Lazaridou et al., 2022; Ram et al., 2023), whose answers are typically found within a single document; therefore, this approach involves retrieving a relevant document based on the query and subsequently integrating this information into QA models to formulate a response.",
+      "block": "b:12",
+      "section": "1 Introduction",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:12/s:4",
+      "page": 1,
+      "text": "Therefore, to effectively handle such complex queries, recent studies have concentrated largely on multistep and multi-reasoning QA, which requires iterative accesses to both LLMs and retrievers multiple times (Press et al., 2023; Trivedi et al., 2023), at the cost of heavy computational overheads.",
+      "block": "b:12",
+      "section": "1 Introduction",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:13/s:3",
+      "page": 2,
+      "text": "In other words, a multi-step QA approach could give rise to unnecessary computational overhead for simple queries, even though it would be vital for complex queries (see Figure 2 (A)).",
+      "block": "b:13",
+      "section": "1 Introduction",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:13/s:4",
+      "page": 2,
+      "text": "On the other hand, handling complex queries with single-step-retrieval or even non-retrieval strategies would be largely insufficient (Figure 2 (B)).",
+      "block": "b:13",
+      "section": "1 Introduction",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:13/s:6",
+      "page": 2,
+      "text": "While some recent approaches are capable of doing this based on the frequency of entities in queries (Mallen et al., 2023) or on the generated outputs from models for multi-step QA (Trivedi et al., 2023), they are still suboptimal: the former methods are overly simplistic, failing to consider multi-hop queries; meanwhile, the latter are excessively complex, terminating answer solving steps after several rounds of module access.",
+      "block": "b:13",
+      "section": "1 Introduction",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:14/s:3",
+      "page": 2,
+      "text": "In this work, we operationalize this process with a novel classifier, which is a smaller model trained to predict the complexity level of incoming queries (see Figure 2 (c)).",
+      "block": "b:14",
+      "section": "1 Introduction",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:14/s:5",
+      "page": 2,
+      "text": "This proposed method can offer a robust middle ground among the iterative LLM augmentation methods for complex queries, single-step methods for simpler queries, and even no-retrieval-augmented methods for the most straightforward queries (answerable by LLMs themselves), thus significantly enhancing the overall efficiency and accuracy, as shown in Figure 1.",
+      "block": "b:14",
+      "section": "1 Introduction",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:15/s:0",
+      "page": 2,
+      "text": "We validate Adaptive-RAG using benchmark open-domain QA datasets, covering a wide range of query complexity from single-hop (Rajpurkar et al., 2016; Joshi et al., 2017; Kwiatkowski et al., 2019) to multi-hop (Yang et al., 2018; Ho et al., 2020; Trivedi et al., 2022b) queries.",
+      "block": "b:15",
+      "section": "1 Introduction",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:15/s:1",
+      "page": 2,
+      "text": "The experimental results show that ours significantly improves the overall accuracy and efficiency, compared to the prior adaptive strategies, on multiple LLMs, such as GPT-3.5 (Brown et al., 2020) and FLAN-T5 series (Chung et al., 2022).",
+      "block": "b:15",
+      "section": "1 Introduction",
+      "signals": [
+       "number",
+       "citation"
+      ]
+     },
+     {
+      "id": "b:21/s:0",
+      "page": 3,
+      "text": "Open-domain QA Open-domain QA is the task of accurately answering a query by sourcing for query-relevant documents, and then interpreting them to provide answers (Chen et al., 2017; Zhu et al., 2021), which, thus, generally involves two modules: a retriever (Karpukhin et al., 2020; Xiong et al., 2021) and a reader (Yang et al., 2019; Izacard and Grave, 2021; Jeong et al., 2023).",
+      "block": "b:21",
+      "section": "2 Related Work",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:21/s:1",
+      "page": 3,
+      "text": "Along with the emergence of LLMs with superior reasoning capabilities thanks to their billion-sized parameters (Wei et al., 2022a), a synergy between LLMs and retrievers has led to significant advancements (Lazaridou et al., 2022; Ram et al., 2023).",
+      "block": "b:21",
+      "section": "2 Related Work",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:21/s:2",
+      "page": 3,
+      "text": "Specifically, this integration has been shown to enhance Open-domain QA by mitigating the hallucination problem from LLMs through strengthened reasoning abilities of the reader, as well as utilizing the retrieved, external documents (Cho et al., 2023).",
+      "block": "b:21",
+      "section": "2 Related Work",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:22/s:0",
+      "page": 3,
+      "text": "Multi-hop QA Multi-hop QA is an extension of conventional Open-domain QA, which additionally requires the system to comprehensively gather and contextualize information from multiple documents (often iteratively), to answer more complex queries (Trivedi et al., 2022a; Yang et al., 2018).",
+      "block": "b:22",
+      "section": "2 Related Work",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:22/s:2",
+      "page": 3,
+      "text": "Specifically, Khattab et al. (2022), Press et al. (2023), Pereira et al. (2023) and Khot et al. (2023) proposed to first decompose the multi-hop queries into simpler single-hop queries, repeatedly access the LLMs and retriever to solve these sub-queries, and merge their solutions to formulate a complete answer.",
+      "block": "b:22",
+      "section": "2 Related Work",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:22/s:3",
+      "page": 3,
+      "text": "In contrast to this decomposition-based approach, other recent studies, such as Yao et al. (2023) and Trivedi et al. (2023), explored the interleaving of Chain-ofThought reasoning (Wei et al., 2022b) - a method where a logical sequence of thoughts is generated -with document retrieval, repeatedly applying this process until the reasoning chain generates the answer.",
+      "block": "b:22",
+      "section": "2 Related Work",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:22/s:4",
+      "page": 3,
+      "text": "In addition, Jiang et al. (2023) introduced an approach to repeatedly retrieving new documents if the tokens within generated sentences have low confidence.",
+      "block": "b:22",
+      "section": "2 Related Work",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:23/s:1",
+      "page": 3,
+      "text": "In this vein, Mallen et al. (2023) proposed to decide the query's complexity level based on the frequency of its entities and suggested using the retrieval modules only when the frequency falls below a certain threshold.",
+      "block": "b:23",
+      "section": "2 Related Work",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:23/s:3",
+      "page": 3,
+      "text": "Additionally, Qi et al. (2021) proposed an approach that performs a fixed set of operations (retrieving, reading, and reranking) multiple times until the answer is derived for the given query, which is built upon traditional BERT-like LMs.",
+      "block": "b:23",
+      "section": "2 Related Work",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:23/s:5",
+      "page": 3,
+      "text": "Concurrent to our work, Asai et al. (2024) suggested training a sophisticated model to dynamically retrieve, critique, and generate the text.",
+      "block": "b:23",
+      "section": "2 Related Work",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:29/s:3",
+      "page": 4,
+      "text": "Here, we can use any off-the-shelf retriever (Robertson et al., 1994; Karpukhin et al., 2020).",
+      "block": "b:29",
+      "section": "3.1 Preliminaries",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:36/s:1",
+      "page": 4,
+      "text": "In other words, employing the most basic, non-retrievalbased approach LLM ( q ) to respond to the complex query q would be also ineffective (Figure 2, A); conversely, using a more elaborate multi-step approach LLM ( q , d , c ) for simple q would be inefficient (Figure 2, B).",
+      "block": "b:36",
+      "section": "3.2 Adaptive-RAG: Adaptive Retrieval-Augmented Generation",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:47/s:0",
+      "page": 5,
+      "text": "Single-hop QA For simpler queries, we use three benchmark single-hop QA datasets, which consist of queries and their associated documents containing answers, namely 1) SQuAD v1.1 (Rajpurkar et al., 2016), 2) Natural Questions (Kwiatkowski et al., 2019), and 3) TriviaQA (Joshi et al., 2017).",
+      "block": "b:47",
+      "section": "4.1 Datasets",
+      "signals": [
+       "number",
+       "citation"
+      ]
+     },
+     {
+      "id": "b:49/s:0",
+      "page": 6,
+      "text": "Multi-hop QA To consider more complex query scenarios, we use three benchmark multi-hop QA datasets, which require sequential reasoning over multiple documents, namely 1) MuSiQue (Trivedi et al., 2022a), 2) HotpotQA (Yang et al., 2018), and 3) 2WikiMultiHopQA (Ho et al., 2020).",
+      "block": "b:49",
+      "section": "4.1 Datasets",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:51/s:0",
+      "page": 6,
+      "text": "We compare our Adaptive-RAG against relevant models, including three retrieval-augmented LLM strategies (in Section 3.1) and the adaptive retrieval approaches (Mallen et al., 2023; Asai et al., 2024), which can be grouped into one of three categories: Simple, Adaptive, and Complex.",
+      "block": "b:51",
+      "section": "4.2 Models",
+      "signals": [
+       "number",
+       "citation"
+      ]
+     },
+     {
+      "id": "b:51/s:2",
+      "page": 6,
+      "text": "Adaptive approaches include the 3) Adaptive Retrieval (Mallen et al., 2023), 4) Self-RAG (Asai et al., 2024), and our 5) Adaptive-RAG , which can adaptively perform retrieval based on the question complexity.",
+      "block": "b:51",
+      "section": "4.2 Models",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:51/s:3",
+      "page": 6,
+      "text": "For the 6) Multi-step Approach , we use the most sophisticated state-ofthe-art method (Trivedi et al., 2023), iteratively accessing both the retriever and LLM with Chainof-Thought reasoning (Wei et al., 2022b), for every query.",
+      "block": "b:51",
+      "section": "4.2 Models",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:53/s:2",
+      "page": 6,
+      "text": "In particular, for effectiveness, we use F1, EM, and Accuracy (Acc), following the standard evaluation protocol (Mallen et al., 2023; Baek et al., 2023; Asai et al., 2024), where F1 measures the number of overlapping words between the predicted answer and the ground truth, EM measures whether they are the same, and Acc measures whether the predicted answer contains the ground-truth answer.",
+      "block": "b:53",
+      "section": "4.3 Evaluation Metrics",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:55/s:0",
+      "page": 6,
+      "text": "For a fair comparison and following Mallen et al. (2023) and Trivedi et al. (2023), we use the same retriever, a term-based sparse retrieval model known as BM25 (Robertson et al., 1994), across all different models.",
+      "block": "b:55",
+      "section": "4.4 Implementation Details",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:55/s:1",
+      "page": 6,
+      "text": "For the external document corpus, we use different sources depending on the dataset type: the Wikipedia corpus preprocessed by Karpukhin et al. (2020) for single-hop datasets, and the preprocessed corpus by Trivedi et al. (2023) for multihop datasets.",
+      "block": "b:55",
+      "section": "4.4 Implementation Details",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:55/s:2",
+      "page": 6,
+      "text": "Regarding the LLMs that are used to generate answers, we use the FLAN-T5 series models (Chung et al., 2022) of XL with 3B parameters and XXL with 11B parameters, and the GPT-3.5 model (gpt-3.5-turbo-instruct).",
+      "block": "b:55",
+      "section": "4.4 Implementation Details",
+      "signals": [
+       "number",
+       "citation"
+      ]
+     },
+     {
+      "id": "b:55/s:3",
+      "page": 6,
+      "text": "For the retrieval-augmented LLM design, we follow the implementation details from Trivedi et al. (2023), which include input prompts, instructions, and the number of test samples for evaluation (e.g., 500 samples per dataset).",
+      "block": "b:55",
+      "section": "4.4 Implementation Details",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:55/s:4",
+      "page": 6,
+      "text": "In our Adaptive-RAG, for the query-complexity classifier, we use and train the T5-Large model (Raffel et al., 2020).",
+      "block": "b:55",
+      "section": "4.4 Implementation Details",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:55/s:5",
+      "page": 6,
+      "text": "Specifically, the classifier is trained using the epoch that shows the best performance until 100 training iterations from the validation set, with the learning rate of 3e- Figure 3: Performance on QA and query-complexity assessment of different adaptive approaches for retrieval-augmented LLMs with FLAN-T5 XL (Left) and XXL (Center).",
+      "block": "b:55",
+      "section": "4.4 Implementation Details",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:55/s:6",
+      "page": 6,
+      "text": "For labeling the complexity of queries, we use the silver data annotated from the prediction outcomes of models (described in Section 3.2).",
+      "block": "b:55",
+      "section": "4.4 Implementation Details",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:56/s:0",
+      "page": 7,
+      "text": "5 and the AdamW (Loshchilov and Hutter, 2019) as an optimizer.",
+      "block": "b:56",
+      "section": "4.4 Implementation Details",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:59/s:0",
+      "page": 7,
+      "text": "Main Results First of all, Table 1 shows our main results averaged over all considered datasets, which corroborate our hypothesis that simple retrievalaugmented strategies are less effective than the complex strategy, while the complex one is significantly more expensive than the simple ones.",
+      "block": "b:59",
+      "section": "5 Experimental Results and Analyses",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:59/s:1",
+      "page": 7,
+      "text": "In addition, we report the more granular results with FLAN-T5-XL on each of the single-hop and multihop datasets in Table 2 (and more with different LLMs in Table 7 and Table 8 of Appendix), which are consistent with the results observed in Table 1.",
+      "block": "b:59",
+      "section": "5 Experimental Results and Analyses",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:60/s:1",
+      "page": 7,
+      "text": "Note that among the adaptive strategies, our Adaptive-RAG shows remarkable effectiveness over the competitors (Table 1).",
+      "block": "b:60",
+      "section": "5 Experimental Results and Analyses",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:60/s:3",
+      "page": 7,
+      "text": "Also, as shown in Table 2, such simple adaptive strategies are particularly inadequate for handling complex queries in multi-hop datasets, which require aggregated information and reasoning over multiple documents.",
+      "block": "b:60",
+      "section": "5 Experimental Results and Analyses",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:60/s:6",
+      "page": 7,
+      "text": "As shown in Table 1, compared to the complex multi-step strategy, our proposed adaptive strategy is significantly more efficient across all model sizes.",
+      "block": "b:60",
+      "section": "5 Experimental Results and Analyses",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:60/s:9",
+      "page": 7,
+      "text": "As shown in Table 1 and Table 2, we observe that it achieves the best performance while being much more efficient than our Adaptive-RAG without the oracle classifier.",
+      "block": "b:60",
+      "section": "5 Experimental Results and Analyses",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:61/s:1",
+      "page": 8,
+      "text": "As Figure 3 (Left and Center) shows, the classification accuracy of our Adaptive-RAG is better than those of the other adaptive retrieval baselines, which leads to overall QA performance improvements.",
+      "block": "b:61",
+      "section": "5 Experimental Results and Analyses",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:61/s:3",
+      "page": 8,
+      "text": "In addition to the true positive performance of our classifier averaged over all those three labels in Figure 3 (Left and Center), we further report its confusion matrix in Figure 3 (Right).",
+      "block": "b:61",
+      "section": "5 Experimental Results and Analyses",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:61/s:4",
+      "page": 8,
+      "text": "We note that the confusion matrix reveals some notable trends: 'C (Multi)' is sometimes misclassified as 'B (One)' (about 31%) and 'B (One)' as 'C (Multi)' (about 23%); 'A (No)' is misclassified often as 'B (One)' (about 47%) and less frequently as 'C (Multi)' (about 22%).",
+      "block": "b:61",
+      "section": "5 Experimental Results and Analyses",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:61/s:5",
+      "page": 8,
+      "text": "While the overall results in Figure 3 show that our classifier effectively categorizes the three labels, further refining it based on such misclassification would be a meaningful direction for future work.",
+      "block": "b:61",
+      "section": "5 Experimental Results and Analyses",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:62/s:0",
+      "page": 8,
+      "text": "Analyses on Efficiency for Classifier While Table 1 shows the relative elapsed time for each of the three different RAG strategies, we further provide the exact elapsed time per query for our AdaptiveRAG and the distribution for predicted labels from our query-complexity classifier in Table 3.",
+      "block": "b:62",
+      "section": "5 Experimental Results and Analyses",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:62/s:1",
+      "page": 8,
+      "text": "Similar to the results of the elapsed time in Table 1 (relative time), Table 3 (exact time) shows that efficiency can be substantially improved by identifying simple or straightforward queries.",
+      "block": "b:62",
+      "section": "5 Experimental Results and Analyses",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:63/s:1",
+      "page": 8,
+      "text": "Here, we further analyze the different strategies for training the classifier by ablating our full training strategy, which includes two approaches: generating silver data from predicted outcomes of models and utilizing inductive bias in datasets (see Section 3.2).",
+      "block": "b:63",
+      "section": "5 Experimental Results and Analyses",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:63/s:2",
+      "page": 8,
+      "text": "As Table 4 shows, compared to the training strategy relying solely on the data derived from inductive bias, ours is significantly more efficient.",
+      "block": "b:63",
+      "section": "5 Experimental Results and Analyses",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:64/s:1",
+      "page": 8,
+      "text": "As shown in Table 6, we observe no significant performance differences among classifiers of various sizes, even with reduced complexity and fewer parameters in smaller classifiers.",
+      "block": "b:64",
+      "section": "5 Experimental Results and Analyses",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:65/s:1",
+      "page": 8,
+      "text": "Table 5 shows the classified complexity and the query handling patterns for both simple and complex questions.",
+      "block": "b:65",
+      "section": "5 Experimental Results and Analyses",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:78/s:0",
+      "page": 14,
+      "text": "We use publicly open datasets for both singlehop and multi-hop QA datasets, referring to as Karpukhin et al. (2020) and Trivedi et al. (2023), respectively.",
+      "block": "b:78",
+      "section": "A.1 Datasets",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:79/s:0",
+      "page": 14,
+      "text": "SQuAD v1.1 (Rajpurkar et al., 2016) is created through a process where annotators write questions based on the documents they read.",
+      "block": "b:79",
+      "section": "A.1 Datasets",
+      "signals": [
+       "number",
+       "citation"
+      ]
+     },
+     {
+      "id": "b:80/s:0",
+      "page": 14,
+      "text": "Natural Questions (Kwiatkowski et al., 2019) is",
+      "block": "b:80",
+      "section": "A.1 Datasets",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:82/s:0",
+      "page": 14,
+      "text": "TriviaQA (Joshi et al., 2017) comprises trivia questions sourced from various quiz websites.",
+      "block": "b:82",
+      "section": "A.1 Datasets",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:83/s:0",
+      "page": 14,
+      "text": "MuSiQue (Trivedi et al., 2022a) is collected by compositing multiple single-hop queries, to form queries spanning 2-4 hops.",
+      "block": "b:83",
+      "section": "A.1 Datasets",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:84/s:0",
+      "page": 14,
+      "text": "HotpotQA (Yang et al., 2018) is constructed by having annotators create questions that link multiple Wikipedia articles.",
+      "block": "b:84",
+      "section": "A.1 Datasets",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:85/s:0",
+      "page": 14,
+      "text": "2WikiMultiHopQA (Ho et al., 2020) is derived from Wikipedia and its associated knowledge graph path, needing 2-hops.",
+      "block": "b:85",
+      "section": "A.1 Datasets",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:90/s:1",
+      "page": 14,
+      "text": "This baseline (Mallen et al., 2023) adaptively augments the LLM with the retrieval module, only when the entities appearing in queries are less popular.",
+      "block": "b:90",
+      "section": "A.2 Models",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:90/s:2",
+      "page": 14,
+      "text": "To extract entities, we use the available entity-linking method (Li et al., 2020), namely BLINK, for questions.",
+      "block": "b:90",
+      "section": "A.2 Models",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:91/s:1",
+      "page": 14,
+      "text": "This baseline (Asai et al., 2024)",
+      "block": "b:91",
+      "section": "A.2 Models",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:94/s:1",
+      "page": 14,
+      "text": "This approach (Trivedi et al., 2023) is the multi-step retrieval-augmented",
+      "block": "b:94",
+      "section": "A.2 Models",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:95/s:0",
+      "page": 14,
+      "text": "LLM, which iteratively accesses both the retriever and LLM with interleaved Chain-of-Thought reasoning (Wei et al., 2022b) repeatedly until it derives the solution or reaches the maximum step number.",
+      "block": "b:95",
+      "section": "A.2 Models",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:98/s:2",
+      "page": 14,
+      "text": "Finally, we implemented models using PyTorch (Paszke et al., 2019) and Transformers library (Wolf et al., 2020).",
+      "block": "b:98",
+      "section": "A.3 Implementation Details",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:100/s:0",
+      "page": 14,
+      "text": "Performance vs Time We further provide a comparison of different retrieval-augmented generation approaches with FLAN-T5-XL and FLAN-T5XXL models in Figure 4 and Figure 5, respectively, in the context of performance and efficiency tradeoffs.",
+      "block": "b:100",
+      "section": "B Additional Experimental Results",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:100/s:1",
+      "page": 14,
+      "text": "Similar to the observation made from the GPT3.5 model in Figure 1, our proposed Adaptive-RAG is significantly more effective as well as efficient.",
+      "block": "b:100",
+      "section": "B Additional Experimental Results",
+      "signals": [
+       "number",
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:102/s:0",
+      "page": 15,
+      "text": "Performance per Dataset In addition to detailing the performance of each dataset with the FLANT5-XL model, as shown in Table 2, we also present the results for each dataset with the FLAN-T5XXL and GPT-3.5 models in Table 2 and Table 8, respectively.",
+      "block": "b:102",
+      "section": "B Additional Experimental Results",
+      "signals": [
+       "number",
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:102/s:2",
+      "page": 15,
+      "text": "It is worth noting that while the GPT-3.5 model performs effectively in addressing straightforward queries even without document retrieval, it benefits significantly from our Adaptive-RAG in terms of effectiveness when solving complex multi-hop queries.",
+      "block": "b:102",
+      "section": "B Additional Experimental Results",
+      "signals": [
+       "number"
+      ]
+     }
+    ],
+    "prompt_version": "v1",
+    "total_sentences": 212
+   },
+   "finished_at": "2026-10-16T19:47:07.222Z"
+  },
+  {
+   "step_id": 846,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 0,
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T19:47:07.234Z"
+  },
+  {
+   "step_id": 847,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 0,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 19:47:37 GMT\",\"content-type\":\"application/json\",\"content-length\":\"388\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"1009\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"998\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"2m52.8s\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m5342x7fegdvr0s277j8qe76\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=zD0BdaFLnu5d2Wwinj3ov2C16O5ws7rw1E1BnSz98Mk-1792180057.3094583-1.0.1.1-pPy_bbLjRqSCpUzOJwe5x0QCBwK7nsGWg9BKMbSjAFjG7z7AKIJ_We0Q_3cTcBRCtVhYsZbme39u.88x1tqh19CQ9mDFSKZYELT1uZoyeyaHQGD_GiRvJfcPinZzsZR0; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:17:37 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b9938e2ac5e1e1-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claim"
+   },
+   "finished_at": "2026-10-16T19:47:37.569Z"
+  },
+  {
+   "step_id": 848,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 0,
+    "attempt": 2
+   },
+   "finished_at": "2026-10-16T19:47:37.587Z"
+  },
+  {
+   "step_id": 849,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 0,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 19:48:07 GMT\",\"content-type\":\"application/json\",\"content-length\":\"381\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"433\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"998\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"2m52.8s\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m5343tsyedsta4161p6xnc75\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=1gxp9XxSycEM5zTfpCouxHbn060u_pAJCB.f_KxZvkU-1792180087.6001232-1.0.1.1-XrcKxPqNB_ccphMdbqGwkCV_Ar29sG1VxH3hOyjq5LmAYkQ8OpBTf0GD9arkSvE9ewq8DYZK2.Ax_5zYgKizipF1gF6fgGqO3Ngl2jV8qieAVlLRurecC46zskxx1CmN; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:18:07 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b9944b784ce1e9-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims"
+   },
+   "finished_at": "2026-10-16T19:48:07.862Z"
+  },
+  {
+   "step_id": 850,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 0,
+    "attempt": 3
+   },
+   "finished_at": "2026-10-16T19:48:07.885Z"
+  },
+  {
+   "step_id": 851,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 0,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 19:48:37 GMT\",\"content-type\":\"application/json\",\"content-length\":\"387\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"295\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"999\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1m26.4s\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m5344rckexyazakac4qh6j9j\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=vDvN6MH1drR2uEGinlNGHXPV2hUEag7gJJxZnQi4W9w-1792180117.8922446-1.0.1.1-mEpMIyErwSkOuNkBl_TrDevZDy1Zd28oKxXuaA2ZnjLWmhTOjEIGj9Uc3qCChTnSsJDjmQUGEr5.1eX7FY1xXDzga.bGKzx1bjYDXft6JQpbwSJVRtvVLkHA7OKLQYB.; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:18:37 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b99508de1713d3-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims"
+   },
+   "finished_at": "2026-10-16T19:48:38.151Z"
+  },
+  {
+   "step_id": 852,
+   "step_name": "claims_batch",
+   "status": "skipped",
+   "detail": {
+    "batch": 0,
+    "reason": "no valid output after 3 attempts"
+   },
+   "finished_at": "2026-10-16T19:48:38.171Z"
+  },
+  {
+   "step_id": 853,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 1,
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T19:48:38.173Z"
+  },
+  {
+   "step_id": 854,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 1,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 19:49:08 GMT\",\"content-type\":\"application/json\",\"content-length\":\"382\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"934\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"999\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1m26.4s\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m5345nzze8barmaqs1d4jman\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=cn4mj87kZMKQLhSRJAjDowEWS3O23eybFRo9By3CAGU-1792180148.208771-1.0.1.1-lRfg788KMTjNEr8ykbSUKZcrdS7fu08wtjerDx4e.EsGmO7Z_vPaKxBP.xjlkunZf_PXMCf7ZWEERHz4Bnpc8BMow0ruTftpN5_pdwL88lXzdTsuu_4Gc3K0TxJLpH6M; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:19:08 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b995c64e445fd0-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims."
+   },
+   "finished_at": "2026-10-16T19:49:08.472Z"
+  },
+  {
+   "step_id": 855,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 1,
+    "attempt": 2
+   },
+   "finished_at": "2026-10-16T19:49:08.493Z"
+  },
+  {
+   "step_id": 856,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 1,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 19:49:38 GMT\",\"content-type\":\"application/json\",\"content-length\":\"381\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"231\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m5346khxe4sstjrrvttv4jg7\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=oh7WbT3QqrTHJdtxuX6OyeYoYVFT.LBS8xBk0jTt4lk-1792180178.4783933-1.0.1.1-u2Tt.6.IIMnhnICoM2vdRS.pl31a_UcTuVSgWVoyORGXCoHJu0X4k_3ekhpukUSbsP6XYj155B9uq.Fn6PUepI6qwf1IK00867dFYN4ZdM26qr_hxHuYfo._k3Lyi_6R; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:19:38 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b996837a33e1f0-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. A"
+   },
+   "finished_at": "2026-10-16T19:49:38.762Z"
+  },
+  {
+   "step_id": 857,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 1,
+    "attempt": 3
+   },
+   "finished_at": "2026-10-16T19:49:38.793Z"
+  },
+  {
+   "step_id": 858,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 1,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 19:50:08 GMT\",\"content-type\":\"application/json\",\"content-length\":\"380\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"190\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m5347h9wear924d67f09r108\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=bCW55HmVtHbqeUdX9V2AHhiGagLUy2Bt04bZa2m4Hkc-1792180208.9408722-1.0.1.1-BdPhu2iewWxhspwMMsJhucx5OqEh6DS_OtmYne.rjK9d2yN9ht60xZhw1oxuwOnxbSOWXtyzI3M_FnuiObQJEErHqiSt7pclIo8HEvhpr.MKoc1dfYwNJim1CH.8X3RZ; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:20:08 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b99741d8619818-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. A"
+   },
+   "finished_at": "2026-10-16T19:50:09.206Z"
+  },
+  {
+   "step_id": 859,
+   "step_name": "claims_batch",
+   "status": "skipped",
+   "detail": {
+    "batch": 1,
+    "reason": "no valid output after 3 attempts"
+   },
+   "finished_at": "2026-10-16T19:50:09.228Z"
+  },
+  {
+   "step_id": 860,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 2,
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T19:50:09.229Z"
+  },
+  {
+   "step_id": 861,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 2,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 19:50:39 GMT\",\"content-type\":\"application/json\",\"content-length\":\"381\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"168\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m5348extec2s3yc0e1nhv8b3\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=Pi2HXns8XPeFHJ7qIp.WBj7KoQwogq7jqTy8cFGmD5U-1792180239.2692652-1.0.1.1-5gloiJ3p3suKymRIo2eXWBn9hQLwzPmVOo39XDqgwly0drMJmv4DdzuSZAjwn8ZhFieT.ImBgV2r5Oyax9jxNFPzWYmSsPy3_GKTmFeQSUuGDXR6odrApLjDIcc7pf_w; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:20:39 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b997ff6a95cd5d-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. A"
+   },
+   "finished_at": "2026-10-16T19:50:39.533Z"
+  },
+  {
+   "step_id": 862,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 2,
+    "attempt": 2
+   },
+   "finished_at": "2026-10-16T19:50:39.555Z"
+  },
+  {
+   "step_id": 863,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 2,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 19:51:10 GMT\",\"content-type\":\"application/json\",\"content-length\":\"381\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"137\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m5349d5ke35vwge61htd50qk\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=sJzMCjkizhkT.3hDZbTjq9DU9ozin11Ctad6xPHZ4TM-1792180270.239626-1.0.1.1-MLaZxJ_p5bB5aU4debrh_5KREPET7ufeWm9CmWgOigO0nUg3sknP9h7a5Pr4oVbNCXJrWsrSfaLByzg7aZ4Aj1Mq0IAEHGyHjsNsy3UGh1DoCd_Lwm6uoFw6BX5UPqWZ; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:21:10 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b998c0f8689822-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. A "
+   },
+   "finished_at": "2026-10-16T19:51:10.514Z"
+  },
+  {
+   "step_id": 864,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 2,
+    "attempt": 3
+   },
+   "finished_at": "2026-10-16T19:51:10.531Z"
+  },
+  {
+   "step_id": 865,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 2,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 19:51:41 GMT\",\"content-type\":\"application/json\",\"content-length\":\"387\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"107\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m534ab6ke9pb8d24cz39kr1g\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=4gf8Zau6DTrecnvfrGcmw6JWctNyg9MCgwDsM9T_840-1792180300.9948723-1.0.1.1-GnR5Daq.udDsg8xyxzbpfFcgNUQ3j4bVs0IRgnIug5VdpK5fDlfPN_esWCYlJI5IIUpEwp9MUutjdlSmXEDz8jswdAlgTzEpmUzNK1kFctSsUWgtzDwMZOS1reaLRipg; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:21:41 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b999813cefe276-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. A"
+   },
+   "finished_at": "2026-10-16T19:51:41.262Z"
+  },
+  {
+   "step_id": 866,
+   "step_name": "claims_batch",
+   "status": "skipped",
+   "detail": {
+    "batch": 2,
+    "reason": "no valid output after 3 attempts"
+   },
+   "finished_at": "2026-10-16T19:51:41.280Z"
+  },
+  {
+   "step_id": 867,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 3,
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T19:51:41.281Z"
+  },
+  {
+   "step_id": 868,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 3,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 19:52:11 GMT\",\"content-type\":\"application/json\",\"content-length\":\"381\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"109\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m534b8sse3mse86qdyrja11c\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=1EnYy489T7JoqDgwWcFLneQLFi0T.W0H8Wr5HLAcLHk-1792180331.3050642-1.0.1.1-k.Pe8iFJc7ik7evbh98HChgMjPH2rI7K1UJby.wVahYY7eEr1RTde19.exj5zDJNsNJdPu7syuPrlmkJpA7cc1r9gkzCJzSuEtlR6Sp_UwuTg_VRPOdPUZd2BGxNFZY1; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:22:11 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b99a3eaedcc6b7-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. A"
+   },
+   "finished_at": "2026-10-16T19:52:11.579Z"
+  },
+  {
+   "step_id": 869,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 3,
+    "attempt": 2
+   },
+   "finished_at": "2026-10-16T19:52:11.601Z"
+  },
+  {
+   "step_id": 870,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 3,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 19:52:41 GMT\",\"content-type\":\"application/json\",\"content-length\":\"381\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"73\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m534c6ewes183vstykq7cb7q\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=sMk9PFcop92arEwJejm6_mLGRFzzyoyrivE07TNLWfI-1792180361.674722-1.0.1.1-qUeX9ZQAsVJPmsRaBNQ9SNDFUBBkoRgQWO_dLvXtV9WiUIyYh5EG7sTdYAgDMhJZGz2j7zhIGY9cuAaecNwBCOVbX_MPHNDqLSNiDrGPbASGhM1L0UeYv5Kh71vqfPZW; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:22:41 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b99afc79394c05-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. A c"
+   },
+   "finished_at": "2026-10-16T19:52:41.934Z"
+  },
+  {
+   "step_id": 871,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 3,
+    "attempt": 3
+   },
+   "finished_at": "2026-10-16T19:52:41.952Z"
+  },
+  {
+   "step_id": 872,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 3,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 19:53:11 GMT\",\"content-type\":\"application/json\",\"content-length\":\"379\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"51\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m534d419eqv8wpkccts2xy0s\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=Ee0ohenWIV3dvngm_l.9zNLOJMjYI21uJK.sRtMwF4s-1792180391.9617376-1.0.1.1-3HD8eqrIZ_pivZwUX1xUcVbCfjpOdxlR5WsI4TtMIhDEsuLuZBjR352NBaT7LJ_Vsr6FfiYobjpx3dKJVnoBk6BwZmCC0Var7tvbmHAxRv1_Ntv6Ye07UhS6xEUc7brM; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:23:11 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b99bb9c8ab3391-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. A claim is one checkable as"
+   },
+   "finished_at": "2026-10-16T19:53:12.223Z"
+  },
+  {
+   "step_id": 873,
+   "step_name": "claims_batch",
+   "status": "skipped",
+   "detail": {
+    "batch": 3,
+    "reason": "no valid output after 3 attempts"
+   },
+   "finished_at": "2026-10-16T19:53:12.241Z"
+  },
+  {
+   "step_id": 874,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 4,
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T19:53:12.242Z"
+  },
+  {
+   "step_id": 875,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 4,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 19:53:42 GMT\",\"content-type\":\"application/json\",\"content-length\":\"377\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"1\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m534e1x7ey8sdk8j25c45d0c\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=iAMXmMgivRCGFQHpQL5MY4nJpe4kaEHqhgorZMD0Ct4-1792180422.5522485-1.0.1.1-Gwi6pV8RZfNm65hU5_Yw3bNHTBGs0tL7iaIyAzmBSA7irl.n77dfVrPRXjQOyycu25a2G875Nl4wIMcu.XG4JW6AJMXbhtEmdnQC6sJHc_ItA8eiPGekfPgApKGgsuX2; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:23:42 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b99c78fe028137-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. A claim is one checkable ass"
+   },
+   "finished_at": "2026-10-16T19:53:42.810Z"
+  },
+  {
+   "step_id": 876,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 4,
+    "attempt": 2
+   },
+   "finished_at": "2026-10-16T19:53:42.828Z"
+  },
+  {
+   "step_id": 877,
+   "step_name": "claims_batch",
+   "status": "done",
+   "detail": {
+    "kept": [
+     {
+      "type": "other",
+      "cites": [],
+      "claim": "Table 2 shows simple adaptive strategies are inadequate for handling complex queries in multi-hop datasets.",
+      "values": [],
+      "sentence": "Also, as shown in Table 2, such simple adaptive strategies are particularly inadequate for handling complex queries in multi-hop datasets, which require aggregated information and reasoning over multiple documents.",
+      "refers_to": [
+       "table:2"
+      ],
+      "comparison": null,
+      "sentence_id": "b:60/s:3",
+      "unknown_refs": []
+     },
+     {
+      "type": "comparison",
+      "cites": [],
+      "claim": "Our adaptive strategy is more efficient than the complex multi-step strategy across all model sizes.",
+      "values": [],
+      "sentence": "As shown in Table 1, compared to the complex multi-step strategy, our proposed adaptive strategy is significantly more efficient across all model sizes.",
+      "refers_to": [
+       "table:1"
+      ],
+      "comparison": {
+       "kind": "unspecified",
+       "system": "our adaptive strategy",
+       "baseline": "complex multi-step strategy",
+       "direction": "better",
+       "difference": ""
+      },
+      "sentence_id": "b:60/s:6",
+      "unknown_refs": []
+     },
+     {
+      "type": "comparison",
+      "cites": [],
+      "claim": "The classification accuracy of our Adaptive-RAG is better than other adaptive retrieval baselines, leading to overall QA performance improvements.",
+      "values": [],
+      "sentence": "As Figure 3 (Left and Center) shows, the classification accuracy of our Adaptive-RAG is better than those of the other adaptive retrieval baselines, which leads to overall QA performance improvements.",
+      "refers_to": [
+       "figure:3"
+      ],
+      "comparison": {
+       "kind": "unspecified",
+       "system": "our Adaptive-RAG",
+       "baseline": "other adaptive retrieval baselines",
+       "direction": "better",
+       "difference": ""
+      },
+      "sentence_id": "b:61/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Figure 3 (Right) shows the confusion matrix of our classifier.",
+      "values": [],
+      "sentence": "In addition to the true positive performance of our classifier averaged over all those three labels in Figure 3 (Left and Center), we further report its confusion matrix in Figure 3 (Right).",
+      "refers_to": [
+       "figure:3"
+      ],
+      "comparison": null,
+      "sentence_id": "b:61/s:3",
+      "unknown_refs": []
+     },
+     {
+      "type": "result",
+      "cites": [],
+      "claim": "The confusion matrix shows misclassification rates: 'C (Multi)' as 'B (One)' 31%, 'B (One)' as 'C (Multi)' 23%, 'A (No)' as 'B (One)' 47%, and 'A (No)' as 'C (Multi)' 22%.",
+      "values": [
+       {
+        "value": "31%",
+        "metric": "misclassification rate",
+        "system": "our classifier",
+        "dataset": "",
+        "setting": "C (Multi) as B (One)"
+       },
+       {
+        "value": "23%",
+        "metric": "misclassification rate",
+        "system": "our classifier",
+        "dataset": "",
+        "setting": "B (One) as C (Multi)"
+       },
+       {
+        "value": "47%",
+        "metric": "misclassification rate",
+        "system": "our classifier",
+        "dataset": "",
+        "setting": "A (No) as B (One)"
+       },
+       {
+        "value": "22%",
+        "metric": "misclassification rate",
+        "system": "our classifier",
+        "dataset": "",
+        "setting": "A (No) as C (Multi)"
+       }
+      ],
+      "sentence": "We note that the confusion matrix reveals some notable trends: 'C (Multi)' is sometimes misclassified as 'B (One)' (about 31%) and 'B (One)' as 'C (Multi)' (about 23%); 'A (No)' is misclassified often as 'B (One)' (about 47%) and less frequently as 'C (Multi)' (about 22%).",
+      "refers_to": [
+       "figure:3"
+      ],
+      "comparison": null,
+      "sentence_id": "b:61/s:4",
+      "unknown_refs": []
+     },
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Table 1 shows relative elapsed time for each RAG strategy, and Table 3 provides exact elapsed time per query for Adaptive-RAG and label distribution.",
+      "values": [],
+      "sentence": "Analyses on Efficiency for Classifier While Table 1 shows the relative elapsed time for each of the three different RAG strategies, we further provide the exact elapsed time per query for our AdaptiveRAG and the distribution for predicted labels from our query-complexity classifier in Table 3.",
+      "refers_to": [
+       "table:1",
+       "table:3"
+      ],
+      "comparison": null,
+      "sentence_id": "b:62/s:0",
+      "unknown_refs": []
+     },
+     {
+      "type": "other",
+      "cites": [],
+      "claim": "Table 1 (relative time) and Table 3 (exact time) show that efficiency can be substantially improved by identifying simple or straightforward queries.",
+      "values": [],
+      "sentence": "Similar to the results of the elapsed time in Table 1 (relative time), Table 3 (exact time) shows that efficiency can be substantially improved by identifying simple or straightforward queries.",
+      "refers_to": [
+       "table:1",
+       "table:3"
+      ],
+      "comparison": null,
+      "sentence_id": "b:62/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "other",
+      "cites": [],
+      "claim": "We analyze different strategies for training the classifier by ablating our full training strategy, which includes generating silver data and utilizing inductive bias.",
+      "values": [],
+      "sentence": "Here, we further analyze the different strategies for training the classifier by ablating our full training strategy, which includes two approaches: generating silver data from predicted outcomes of models and utilizing inductive bias in datasets (see Section 3.2).",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:63/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "comparison",
+      "cites": [],
+      "claim": "Our training strategy is significantly more efficient than the strategy relying solely on inductive bias.",
+      "values": [],
+      "sentence": "As Table 4 shows, compared to the training strategy relying solely on the data derived from inductive bias, ours is significantly more efficient.",
+      "refers_to": [
+       "table:4"
+      ],
+      "comparison": {
+       "kind": "unspecified",
+       "system": "our training strategy",
+       "baseline": "inductive bias only strategy",
+       "direction": "better",
+       "difference": ""
+      },
+      "sentence_id": "b:63/s:2",
+      "unknown_refs": []
+     },
+     {
+      "type": "result",
+      "cites": [],
+      "claim": "Table 6 shows no significant performance differences among classifiers of various sizes.",
+      "values": [],
+      "sentence": "As shown in Table 6, we observe no significant performance differences among classifiers of various sizes, even with reduced complexity and fewer parameters in smaller classifiers.",
+      "refers_to": [
+       "table:6"
+      ],
+      "comparison": null,
+      "sentence_id": "b:64/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Table 5 shows the classified complexity and query handling patterns for both simple and complex questions.",
+      "values": [],
+      "sentence": "Table 5 shows the classified complexity and the query handling patterns for both simple and complex questions.",
+      "refers_to": [
+       "table:5"
+      ],
+      "comparison": null,
+      "sentence_id": "b:65/s:1",
+      "unknown_refs": []
+     }
+    ],
+    "batch": 4,
+    "usage": {
+     "queue_time": 0.153497437,
+     "total_time": 2.130343788,
+     "prompt_time": 0.297618631,
+     "total_tokens": 4227,
+     "prompt_tokens": 2457,
+     "completion_time": 1.832725157,
+     "completion_tokens": 1770,
+     "completion_tokens_details": {
+      "reasoning_tokens": 805
+     }
+    },
+    "dropped": [
+     {
+      "type": "comparison",
+      "cites": [],
+      "claim": "Our method achieves best performance while being much more efficient than Adaptive-RAG without the oracle classifier.",
+      "reason": "unknown sentence id",
+      "values": [],
+      "refers_to": [
+       "table:1",
+       "table:2"
+      ],
+      "comparison": {
+       "kind": "unspecified",
+       "system": "our method",
+       "baseline": "Adaptive-RAG without oracle classifier",
+       "direction": "better",
+       "difference": ""
+      },
+      "sentence_id": "b:60/s/9"
+     }
+    ]
+   },
+   "finished_at": "2026-10-16T19:54:15.425Z"
+  },
+  {
+   "step_id": 878,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 5,
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T19:54:15.443Z"
+  },
+  {
+   "step_id": 879,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 5,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 19:54:46 GMT\",\"content-type\":\"application/json\",\"content-length\":\"382\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"1169\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"999\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1m26.4s\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m534g0c1ep3rq5jzgxn0kay2\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=e5F1TvAx8OPOb4p7Jwgjg0BHKGeRcp6EHXEmh9vwZTA-1792180486.5142677-1.0.1.1-4pqtak_K7kw02g9MCcryOhMc8v5tkdFpdOXacpaENuMnWv76AVZ0KnUBEeeuK.GrVo_gEg3YTNjYUEv8qS35EhdDHMSlcLxXIFPXHmVLd__osz6ODNp6jieu_VJNH0Dz; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:24:46 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b99e08bc54376c-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claim"
+   },
+   "finished_at": "2026-10-16T19:54:46.779Z"
+  },
+  {
+   "step_id": 880,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 5,
+    "attempt": 2
+   },
+   "finished_at": "2026-10-16T19:54:46.799Z"
+  },
+  {
+   "step_id": 881,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 5,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 19:55:16 GMT\",\"content-type\":\"application/json\",\"content-length\":\"382\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"1137\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"999\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1m26.4s\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m534gxz2eajbhsvdsfvhvky6\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=doXNrU_jiPKpocLbIDnVpvULYgKYq.RH78mwF0viGpE-1792180516.8126788-1.0.1.1-FEToMXFce3uYDsDcPv7zDczTRNaKUS0z2wdNGJjcFGgosiWGjWKLErPPFLlefTF.5phL46zQMUxqkOAvd9kDudrAynf_h0MpuGomiEnmSpHyD7dsSSTaewqQ.4dQyMWV; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:25:16 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b99ec608eb2e36-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claim"
+   },
+   "finished_at": "2026-10-16T19:55:17.071Z"
+  },
+  {
+   "step_id": 882,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 5,
+    "attempt": 3
+   },
+   "finished_at": "2026-10-16T19:55:17.093Z"
+  },
+  {
+   "step_id": 883,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 5,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 19:55:47 GMT\",\"content-type\":\"application/json\",\"content-length\":\"388\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"1773\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m534hvm0evqrjkpam2fc1b5g\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=meLeK8LHJY5Nt.qkLnQaUDAHQ.EVub6PQPbF0uZwLPI-1792180547.1833718-1.0.1.1-tLc1yo7ScFfCF479QLLNu_HjdT3lNHy0YhTTUuUSbdYojMgiXpqVKIOv9cbo2p2FbRz6LLkp2EosZb6qAr6uSCAqCinO6_5lrxBXvFEKhoI0T1VGSylSDG6dhmV1x6Bg; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:25:47 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b99f83eb5e0d4b-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. "
+   },
+   "finished_at": "2026-10-16T19:55:47.449Z"
+  },
+  {
+   "step_id": 884,
+   "step_name": "claims_batch",
+   "status": "skipped",
+   "detail": {
+    "batch": 5,
+    "reason": "no valid output after 3 attempts"
+   },
+   "finished_at": "2026-10-16T19:55:47.469Z"
+  }
+ ]
+}
