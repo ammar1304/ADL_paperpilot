@@ -369,7 +369,7 @@
     "url": "={{ $env.PP_TOOLS_URL }}/audit/{{ $('Called by router').first().json.run_id }}/claims/error",
     "sendBody": true,
     "specifyBody": "json",
-    "jsonBody": "={{ JSON.stringify({ batch: $('Next claim batch').last().json.batch, error: JSON.stringify($json).slice(0, 2000) }) }}",
+    "jsonBody": "={{ JSON.stringify({ batch: $('Next claim batch').last().json.batch, error: JSON.stringify({ error: $json.error, message: $json.message, status: $json.statusCode }).slice(0, 2000) }) }}",
     "options": {
      "timeout": 30000,
      "response": {
