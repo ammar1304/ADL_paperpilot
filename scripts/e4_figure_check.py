@@ -47,10 +47,12 @@ def dotenv() -> dict[str, str]:
 
 
 def call_groq(body: dict, key: str) -> tuple[int, dict | str, dict]:
+    """(status, answer, headers); status 0 for a network failure or a timeout (first E4 run:
+    one call hung for over 120 s and the uncaught timeout ended the run)."""
     req = urllib.request.Request(GROQ, data=json.dumps(body).encode(), method="POST", headers={
         "Authorization": f"Bearer {key}", "Content-Type": "application/json", "User-Agent": "PaperPilot/0.1"})
     try:
-        with urllib.request.urlopen(req, timeout=120) as resp:
+        with urllib.request.urlopen(req, timeout=90) as resp:
             return resp.status, json.loads(resp.read().decode()), dict(resp.headers)
     except urllib.error.HTTPError as exc:
         raw = exc.read().decode()
@@ -58,12 +60,20 @@ def call_groq(body: dict, key: str) -> tuple[int, dict | str, dict]:
             return exc.code, json.loads(raw), dict(exc.headers)
         except ValueError:
             return exc.code, raw, dict(exc.headers)
+    except (urllib.error.URLError, TimeoutError, OSError) as exc:
+        return 0, f"network: {type(exc).__name__}: {exc}", {}
 
 
 def run_pass(figures: list[dict], prompt, key: str, cache: Path, variant: str, out: Path) -> dict:
     """One pass over the gold figures with one request variant; writes its files to out/."""
     out.mkdir(parents=True)
     rows, calls = [], []
+    checks_file, calls_file = (out / "checks.jsonl").open("a", encoding="utf-8"), (out / "calls.jsonl").open("a", encoding="utf-8")
+
+    def keep_call(c: dict) -> None:  # written as it happens, so a crash loses nothing
+        calls.append(c)
+        calls_file.write(json.dumps(c, ensure_ascii=False) + "\n")
+        calls_file.flush()
     for n, item in enumerate(figures):
         folder = cache / "audit" / item["sha256"]
         image = folder / "figures" / (item["figure"].replace(":", "_") + ".png")
@@ -82,6 +92,10 @@ def run_pass(figures: list[dict], prompt, key: str, cache: Path, variant: str, o
             started = time.monotonic()
             status, answer, headers = call_groq(body, key)
             secs = round(time.monotonic() - started, 1)
+            if status == 0:
+                print(f"  {answer}; retrying in 30 s")
+                time.sleep(30)
+                continue
             if status != 429:
                 break
             wait = float(headers.get("retry-after") or headers.get("Retry-After") or 60)
@@ -93,7 +107,7 @@ def run_pass(figures: list[dict], prompt, key: str, cache: Path, variant: str, o
             time.sleep(wait + 1)
         if status != 200 or not isinstance(answer, dict):
             print(f"{item['paper']} {item['figure']}: HTTP {status}: {str(answer)[:300]}")
-            calls.append({"paper": item["paper"], "figure": item["figure"], "status": status, "error": str(answer)[:2000]})
+            keep_call({"paper": item["paper"], "figure": item["figure"], "status": status, "error": str(answer)[:2000]})
             if stop:
                 break
             continue
@@ -103,20 +117,23 @@ def run_pass(figures: list[dict], prompt, key: str, cache: Path, variant: str, o
             description, checks = fig.validate(content, list(range(len(item["claims"]))))
         except ValueError as exc:
             print(f"{item['paper']} {item['figure']}: invalid output ({exc}): {content[:300]}")
-            calls.append({"paper": item["paper"], "figure": item["figure"], "status": status, "error": f"invalid: {exc}",
-                          "content": content[:2000], "usage": usage})
+            keep_call({"paper": item["paper"], "figure": item["figure"], "status": status, "error": f"invalid: {exc}",
+                       "content": content[:2000], "usage": usage})
             continue
-        calls.append({"paper": item["paper"], "figure": item["figure"], "status": status, "seconds": secs, "usage": usage,
-                      "description": description})
+        keep_call({"paper": item["paper"], "figure": item["figure"], "status": status, "seconds": secs, "usage": usage,
+                   "description": description})
         print(f"{item['paper']} {item['figure']} ({secs} s, {usage.get('completion_tokens')} output tokens): {description[:140]}")
         for c, check in zip(item["claims"], checks):
             ok = check["verdict"] == c["expected"]
-            rows.append({"paper": item["paper"], "figure": item["figure"], "claim": c["claim"], "expected": c["expected"],
-                         "got": check["verdict"], "correct": ok, "evidence": check["evidence"], "read_values": check["read_values"]})
+            row = {"paper": item["paper"], "figure": item["figure"], "claim": c["claim"], "expected": c["expected"],
+                   "got": check["verdict"], "correct": ok, "evidence": check["evidence"], "read_values": check["read_values"]}
+            rows.append(row)
+            checks_file.write(json.dumps(row, ensure_ascii=False) + "\n")
+            checks_file.flush()
             print(f"   {'ok ' if ok else 'XX '} expected {c['expected']:12} got {check['verdict']:12} {c['claim'][:90]}")
 
-    (out / "checks.jsonl").write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in rows), encoding="utf-8")
-    (out / "calls.jsonl").write_text("".join(json.dumps(r, ensure_ascii=False) + "\n" for r in calls), encoding="utf-8")
+    checks_file.close()
+    calls_file.close()
     reasoning, mode = fig.VARIANTS[variant]
     answered = [c for c in calls if c.get("description") is not None]
     tokens = [c["usage"].get("completion_tokens", 0) for c in answered if c.get("usage")]
