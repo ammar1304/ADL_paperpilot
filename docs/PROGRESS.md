@@ -424,5 +424,6 @@ Branch `feat/m3-parser-spike`. Decision D31: Docling (CPU) instead of MinerU.
 - [x] Team PC, first run: E4 22/22 verdicts right but 7 of 14 calls failed (F-021); audits of CRAG (3/3 figures) and Self-RAG (3/4) through n8n with the figure check, end to end
 - [x] P5 v2 (output shape in the prompt), output budget 900, request variants A/B/C; 195 tests
 - [x] Team PC: E4 on variants A and B (C not reached: daily limit). A chosen (D36): 34/34 verdicts right, failures retried; empty answers now count as failures
-- [ ] Team PC: final E4 with variant A and 3 attempts; final audits of CRAG and Self-RAG; then merge PR #27
+- [x] First attempt at the final run (2026-10-17 00:06): the vision model's 200K tokens a day were already spent by the variant comparison. E4 got 1 figure (5/5 right). The audits showed the designed degradation: one 429, then the figure check stopped with "Groq daily token limit reached on qwen/qwen3.8-27b" in the result, while claims and the number check completed (CRAG: 13 margins supported).
+- [ ] Team PC: final E4 with variant A and 3 attempts, and the two audits, once the vision tokens are free again (Groq counts them over a rolling 24 hours); then merge PR #27
 
