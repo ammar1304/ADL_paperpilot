@@ -1,0 +1,9 @@
+config,idea,ok,repeat,error,expected,expected_added_by_agent,expected_in_candidates,expected_in_closest,false_overlap,judge_attempts,llm_coverage_claim_unspecified,llm_discusses_unspecified,llm_overclaims,llm_states_scope,n_closest,n_judged,n_queries,overlap_found,query_similarity,run_id,search_rounds,seconds,unverified,web_closest,web_queries
+agent-on,out-of-domain,True,1,,0,0,0,0,False,1,False,False,False,True,0,6,5,False,0.238,4add389a-5b13-4a36-8292-8144282322fe,1,42.3,0,0,1
+agent-on,out-of-domain,True,2,,0,0,0,0,False,1,False,False,False,True,0,6,5,False,0.243,012dcf59-6e36-4777-a804-7c256b381fc9,1,46.0,0,0,1
+agent-on,draft-and-verify-decoding,True,1,,2,0,0,0,False,1,False,False,False,True,0,6,5,False,0.105,4810bf81-f263-4fa6-bf31-38046b81793e,1,57.6,0,0,1
+agent-on,draft-and-verify-decoding,True,2,,2,0,0,0,False,1,False,False,False,True,2,6,5,True,0.105,78fec463-aeab-4388-ae6d-ab914a2321ad,1,48.9,0,0,2
+agent-on,low-rank-finetuning,True,1,,1,0,0,0,False,1,False,False,False,True,6,6,5,True,0.204,903896ef-c69b-4f2e-bb52-c1328b7338bd,0,24.6,0,0,0
+agent-on,low-rank-finetuning,True,2,,1,0,0,0,False,1,False,False,False,True,6,6,5,True,0.132,6c1523b9-8fc4-405b-ac01-cf06a62f46e6,0,27.7,0,0,0
+agent-on,verify-own-answer,True,1,,1,0,0,0,False,1,False,False,False,True,6,6,6,True,0.075,b853eb16-31a3-44b0-90fd-d27e2198cf4c,0,20.4,0,0,0
+agent-on,verify-own-answer,True,2,,1,0,0,0,False,1,False,False,False,True,6,6,5,True,0.112,5a3102d7-863f-49d4-92a7-2b1db8334c54,0,29.9,0,0,0
