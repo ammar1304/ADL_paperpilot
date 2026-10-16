@@ -26,6 +26,7 @@ from typing import Any
 
 _CELL_NUMBER = re.compile(r"^\s*[*_]*([+-]?\d[\d,]*(?:\.\d+)?)\s*(%?)\s*[*_†‡§¶∗\s]*(?:\(.*\))?\s*$")
 _NUMBER = re.compile(r"[+-]?\d[\d,]*(?:\.\d+)?")
+_SPACED_DECIMAL = re.compile(r"(?<=\d)\s+\.\s*(?=\d)|(?<=\d)\s*\.\s+(?=\d)")
 LOWER_BETTER = re.compile(r"time|latency|step|error|loss|perplexity|\bppl\b|cost|\bwer\b|seconds|\bsec\b", re.I)
 _ABLATION = re.compile(r"^\s*(w/o|w/|without|with|[-−–+])[\s.]", re.I)  # "w/o. refinement", "- rewriting"
 _OURS = re.compile(r"\bours?\b|our (method|model|approach|system|framework)|proposed (method|model|approach)", re.I)
@@ -47,6 +48,7 @@ class Cell:
     col_ctx: list[str] = field(default_factory=list)
     section: str = ""
     block: int = 0  # which header block: tables can stack sub-tables that reuse the same columns
+    caption: str = ""  # often names the dataset or the metric that no header repeats
 
     def context(self) -> list[str]:
         return self.row_ctx + self.col_ctx + ([self.section] if self.section else [])
@@ -58,7 +60,8 @@ class Cell:
 
 def parse_number(text: str) -> tuple[float, int, bool] | None:
     """(value, decimals, has %) for a cell or claimed value that is one number; None otherwise."""
-    m = _CELL_NUMBER.match(text or "")
+    text = _SPACED_DECIMAL.sub(".", text or "")  # Docling sometimes writes "62 . 3"
+    m = _CELL_NUMBER.match(text)
     if not m:
         return None
     raw = m.group(1).replace(",", "")
@@ -68,7 +71,8 @@ def parse_number(text: str) -> tuple[float, int, bool] | None:
 
 def claimed_number(text: str) -> tuple[float, int, bool] | None:
     """The first number of a claimed value ("7.0%", "0.77B", "+4.4") with its precision."""
-    m = _NUMBER.search(text or "")
+    text = _SPACED_DECIMAL.sub(".", text or "")
+    m = _NUMBER.search(text)
     if not m:
         return None
     raw = m.group(0).replace(",", "").lstrip("+")
@@ -87,28 +91,31 @@ def _tokens(s: str) -> set[str]:
     return set(re.findall(r"[0-9a-z]+", s.lower()))
 
 
-def similarity(a: str, b: str) -> float:
+def similarity(a: str, b: str, abbreviations: bool = True) -> float:
     """1.0 same name ignoring case and punctuation; 0.9 one is an abbreviation of the
-    other ("Bio" / "Biography", "ARC" / "Arc-Challenge"); else token overlap."""
+    other ("Bio" / "Biography", "ARC" / "Arc-Challenge"); else token overlap.
+
+    Abbreviations are for datasets and metrics only: for a system name they would
+    read "RAPTOR" as "RAPTOR + GPT-4", a different row (E3 held-out)."""
     ca, cb = _compact(a), _compact(b)
     if not ca or not cb:
         return 0.0
     if ca == cb:
         return 1.0
     short, long_ = sorted((ca, cb), key=len)
-    if len(short) >= 3 and long_.startswith(short) and not short.isdigit():
+    if abbreviations and len(short) >= 3 and long_.startswith(short) and not short.isdigit():
         return 0.9
     ta, tb = _tokens(a), _tokens(b)
     return len(ta & tb) / len(ta | tb) if ta and tb else 0.0
 
 
-def best_match(name: str, texts: list[str]) -> float:
+def best_match(name: str, texts: list[str], abbreviations: bool = True) -> float:
     """How well a name matches the best of the texts; a text such as "PopQA (Accuracy)"
     is also tried part by part ("PopQA", "Accuracy")."""
     best = 0.0
     for t in texts:
         parts = [t] + [p for p in re.split(r"[()\[\],/]| - ", t) if p.strip()]
-        best = max(best, *(similarity(name, p) for p in parts))
+        best = max(best, *(similarity(name, p, abbreviations) for p in parts))
     return best
 
 
@@ -179,7 +186,8 @@ def index_table(table: dict[str, Any]) -> list[Cell]:
                 t = h[c].strip()
                 if t and t not in col_ctx:
                     col_ctx.append(t)
-            cells.append(Cell(table["id"], r, c, row[c], value, decimals, percent, list(row_ctx), col_ctx, section, block))
+            cells.append(Cell(table["id"], r, c, row[c], value, decimals, percent, list(row_ctx), col_ctx, section, block,
+                              (table.get("caption") or "")[:300]))
     return cells
 
 
@@ -190,9 +198,10 @@ def index_paper(paper: dict[str, Any]) -> dict[str, list[Cell]]:
 # ---- locating a claim's cell ------------------------------------------------------------------
 
 
-def _system_names(system: str, paper: dict[str, Any]) -> list[str]:
-    """The claim's system, plus "(Ours)" when the claim says "our method"."""
-    names = [system]
+def _system_names(system: str, paper: dict[str, Any], setting: str = "") -> list[str]:
+    """The claim's system; with its setting too ("RAPTOR" + "GPT-4" is the row "RAPTOR + GPT-4");
+    plus "(Ours)" when the claim says "our method"."""
+    names = [system] + ([f"{system} {setting}"] if setting.strip() else [])
     if _OURS.search(system):
         names.append("Ours")
     return names
@@ -254,11 +263,12 @@ def locate(cells: list[Cell], system: str, dataset: str = "", metric: str = "", 
     own words, only narrow the candidates."""
     if not system.strip():
         return []
-    names = _system_names(system, paper or {})
+    names = _system_names(system, paper or {}, setting)
     # the row's own label (or a column header, for transposed tables) counts fully; a label the
     # row only inherits (its group, or the method a "w/o ..." ablation belongs to) a little less,
     # so "Adaptive-RAG (Ours)" is its own row, not "Adaptive-RAG (Ours) / w/o Binary"
-    scored = [(max(max(best_match(n, c.row_ctx[-1:] + c.col_ctx), 0.95 * best_match(n, c.row_ctx[:-1])) for n in names), c)
+    scored = [(max(max(best_match(n, c.row_ctx[-1:] + c.col_ctx, False), 0.95 * best_match(n, c.row_ctx[:-1], False))
+                   for n in names), c)
               for c in cells]
     top = max((s for s, _ in scored), default=0.0)
     if top < SYSTEM_MIN:
@@ -267,11 +277,43 @@ def locate(cells: list[Cell], system: str, dataset: str = "", metric: str = "", 
     for wanted in (setting, dataset, metric):
         if not wanted.strip():
             continue
-        scores = [(best_match(wanted, c.context()), c) for c in found]
+        scores = [(field_match(wanted, c), c) for c in found]
         best = max((s for s, _ in scores), default=0.0)
         if best >= FIELD_MIN:
             found = [c for s, c in scores if s == best]
     return narrow_by_text(found, text, [system])
+
+
+def field_match(field: str, cell: Cell) -> float:
+    """How well a dataset, metric or setting fits the cell: its labels, or a mention in the
+    table's caption (worth a little less than a label, which names this very cell)."""
+    score = best_match(field, cell.context())
+    words = _compact(cell.caption)
+    c = _compact(field)
+    if c and len(c) >= 2 and (c in words or _tokens(field) <= _tokens(cell.caption)):
+        score = max(score, 0.7)
+    return score
+
+
+def unmatched_fields(cell: Cell, **fields: str) -> list[str]:
+    """The claim's named details (dataset, metric, setting) that neither the cell's labels
+    nor its table's caption mention. A contradiction needs none: a value that does not match
+    is only evidence when the cell is surely the one the claim means (E3 held-out)."""
+    return [f"{k} '{v}'" for k, v in fields.items() if v and v.strip() and field_match(v, cell) < FIELD_MIN]
+
+
+# "by 20%", "by margins of 7.0%", "an improvement of 5%"; not "an accuracy of 62.4%", which is a score
+_MARGIN_WORDS = (r"\b(?:by|(?:improvements?|margins?|gains?|increases?|boosts?|drops?|decreases?)\s+of)\s+"
+                 r"(?:(?:a\s+)?margins?\s+of\s+|about\s+|around\s+|nearly\s+|over\s+|up\s+to\s+|at\s+least\s+)?")
+
+
+def _is_margin(value: str, claim: dict[str, Any]) -> bool:
+    """"improves ... by 20%" written as a value: a margin, not the system's score."""
+    m = _NUMBER.search(value or "")
+    if not m:
+        return False
+    text = (claim.get("sentence") or "") + " " + (claim.get("claim") or "")
+    return re.search(_MARGIN_WORDS + re.escape(m.group(0)), text, re.I) is not None
 
 
 def _close(computed: float, claimed: float, decimals: int, slack_units: float = 0.5) -> bool:
@@ -298,6 +340,8 @@ def check_value(claim: dict[str, Any], value: dict[str, Any], index: dict[str, l
     if parsed is None:
         return out | {"verdict": "unverifiable", "note": "no number"}
     claimed, decimals, _ = parsed
+    if _is_margin(value["value"], claim):
+        return out | {"verdict": "unverifiable", "note": "a margin over an unnamed baseline, not a score"}
     pool = _tables_for(claim, index)
     found = locate(pool, value.get("system", ""), value.get("dataset", ""), value.get("metric", ""),
                    value.get("setting", ""), paper, claim.get("claim", ""))
@@ -307,6 +351,11 @@ def check_value(claim: dict[str, Any], value: dict[str, Any], index: dict[str, l
     if matching:
         return out | {"verdict": "supported", "cell": matching[0].where(), "candidates": len(found)}
     if len(found) == 1:
+        missing = unmatched_fields(found[0], dataset=value.get("dataset", ""), metric=value.get("metric", ""),
+                                   setting=value.get("setting", ""))
+        if missing:
+            return out | {"verdict": "unverifiable", "cell": found[0].where(),
+                          "note": f"the closest cell ({found[0].text.strip()}) does not mention {', '.join(missing)}"}
         return out | {"verdict": "contradicted", "cell": found[0].where(), "table_says": found[0].text.strip(),
                       "note": f"the table gives {found[0].text.strip()}"}
     return out | {"verdict": "unverifiable", "note": f"{len(found)} cells fit and none shows {value['value']}",
@@ -332,12 +381,14 @@ def check_difference(claim: dict[str, Any], index: dict[str, list[Cell]],
     base_cells = locate(pool, comp.get("baseline", ""), dataset, metric, setting, paper)
     pairs = [(s, b) for s in sys_cells for b in base_cells
              if s.table == b.table and s.block == b.block and s.col == b.col and s.section == b.section and s.row != b.row]
+    pinned = len(pairs) == 1  # only one column could be meant, or the claim's words chose it
     if len(pairs) > 1:  # the claim's words pick the column and the section
         names = [comp.get("system", ""), comp.get("baseline", "")]
         scored = [(text_score(s, claim.get("claim", ""), names + b.row_ctx, [comp.get("baseline", ""), *b.row_ctx[-1:]]), (s, b))
                   for s, b in pairs]
         best = max(sc for sc, _ in scored)
         pairs = [p for sc, p in scored if sc == best]
+        pinned = best > 0 or bool(dataset or metric)
     if not pairs:
         return out | {"verdict": "unverifiable", "note": "the system and the baseline could not both be located in one column"}
     results = []
@@ -364,6 +415,11 @@ def check_difference(claim: dict[str, Any], index: dict[str, list[Cell]],
     if ok:
         note = f"{s.text.strip()} vs {b.text.strip()}: {kind} difference"
         return out | detail | {"verdict": "supported", "matched_as": kind, "note": note}
+    missing = unmatched_fields(s, dataset=dataset, metric=metric, setting=setting)
+    if not pinned or missing:
+        why = f"does not mention {', '.join(missing)}" if missing else "nothing in the claim says which column"
+        return out | detail | {"verdict": "unverifiable", "note": f"{s.text.strip()} vs {b.text.strip()} is the closest pair, but the table {why}"
+                               if missing else f"{len(pairs)} column pairs fit and {why}"}
     if len(pairs) == 1 or len({(r[3], r[4]) for r in results}) == 1:
         why = "the direction is reversed" if (kind and not direction_ok) else \
             f"the table gives {s.text.strip()} vs {b.text.strip()}: {absolute} points" + \

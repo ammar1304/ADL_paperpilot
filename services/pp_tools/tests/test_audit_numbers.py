@@ -139,3 +139,64 @@ def test_values_without_a_system_and_margins_already_checked_are_skipped():
                        {"value": "14k", "system": "", "dataset": "PopQA", "metric": "samples", "setting": "", "role": "value"}]
     out = check_claims(PAPER, [claim])
     assert [c["kind"] for c in out["checks"]] == ["difference"] and out["summary"]["supported"] == 1
+
+
+# ---- lessons from the held-out papers (RAPTOR, FLARE) ---------------------------------------
+
+RAPTOR_LIKE = {"tables": [
+    {"id": "table:3", "caption": "Table 3: F-1 scores on QASPER.", "grid": [
+        ["Retriever", "GPT-4 F-1 Match", "UnifiedQA F-1 Match"],
+        ["DPR", "53.0", "32.1"],
+        ["RAPTOR", "55.7", "36.6"]]},
+    {"id": "table:7", "caption": "Table 7: Accuracies on QuALITY.", "grid": [
+        ["Model", "Accuracy", "Accuracy"],
+        ["", "Test Set", "Hard Subset"],
+        ["CoLISA (Dong et al., 2023a)", "62 . 3", "54 . 7"],
+        ["RAPTOR + GPT-4", "82 . 6", "76 . 2"]]},
+]}
+
+
+def _raptor(claim):
+    checks = check_claims(RAPTOR_LIKE, [claim])["checks"]
+    assert len(checks) == 1
+    return checks[0]
+
+
+def test_spaced_decimals_from_the_parser_are_numbers():
+    assert parse_number("62 . 3") == (62.3, 1, False) and claimed_number("10 . 6")[0] == 10.6
+    cells = index_table(RAPTOR_LIKE["tables"][1])
+    assert [c.col_ctx for c in cells if c.row_ctx == ["RAPTOR + GPT-4"]] == [["Accuracy", "Test Set"], ["Accuracy", "Hard Subset"]]
+
+
+def test_a_margin_written_as_a_value_is_not_read_as_a_score():
+    """Held-out false alarm: "improve ... on QuALITY by 20% in absolute accuracy" was compared with RAPTOR's 55.7."""
+    claim = _value("RAPTOR", "20%", "RAPTOR with GPT-4 improves QuALITY accuracy by 20% absolute.", dataset="QuALITY",
+                   metric="accuracy", setting="GPT-4", refs=())
+    claim["sentence"] = "we can improve the best performance on the QuALITY benchmark by 20% in absolute accuracy."
+    c = _raptor(claim)
+    assert c["verdict"] == "unverifiable" and "margin" in c["note"]
+    score = _value("RAPTOR", "82.6%", "RAPTOR with GPT-4 reaches an accuracy of 82.6% on QuALITY.", dataset="QuALITY",
+                   metric="accuracy", setting="GPT-4", refs=("table:7",))
+    assert _raptor(score)["verdict"] == "supported"  # "an accuracy of X" is a score
+
+
+def test_a_system_name_is_not_an_abbreviation_of_a_longer_row():
+    """Held-out false alarm: "RAPTOR" was read as the row "RAPTOR + GPT-4"."""
+    c = _raptor(_value("RAPTOR", "62.4%", "RAPTOR achieves an accuracy of 62.4% on QuALITY.", dataset="QuALITY",
+                       metric="accuracy", refs=("table:7",)))
+    assert c["verdict"] == "unverifiable"
+    c = _raptor(_value("RAPTOR", "80.1%", "RAPTOR with GPT-4 reaches 80.1% on the QuALITY test set.", dataset="QuALITY",
+                       metric="accuracy", setting="GPT-4", refs=("table:7",)))
+    assert c["verdict"] == "contradicted" and c["table_says"] == "82 . 6"  # the setting completes the row name
+
+
+def test_a_contradiction_needs_every_named_detail_in_the_cell_or_its_caption():
+    """Saying "wrong" needs more evidence than saying "right": the cell must be the one the claim means."""
+    c = _raptor(_value("RAPTOR", "62.4%", "RAPTOR with GPT-4 reaches 62.4% accuracy on QuALITY.", dataset="QuALITY",
+                       metric="accuracy", setting="GPT-4", refs=("table:3",)))
+    assert c["verdict"] == "unverifiable" and "does not mention dataset 'QuALITY', metric 'accuracy'" in c["note"]
+    two = _raptor(_value("RAPTOR", "52.7", "RAPTOR reaches 52.7 F-1 on QASPER.", dataset="QASPER", metric="F-1", refs=("table:3",)))
+    assert two["verdict"] == "unverifiable" and "2 cells fit" in two["note"]  # GPT-4 or UnifiedQA: not said
+    c = _raptor(_value("RAPTOR", "52.7", "RAPTOR reaches 52.7 F-1 on QASPER with GPT-4.", dataset="QASPER",
+                       metric="F-1", setting="GPT-4", refs=("table:3",)))
+    assert c["verdict"] == "contradicted" and c["table_says"] == "55.7"  # QASPER is only in the caption
