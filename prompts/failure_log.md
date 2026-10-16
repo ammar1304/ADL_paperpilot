@@ -152,3 +152,49 @@ The agent added nothing, for two different reasons:
 **Other observations.**
 - Speculative decoding without the agent: closest work was 1 or 2 RAG papers rated `partial` task / `different` method. That is a weak but honest "nothing close here". The out-of-domain idea stayed at 0 overlap in both configurations.
 - The planner's web queries for speculative decoding were vague ("auxiliary model token suggestion for parallel decoding"). Whether they find the right papers is now measurable, since web results are scored.
+
+## Audit, step 3: first runs (2026-10-16)
+
+**F-011 (pipeline, not prompt): every P4 call was refused by Groq.** First audit run on the team PC (`eval/results/20261016-170157-audit-claims`, 3 papers, all HTTP 500). n8n's log: `413 Request too large for model openai/gpt-oss-20b ... tokens per minute (TPM): Limit 8000, Requested 8069`. Groq counts a request as input plus the output budget (`max_tokens`). Batches of 1,800 counted tokens of sentences plus the prompt, the parser's format instructions and a 4,096-token output budget came to 8,069 to 8,213. Fix: batches of 700 counted tokens, a 3,000-token output budget, a 40 s pause between batches, 30 s between retries, and a test that keeps the estimate under 7,000 (D33).
+
+**F-012 (pipeline): after the F-011 fix, calls were still refused, now for the minute's total.** Second run (`eval/results/20261016-171408-audit-claims`, 3 papers, HTTP 500). Groq's message: `Limit 8000, Used 7303, Requested 5578. Please try again in 36.6s`. Each request now fits, but two things combined:
+- gpt-oss-20b is a reasoning model, and its hidden reasoning tokens count, so one call really uses 6,000 to 7,000 tokens.
+- n8n's node retries wait at most 5 seconds (`waitBetweenTries` is capped), so the retries fired inside the same minute and failed too.
+
+Fix:
+- **The loop's state moved to pp-tools.** `POST /audit/{run}/claims/next` serves the first batch without a saved valid output.
+- **n8n waits 65 s before every call.** An LLM error goes through the node's error output straight back to "Next claim batch", which serves the same batch again after the pause.
+- **A batch is skipped and recorded after 3 attempts,** so a run always ends.
+- **A rerun resumes** where the previous one stopped.
+
+**F-013 (model and node): gpt-oss-20b returned nothing.** Third run (`eval/results/20261016-172946-audit-claims`, CRAG). The new loop worked: 6 batches, 3 attempts each, every one skipped, run finished in 21 minutes. But all 18 LLM calls failed. n8n's log: "The AI model returned an empty response to the Structured Output Parser" (8 times) and "Model output doesn't fit required format" (4 times). Cause:
+- gpt-oss reasons before it answers, and with the default effort it spent the whole 3,000-token output budget on reasoning, leaving no answer.
+- The budget cannot simply grow, because of the 8,000-tokens-per-minute cap (F-011).
+- n8n's Groq chat-model node exposes neither `reasoning_effort` nor Groq's strict structured outputs.
+
+Fix (D34):
+- The extractor calls Groq's API from an n8n HTTP Request node with `reasoning_effort: "low"`, `include_reasoning: false` and a strict JSON schema, so the decoder can only produce schema-valid JSON.
+- The output budget is 3,500 tokens, with a test that keeps input plus output under about 7,600.
+- LLM errors are now stored as run steps (`claims_llm_error`) instead of disappearing into the retry loop.
+
+**F-014 (n8n credential): the direct Groq call never left n8n.** Fourth run (`eval/results/20261016-181732-audit-claims`): again 18 failed calls, but the recorded error had been cut at 2,000 characters before the error field, because the error item carries the whole prompt first. Now only the error itself is recorded. A probe (`scripts/groq_claims_probe.py`) sent the identical request from Python, and Groq answered in 1.2 s:
+- 2,586 tokens in total: 2,351 in, 235 out, of which 133 reasoning;
+- finish reason "stop";
+- valid JSON, accepted by pp-tools.
+
+So Groq, the settings and the schema were right; n8n's HTTP Request node could not use the `groqApi` credential type, which belongs to n8n's Groq chat-model node. Fix: `n8n/entrypoint.sh` also creates the Groq key as a generic header credential (`httpHeaderAuth`, `Authorization: Bearer ...`), still only from `.env` and never in a workflow file.
+
+With real usage measured (about 2,600 tokens per call, not the 6,000 to 7,000 seen with default reasoning), the pause between calls is 30 s and the output budget 2,500 tokens.
+
+**F-015 (my bug, deployment): n8n stopped starting.** The F-014 change added a comment containing an apostrophe inside the single-quoted `node -e '...'` block of `n8n/entrypoint.sh`. The shell ended the string there, n8n restarted in a loop ("syntax error: unexpected '('"), and the audit request found nothing on port 5678. Fix: the apostrophe removed. `tests/test_n8n_entrypoint.py` now checks the script with `sh -n` and runs it with a stand-in n8n to check that every credential is written.
+
+
+**F-016 (my bug, workflow): every Groq call failed before leaving n8n.** First full run on the team PC (2026-10-16, `eval/results/20261016-185700-audit-claims/`): 3 papers, 22 batches, 66 attempts, 0 claims; every attempt recorded `{"error":"invalid syntax"}`. The "Extract claims" body was one n8n expression with the JSON schema written inline. n8n ends an expression at the first `}}`, and the schema contains several (`false}}`), so the expression was cut short and never evaluated. The probe script missed it because it built the body in Python. Fix: pp-tools builds the whole request (`claims_request()` in `app/audit/claims.py`, schema next to the Pydantic models it mirrors) and returns it with each batch; the node now sends `{{ JSON.stringify($json.request) }}`, and the probe sends the same object. A new test fails if any expression in any workflow contains a stray `}}`. Lesson: the probe must exercise the same path as the workflow, not a copy of it.
+
+**F-017 (design, rate limits): a spent daily quota skipped every batch in 90 s.** Second full run (`eval/results/20261016-194137-audit-claims/`): 6 of 22 batches done. Groq answered 429 with `x-ratelimit-remaining-tokens: 8000` (the per-minute budget was untouched) and `retry-after: 1009`: the 200K tokens a day of gpt-oss-20b, used up by the day's debugging. Each 429 counted as one of the batch's 3 attempts, 30 s apart, so a batch was skipped after 90 s although the limit lasted 17 minutes. Fix: n8n sends the HTTP status, `retry-after` and the model; a 429 does not use an attempt; pp-tools returns `wait_s` (retry-after when it is short, otherwise 30 s) and the Wait node uses it; a retry-after above 90 s means the daily limit, so the next batch goes to `openai/gpt-oss-120b`, which has its own limits and accepts the same strict schema; when both are spent, the run stops, records why, and the result says so in `coverage.stopped`. One full three-paper run costs about 22 calls × 3,000 tokens ≈ 66K tokens, so each model allows about three runs a day.
+
+**F-018 (LLM output, repaired in code): small, regular defects in the first 28 claims.** All 28 claims were faithful to their sentence, but: "0.77B vs 7B" was dropped because the guardrail compared "0.77B" with "0.77"; one id came back as `b:60/s/9` instead of `b:60/s:9`; the model did not link a lowercase "as shown in table 1" (7 claims); in all 13 comparisons the margin ("7.0%") was also listed as a value of the system, which the number check would read as CRAG scoring 7.0%. These are fixed deterministically in `validate()`: numbers are compared without units, an id with a typo is mapped back when exactly one id matches, references written in the sentence are added, and a value equal to the margin gets `role: "difference"`. Code, not prompt, because the rule is exact and costs no tokens.
+
+**F-019 (parser, Docling): swapped captions and spaced decimals on RAPTOR.** Two of RAPTOR's tables share a page; Docling attached each caption to the other table ("Table 4: accuracies on QuALITY" sits on the QASPER F-1 grid, and the reverse). Tables 6 and 7 come out with spaced decimals ("62 . 3"), which made whole rows look like headers. Fixes: the number reader joins spaced decimals; swapped captions are not detected, but the number check now needs the claim's named details to match the cell, so a swapped caption leads to "unverifiable", not to a false alarm. Possible later fix: check that a caption's dataset and metric words appear in the table's headers.
+
+**F-020 (number check, held-out E3): two false alarms on the first unseen paper.** The rules were tuned on three papers with 0 false alarms; on RAPTOR, 2 of 5 decided numbers were false alarms. (1) "improve ... on QuALITY by 20% in absolute accuracy" was extracted as RAPTOR's score and compared with a QASPER F-1 cell. (2) "RAPTOR achieves an accuracy of 62.4%" matched the row "RAPTOR + GPT-4" through the abbreviation rule meant for "Bio"/"Biography", in an F-1 column. Fixes: margins written as values are recognised; system names never match as abbreviations (the claim's setting can complete them); a contradiction requires every named dataset, metric and setting to be in the cell's labels or caption. After the fixes: 0 false alarms on both sets, at the cost of planted errors on RAPTOR becoming unverifiable instead of caught. The blind numbers are kept in `eval/results/20261016-220829-e3-numbers-heldout/`.

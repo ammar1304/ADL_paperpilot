@@ -9,7 +9,8 @@ Code does the cheap, exact parts and the LLM only the part that needs reading:
    a paper costs a few LLM calls instead of one call per page (Groq's free
    tier allows about 8,000 tokens per minute, D12).
 2. ``batches``: candidates grouped under a token budget, each batch one call
-   of P4-claim-extractor.
+   of P4-claim-extractor (the budget is set by Groq's per-request limit, see
+   ``steps.BATCH_TOKENS``).
 3. ``validate``: every claim the LLM returns is checked against the paper.
    The sentence must exist; every number it extracted must appear in that
    sentence as written (an extractor that invents or "corrects" a number
@@ -96,8 +97,8 @@ def sentences_block(batch: list[Sentence]) -> str:
 
 def objects_block(paper: dict[str, Any]) -> str:
     """Tables and figures the paper contains, so the extractor only links to real ones."""
-    lines = [f"{t['id']}: {t['caption'][:140] or '(no caption)'}" for t in paper["tables"] if t["number"] is not None]
-    lines += [f"{f['id']}: {f['caption'][:140] or '(no caption)'}" for f in paper["figures"] if f["number"] is not None]
+    lines = [f"{t['id']}: {t['caption'][:80] or '(no caption)'}" for t in paper["tables"] if t["number"] is not None]
+    lines += [f"{f['id']}: {f['caption'][:80] or '(no caption)'}" for f in paper["figures"] if f["number"] is not None]
     return "\n".join(lines) or "(none found)"
 
 
@@ -138,36 +139,240 @@ class ClaimsOutput(BaseModel):
     claims: list[Claim] = Field(default_factory=list, max_length=60)
 
 
+_NUMBER = re.compile(r"\d[\d,]*(?:\.\d+)?")
+_REF = re.compile(r"\b(table|tab\.|figure|fig\.)\s*(\d+)", re.I)
+
+
 def _norm_number(s: str) -> str:
-    return re.sub(r"[\s,]", "", s).rstrip("%").lstrip("+")
+    return s.replace(",", "")
+
+
+def _numbers(text: str) -> list[str]:
+    """Every number in the text, without thousands separators: "0.77B vs 7B" -> ["0.77", "7"]."""
+    return [_norm_number(m) for m in _NUMBER.findall(text)]
+
+
+def _sentence_refs(sentence: str, objects: set[str]) -> list[str]:
+    """"Table 1", "table 1", "Fig. 3" written in the sentence, as object ids that exist."""
+    found = []
+    for kind, n in _REF.findall(sentence):
+        oid = f"{'table' if kind.lower().startswith('tab') else 'figure'}:{n}"
+        if oid in objects and oid not in found:
+            found.append(oid)
+    return found
+
+
+def _canon_id(sid: str) -> str:
+    return re.sub(r"[^0-9a-z]+", ":", sid.lower()).strip(":")
 
 
 def validate(output: Any, batch_ids: set[str], sentences: dict[str, str], paper: dict[str, Any]) -> tuple[list[dict], list[dict]]:
-    """(kept claims, dropped claims with reasons). Raises ValueError if the output is not a ClaimsOutput."""
+    """(kept claims, dropped claims with reasons). Raises ValueError if the output is not a ClaimsOutput.
+
+    Deterministic repairs after the LLM (F-018), each one cheaper and more
+    reliable in code than in the prompt:
+      - a sentence id with a typo ("b:60/s/9") is mapped back when only one id matches;
+      - every number of a value must be in the sentence; units are ignored ("0.77B");
+      - a value equal to the comparison's difference is marked role="difference",
+        so the number check does not read a margin as the system's score;
+      - table and figure references written in the sentence are added when the
+        model missed them (it skips a lowercase "table 1").
+    """
     try:
         parsed = ClaimsOutput.model_validate(output)
     except ValidationError as exc:
         raise ValueError(f"claims output does not match the schema: {exc.errors()[:3]}") from exc
     objects = {t["id"] for t in paper["tables"]} | {f["id"] for f in paper["figures"]}
+    canon: dict[str, list[str]] = {}
+    for sid in batch_ids:
+        canon.setdefault(_canon_id(sid), []).append(sid)
     kept, dropped = [], []
     for c in parsed.claims:
         d = c.model_dump()
-        if c.sentence_id not in batch_ids:
-            dropped.append({**d, "reason": "unknown sentence id"})
-            continue
-        sentence = sentences[c.sentence_id]
-        digits = {_norm_number(m.group(0)) for m in re.finditer(r"[+-]?\d[\d,]*(\.\d+)?\s?%?", sentence)}
-        invented = [v.value for v in c.values if _norm_number(v.value) not in digits]
-        if c.comparison and c.comparison.difference and _norm_number(c.comparison.difference) not in digits:
-            invented.append(c.comparison.difference)
+        sid = c.sentence_id
+        if sid not in batch_ids:
+            match = canon.get(_canon_id(sid), [])
+            if len(match) != 1:
+                dropped.append({**d, "reason": "unknown sentence id"})
+                continue
+            d["sentence_id"] = sid = match[0]
+            d["repaired_id"] = c.sentence_id
+        sentence = sentences[sid]
+        digits = set(_numbers(sentence))
+        invented = [v.value for v in c.values if not _numbers(v.value) or not set(_numbers(v.value)) <= digits]
+        diff = c.comparison.difference if c.comparison else ""
+        if diff and not set(_numbers(diff)) <= digits:
+            invented.append(diff)
         if invented:
             dropped.append({**d, "reason": f"values not in the sentence: {invented}"})
             continue
+        for v in d["values"]:
+            v["role"] = "difference" if diff and _numbers(v["value"]) == _numbers(diff) else "value"
+        refs = [r for r in c.refers_to if r in objects]
         d["unknown_refs"] = [r for r in c.refers_to if r not in objects]
-        d["refers_to"] = [r for r in c.refers_to if r in objects]
+        d["refers_to"] = refs + [r for r in _sentence_refs(sentence, objects) if r not in refs]
         d["sentence"] = sentence
         kept.append(d)
     return kept, dropped
+
+
+# ---- the Groq request n8n sends --------------------------------------------------------------
+# pp-tools builds the whole request body and n8n posts it unchanged. The schema
+# used to be written inline in the n8n node, but n8n ends an expression at the
+# first "}}", and a JSON schema is full of them: every call failed with
+# "invalid syntax" before reaching Groq (F-016). Keeping it here also puts the
+# schema next to the Pydantic models it mirrors.
+
+CLAIMS_MODEL = "openai/gpt-oss-20b"
+# Groq's limits are per model, so the larger sibling has its own 200K tokens a
+# day; it accepts the same parameters and strict schema (F-017).
+CLAIMS_FALLBACK_MODELS = ("openai/gpt-oss-120b",)
+CLAIMS_MAX_OUTPUT = 2500  # Groq counts input + this budget against 8,000 tokens per minute (F-011)
+CLAIMS_SCHEMA: dict[str, Any] = {
+    "type": "object",
+    "properties": {
+        "claims": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "properties": {
+                    "sentence_id": {
+                        "type": "string"
+                    },
+                    "type": {
+                        "type": "string",
+                        "enum": [
+                            "result",
+                            "comparison",
+                            "figure",
+                            "citation",
+                            "other"
+                        ]
+                    },
+                    "claim": {
+                        "type": "string"
+                    },
+                    "values": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "value": {
+                                    "type": "string"
+                                },
+                                "metric": {
+                                    "type": "string"
+                                },
+                                "dataset": {
+                                    "type": "string"
+                                },
+                                "system": {
+                                    "type": "string"
+                                },
+                                "setting": {
+                                    "type": "string"
+                                }
+                            },
+                            "required": [
+                                "value",
+                                "metric",
+                                "dataset",
+                                "system",
+                                "setting"
+                            ],
+                            "additionalProperties": False
+                        }
+                    },
+                    "comparison": {
+                        "type": [
+                            "object",
+                            "null"
+                        ],
+                        "properties": {
+                            "system": {
+                                "type": "string"
+                            },
+                            "baseline": {
+                                "type": "string"
+                            },
+                            "difference": {
+                                "type": "string"
+                            },
+                            "kind": {
+                                "type": "string",
+                                "enum": [
+                                    "absolute",
+                                    "relative",
+                                    "unspecified"
+                                ]
+                            },
+                            "direction": {
+                                "type": "string",
+                                "enum": [
+                                    "better",
+                                    "worse",
+                                    "equal"
+                                ]
+                            }
+                        },
+                        "required": [
+                            "system",
+                            "baseline",
+                            "difference",
+                            "kind",
+                            "direction"
+                        ],
+                        "additionalProperties": False
+                    },
+                    "refers_to": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "cites": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    }
+                },
+                "required": [
+                    "sentence_id",
+                    "type",
+                    "claim",
+                    "values",
+                    "comparison",
+                    "refers_to",
+                    "cites"
+                ],
+                "additionalProperties": False
+            }
+        }
+    },
+    "required": [
+        "claims"
+    ],
+    "additionalProperties": False
+}
+
+
+def claims_request(system: str, user: str, model: str = CLAIMS_MODEL) -> dict[str, Any]:
+    """Body for POST https://api.groq.com/openai/v1/chat/completions (D34).
+
+    Low reasoning effort and hidden reasoning, or gpt-oss spends the whole
+    budget thinking and answers with nothing (F-013); a strict schema so the
+    answer is always parseable JSON.
+    """
+    return {
+        "model": model,
+        "temperature": 0,
+        "reasoning_effort": "low",
+        "include_reasoning": False,
+        "max_completion_tokens": CLAIMS_MAX_OUTPUT,
+        "messages": [{"role": "system", "content": system}, {"role": "user", "content": user}],
+        "response_format": {"type": "json_schema", "json_schema": {"name": "claims", "strict": True, "schema": CLAIMS_SCHEMA}},
+    }
 
 
 def as_dicts(sentences: list[Sentence]) -> list[dict[str, Any]]:

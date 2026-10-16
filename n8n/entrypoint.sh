@@ -1,6 +1,6 @@
 #!/bin/sh
 # Prepares n8n, then starts it:
-#   1. creates the LLM credentials (Groq, Gemini) from GROQ_API_KEY and GEMINI_API_KEY
+#   1. creates the LLM credentials (Groq, Groq header, Gemini) from GROQ_API_KEY and GEMINI_API_KEY
 #   2. imports the workflows from git and publishes them
 #   3. removes the API keys from the environment and starts n8n
 #
@@ -37,6 +37,11 @@ const key = (name) => (process.env[name] || "").trim() || "not-set";
 fs.writeFileSync(process.argv[1], JSON.stringify([
   { id: "ppGroqCredent001", name: "Groq (PaperPilot)", type: "groqApi",
     data: { apiKey: key("GROQ_API_KEY") } },
+  // The same Groq key as a generic header credential, for HTTP Request nodes that
+  // call Groq directly (the audit extractor, D34): the groqApi type only works in
+  // the Groq chat-model node of n8n (F-014). No apostrophes here: this is inside a single-quoted shell string.
+  { id: "ppGroqHeader0001", name: "Groq API header (PaperPilot)", type: "httpHeaderAuth",
+    data: { name: "Authorization", value: "Bearer " + key("GROQ_API_KEY") } },
   { id: "ppGeminiCredent1", name: "Gemini (PaperPilot)", type: "googlePalmApi",
     data: { host: process.env.GEMINI_API_HOST || "https://generativelanguage.googleapis.com", apiKey: key("GEMINI_API_KEY") } },
 ]));

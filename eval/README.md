@@ -6,7 +6,7 @@ Retrieval quality and answer quality are measured separately.
 | --- | --- | --- | --- |
 | E1 chunking | 1 | Does structure-aware chunking (B) retrieve the right paper more often than fixed-size (A)? Recall@k and MRR | Tooling ready; queries to write |
 | E2 novelty | 2 | Leave-one-out: does the system find the papers a paper builds on? | Tooling ready (`scripts/e2_leave_one_out.py`); run on the team PC |
-| E3 planted errors | 3 | Detection rate of altered table values, inflated claims, swapped citations | Parser chosen (D31); not started |
+| E3 planted errors | 3 | Number check: false alarms on correct numbers, detection of planted errors (digit, transposed digits, inflated), on real claims and on synthetic claims from every table cell (`scripts/e3_number_check.py`, offline) | Tuning papers: 0 false alarms, 0 errors accepted (D35); held-out run pending |
 | E4 gold claims | 3 | Audit judge accuracy on about 30 labelled claims | Not started |
 | E5 citation faithfulness | 3 | Faithful vs unfaithful citation pairs | Not started |
 | E6 verifier on/off | 3 | Invented citations and untraceable numbers per run | Not started |

@@ -1,0 +1,2220 @@
+{
+ "url": "https://arxiv.org/pdf/2310.11511v1",
+ "run_id": "e9f41803-4500-4639-b992-b1c7f06f22b9",
+ "result": {
+  "paper": {
+   "items": 14,
+   "pages": 30,
+   "title": "SELF-RAG: LEARNING TO RETRIEVE, GENERATE, AND CRITIQUE THROUGH SELF-REFLECTION",
+   "sha256": "d9eaa1398abac0df67a9d0933a5bf8b6d9d83d2e72da2a486073cd842dd52978",
+   "tables": [
+    "table:1",
+    "table:2",
+    "table:u1",
+    "table:u2",
+    "table:3",
+    "table:u3",
+    "table:u4",
+    "table:5"
+   ],
+   "figures": [
+    "figure:1",
+    "figure:2",
+    "figure:3",
+    "figure:4",
+    "figure:u1",
+    "figure:u2"
+   ],
+   "numbered": 8,
+   "references": 60
+  },
+  "branch": "audit",
+  "claims": [],
+  "run_id": "e9f41803-4500-4639-b992-b1c7f06f22b9",
+  "coverage": {
+   "batches": 10,
+   "by_type": {},
+   "llm_errors": 27,
+   "batches_done": 1,
+   "batches_skipped": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8
+   ],
+   "total_sentences": 507,
+   "candidate_sentences": 123
+  },
+  "implemented": "parse+claims",
+  "claims_dropped": 0,
+  "prompt_versions": {
+   "P4-claim-extractor": "v1"
+  }
+ },
+ "steps": [
+  {
+   "step_id": 885,
+   "step_name": "parse",
+   "status": "done",
+   "detail": {
+    "items": 14,
+    "pages": 30,
+    "title": "SELF-RAG: LEARNING TO RETRIEVE, GENERATE, AND CRITIQUE THROUGH SELF-REFLECTION",
+    "blocks": 197,
+    "cached": true,
+    "sha256": "d9eaa1398abac0df67a9d0933a5bf8b6d9d83d2e72da2a486073cd842dd52978",
+    "tables": [
+     {
+      "id": "table:1",
+      "page": 4,
+      "rows": 2,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:2",
+      "page": 8,
+      "rows": 24,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:u1",
+      "page": 10,
+      "rows": 4,
+      "caption_source": "none"
+     },
+     {
+      "id": "table:u2",
+      "page": 16,
+      "rows": 11,
+      "caption_source": "none"
+     },
+     {
+      "id": "table:3",
+      "page": 18,
+      "rows": 15,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:u3",
+      "page": 18,
+      "rows": 12,
+      "caption_source": "none"
+     },
+     {
+      "id": "table:u4",
+      "page": 18,
+      "rows": 3,
+      "caption_source": "none"
+     },
+     {
+      "id": "table:5",
+      "page": 23,
+      "rows": 6,
+      "caption_source": "repaired"
+     }
+    ],
+    "figures": [
+     {
+      "id": "figure:1",
+      "page": 2,
+      "has_image": true,
+      "caption_source": "docling"
+     },
+     {
+      "id": "figure:2",
+      "page": 5,
+      "has_image": true,
+      "caption_source": "docling"
+     },
+     {
+      "id": "figure:3",
+      "page": 9,
+      "has_image": true,
+      "caption_source": "docling"
+     },
+     {
+      "id": "figure:4",
+      "page": 10,
+      "has_image": true,
+      "caption_source": "docling"
+     },
+     {
+      "id": "figure:u1",
+      "page": 26,
+      "has_image": true,
+      "caption_source": "none"
+     },
+     {
+      "id": "figure:u2",
+      "page": 28,
+      "has_image": true,
+      "caption_source": "none"
+     }
+    ],
+    "seconds": 1.3,
+    "numbered": 8,
+    "references": 60
+   },
+   "finished_at": "2026-10-16T19:55:48.942Z"
+  },
+  {
+   "step_id": 886,
+   "step_name": "claim_prompts",
+   "status": "done",
+   "detail": {
+    "prompt": "P4-claim-extractor",
+    "batches": [
+     [
+      "b:7/s:0",
+      "b:7/s:1",
+      "b:7/s:2",
+      "b:7/s:3",
+      "b:7/s:6",
+      "b:7/s:11",
+      "b:9/s:2",
+      "b:9/s:5",
+      "b:11/s:1",
+      "b:13/s:1",
+      "b:13/s:2"
+     ],
+     [
+      "b:13/s:3",
+      "b:13/s:4",
+      "b:14/s:2",
+      "b:14/s:4",
+      "b:14/s:7",
+      "b:15/s:1",
+      "b:15/s:2",
+      "b:15/s:5",
+      "b:15/s:6",
+      "b:15/s:7",
+      "b:17/s:0",
+      "b:17/s:3",
+      "b:19/s:0"
+     ],
+     [
+      "b:24/s:1",
+      "b:24/s:5",
+      "b:24/s:6",
+      "b:25/s:3",
+      "b:25/s:5",
+      "b:27/s:0",
+      "b:29/s:1",
+      "b:29/s:2",
+      "b:29/s:3",
+      "b:29/s:6",
+      "b:32/s:0",
+      "b:32/s:1",
+      "b:34/s:1",
+      "b:34/s:8",
+      "b:36/s:1"
+     ],
+     [
+      "b:37/s:1",
+      "b:37/s:4",
+      "b:39/s:1",
+      "b:42/s:5",
+      "b:45/s:1",
+      "b:46/s:0",
+      "b:47/s:0",
+      "b:47/s:2",
+      "b:47/s:3",
+      "b:48/s:0",
+      "b:48/s:1",
+      "b:50/s:1"
+     ],
+     [
+      "b:50/s:3",
+      "b:51/s:5",
+      "b:53/s:2",
+      "b:53/s:4",
+      "b:53/s:5",
+      "b:54/s:1",
+      "b:54/s:2",
+      "b:54/s:3",
+      "b:54/s:6",
+      "b:59/s:1",
+      "b:59/s:3",
+      "b:60/s:1",
+      "b:60/s:7"
+     ],
+     [
+      "b:62/s:3",
+      "b:63/s:0",
+      "b:64/s:3",
+      "b:64/s:5",
+      "b:65/s:3",
+      "b:66/s:4",
+      "b:67/s:3",
+      "b:67/s:6",
+      "b:67/s:8",
+      "b:81/s:0",
+      "b:81/s:2",
+      "b:82/s:0",
+      "b:82/s:1",
+      "b:84/s:2",
+      "b:84/s:3",
+      "b:87/s:1"
+     ],
+     [
+      "b:87/s:3",
+      "b:87/s:4",
+      "b:88/s:3",
+      "b:89/s:0",
+      "b:89/s:1",
+      "b:94/s:1",
+      "b:102/s:2",
+      "b:102/s:4",
+      "b:102/s:5",
+      "b:104/s:3",
+      "b:104/s:5",
+      "b:106/s:1",
+      "b:109/s:4",
+      "b:113/s:0",
+      "b:115/s:0"
+     ],
+     [
+      "b:117/s:1",
+      "b:117/s:2",
+      "b:117/s:4",
+      "b:117/s:5",
+      "b:117/s:6",
+      "b:127/s:0",
+      "b:129/s:0",
+      "b:130/s:0",
+      "b:132/s:0",
+      "b:134/s:0",
+      "b:135/s:0",
+      "b:137/s:0",
+      "b:139/s:0"
+     ],
+     [
+      "b:143/s:0",
+      "b:144/s:0",
+      "b:145/s:1",
+      "b:149/s:0",
+      "b:149/s:1",
+      "b:150/s:0",
+      "b:151/s:0",
+      "b:153/s:0",
+      "b:154/s:0",
+      "b:155/s:0",
+      "b:157/s:0"
+     ],
+     [
+      "b:157/s:2",
+      "b:158/s:0",
+      "b:159/s:0",
+      "b:173/s:0"
+     ]
+    ],
+    "candidates": [
+     {
+      "id": "b:7/s:0",
+      "page": 1,
+      "text": "State-of-the-art LLMs continue to struggle with factual errors (Mallen et al., 2023; Min et al., 2023) despite their increased model and data scale (Ouyang et al., 2022).",
+      "block": "b:7",
+      "section": "1 INTRODUCTION",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:7/s:1",
+      "page": 1,
+      "text": "Retrieval-Augmented Generation (RAG) methods (Figure 1 left; Lewis et al. 2020; Guu et al. 2020) augment the input of LLMs with relevant retrieved passages, reducing factual errors in knowledge-intensive tasks (Ram et al., 2023; Asai et al., 2023a).",
+      "block": "b:7",
+      "section": "1 INTRODUCTION",
+      "signals": [
+       "table_figure",
+       "citation"
+      ]
+     },
+     {
+      "id": "b:7/s:2",
+      "page": 1,
+      "text": "However, these methods may hinder the versatility of LLMs or introduce unnecessary or off-topic passages that lead to low-quality generations (Shi et al., 2023) since they retrieve passages indiscriminately regardless of whether the factual grounding is helpful.",
+      "block": "b:7",
+      "section": "1 INTRODUCTION",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:7/s:3",
+      "page": 1,
+      "text": "Moreover, the output is not guaranteed to be consistent with retrieved relevant passages (Gao et al., 2023) since the models are not explicitly trained to leverage and follow facts from provided passages.",
+      "block": "b:7",
+      "section": "1 INTRODUCTION",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:7/s:6",
+      "page": 1,
+      "text": "Reflection tokens are categorized into retrieval and critique tokens to indicate the need for retrieval and its generation quality respectively (Figure 1 right).",
+      "block": "b:7",
+      "section": "1 INTRODUCTION",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:7/s:11",
+      "page": 1,
+      "text": "This process differs from conventional RAG (Figure 1 left), which consistently retrieves a fixed number of documents for generation regardless of the retrieval necessity (e.g., the bottom figure example does not require factual knowledge) and never second visits the generation quality.",
+      "block": "b:7",
+      "section": "1 INTRODUCTION",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:9/s:2",
+      "page": 2,
+      "text": "Reflection tokens, inspired by reward models used in reinforcement learning (Ziegler et al., 2019; Ouyang et al., 2022), are inserted offline into the original corpus by a trained critic model.",
+      "block": "b:9",
+      "section": "1 INTRODUCTION",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:9/s:5",
+      "page": 2,
+      "text": "While we draw inspiration from studies that use control tokens to start and guide text generation (Lu et al., 2022; Keskar et al., 2019), our trained LM uses critique tokens to assess its own predictions after each generated segment as an integral part of the generation output.",
+      "block": "b:9",
+      "section": "1 INTRODUCTION",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:11/s:1",
+      "page": 2,
+      "text": "In particular, SELF-RAG outperforms retrieval-augmented ChatGPT on four tasks, Llama2-chat (Touvron et al., 2023) and Alpaca (Dubois et al., 2023) on all tasks.",
+      "block": "b:11",
+      "section": "1 INTRODUCTION",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:13/s:1",
+      "page": 2,
+      "text": "Retrieval-Augmented Generation (RAG) augments the input space of LMs with retrieved text passages (Guu et al., 2020; Lewis et al., 2020), leading to large improvements in knowledge-intensive tasks after fine-tuning or used with off-the-shelf LMs (Ram et al., 2023).",
+      "block": "b:13",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:13/s:2",
+      "page": 2,
+      "text": "A more recent work (Luo et al., 2023) instruction-tunes an LM with a fixed number of retrieved passages prepended to input, or pre-train a retriever and LM jointly, followed by fewshot fine-tuning on task datasets (Izacard et al., 2022b).",
+      "block": "b:13",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:13/s:3",
+      "page": 2,
+      "text": "While prior work often retrieves only once at the beginning, Jiang et al. (2023) propose to adaptively retrieve passages for generation on top of a proprietary LLM or Schick et al. (2023) train an LM to generate API calls for named entities.",
+      "block": "b:13",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:13/s:4",
+      "page": 2,
+      "text": "Yet, the improved task performance of such approaches often comes at the expense of runtime efficiency (Mallen et al., 2023), robustness to irrelevant context (Shi et al., 2023), and lack of attributions (Liu et al., 2023a; Gao et al., 2023).",
+      "block": "b:13",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:14/s:2",
+      "page": 3,
+      "text": "Lin et al. (2023) fine-tune both the retriever and LM on instruction-tuning datasets in two steps.",
+      "block": "b:14",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:14/s:4",
+      "page": 3,
+      "text": "Yoran et al. (2023) use a natural language inference model and Xu et al. (2023) use a summarization model to filter out or compress retrieved passages before using them to prompt the LMto generate the output.",
+      "block": "b:14",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:14/s:7",
+      "page": 3,
+      "text": "LATS (Zhou et al., 2023) prompt off-the-shelf LMs to search for relevant information for question answering tasks and to generate with tree search, guided by LM-generated value scores.",
+      "block": "b:14",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:15/s:1",
+      "page": 3,
+      "text": "Training LLMs with reinforcement learning (e.g., Proximal Policy Optimization or PPO; Schulman et al. 2017) from human feedback (RLHF) has proven effective in aligning LLMs with human preferences (Ouyang et al., 2022).",
+      "block": "b:15",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:15/s:2",
+      "page": 3,
+      "text": "Wu et al. (2023) introduce fine-grained RLHF with multiple reward models.",
+      "block": "b:15",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:15/s:5",
+      "page": 3,
+      "text": "Other works use general control tokens to guide LM generation (Lu et al., 2022; Korbak et al., 2023), while SELF-RAG uses reflection tokens to decide the need for retrieval and to self-evaluate generation quality.",
+      "block": "b:15",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:15/s:6",
+      "page": 3,
+      "text": "Xie et al. (2023) propose a self-evaluationguided decoding framework, but they focus only on reasoning tasks with one evaluation dimension (reasoning path consistency) and without retrieval.",
+      "block": "b:15",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:15/s:7",
+      "page": 3,
+      "text": "Recent work on LLM refinement (Dhuliawala et al., 2023; Madaan et al., 2023; Paul et al., 2023) prompts a model to generate task output, natural language feedback and refined task output iteratively, but at the cost of inference efficiency.",
+      "block": "b:15",
+      "section": "2 RELATED WORK",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:17/s:0",
+      "page": 3,
+      "text": "We introduce Self-Reflective Retrieval-Augmented Generation (SELF-RAG), shown in Figure 1.",
+      "block": "b:17",
+      "section": "3 SELF-RAG: LEARNING TO RETRIEVE, GENERATE AND CRITIQUE",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:17/s:3",
+      "page": 3,
+      "text": "These reflection tokens (Table 1) signal the need for retrieval or confirm the output's relevance, support, or completeness.",
+      "block": "b:17",
+      "section": "3 SELF-RAG: LEARNING TO RETRIEVE, GENERATE AND CRITIQUE",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:19/s:0",
+      "page": 3,
+      "text": "Formally, given input x , we train M to sequentially generate textual outputs y consisting of multiple segments y = [ y 1 , . . . , y T ] , where y t indicates a sequence of tokens for the t -th segment. 3 Generated tokens in y t include text from the original vocabulary as well as the reflection tokens (Table 1).",
+      "block": "b:19",
+      "section": "3.1 PROBLEM FORMALIZATION AND OVERVIEW",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:24/s:1",
+      "page": 4,
+      "text": "Figure 1 and Algorithm 1 present an overview of SELF-RAG at inference.",
+      "block": "b:24",
+      "section": "Algorithm 1 SELF-RAG Inference",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:24/s:5",
+      "page": 4,
+      "text": "Finally, a new critique token evaluates the overall utility of the response. 4 To generate each segment, SELF-RAG processes multiple passages in parallel and uses its own generated reflection tokens to enforce soft constraints (Section 3.3) or hard control (Algorithm 1) over the generated task output.",
+      "block": "b:24",
+      "section": "Algorithm 1 SELF-RAG Inference",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:24/s:6",
+      "page": 4,
+      "text": "For instance, in Figure 1 (right), the retrieved passages d 1 is selected at the first time step since d 2 does not provide direct evidence ( ISREL is Irrelevant) and d 3 output is only partially supported while d 1 are fully supported.",
+      "block": "b:24",
+      "section": "Algorithm 1 SELF-RAG Inference",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:25/s:3",
+      "page": 4,
+      "text": "We train C to generate reflection tokens for evaluating retrieved passages and the quality of a given task output (Section 3.2.1).",
+      "block": "b:25",
+      "section": "Algorithm 1 SELF-RAG Inference",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:25/s:5",
+      "page": 4,
+      "text": "Subsequently, we train the final generator model ( M ) using the conventional LM objective (Section 3.2.2) to enable M to generate reflection tokens by itself without relying on the critic at inference time.",
+      "block": "b:25",
+      "section": "Algorithm 1 SELF-RAG Inference",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:27/s:0",
+      "page": 4,
+      "text": "Here, we describe the supervised data collection and training of two models, the critic C (Section 3.2.1) and the generator M (Section 3.2.2).",
+      "block": "b:27",
+      "section": "3.2 SELF-RAG TRAINING",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:29/s:1",
+      "page": 4,
+      "text": "Manual annotation of reflection tokens for each segment is expensive (Wu et al., 2023).",
+      "block": "b:29",
+      "section": "3.2.1 TRAINING THE CRITIC MODEL",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:29/s:2",
+      "page": 4,
+      "text": "A state-of-the-art LLM like GPT-4 (OpenAI, 2023) can be effectively used to generate such feedback (Liu et al., 2023b).",
+      "block": "b:29",
+      "section": "3.2.1 TRAINING THE CRITIC MODEL",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:29/s:3",
+      "page": 4,
+      "text": "However, depending on such proprietary LMs can raise API costs and diminish reproducibility (Chen et al., 2023).",
+      "block": "b:29",
+      "section": "3.2.1 TRAINING THE CRITIC MODEL",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:29/s:6",
+      "page": 4,
+      "text": "As different reflection token groups have their own definitions and input, as shown in Table 1, we use different instruction prompts for them.",
+      "block": "b:29",
+      "section": "3.2.1 TRAINING THE CRITIC MODEL",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:32/s:0",
+      "page": 5,
+      "text": "Though the initial model can be any pre-trained LM, we use the same one as the generator LM (i.e., Llama 2-7B; Touvron et al. 2023) for C initialization.",
+      "block": "b:32",
+      "section": "3.2.1 TRAINING THE CRITIC MODEL",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:32/s:1",
+      "page": 5,
+      "text": "The critic achieves a higher than 90% agreement with GPT-4-based predictions on most reflection token categories (Appendix Table 5).",
+      "block": "b:32",
+      "section": "3.2.1 TRAINING THE CRITIC MODEL",
+      "signals": [
+       "number",
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:34/s:1",
+      "page": 5,
+      "text": "Given an input-output pair ( x, y ) , we augment the original output y using the retrieval and critic models to create supervised data that precisely mimics the SELFRAG inference-time process (Section 3.1).",
+      "block": "b:34",
+      "section": "3.2.2 TRAINING THE GENERATOR MODEL",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:34/s:8",
+      "page": 5,
+      "text": "See the example training data in Figure 2.",
+      "block": "b:34",
+      "section": "3.2.2 TRAINING THE GENERATOR MODEL",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:36/s:1",
+      "page": 5,
+      "text": "During training, we mask out the retrieved text chunks (surrounded by <p> and </p> in Figure 2) for loss calculation and expand the original vocabulary V with a set of reflection tokens { Critique , Retrieve } .",
+      "block": "b:36",
+      "section": "3.2.2 TRAINING THE GENERATOR MODEL",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:37/s:1",
+      "page": 5,
+      "text": "Recent work incorporates additional critique (feedback) during training, e.g., RLHF (Ouyang et al. 2022) via PPO.",
+      "block": "b:37",
+      "section": "3.2.2 TRAINING THE GENERATOR MODEL",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:37/s:4",
+      "page": 5,
+      "text": "Our work also relates to prior work that incorporates special tokens to control generation (Keskar et al., 2019; Lu et al., 2022; Korbak et al., 2023).",
+      "block": "b:37",
+      "section": "3.2.2 TRAINING THE GENERATOR MODEL",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:39/s:1",
+      "page": 6,
+      "text": "For tasks demanding factual accuracy (Min et al., 2023), we aim for the model to retrieve passages more frequently to ensure that the output aligns closely with the available evidence.",
+      "block": "b:39",
+      "section": "3.3 SELF-RAG INFERENCE",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:42/s:5",
+      "page": 6,
+      "text": "Balancing the trade-off between multiple preferences has been studied in RLHF (Touvron et al., 2023; Wu et al., 2023), which often requires training to change models' behaviors.",
+      "block": "b:42",
+      "section": "3.3 SELF-RAG INFERENCE",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:45/s:1",
+      "page": 6,
+      "text": "Throughout these experiments, we conduct zero-shot evaluations, where we provide instructions describing tasks without few-shot demonstrations (Wei et al., 2022; Sanh et al., 2022).",
+      "block": "b:45",
+      "section": "4.1 TASKS AND DATASETS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:46/s:0",
+      "page": 6,
+      "text": "Closed-set tasks include two datasets, i.e., a fact verification dataset about public health ( PubHealth ; Zhang et al. 2023) and a multiple-choice reasoning dataset created from scientific exams ( ARC- Challenge ; Clark et al. 2018).",
+      "block": "b:46",
+      "section": "4.1 TASKS AND DATASETS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:47/s:0",
+      "page": 7,
+      "text": "Short-form generations tasks include two open-domain question answering (QA) datasets, PopQA (Mallen et al., 2023) and TriviaQA-unfiltered (Joshi et al., 2017), where systems need to answer arbitrary questions about factual knowledge.",
+      "block": "b:47",
+      "section": "4.1 TASKS AND DATASETS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:47/s:2",
+      "page": 7,
+      "text": "As the TriviaQA-unfiltered (open) test set is not publicly available, we follow prior work's validation and test split (Min et al., 2019; Guu et al., 2020), using 11,313 test queries for evaluation.",
+      "block": "b:47",
+      "section": "4.1 TASKS AND DATASETS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:47/s:3",
+      "page": 7,
+      "text": "We evaluate performance based on whether gold answers are included in the model generations instead of strictly requiring exact matching, following Mallen et al. (2023); Schick et al. (2023).",
+      "block": "b:47",
+      "section": "4.1 TASKS AND DATASETS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:48/s:0",
+      "page": 7,
+      "text": "Long-form generation tasks include a biography generation task (Min et al., 2023) and a long-form QA task ALCE-ASQA Gao et al. (2023); Stelmakh et al. (2022).",
+      "block": "b:48",
+      "section": "4.1 TASKS AND DATASETS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:48/s:1",
+      "page": 7,
+      "text": "We use FactScore (Min et al., 2023) to evaluate biographies, and we use official metrics of correctness (str-em), fluency based on MAUVE (Pillutla et al., 2021), and citation precision and recall (Gao et al., 2023) for ASQA. 5",
+      "block": "b:48",
+      "section": "4.1 TASKS AND DATASETS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:50/s:1",
+      "page": 7,
+      "text": "We evaluate strong publicly available pre-trained LLMs, Llama27B , 13B (Touvron et al., 2023), instruction-tuned models, Alpaca7B , 13B (Dubois et al., 2023) (our replication based on Llama2); and models trained and reinforced using private data, ChatGPT (Ouyang et al., 2022) and Llama2-chat13B.",
+      "block": "b:50",
+      "section": "4.2 BASELINES",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:50/s:3",
+      "page": 7,
+      "text": "We also compare our method to concurrent work, CoVE65B (Dhuliawala et al., 2023), which introduces iterative prompt engineering to improve the factuality of LLM generations.",
+      "block": "b:50",
+      "section": "4.2 BASELINES",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:51/s:5",
+      "page": 7,
+      "text": "The second category includes concurrent methods that are trained with retrieved text passages, i.e., SAIL (Luo et al., 2023) to instruction-tune an LM on the Alpaca instruction-tuning data with top retrieved documents inserted before instructions, and Toolformer (Schick et al., 2023) to pre-train an LM with API calls (e.g., Wikipedia APIs). 6",
+      "block": "b:51",
+      "section": "4.2 BASELINES",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:53/s:2",
+      "page": 7,
+      "text": "In particular, we sample instances from Open-Instruct processed data (Wang et al., 2023) and knowledge-intensive datasets (Petroni et al., 2021; Stelmakh et al., 2022; Mihaylov et al., 2018).",
+      "block": "b:53",
+      "section": "4.3 EXPERIMENTAL SETTINGS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:53/s:4",
+      "page": 7,
+      "text": "We use Llama2 7B and 13B (Touvron et al., 2023) as our generator base LM, and we use Llama2 7B as our base critic LM.",
+      "block": "b:53",
+      "section": "4.3 EXPERIMENTAL SETTINGS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:53/s:5",
+      "page": 7,
+      "text": "For the retriever model R , we use off-the-shelf Contriever-MS MARCO (Izacard et al., 2022a) by default and retrieve up to ten documents for each input.",
+      "block": "b:53",
+      "section": "4.3 EXPERIMENTAL SETTINGS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:54/s:1",
+      "page": 7,
+      "text": "As a default configuration, we assign the weight terms ISREL , ISSUP , ISUSE values of 1.0, 1.0 and 0.5, respectively.",
+      "block": "b:54",
+      "section": "4.3 EXPERIMENTAL SETTINGS",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:54/s:2",
+      "page": 7,
+      "text": "To encourage frequent retrieval, we set the retrieval threshold to 0.2 for most tasks and to 0 for ALCE (Gao et al., 2023) due to citation requirements.",
+      "block": "b:54",
+      "section": "4.3 EXPERIMENTAL SETTINGS",
+      "signals": [
+       "number",
+       "citation"
+      ]
+     },
+     {
+      "id": "b:54/s:3",
+      "page": 7,
+      "text": "We speed up inference using vllm (Kwon et al., 2023).",
+      "block": "b:54",
+      "section": "4.3 EXPERIMENTAL SETTINGS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:54/s:6",
+      "page": 7,
+      "text": "By default, we use the top five documents from Contriever-MS MARCO (Izacard et al., 2022a); for biographies and open-domain QA, we use additional top five documents retrieved by a web search engine, following Luo et al. (2023); for ASQA, we use the author-provided top 5 documents by GTR-XXL (Ni et al., 2022) across all baselines for a fair comparison.",
+      "block": "b:54",
+      "section": "4.3 EXPERIMENTAL SETTINGS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:59/s:1",
+      "page": 8,
+      "text": "Table 2 (top) presents the baselines without retrieval.",
+      "block": "b:59",
+      "section": "5.1 MAIN RESULTS",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:59/s:3",
+      "page": 8,
+      "text": "Our approach also significantly outperforms a concurrent method that employs sophisticated prompt engineering; specifically, on the bio generation task, our 7B and 13B models outperform the concurrent CoVE (Dhuliawala et al., 2023), which iteratively prompts Llama265B to refine output.",
+      "block": "b:59",
+      "section": "5.1 MAIN RESULTS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:60/s:1",
+      "page": 8,
+      "text": "As shown in Tables 2 (bottom), our SELF-RAG also outperforms existing RAG in many tasks, obtaining the best performance among non-proprietary LM-based models on all tasks.",
+      "block": "b:60",
+      "section": "5.1 MAIN RESULTS",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:60/s:7",
+      "page": 8,
+      "text": "Gao et al. (2023) found that ChatGPT consistently exhibits superior efficacy in this particular task, surpassing smaller LMs.",
+      "block": "b:60",
+      "section": "5.1 MAIN RESULTS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:62/s:3",
+      "page": 9,
+      "text": "This is similar to SAIL (Luo et al., 2023), and we use our instruction-output data instead of using the Alpaca dataset (Dubois et al., 2023), as in SAIL.",
+      "block": "b:62",
+      "section": "5.2 ANALYSIS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:63/s:0",
+      "page": 9,
+      "text": "We show in Table 3a the ablation results.",
+      "block": "b:63",
+      "section": "5.2 ANALYSIS",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:64/s:3",
+      "page": 9,
+      "text": "Figure 3b shows the effects of changing the weighting term for ISSUP , which criticizes how supported the output is by the text passage.",
+      "block": "b:64",
+      "section": "5.2 ANALYSIS",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:64/s:5",
+      "page": 9,
+      "text": "On the contrary, a larger weight results in lower MAUVE scores: when generation gets longer and more fluent, there are often more claims that are not fully supported by citations, consistent with findings by Liu et al. (2023a).",
+      "block": "b:64",
+      "section": "5.2 ANALYSIS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:65/s:3",
+      "page": 10,
+      "text": "Figure 3c shows that the model's retrieval frequencies dramatically change on both datasets. as δ varies.",
+      "block": "b:65",
+      "section": "5.2 ANALYSIS",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:66/s:4",
+      "page": 10,
+      "text": "We also evaluate Figures 4a, 4b and 4c shows the models' performance trained on different amount of data.",
+      "block": "b:66",
+      "section": "5.2 ANALYSIS",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:67/s:3",
+      "page": 10,
+      "text": "Following Menick et al. (2022), human annotators evaluate S&P , which indicates whether the model output is plausible (i.e., the output is a reasonable and on-topic response to the question as if it were occurring in a conversation) and supported (i.e., the provided evidence is sufficient to verify the validity of the answer).",
+      "block": "b:67",
+      "section": "5.2 ANALYSIS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:67/s:6",
+      "page": 10,
+      "text": "Human annotators find SELF-RAG answers are often plausible and supported by relevant passages with higher S&P scores on short-form PopQA, which is consistent with Menick et al. (2022).",
+      "block": "b:67",
+      "section": "5.2 ANALYSIS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:67/s:8",
+      "page": 10,
+      "text": "Appendix Table 6 shows several annotated examples and explanations on assessments.",
+      "block": "b:67",
+      "section": "5.2 ANALYSIS",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:81/s:0",
+      "page": 17,
+      "text": "Supported ( ISSUP ): Attribution is the concept of whether the output is fully supported by certain evidence (Menick et al., 2022; Bohnet et al., 2022).",
+      "block": "b:81",
+      "section": "A.1 REFLECTION TOKENS.",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:81/s:2",
+      "page": 17,
+      "text": "We evaluate attributions in three scale, Fully supported , Partially supported , and No support / Contradictory , following Yue et al. (2023); Nakano et al. (2021).",
+      "block": "b:81",
+      "section": "A.1 REFLECTION TOKENS.",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:82/s:0",
+      "page": 17,
+      "text": "Useful ( ISUSE ): Following the definitions from Liu et al. (2023a), we define the perceived utility as whether the response is a helpful and informative answer to the query, independently from whether it is in fact factual or not.",
+      "block": "b:82",
+      "section": "A.1 REFLECTION TOKENS.",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:82/s:1",
+      "page": 17,
+      "text": "This can be also viewed as plausibility in Menick et al. (2022).",
+      "block": "b:82",
+      "section": "A.1 REFLECTION TOKENS.",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:84/s:2",
+      "page": 17,
+      "text": "We found our assessments show high agreement with GPT-4 predictions, especially for relevance (95%), retrieval necessity (95%), and the degree of support (90%).",
+      "block": "b:84",
+      "section": "A.1 REFLECTION TOKENS.",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:84/s:3",
+      "page": 17,
+      "text": "Agreement was slightly lower in usefulness (80%), mostly due to the disagreement between 1 and 2 or 4 and 5.",
+      "block": "b:84",
+      "section": "A.1 REFLECTION TOKENS.",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:87/s:1",
+      "page": 17,
+      "text": "To sample diverse input-output pairs, we sample instances of the OpenInstruct (Wang et al., 2023) dataset.",
+      "block": "b:87",
+      "section": "A.2 SELF-RAG TRAINING",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:87/s:3",
+      "page": 17,
+      "text": "We also sample instances from a couple of knowledgeintensive datasets, Natural Questions (Kwiatkowski et al., 2019), Wizard of Wikipedia (Dinan et al., 2019) and FEVER (Thorne et al., 2018) from the KILT benchmark (Petroni et al., 2021), ASQA (Stelmakh et al., 2022) and multiple QA datasets including ARC-Easy and OpenBookQA (Mihaylov et al., 2018).",
+      "block": "b:87",
+      "section": "A.2 SELF-RAG TRAINING",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:87/s:4",
+      "page": 17,
+      "text": "Table 3 shows the full list of training instances, and in total, we use 145,619 instances.",
+      "block": "b:87",
+      "section": "A.2 SELF-RAG TRAINING",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:88/s:3",
+      "page": 17,
+      "text": "Table 5 shows the model performance of predicting GPT-4 judgments.",
+      "block": "b:88",
+      "section": "A.2 SELF-RAG TRAINING",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:89/s:0",
+      "page": 18,
+      "text": "While our final model uses Llama2-7B as a base LM, we also train and compare FLAN-3B (Wei et al., 2022) model on the same data, to investigate the effectiveness of different data sizes affect final reward predictions.",
+      "block": "b:89",
+      "section": "A.2 SELF-RAG TRAINING",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:89/s:1",
+      "page": 18,
+      "text": "In most aspects, our reward model shows higher than 80% accuracy, indicating the powerful ability of fine-tuned specialized LMs to evaluate text.",
+      "block": "b:89",
+      "section": "A.2 SELF-RAG TRAINING",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:94/s:1",
+      "page": 19,
+      "text": "Table 4 show several training examples used for M training.",
+      "block": "b:94",
+      "section": "Algorithm 3 M gen Data creation",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:102/s:2",
+      "page": 19,
+      "text": "All models are trained for 3 epochs with a batch size of 128, a peak learning rate of 2e-5 with 3% warmup steps, and linear decay afterward.",
+      "block": "b:102",
+      "section": "B.1 MORE DETAILS OF TRAINING",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:102/s:4",
+      "page": 19,
+      "text": "We use Deepspeed stage 3 (Rajbhandari et al., 2020) to conduct multi-GPU distributed training, with training precision Bfloat16 enabled.",
+      "block": "b:102",
+      "section": "B.1 MORE DETAILS OF TRAINING",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:102/s:5",
+      "page": 19,
+      "text": "FlashAttention (Dao et al., 2022) is used to make the long-context training more efficient.",
+      "block": "b:102",
+      "section": "B.1 MORE DETAILS OF TRAINING",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:104/s:3",
+      "page": 20,
+      "text": "Therefore, for PopQA, we used the December 2020 preprocessed Wikipedia corpus provided by Izacard et al. (2022b) and generated document embeddings. 8 The issues of performance variance from different Wikipedia dumps have been reported by prior work (Asai et al., 2020; Izacard et al., 2022b).",
+      "block": "b:104",
+      "section": "B.2 MORE DETAILS OF EVALUATIONS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:104/s:5",
+      "page": 20,
+      "text": "Recent or concurrent work studies instruction-tuning of retrieval systems (Asai et al., 2023b) or joint training of retrieval and LM components (Lin et al., 2023), while we leave exploring the effectivess of such appraoches for future work.",
+      "block": "b:104",
+      "section": "B.2 MORE DETAILS OF EVALUATIONS",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:106/s:1",
+      "page": 20,
+      "text": "Table 5 shows the list of the instructions used during evaluations.",
+      "block": "b:106",
+      "section": "B.2 MORE DETAILS OF EVALUATIONS",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:109/s:4",
+      "page": 20,
+      "text": "We found that SELF-RAG significantly less frequently generates answers that are not included in the provided evidence; in particular, in Alpaca 30B, 20% of the correct predictions are not included in the provided passages, followed by Llama2-chat 13B (18%) and Alpaca (15%), while it is only 2% in SELF-RAG.",
+      "block": "b:109",
+      "section": "C.1 ANALYSIS",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:113/s:0",
+      "page": 21,
+      "text": "Table 6 shows examples with human evaluations on S&P and correctness of ISREL and ISSUP reflection tokens.",
+      "block": "b:113",
+      "section": "C.2 HUMAN EVALUATION EXAMPLES",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:115/s:0",
+      "page": 21,
+      "text": "Table 7 shows several examples predicted by our SELF-RAG (13B).",
+      "block": "b:115",
+      "section": "C.3 QUALITATIVE EXAMPLES",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:117/s:1",
+      "page": 21,
+      "text": "Table 8 shows the instructions and demonstrations for the initial retrieval token.",
+      "block": "b:117",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:117/s:2",
+      "page": 21,
+      "text": "Table 9 shows the instruction and demonstrations used to collect the three-way output tokens for Retrieve given instruction, preceding sentences, and previously retrieved passages.",
+      "block": "b:117",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:117/s:4",
+      "page": 21,
+      "text": "Table 10 shows an instruction and demonstrations used to collect the three-way output tokens for ISREL .",
+      "block": "b:117",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:117/s:5",
+      "page": 21,
+      "text": "Table 11 shows an instruction and demonstrations used to collect the three-way output tokens for ISREL .",
+      "block": "b:117",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:117/s:6",
+      "page": 21,
+      "text": "Table 12 shows an instruction and demonstrations used to collect the five-way output tokens for ISUSE .",
+      "block": "b:117",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:127/s:0",
+      "page": 23,
+      "text": "Table 5: Full list of instructions used during zero-shot evaluations.",
+      "block": "b:127",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:129/s:0",
+      "page": 24,
+      "text": "Output [ Retrieve = Yes ] <p> Reference [1] <p> [ ISREL = Relevant ] A Question and Answer Guide to Astronomy is a non-fiction book that falls under the genre of Astronomy and Cosmology.",
+      "block": "b:129",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:130/s:0",
+      "page": 24,
+      "text": "Reference [1] A Question and Answer Guide to Astronomy is a book about astronomy and cosmology, and is intended for a general audience.",
+      "block": "b:130",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:132/s:0",
+      "page": 24,
+      "text": "Correctness of ISREL and ISSUP : Both ISREL and ISSUP are correct, as the Reference [1] provides detailed information of the book including the genre, and the model output is fully supported by the reference.",
+      "block": "b:132",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:134/s:0",
+      "page": 24,
+      "text": "Output [ Retrieve = Yes ] <p> Reference [1] <p> [ ISREL = Relevant ] The author of The Lie is Sam Harris.[ ISSUP = Fully Supported ][ ISUSE =5]",
+      "block": "b:134",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:135/s:0",
+      "page": 24,
+      "text": "Reference [1] Lying is a 2011 long-form essay book by American author and neuroscience expert Sam Harris.",
+      "block": "b:135",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:137/s:0",
+      "page": 24,
+      "text": "Correctness of ISREL and ISSUP Both ISREL and ISSUP are incorrect, as the Reference [1] is about a different book whose title is similar to The Lie.",
+      "block": "b:137",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:139/s:0",
+      "page": 24,
+      "text": "Output [ Retrieve = Yes ] <p> Reference [1] <p> [ ISREL = Relevant ] Ronaldinho is a retired professional footballer from Brazil.[ ISSUP = Fully Supported ][ Retrieve = Continue ]He played as an attacking midfielder and was known for his technical skills, creativity, dribbling ability, and accuracy from free kicks[ Retrieve = Continue ]He won two FIFA World Player of the Year awards and a Ballon d'Or.[ ISUSE =5] Reference [1] Ronaldo de Assis Moreira (born 21 March 1980), commonly known as Ronaldinho Ga´ ucho or simply Ronaldinho, is a Brazilian retired professional footballer who played mostly as an attacking midfielder, but was also deployed as a winger.",
+      "block": "b:139",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:143/s:0",
+      "page": 24,
+      "text": "Output [ Retrieve = Yes ] <p> Reference [1] <p> [ ISREL = Relevant ] Sergei Vladimirovich Bodrov (born June 28, 1948) is a Russian film director, screenwriter, and producer.[ ISSUP = Fully Supported ][ Retrieve = Continue ]He was born in Moscow, Russia.[ Retrieve = Continue ]He is the president of the Russian Guild of Film Producers.[ ISUSE =5]",
+      "block": "b:143",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:144/s:0",
+      "page": 24,
+      "text": "Reference [1] Sergei Vladimirovich Bodrov (born June 28, 1948) is a Russian film director, screenwriter, and producer.",
+      "block": "b:144",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:145/s:1",
+      "page": 24,
+      "text": "The the Reference [1] does not explicitly mention the person is born in Moscow and there is no description about the Russian Guild of Film Producers.",
+      "block": "b:145",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:149/s:0",
+      "page": 25,
+      "text": "Output [ Retrieve = Yes ] <p> Reference [1] <p> [ ISREL = Relevant ] In 321 AD, the Roman Emperor Constantine the Great made Sunday a day of rest from labor, stating: 'On the venerable Day of the Sun let the magistrates and people residing in cities rest, and let all workshops be closed'.[ ISSUP = Fully Supported ] [ Retrieve = Yes ] <p> Reference [2] <p> [ ISREL = Relevant ] The official adoption of Sunday as a day of rest by Constantine the Great in AD 321 made Sunday the seventh day of the week.",
+      "block": "b:149",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:149/s:1",
+      "page": 25,
+      "text": "[2] [ ISSUP = Fully Supported ][ ISUSE =5]",
+      "block": "b:149",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:150/s:0",
+      "page": 25,
+      "text": "Reference [1] Emperor Constantine then enacted the first Sunday Laws, for 'the venerable Day of the Sun' in 321 A.D.",
+      "block": "b:150",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:151/s:0",
+      "page": 25,
+      "text": "Reference [2] Despite the official adoption of Sunday as a day of rest by Constantine, the seven-day week and the nundial cycle continued to be used side-by-side until at least the Calendar of 354 and probably later. ...",
+      "block": "b:151",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:153/s:0",
+      "page": 25,
+      "text": "Output <p> Reference [1] <p> [ ISREL = Relevant ] Rory Tapner is a British businessman who has served as the Chief Executive Officer of Coutts, a private banking and wealth management company, since 2010.[ ISSUP = Contradictory ], Reference [2] <p> [ ISREL = Relevant ] Rory Tapner was born on 30 September 1959 in London, England.[ ISSUP = Fully Supported ]",
+      "block": "b:153",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:154/s:0",
+      "page": 25,
+      "text": "Reference [1] Rory Tapner Rory Tapner is a UK businessman who, in September 2010 was appointed CEO of Coutts, the Wealth Management division of Royal Bank of Scotland Group.",
+      "block": "b:154",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:155/s:0",
+      "page": 25,
+      "text": "Reference [2] Holdings (from August 2016); and the Council of the University of Buckingham (from July 2017).",
+      "block": "b:155",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:157/s:0",
+      "page": 25,
+      "text": "Output (ranked 1) [ Retrieve = Yes ] <p> Reference [1] <p> [ ISREL = Relevant ] G.",
+      "block": "b:157",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:157/s:2",
+      "page": 25,
+      "text": "[ Retrieve = Continue ] He has sung over 300 songs in Malayalam, Tamil, and Hindi movies.[ ISSUP = Partially Supported ] [ Retrieve = Yes ] <p> Reference [2] <p> G.",
+      "block": "b:157",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:158/s:0",
+      "page": 25,
+      "text": "Reference [1] 'G.",
+      "block": "b:158",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:159/s:0",
+      "page": 25,
+      "text": "Reference [2] Kerala State Film Awards: Kerala Film Critics Award Kerala State Government Award (Professional Drama): Asianet Film Awards: Kerala Kaumadi Gallup Poll Award: Academic G.",
+      "block": "b:159",
+      "section": "D FULL LIST OF INSTRUCTIONS AND DEMONSTRATIONS FOR GPT-4",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:173/s:0",
+      "page": 27,
+      "text": "Table 9: Instructions and demonstrations for Retrieve aspect given the input, preceding generations, and retrieved passages.",
+      "block": "b:173",
+      "section": "Instruction Explain the use of word embeddings in Natural Language Processing.",
+      "signals": [
+       "table_figure"
+      ]
+     }
+    ],
+    "prompt_version": "v1",
+    "total_sentences": 507
+   },
+   "finished_at": "2026-10-16T19:55:57.833Z"
+  },
+  {
+   "step_id": 887,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 0,
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T19:55:57.851Z"
+  },
+  {
+   "step_id": 888,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 0,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 19:56:27 GMT\",\"content-type\":\"application/json\",\"content-length\":\"382\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"954\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m534k3bke51tdy3255s3v9gn\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=AwFr90BFqIDC7i_m5TA7_ggi_bcYxa6eNCHuNVKUGc0-1792180587.8771522-1.0.1.1-zkN99W032deK8u6wyo_NNiDq..hmIxn1kAMumIkB74lASeuoDVc5fnCO6_R3wEnGmu0CbaWOFnoTZ4GFMkVdrnftLCUcu19.J_fSJwTiiGdH.YU.Zqo9SPatZjxu6v6y; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:26:27 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b9a0823acfcc66-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. A"
+   },
+   "finished_at": "2026-10-16T19:56:28.137Z"
+  },
+  {
+   "step_id": 889,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 0,
+    "attempt": 2
+   },
+   "finished_at": "2026-10-16T19:56:28.157Z"
+  },
+  {
+   "step_id": 890,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 0,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 19:56:58 GMT\",\"content-type\":\"application/json\",\"content-length\":\"382\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"930\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m534m0y3ezm9qmnxcmykktzk\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=Zi4lLnxbwTl7XTyiVCNRRrRY9YSIjoqfm6b67N.5rWs-1792180618.160444-1.0.1.1-lUau1gXX42bVVupBnsF0d9j3It1nIqVJUAZzZ0PSq.kgcyWDH0R9MCHjpaRRyEbV08Ry2V.crgAhcyvCKiCqywUwBFResBuC71BkS0c09yad37EUpdC0ANt0q2RyHr85; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:26:58 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b9a13f7867c0ae-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. A "
+   },
+   "finished_at": "2026-10-16T19:56:58.426Z"
+  },
+  {
+   "step_id": 891,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 0,
+    "attempt": 3
+   },
+   "finished_at": "2026-10-16T19:56:58.452Z"
+  },
+  {
+   "step_id": 892,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 0,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 19:57:28 GMT\",\"content-type\":\"application/json\",\"content-length\":\"382\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"1576\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m534mygmejcsyzk82czk9t1w\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=GYbvZGTAzg7n6Y0YKEhvNvZfcy0RZEfDuFmBTeg8L6c-1792180648.45267-1.0.1.1-ikY1JcqHGivqnb_1B.9YQ3xhiF6s_QJ0Fij.FCwps.bau76zYVySv.d6QXW2OfTDrNqHS9QdqN8F0DMgmr_niTFpgEJrpqUuxzF7VFJaV9RLxA.IIllzJc3EE0ptCiSf; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:27:28 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b9a1fcdb93e6f0-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. A "
+   },
+   "finished_at": "2026-10-16T19:57:28.715Z"
+  },
+  {
+   "step_id": 893,
+   "step_name": "claims_batch",
+   "status": "skipped",
+   "detail": {
+    "batch": 0,
+    "reason": "no valid output after 3 attempts"
+   },
+   "finished_at": "2026-10-16T19:57:28.732Z"
+  },
+  {
+   "step_id": 894,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 1,
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T19:57:28.733Z"
+  },
+  {
+   "step_id": 895,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 1,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 19:58:00 GMT\",\"content-type\":\"application/json\",\"content-length\":\"388\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"914\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m534nxheeymaxj8wgzm5tqnt\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=PCT0CLgQyRFA2dQRtA0e2qhikVd9MemVqnH3iU.bk3Q-1792180680.221091-1.0.1.1-eaF3PQMfFeMhw9DCPJgSwQWgA3IjANOSMVrWn3p9WXO6lky7GB5heWOjG3gIALR.PPhPQqgssEBfw6yNBu.hHENHKYpIcejnCUhRtm2NdP_h2nulweoClyvt8gsmcVQh; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:28:00 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b9a2c35b639104-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. A "
+   },
+   "finished_at": "2026-10-16T19:58:00.490Z"
+  },
+  {
+   "step_id": 896,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 1,
+    "attempt": 2
+   },
+   "finished_at": "2026-10-16T19:58:00.508Z"
+  },
+  {
+   "step_id": 897,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 1,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 19:58:30 GMT\",\"content-type\":\"application/json\",\"content-length\":\"382\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"869\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m534pv4gerstb0shpcjgsb4t\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=8lDeyc_kZjBxwNNkXF3r8lAbZT9.T6VmRxIO7SFm7j0-1792180710.5278757-1.0.1.1-bhvU.3JgvtEaJQXsCDq4C7j6CmLuGTdG5_IOcW3ioLXm3kHeFXfWfCRy0ujPlwzxy_NsU8oNVQhYwUzH8znomqzH_f4u82QrFj13NdmtQO9NnaICquGuYzeWFHZAhHsf; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:28:30 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b9a380cdc54a32-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. A"
+   },
+   "finished_at": "2026-10-16T19:58:30.797Z"
+  },
+  {
+   "step_id": 898,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 1,
+    "attempt": 3
+   },
+   "finished_at": "2026-10-16T19:58:30.816Z"
+  },
+  {
+   "step_id": 899,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 1,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 19:59:01 GMT\",\"content-type\":\"application/json\",\"content-length\":\"388\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"833\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m534qrxver2v8rgds5h5v23x\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=C2cb04SE72SDm0pPr.YuPpAsv3RcRq07btwqgZvXLHM-1792180741.0360694-1.0.1.1-WNZI2smucbI1Lo3fQEMiencSOSOvq5bOzu7o755kkbaMFH5UN6wSNfTJyBsm1AxHbr.pEr5imdNDwP8l0tJ5Eu1q_i9YOb0nHy4wE1a_Z8sEbberr65vn.IgEn8IkLHk; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:29:01 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b9a43f7e246dcc-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. A"
+   },
+   "finished_at": "2026-10-16T19:59:01.301Z"
+  },
+  {
+   "step_id": 900,
+   "step_name": "claims_batch",
+   "status": "skipped",
+   "detail": {
+    "batch": 1,
+    "reason": "no valid output after 3 attempts"
+   },
+   "finished_at": "2026-10-16T19:59:01.322Z"
+  },
+  {
+   "step_id": 901,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 2,
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T19:59:01.323Z"
+  },
+  {
+   "step_id": 902,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 2,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 19:59:31 GMT\",\"content-type\":\"application/json\",\"content-length\":\"382\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"806\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m534rph6e2ts7g4a9t28fmb9\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=o84VvQFbJ3nO_8bMJDxN5KuzaXuLr1BLhw6P5KEJEWM-1792180771.3503172-1.0.1.1-0TR.UyxUpguRAfH4QaFhY1A9O8TPjGwAFvDOd0NfaAi7pn7jaKohqEk_6r1qf4U4CvsRLt4PVROi_LCsQ5Gle0KAtUBygYnu2mVX1R_HKBRYV3fZKMzR8DK4PN3xBBiU; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:29:31 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b9a4fcef5e4aaf-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. A"
+   },
+   "finished_at": "2026-10-16T19:59:31.612Z"
+  },
+  {
+   "step_id": 903,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 2,
+    "attempt": 2
+   },
+   "finished_at": "2026-10-16T19:59:31.632Z"
+  },
+  {
+   "step_id": 904,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 2,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 20:00:02 GMT\",\"content-type\":\"application/json\",\"content-length\":\"382\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"791\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m534smh9erwbkp169p5xbmsa\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=cxx.j6oxfdEQDnqQiQh4lKypxm1SpLdTm841Abl9mGM-1792180802.0705614-1.0.1.1-RFH0Ftb.VWHGkzVe3AVJ2w9VwrtXFDzgx7ci.km9n0fgYiJrseaweNqnOPuCjPLxCRi0T8t76ERkXECGkQlwvkNbD4CaGTEtg_IsIshpeODII_7NwUOwgggNH2iEnECF; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:30:02 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b9a5bcecf6e23b-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. A"
+   },
+   "finished_at": "2026-10-16T20:00:02.333Z"
+  },
+  {
+   "step_id": 905,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 2,
+    "attempt": 3
+   },
+   "finished_at": "2026-10-16T20:00:02.354Z"
+  },
+  {
+   "step_id": 906,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 2,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 20:00:32 GMT\",\"content-type\":\"application/json\",\"content-length\":\"381\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"759\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m534tj4mehhv0yebmxvzfzc6\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=_hK5QDl0ckFwRsyWd1J0R0saPCpa.rGxjlg8lTvf0fE-1792180832.3870275-1.0.1.1-RZblpzsBVjFNCi2DGU2T3rrVwbHH2_MXQBjtxzl2XcBL4uew6EBYqH2YPKyRtvKO2JvyZT.GxVmQRHI5_V2ZDSSw0jxNj4nGyqs3BWFrNUr8nhCCqZd8D756qXgY8_6t; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:30:32 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b9a67a6b4f4f8a-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. A"
+   },
+   "finished_at": "2026-10-16T20:00:32.664Z"
+  },
+  {
+   "step_id": 907,
+   "step_name": "claims_batch",
+   "status": "skipped",
+   "detail": {
+    "batch": 2,
+    "reason": "no valid output after 3 attempts"
+   },
+   "finished_at": "2026-10-16T20:00:32.682Z"
+  },
+  {
+   "step_id": 908,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 3,
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T20:00:32.683Z"
+  },
+  {
+   "step_id": 909,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 3,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 20:01:02 GMT\",\"content-type\":\"application/json\",\"content-length\":\"388\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"748\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m534vfs8e8bvqyak5fn11k7k\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=tMqCYiAJOiktpfipPH.joHlFP7uYNlRxzDGdmTsPfk8-1792180862.741208-1.0.1.1-3_Uu5tCaBuT3eU6XXQd0dVd3eq2cSxeCrrF4p.2M_mDbFcmc_Bn_qd2VhTSz59IdASPluo6WteL9BM0Sfg_fdTM1dFjTb2kdAb4Jn7ZxioFCmtU2XqCaFIwqGrrB5ys0; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:31:02 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b9a7381c0f5412-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. A "
+   },
+   "finished_at": "2026-10-16T20:01:03.005Z"
+  },
+  {
+   "step_id": 910,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 3,
+    "attempt": 2
+   },
+   "finished_at": "2026-10-16T20:01:03.023Z"
+  },
+  {
+   "step_id": 911,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 3,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 20:01:33 GMT\",\"content-type\":\"application/json\",\"content-length\":\"388\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"697\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m534wdb0evrszneacxy1hsk9\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=nVWFfPlllCVCjawmd9fWYCG0pQzJX7s_ddaovMvLnLI-1792180893.0078297-1.0.1.1-zdrbpu6l2qedFn9LpJWjiGb4qMvhjnndlXhkTMrK0EDclJWsoVlLxDUS8rI9c6_Woqjmer1qCkxrhHzntrmtsy5T_GUSUNRRkMKwL_MqQnPAHcQN2_fv9WSTFmQw_vNQ; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:31:33 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b9a7f54f37ad85-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. A"
+   },
+   "finished_at": "2026-10-16T20:01:33.271Z"
+  },
+  {
+   "step_id": 912,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 3,
+    "attempt": 3
+   },
+   "finished_at": "2026-10-16T20:01:33.293Z"
+  },
+  {
+   "step_id": 913,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 3,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 20:02:03 GMT\",\"content-type\":\"application/json\",\"content-length\":\"382\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"675\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m534xaxped88qjetgfarnf1j\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=TsumqSKdtz_i8h2z7wJQtT1uoPa2a3w_JI_347uwLCo-1792180923.3023942-1.0.1.1-yq_IAv5YsIiY.ctBVibQF0BiSvzBtOFBesFBWyNf32QyAvkyOxXTWVSgi2FT9603F4h9i1j7n21iL6pxre7whHqvPttkAuX.ZgzoDIPp4AcbOyT3zwDJ94VwG_PUXSo.; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:32:03 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b9a8b2af26e1d0-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. A"
+   },
+   "finished_at": "2026-10-16T20:02:03.573Z"
+  },
+  {
+   "step_id": 914,
+   "step_name": "claims_batch",
+   "status": "skipped",
+   "detail": {
+    "batch": 3,
+    "reason": "no valid output after 3 attempts"
+   },
+   "finished_at": "2026-10-16T20:02:03.597Z"
+  },
+  {
+   "step_id": 915,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 4,
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T20:02:03.598Z"
+  },
+  {
+   "step_id": 916,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 4,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 20:02:33 GMT\",\"content-type\":\"application/json\",\"content-length\":\"382\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"631\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m534y8v6etyar6prptehe7gg\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=Rkt5w7Qyz9.xxQBQRqJzmKXXZR31dIJP99zNWnKwCTA-1792180953.9406207-1.0.1.1-YzaW2eMgPCCIBnRJ4b24DfV5gNbQVfYLDKE5ucWTJvCbx66WYJ_qisKWrU6Ixipsq4ZDQh5QCmkMIjNxWg1MWUrmXcVldO0FvnFP_ihzsnBrao2U038gQHCym5BKMfxg; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:32:33 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b9a9721ae18741-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. A"
+   },
+   "finished_at": "2026-10-16T20:02:34.285Z"
+  },
+  {
+   "step_id": 917,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 4,
+    "attempt": 2
+   },
+   "finished_at": "2026-10-16T20:02:34.304Z"
+  },
+  {
+   "step_id": 918,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 4,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 20:03:04 GMT\",\"content-type\":\"application/json\",\"content-length\":\"382\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"615\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m534z6j1ebv93wb469z2eq3f\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=.NxPmneakUZlGvs5vGdpBL8KLnN6hPNYuZDareqLHKQ-1792180984.3698096-1.0.1.1-XsyCU4XZrQtDVfZ79pqF.4p7l4GGA3JZzlnFBH2LQ3716AIDeNrDj5i3wN4nLuVQMuulfGBaBPjyVHLXTqtH1GPUT7wVAOYfjkb4js_x_a825XzwSwGc4D7UoNqgxsK6; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:33:04 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b9aa304ad32d58-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. A"
+   },
+   "finished_at": "2026-10-16T20:03:04.642Z"
+  },
+  {
+   "step_id": 919,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 4,
+    "attempt": 3
+   },
+   "finished_at": "2026-10-16T20:03:04.666Z"
+  },
+  {
+   "step_id": 920,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 4,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 20:03:34 GMT\",\"content-type\":\"application/json\",\"content-length\":\"381\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"582\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m5350452ey89dswr7vtg0mkf\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=Q3.1CG75K6fl3At4BQTtbGlrA3cO6pzqt1lPvbP0h7M-1792181014.6747632-1.0.1.1-FrYLioYOO1ZSi42bS3I1UpyMCauQXxZplXBgK1GDLZMYz99O5ZJD2ekAOaXRoQAH8OH5UQH_nBVJsli3Udyd21mSsNVm5HYhYYQAnnRg0HXgAMpQuaz8jZoPFI09Inw6; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:33:34 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b9aaedb9c58a03-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. A"
+   },
+   "finished_at": "2026-10-16T20:03:34.937Z"
+  },
+  {
+   "step_id": 921,
+   "step_name": "claims_batch",
+   "status": "skipped",
+   "detail": {
+    "batch": 4,
+    "reason": "no valid output after 3 attempts"
+   },
+   "finished_at": "2026-10-16T20:03:34.956Z"
+  },
+  {
+   "step_id": 922,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 5,
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T20:03:34.958Z"
+  },
+  {
+   "step_id": 923,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 5,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 20:04:04 GMT\",\"content-type\":\"application/json\",\"content-length\":\"380\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"569\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m53511qjes3bv0dxzmckt220\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=G.WhvNxfqU8yWy.S0yk9FovEwrUq_PAVEpMHGkp9Vu4-1792181044.9621496-1.0.1.1-dbaP.spNghmV36rgdEzntNA5e6XNvu1jzV_GyjoXisBmUfXWeiCotLFS2umAnoL_LogcCdq.W_3geNGvrxuFNMpAAZPsNvwPllwN.q3hwbK9hmzfvHViAXAI5PDRAURX; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:34:04 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b9abab0bfae160-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. A"
+   },
+   "finished_at": "2026-10-16T20:04:05.220Z"
+  },
+  {
+   "step_id": 924,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 5,
+    "attempt": 2
+   },
+   "finished_at": "2026-10-16T20:04:05.244Z"
+  },
+  {
+   "step_id": 925,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 5,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 20:04:35 GMT\",\"content-type\":\"application/json\",\"content-length\":\"379\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"508\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m5351zbjeefby4pmqxfkcmqw\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=sMGbmkfP_gMQTg1qReUG.8LzaBpim2ovpjJ__x_fZPo-1792181075.2983572-1.0.1.1-i9ybBn2HtZxw7diGJwS4vK2BFdzkMdFSUc54O_n10IxanTlrTenu93Ght7nMK2tYZBJzd6kV0GN9hRkSNV0LFzT0V6YWKYzTsT6d4TkVgxdgIPpu1377sbs_uizIo.2S; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:34:35 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b9ac689f392b24-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. A"
+   },
+   "finished_at": "2026-10-16T20:04:35.569Z"
+  },
+  {
+   "step_id": 926,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 5,
+    "attempt": 3
+   },
+   "finished_at": "2026-10-16T20:04:35.599Z"
+  },
+  {
+   "step_id": 927,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 5,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 20:05:05 GMT\",\"content-type\":\"application/json\",\"content-length\":\"381\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"499\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m5352wytet0tkbn8q2t2mjhv\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=4E98PCxkG0KTsofQiJtFTVeHUqQk0dN5XSGkE9OJ1bQ-1792181105.6102164-1.0.1.1-ZtN4sIfUhgybCIe3HPbtFTFbhht4zFrM2E201e909Ds1TtCF6YoUBXkYN4Zi12RndwJcnTqF7HTNsCURhIMTFva0nozAKa0AwiJwNWJj2CdL6sPejK9zVsJhtGmJkFRL; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:35:05 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b9ad260e6cef9a-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. A"
+   },
+   "finished_at": "2026-10-16T20:05:05.874Z"
+  },
+  {
+   "step_id": 928,
+   "step_name": "claims_batch",
+   "status": "skipped",
+   "detail": {
+    "batch": 5,
+    "reason": "no valid output after 3 attempts"
+   },
+   "finished_at": "2026-10-16T20:05:05.894Z"
+  },
+  {
+   "step_id": 929,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 6,
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T20:05:05.896Z"
+  },
+  {
+   "step_id": 930,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 6,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 20:05:35 GMT\",\"content-type\":\"application/json\",\"content-length\":\"381\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"478\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m5353tjre41bbyhnajghs12k\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=TpRnKHAAkb6qnQ9s8hPPdAPY7YZ4fQTtep7Mxq5.y_c-1792181135.9449904-1.0.1.1-dSk5FWjgnIht1lboxyLDAvXJMwG6Qt8oUyk4QJzjm8b4cMqVsJNagbZVB7JPKPkxAvsw1dnU2X_.SXEc5gN9fkwYKteEdLt8mFx.0Zrvn37CXpEEWxGF4SudMDCSmHG6; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:35:35 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b9ade3adda2d58-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. A"
+   },
+   "finished_at": "2026-10-16T20:05:36.215Z"
+  },
+  {
+   "step_id": 931,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 6,
+    "attempt": 2
+   },
+   "finished_at": "2026-10-16T20:05:36.235Z"
+  },
+  {
+   "step_id": 932,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 6,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 20:06:06 GMT\",\"content-type\":\"application/json\",\"content-length\":\"381\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"445\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m5354r58epf8a189qrctax1s\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=qCYr_xLgzUBwBWJKbgMYuecqHrH8YhWP0oQJgFNZYLI-1792181166.2306125-1.0.1.1-.n2lzJpoNW0RHap4rDmWR5Rq2uM1Mqsjo50VEG2.qLWaTJa.ZdAgVMwT0rzPMM42gZIG6V_1VvxA9uhpPxk1f8iCqO90TB5x6NALtQ9qgMRwaK.IHa.Dmf_D2LG7Zo7a; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:36:06 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b9aea0ef853d73-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. A"
+   },
+   "finished_at": "2026-10-16T20:06:06.500Z"
+  },
+  {
+   "step_id": 933,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 6,
+    "attempt": 3
+   },
+   "finished_at": "2026-10-16T20:06:06.524Z"
+  },
+  {
+   "step_id": 934,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 6,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 20:06:36 GMT\",\"content-type\":\"application/json\",\"content-length\":\"381\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"413\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m5355nqze67bh7ef9bfnmfx8\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=FJCIJmJths6J0oUwn3PEDWV7uLPBqmQZWNebg4Dx8Xo-1792181196.5251231-1.0.1.1-d4uacy77BqoI1N.5h.UxM_SLmTSTDO.OD9Xl5gV8d6gRHZ8XAqXbBdwMzkZLm5ttuC5DicvR8KQYx77xOg9UWk4PV3HHFwv7B7o2GmnUzFz1OJBuE16b20SATUQa4EbS; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:36:36 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b9af5e485de285-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. A"
+   },
+   "finished_at": "2026-10-16T20:06:36.795Z"
+  },
+  {
+   "step_id": 935,
+   "step_name": "claims_batch",
+   "status": "skipped",
+   "detail": {
+    "batch": 6,
+    "reason": "no valid output after 3 attempts"
+   },
+   "finished_at": "2026-10-16T20:06:36.813Z"
+  },
+  {
+   "step_id": 936,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 7,
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T20:06:36.815Z"
+  },
+  {
+   "step_id": 937,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 7,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 20:07:09 GMT\",\"content-type\":\"application/json\",\"content-length\":\"381\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"375\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m5356nhde99bje62m6eab568\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=KtmQgq71QcrN7TTBz0n2vcsWHc3Gp9gajil0loZHR_w-1792181229.0832233-1.0.1.1-iul1mHbwvigTIfoxFmF_Jozzb7jnOsB8heeKvOQJheWcELWKt1QRmwSFCO6bk_WGBcrx4p6fAIv1Y09H2n7nQz9KbHoGMJm7rh16yia8GrN4fV9UfpdAw5UvCd6ixUmv; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:37:09 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b9b029cfb30b96-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. A"
+   },
+   "finished_at": "2026-10-16T20:07:09.573Z"
+  },
+  {
+   "step_id": 938,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 7,
+    "attempt": 2
+   },
+   "finished_at": "2026-10-16T20:07:09.598Z"
+  },
+  {
+   "step_id": 939,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 7,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 20:07:39 GMT\",\"content-type\":\"application/json\",\"content-length\":\"381\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"344\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m5357kapee1t650vazfem3td\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=fmLD6nh4yayEueqn.WUXJ3s_lZOls193D1M2locjxbA-1792181259.5891094-1.0.1.1-pYeFmKna9L1LojIvEY6_5CF3EbIz.cpLcgbFXlbbLEuD.22qS5LgeDuqdv5DxV_VQeJiKIrUSnu.lsa87L50EMvdZZO2e8GzqJ6gBrBxp7BcFwsBnpEYHsmn32j1ne.t; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:37:39 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b9b0e86b1be1e4-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. A"
+   },
+   "finished_at": "2026-10-16T20:07:39.855Z"
+  },
+  {
+   "step_id": 940,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 7,
+    "attempt": 3
+   },
+   "finished_at": "2026-10-16T20:07:39.876Z"
+  },
+  {
+   "step_id": 941,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 7,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 20:08:09 GMT\",\"content-type\":\"application/json\",\"content-length\":\"381\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"314\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m5358gyber5vygamjzjknyf6\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=_Fs4Hq_T9nRiA1z7ZYK1TD9PZImZBIfkMlIkdCuIF74-1792181289.9144554-1.0.1.1-qU79LtwfEqHzEAqL9k.Q5.7_unG.La3XCScBIfbG0bweSI1r4pDLMCIQHNYu085Y4RdpfEG1OVtnlNVaYMeh5sepFqIwmC25GePfGIyjsrIBBNdApAhP45CP.kohwyE5; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:38:09 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b9b1a5fb4a61ee-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. A"
+   },
+   "finished_at": "2026-10-16T20:08:10.185Z"
+  },
+  {
+   "step_id": 942,
+   "step_name": "claims_batch",
+   "status": "skipped",
+   "detail": {
+    "batch": 7,
+    "reason": "no valid output after 3 attempts"
+   },
+   "finished_at": "2026-10-16T20:08:10.203Z"
+  },
+  {
+   "step_id": 943,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 8,
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T20:08:10.205Z"
+  },
+  {
+   "step_id": 944,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 8,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 20:08:40 GMT\",\"content-type\":\"application/json\",\"content-length\":\"381\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"321\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m5359eh5ejmaq9a6r98xa3qp\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=jGRr0dJAmcCzoLTi182rpMTC2YksLjOVJxOvamjaGy8-1792181320.2133334-1.0.1.1-9YDRocPYJhg1cl.iQsJeJ89.GKsd2PvoSd9McBpKjGEHDPwlCdvmzpN0gRqwMVc9OToaHiG8gnNzLhHKZ9vRuzF4BpFjH5EEyHlOi8Q7pe7ukESgToOqDxedMstP6t8b; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:38:40 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b9b2635852e1ec-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. A"
+   },
+   "finished_at": "2026-10-16T20:08:40.490Z"
+  },
+  {
+   "step_id": 945,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 8,
+    "attempt": 2
+   },
+   "finished_at": "2026-10-16T20:08:40.514Z"
+  },
+  {
+   "step_id": 946,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 8,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 20:09:10 GMT\",\"content-type\":\"application/json\",\"content-length\":\"381\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"323\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m535ac4ce8j8jkbvt11k353g\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=ErGp4v6OLCKns2.Ijy2V7ej0JRBUxHy73kpM3FXDpk4-1792181350.512222-1.0.1.1-aVAEe7ntodnSFXmliem8LCppTD.0GIjgzYX8agArhoxQilVMaUyUZvGlVng6p5xo0icd1l3XM2HlB_sdlKZltcd7wpRO6CovqeZNGlKkGXv9.cbTyKgH6Tp6a.eiCAzY; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:39:10 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b9b320bd8fe597-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. A "
+   },
+   "finished_at": "2026-10-16T20:09:10.806Z"
+  },
+  {
+   "step_id": 947,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 8,
+    "attempt": 3
+   },
+   "finished_at": "2026-10-16T20:09:10.828Z"
+  },
+  {
+   "step_id": 948,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 8,
+    "error": "{\"error\":{\"message\":\"Try spacing your requests out using the batching settings under 'Options'\",\"name\":\"AxiosError\",\"isAxiosError\":true,\"code\":\"ERR_BAD_REQUEST\",\"response\":{\"headers\":{\"date\":\"Fri, 16 Oct 2026 20:09:40 GMT\",\"content-type\":\"application/json\",\"content-length\":\"381\",\"connection\":\"close\",\"cache-control\":\"private, max-age=0, no-store, no-cache, must-revalidate\",\"retry-after\":\"214\",\"server\":\"cloudflare\",\"vary\":\"Origin\",\"x-groq-region\":\"fra\",\"x-ratelimit-limit-requests\":\"1000\",\"x-ratelimit-limit-tokens\":\"8000\",\"x-ratelimit-remaining-requests\":\"1000\",\"x-ratelimit-remaining-tokens\":\"8000\",\"x-ratelimit-reset-requests\":\"1ms\",\"x-ratelimit-reset-tokens\":\"1ms\",\"x-request-id\":\"req_01m535b9r3egnsxmjqn31bsvc2\",\"x-should-retry\":\"false\",\"via\":\"1.1 google\",\"cf-cache-status\":\"DYNAMIC\",\"set-cookie\":[\"__cf_bm=2dFLdeOB1t.3DlOMQjGkJ1WkNeqo2r8mJLBWchOWD80-1792181380.8476582-1.0.1.1-yhMHjcpS64h3..KMhf_9t3LXMXhxQC5xKIJMdlBy5gz2f4OoMQ7UgsrzW7TIKjtA_mnSJDA7nUkbFTYeHcWLJ0Dr_7aXfhT6rkBapHAslrKYrESVz4EhlKucLNnHtwo5; HttpOnly; SameSite=None; Secure; Path=/; Domain=groq.com; Expires=Fri, 16 Oct 2026 20:39:40 GMT\"],\"strict-transport-security\":\"max-age=15552000\",\"cf-ray\":\"a4b9b3de4c5ee22d-MRS\",\"alt-svc\":\"h3=\\\":443\\\"; ma=86400\"},\"status\":429,\"statusText\":\"Too Many Requests\"},\"status\":429,\"options\":{\"url\":\"https://api.groq.com/openai/v1/chat/completions\",\"method\":\"post\",\"data\":\"{\\\"model\\\":\\\"openai/gpt-oss-20b\\\",\\\"temperature\\\":0,\\\"reasoning_effort\\\":\\\"low\\\",\\\"include_reasoning\\\":false,\\\"max_completion_tokens\\\":2500,\\\"messages\\\":[{\\\"role\\\":\\\"system\\\",\\\"content\\\":\\\"You extract checkable claims from sentences of a research paper draft, so that each claim can later be checked against the paper's own tables and figures and against the papers it cites.\\\\n\\\\nYou receive the paper's title, the list of tables and figures it contains, and a batch of sentences. Each sentence starts with its id in brackets, then its section in parentheses.\\\\n\\\\nFor each sentence, return zero, one or several claims. A"
+   },
+   "finished_at": "2026-10-16T20:09:41.122Z"
+  },
+  {
+   "step_id": 949,
+   "step_name": "claims_batch",
+   "status": "skipped",
+   "detail": {
+    "batch": 8,
+    "reason": "no valid output after 3 attempts"
+   },
+   "finished_at": "2026-10-16T20:09:41.142Z"
+  },
+  {
+   "step_id": 950,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 9,
+    "attempt": 1
+   },
+   "finished_at": "2026-10-16T20:09:41.143Z"
+  },
+  {
+   "step_id": 951,
+   "step_name": "claims_batch",
+   "status": "done",
+   "detail": {
+    "kept": [],
+    "batch": 9,
+    "usage": {
+     "queue_time": 0.017315531,
+     "total_time": 0.12661646,
+     "prompt_time": 0.105875729,
+     "total_tokens": 1844,
+     "prompt_tokens": 1824,
+     "completion_time": 0.020740731,
+     "completion_tokens": 20,
+     "completion_tokens_details": {
+      "reasoning_tokens": 6
+     }
+    },
+    "dropped": []
+   },
+   "finished_at": "2026-10-16T20:10:11.530Z"
+  }
+ ]
+}

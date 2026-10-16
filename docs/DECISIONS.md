@@ -359,7 +359,7 @@ The container registries were not reachable from the development sandbox, so the
   1. **Code selects the candidate sentences:** those with a decimal or percent number, a table or figure reference, or a citation, outside References, Acknowledgements and Limitations.
      - On the spike papers: CRAG 79 of 304 sentences, Adaptive-RAG 71 of 212, Self-RAG 123 of 507.
      - That is about 3,000 to 4,700 tokens, so 3 or 4 calls per paper.
-  2. **The LLM (gpt-oss-20b) turns each batch of about 1,800 tokens into typed claims:**
+  2. **The LLM (gpt-oss-20b) turns each batch of about 700 counted tokens into typed claims:**
      - five types: `result`, `comparison`, `figure`, `citation`, `other`;
      - values copied as written, with their system, dataset, metric and setting;
      - table and figure references only when the sentence names them;
@@ -369,5 +369,44 @@ The container registries were not reachable from the development sandbox, so the
      - unknown sentence ids are dropped;
      - references to tables or figures the paper does not contain are kept but flagged.
 - **Why this split:** finding "is there a number here" is exact and free in code. Deciding which system and dataset a number belongs to, and whether a sentence is a comparison, needs reading. Validating the reading against the source text stops the LLM from being the weak link.
-- **Rate limits:** n8n loops over the batches one at a time, with a 20-second pause after each, to stay under Groq's free-tier tokens per minute.
+- **Rate limits and the loop:** pp-tools, not n8n, keeps the loop's state (`POST /audit/{run}/claims/next`). n8n asks for the next batch, waits 65 seconds, calls the LLM and saves the output. An LLM error goes back to "next", which serves the same batch again; a batch is skipped after 3 attempts, and a rerun resumes where it stopped (F-012).
+  - Groq's free tier refuses any single request above 8,000 tokens per minute, and it counts the input plus the output budget.
+  - The first version (batches of 1,800 tokens, 4,096 reserved for the answer) was refused on every call (F-011).
+  - A batch is now 700 counted tokens (about 1,000 real) with 3,000 reserved for the answer, about 6,500 per request. A test keeps the budget under 7,000.
+  - gpt-oss-20b's hidden reasoning tokens count too, so one call uses 6,000 to 7,000 tokens, and calls must be a minute apart (F-012). n8n's own retries cannot do this: they wait at most 5 seconds.
+  - Cost: 5 to 9 calls and 7 to 12 minutes per paper. The daily cap (about 200,000 tokens per model) allows roughly 4 to 6 papers a day, so evaluations must be spread over days.
 - **Privacy:** the audit's LLM nodes are Groq only, with no Gemini fallback. A draft is unpublished work, and the Gemini free tier uses content to improve Google's products (D12). If Groq is down, the audit fails visibly instead of sending the draft elsewhere.
+
+## D34. The audit's claim extractor calls Groq's API directly, with low reasoning and a strict schema
+
+- **Date:** 2026-10-16. An exception to D21 (LLM calls in n8n's AI nodes).
+- **Context:** gpt-oss-20b reasons before answering, and reasoning tokens count against the output budget and the 8,000 tokens per minute. With default reasoning it used its whole budget and returned an empty answer (F-013). n8n's Groq chat-model node cannot set `reasoning_effort`, and its output parser adds about 700 tokens of format instructions.
+- **Decision:** the "Extract claims" node is an n8n HTTP Request to `https://api.groq.com/openai/v1/chat/completions`. It authenticates with a header credential that `n8n/entrypoint.sh` creates from `GROQ_API_KEY`, so the key never appears in the workflow (F-014: the `groqApi` credential type only works in the Groq chat-model node). It sends:
+  - `reasoning_effort: "low"` and `include_reasoning: false`;
+  - `max_completion_tokens: 2500`;
+  - `response_format` with a strict JSON schema: every field required, optional ones nullable, `additionalProperties: false`.
+- **Fallback model and rate limits:** `openai/gpt-oss-120b` when gpt-oss-20b's daily tokens are spent (Groq's limits are per model). A 429 does not use one of a batch's attempts; pp-tools tells n8n how long to wait, or stops the run when both models are spent (F-017).
+- **Who builds the body:** pp-tools returns the full request with each batch (`claims_request()`), and the node posts it unchanged. The schema was first written inline in the node; n8n cut the expression at the first `}}` and every call failed (F-016).
+- **Why it is still the automation platform's job:** n8n makes the call, handles its errors (error output to "Record LLM error") and controls the pacing. pp-tools still renders the prompt from the library and validates the output.
+- **Measured (probe, CRAG batch 0):** 2,586 tokens in total (2,351 in, 235 out, of which 133 reasoning), 1.2 s, valid JSON. Calls are therefore paced 30 s apart instead of 65 s.
+- **What the strict schema buys:** the decoder cannot produce JSON outside the schema, so the "doesn't fit required format" failures disappear by construction. pp-tools' own validation (numbers must appear in the sentence) stays, because a schema cannot check meaning.
+- **Trade-off:** the novelty branch keeps the LLM-chain nodes, with Gemini as a fallback, which the audit must not use (D12). The two styles are documented side by side; moving the novelty branch is not worth the risk now.
+- **Sources:** [Groq reasoning](https://console.groq.com/docs/reasoning), [Groq structured outputs](https://console.groq.com/docs/structured-outputs), [Groq rate limits](https://console.groq.com/docs/rate-limits).
+
+## D35. The number check is deterministic code, not an LLM
+
+- **Date:** 2026-10-16. Milestone 3, step 4.
+- **Context:** a claim such as "CRAG outperforms RAG by 7.0% accuracy on PopQA (SelfRAG-LLaMA2-7b)" is checked by finding two table cells and subtracting. An LLM is unreliable at arithmetic and costs tokens on every claim; the hard part is only locating the cells, and parsed tables carry enough structure for code to do it.
+- **Decision:** `app/audit/numbers.py` turns each table into numeric cells with their context (row label and the group labels carried down, column headers of the current header block, the full-width section row, and for "w/o ..." ablation rows the method above them). A claim's system must match a row (or column) label; dataset, metric and setting narrow the candidates when something matches them; the claim's own words decide between the rest, with the system's and baseline's names removed first. A value is compared at the precision it was written with; a margin is recomputed as an absolute difference, or a relative one only when the text does not say absolute. Verdicts: supported, contradicted, unverifiable. Unverifiable is never reported as an error.
+- **Why not an LLM to locate cells:** on the three papers every result claim was located by code. Names a table does not use ("relevance" for "ISREL") stay unverifiable; an LLM locator is a possible extension if E3 on unseen papers shows many of those.
+- **Saying "wrong" needs more evidence than saying "right" (held-out lesson):** a matching number is evidence by itself; a different number is only evidence if the cell is surely the one meant. So a claim is contradicted only when one cell (or one column pair) is left, every dataset, metric and setting it names is in that cell's labels or its table's caption, and, for a margin, the claim's words chose the column. A system name must match a row label exactly (with its setting: "RAPTOR" + "GPT-4" is "RAPTOR + GPT-4"), never as an abbreviation. A number written as "by X" or "an improvement of X" is a margin; without a named baseline it is unverifiable, never a score.
+- **Measured (E3, offline, no tokens; seed 13):**
+
+  | Set | Real claims: correct numbers | Real: planted errors | Synthetic: correct numbers | Synthetic: planted errors |
+  | --- | --- | --- | --- | --- |
+  | Tuning papers (CRAG, Adaptive-RAG, Self-RAG), final rules | 13 supported, 0 false alarms, 17 unverifiable | 30/30 caught | 467/472 supported, 0 false alarms | 1,090/1,277 caught, 0 accepted |
+  | Held-out (RAPTOR, FLARE), rules as first written | 3 supported, **2 false alarms**, 11 unverifiable | 3/10 caught | 300/322 supported, 0 false alarms | 722/785 caught, 0 accepted |
+  | Held-out, after the fixes above | 3 supported, 0 false alarms, 13 unverifiable | 0/10 caught, 10 unverifiable | 340/362 supported, 0 false alarms | 819/882 caught, 0 accepted |
+
+  The second row is the only blind measurement; the third is no longer blind (the fixes came from it). FLARE produced no claim with a numeric value and a system, so its real-claim part is empty.
+- **What this means:** on numbers that are clearly located, the check is reliable in both directions (no false alarm, no planted error accepted in any run). Its weakness is coverage on real prose: on RAPTOR, 13 of 16 numbers stay unverifiable because the text says "RAPTOR" where the table says "RAPTOR + GPT-4", refers to "it" from the previous sentence, gives ranges ("1.7 to 5.8"), or because the parser swapped two captions (F-019). An LLM locator, or giving the extractor the previous sentence, are the next steps if coverage matters more than the remaining milestone-3 steps.
