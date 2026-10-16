@@ -376,3 +376,17 @@ The container registries were not reachable from the development sandbox, so the
   - gpt-oss-20b's hidden reasoning tokens count too, so one call uses 6,000 to 7,000 tokens, and calls must be a minute apart (F-012). n8n's own retries cannot do this: they wait at most 5 seconds.
   - Cost: 5 to 9 calls and 7 to 12 minutes per paper. The daily cap (about 200,000 tokens per model) allows roughly 4 to 6 papers a day, so evaluations must be spread over days.
 - **Privacy:** the audit's LLM nodes are Groq only, with no Gemini fallback. A draft is unpublished work, and the Gemini free tier uses content to improve Google's products (D12). If Groq is down, the audit fails visibly instead of sending the draft elsewhere.
+
+## D34. The audit's claim extractor calls Groq's API directly, with low reasoning and a strict schema
+
+- **Date:** 2026-10-16. An exception to D21 (LLM calls in n8n's AI nodes).
+- **Context:** gpt-oss-20b reasons before answering, and reasoning tokens count against the output budget and the 8,000 tokens per minute. With default reasoning it used its whole budget and returned an empty answer (F-013). n8n's Groq chat-model node cannot set `reasoning_effort`, and its output parser adds about 700 tokens of format instructions.
+- **Decision:** the "Extract claims" node is an n8n HTTP Request to `https://api.groq.com/openai/v1/chat/completions`. It uses n8n's stored Groq credential, so the key never appears in the workflow, and sends:
+  - `reasoning_effort: "low"` and `include_reasoning: false`;
+  - `max_completion_tokens: 3500`;
+  - `response_format` with a strict JSON schema: every field required, optional ones nullable, `additionalProperties: false`.
+- **Why it is still the automation platform's job:** n8n makes the call, handles its errors (error output to "Record LLM error") and controls the pacing. pp-tools still renders the prompt from the library and validates the output.
+- **What the strict schema buys:** the decoder cannot produce JSON outside the schema, so the "doesn't fit required format" failures disappear by construction. pp-tools' own validation (numbers must appear in the sentence) stays, because a schema cannot check meaning.
+- **Trade-off:** the novelty branch keeps the LLM-chain nodes, with Gemini as a fallback, which the audit must not use (D12). The two styles are documented side by side; moving the novelty branch is not worth the risk now.
+- **Sources:** [Groq reasoning](https://console.groq.com/docs/reasoning), [Groq structured outputs](https://console.groq.com/docs/structured-outputs), [Groq rate limits](https://console.groq.com/docs/rate-limits).
+

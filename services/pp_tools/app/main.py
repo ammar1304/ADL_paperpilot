@@ -24,7 +24,15 @@ from pydantic import ValidationError
 
 from .audit.parse_job import parse_paper
 from .audit.parser import DoclingClient
-from .audit.steps import AuditError, audit_result, claim_prompts, claims as audit_claims, next_claim_batch, save_claims
+from .audit.steps import (
+    AuditError,
+    audit_result,
+    claim_prompts,
+    claims as audit_claims,
+    next_claim_batch,
+    record_llm_error,
+    save_claims,
+)
 from .audit.store import PaperStore
 from .config import Settings, get_settings
 from .corpus.arxiv import ArxivClient
@@ -566,7 +574,15 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         """Validate and store one batch of P4 output: {"batch": 0, "output": {...}}."""
         if not isinstance(body.get("batch"), int):
             raise HTTPException(status_code=422, detail="batch (integer) is required")
-        return await run_in_threadpool(_audit_errors, save_claims, db, papers, run_id, body["batch"], body.get("output"))
+        return await run_in_threadpool(
+            _audit_errors, save_claims, db, papers, run_id, body["batch"], body.get("output"), body.get("output_text"), body.get("usage")
+        )
+
+    @app.post("/audit/{run_id}/claims/error")
+    async def audit_llm_error(run_id: UUID, body: dict[str, Any]) -> Any:
+        if not isinstance(body.get("batch"), int):
+            raise HTTPException(status_code=422, detail="batch (integer) is required")
+        return await run_in_threadpool(_audit_errors, record_llm_error, db, run_id, body["batch"], str(body.get("error", "")))
 
     @app.get("/audit/{run_id}/claims")
     async def audit_get_claims(run_id: UUID) -> Any:

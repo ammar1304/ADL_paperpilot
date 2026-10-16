@@ -1,5 +1,7 @@
 """Audit pipeline steps that n8n calls between LLM nodes (the novelty branch's pattern, D21)."""
 
+import json
+
 from typing import Any
 from uuid import UUID
 
@@ -92,8 +94,18 @@ def _prompts_step(db: Database, run_id: UUID) -> dict[str, Any]:
     return steps[-1]["detail"]
 
 
-def save_claims(db: Database, papers: PaperStore, run_id: UUID, batch: int, output: Any) -> dict[str, Any]:
+def save_claims(
+    db: Database, papers: PaperStore, run_id: UUID, batch: int, output: Any, output_text: str | None = None,
+    usage: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    """Validate and store one batch of P4 output: a parsed object, or the model's raw JSON text."""
     paper = papers.paper(parsed_digest(db, run_id))
+    if output is None and output_text is not None:
+        try:
+            output = json.loads(output_text)
+        except ValueError as exc:
+            db.add_step(run_id, "claims_batch", "failed", {"batch": batch, "error": f"not JSON: {exc}", "output_text": output_text[:2000]})
+            raise AuditError(f"the model's output is not JSON: {exc}") from exc
     detail = _prompts_step(db, run_id)
     if not 0 <= batch < len(detail["batches"]):
         raise AuditError(f"batch {batch} does not exist (0..{len(detail['batches']) - 1})")
@@ -104,8 +116,16 @@ def save_claims(db: Database, papers: PaperStore, run_id: UUID, batch: int, outp
     except ValueError as exc:
         db.add_step(run_id, "claims_batch", "failed", {"batch": batch, "error": str(exc)[:1000], "output": output})
         raise AuditError(str(exc)) from exc
-    db.add_step(run_id, "claims_batch", "done", {"batch": batch, "kept": kept, "dropped": dropped})
+    db.add_step(run_id, "claims_batch", "done", {"batch": batch, "kept": kept, "dropped": dropped, "usage": usage})
     return {"batch": batch, "kept": len(kept), "dropped": len(dropped)}
+
+
+def record_llm_error(db: Database, run_id: UUID, batch: int, error: str) -> dict[str, Any]:
+    """Why an LLM call failed (rate limit, empty output...), so a skipped batch is never silent."""
+    if db.get_run(run_id) is None:
+        raise LookupError(f"run {run_id} not found")
+    db.add_step(run_id, "claims_llm_error", "failed", {"batch": batch, "error": error[:2000]})
+    return {"batch": batch, "recorded": True}
 
 
 def claims(db: Database, run_id: UUID) -> dict[str, Any]:
@@ -120,6 +140,7 @@ def claims(db: Database, run_id: UUID) -> dict[str, Any]:
     by_type: dict[str, int] = {}
     for c in kept:
         by_type[c["type"]] = by_type.get(c["type"], 0) + 1
+    llm_errors = [s["detail"] for s in db.get_steps(run_id, "claims_llm_error")]
     skipped = sorted({s["detail"]["batch"] for s in db.get_steps(run_id, "claims_batch") if s["status"] == "skipped"} - set(latest))
     return {
         "prompt_version": detail["prompt_version"],
@@ -128,6 +149,7 @@ def claims(db: Database, run_id: UUID) -> dict[str, Any]:
         "batches": len(detail["batches"]),
         "batches_done": len(latest),
         "batches_skipped": skipped,
+        "llm_errors": len(llm_errors),
         "claims": kept,
         "dropped": dropped,
         "by_type": by_type,
@@ -149,6 +171,6 @@ def audit_result(db: Database, papers: PaperStore, run_id: UUID) -> dict[str, An
                  | {"tables": [t["id"] for t in p["tables"]], "figures": [f["id"] for f in p["figures"]]},
         "claims": extracted["claims"],
         "claims_dropped": len(extracted["dropped"]),
-        "coverage": {k: extracted[k] for k in ("total_sentences", "candidate_sentences", "batches", "batches_done", "batches_skipped", "by_type")},
+        "coverage": {k: extracted[k] for k in ("total_sentences", "candidate_sentences", "batches", "batches_done", "batches_skipped", "llm_errors", "by_type")},
         "prompt_versions": {EXTRACTOR: extracted["prompt_version"]},
     }

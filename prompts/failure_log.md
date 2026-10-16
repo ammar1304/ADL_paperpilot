@@ -167,3 +167,13 @@ Fix:
 - **A batch is skipped and recorded after 3 attempts,** so a run always ends.
 - **A rerun resumes** where the previous one stopped.
 
+**F-013 (model and node): gpt-oss-20b returned nothing.** Third run (`eval/results/20261016-172946-audit-claims`, CRAG). The new loop worked: 6 batches, 3 attempts each, every one skipped, run finished in 21 minutes. But all 18 LLM calls failed. n8n's log: "The AI model returned an empty response to the Structured Output Parser" (8 times) and "Model output doesn't fit required format" (4 times). Cause:
+- gpt-oss reasons before it answers, and with the default effort it spent the whole 3,000-token output budget on reasoning, leaving no answer.
+- The budget cannot simply grow, because of the 8,000-tokens-per-minute cap (F-011).
+- n8n's Groq chat-model node exposes neither `reasoning_effort` nor Groq's strict structured outputs.
+
+Fix (D34):
+- The extractor calls Groq's API from an n8n HTTP Request node with `reasoning_effort: "low"`, `include_reasoning: false` and a strict JSON schema, so the decoder can only produce schema-valid JSON.
+- The output budget is 3,500 tokens, with a test that keeps input plus output under about 7,600.
+- LLM errors are now stored as run steps (`claims_llm_error`) instead of disappearing into the retry loop.
+

@@ -203,71 +203,6 @@
    }
   },
   {
-   "id": "c3f2e8f4-0012-4c9a-9c33-000000000012",
-   "name": "Extract claims",
-   "notes": "LLM call per batch: P4 turns sentences into structured claims. Groq gpt-oss-20b only: a draft is never sent to the Gemini free tier (D12). On an error (rate limit, invalid JSON) the error output goes back to 'Next claim batch', which serves the batch again after the pause; n8n's own retries wait at most 5 s, too short for Groq's per-minute window.",
-   "type": "@n8n/n8n-nodes-langchain.chainLlm",
-   "typeVersion": 1.9,
-   "position": [
-    1760,
-    200
-   ],
-   "parameters": {
-    "promptType": "define",
-    "text": "={{ $json.user }}",
-    "hasOutputParser": true,
-    "needsFallback": false,
-    "messages": {
-     "messageValues": [
-      {
-       "type": "SystemMessagePromptTemplate",
-       "message": "={{ $json.system }}"
-      }
-     ]
-    },
-    "batching": {}
-   },
-   "onError": "continueErrorOutput"
-  },
-  {
-   "id": "c3f2e8f4-0013-4c9a-9c33-000000000013",
-   "name": "Groq gpt-oss-20b (claims)",
-   "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
-   "typeVersion": 1,
-   "position": [
-    1700,
-    440
-   ],
-   "parameters": {
-    "model": "openai/gpt-oss-20b",
-    "options": {
-     "temperature": 0,
-     "maxTokensToSample": 3000
-    }
-   },
-   "credentials": {
-    "groqApi": {
-     "id": "ppGroqCredent001",
-     "name": "Groq (PaperPilot)"
-    }
-   }
-  },
-  {
-   "id": "c3f2e8f4-0014-4c9a-9c33-000000000014",
-   "name": "Claims schema",
-   "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
-   "typeVersion": 1.3,
-   "position": [
-    1900,
-    440
-   ],
-   "parameters": {
-    "schemaType": "manual",
-    "inputSchema": "{\n  \"type\": \"object\",\n  \"properties\": {\n    \"claims\": {\n      \"type\": \"array\",\n      \"maxItems\": 60,\n      \"items\": {\n        \"type\": \"object\",\n        \"properties\": {\n          \"sentence_id\": {\n            \"type\": \"string\"\n          },\n          \"type\": {\n            \"type\": \"string\",\n            \"enum\": [\n              \"result\",\n              \"comparison\",\n              \"figure\",\n              \"citation\",\n              \"other\"\n            ]\n          },\n          \"claim\": {\n            \"type\": \"string\"\n          },\n          \"values\": {\n            \"type\": \"array\",\n            \"items\": {\n              \"type\": \"object\",\n              \"properties\": {\n                \"value\": {\n                  \"type\": \"string\"\n                },\n                \"metric\": {\n                  \"type\": \"string\"\n                },\n                \"dataset\": {\n                  \"type\": \"string\"\n                },\n                \"system\": {\n                  \"type\": \"string\"\n                },\n                \"setting\": {\n                  \"type\": \"string\"\n                }\n              },\n              \"required\": [\n                \"value\",\n                \"metric\",\n                \"dataset\",\n                \"system\",\n                \"setting\"\n              ],\n              \"additionalProperties\": false\n            }\n          },\n          \"comparison\": {\n            \"type\": \"object\",\n            \"properties\": {\n              \"system\": {\n                \"type\": \"string\"\n              },\n              \"baseline\": {\n                \"type\": \"string\"\n              },\n              \"difference\": {\n                \"type\": \"string\"\n              },\n              \"kind\": {\n                \"type\": \"string\",\n                \"enum\": [\n                  \"absolute\",\n                  \"relative\",\n                  \"unspecified\"\n                ]\n              },\n              \"direction\": {\n                \"type\": \"string\",\n                \"enum\": [\n                  \"better\",\n                  \"worse\",\n                  \"equal\"\n                ]\n              }\n            },\n            \"required\": [\n              \"system\",\n              \"baseline\",\n              \"difference\",\n              \"kind\",\n              \"direction\"\n            ],\n            \"additionalProperties\": false\n          },\n          \"refers_to\": {\n            \"type\": \"array\",\n            \"items\": {\n              \"type\": \"string\"\n            }\n          },\n          \"cites\": {\n            \"type\": \"array\",\n            \"items\": {\n              \"type\": \"string\"\n            }\n          }\n        },\n        \"required\": [\n          \"sentence_id\",\n          \"type\",\n          \"claim\",\n          \"values\",\n          \"refers_to\",\n          \"cites\"\n        ],\n        \"additionalProperties\": false\n      }\n    }\n  },\n  \"required\": [\n    \"claims\"\n  ],\n  \"additionalProperties\": false\n}",
-    "autoFix": false
-   }
-  },
-  {
    "id": "c3f2e8f4-0015-4c9a-9c33-000000000015",
    "name": "Save claims",
    "notes": "pp-tools validates the batch again and drops any claim whose numbers are not in its sentence. An invalid output (HTTP 409) does not stop the run: the batch is served again, up to 3 attempts.",
@@ -284,7 +219,7 @@
     "url": "={{ $env.PP_TOOLS_URL }}/audit/{{ $('Called by router').first().json.run_id }}/claims",
     "sendBody": true,
     "specifyBody": "json",
-    "jsonBody": "={{ JSON.stringify({ batch: $('Next claim batch').last().json.batch, output: $json.output }) }}",
+    "jsonBody": "={{ JSON.stringify({ batch: $('Next claim batch').last().json.batch, output_text: $json.choices[0].message.content, usage: $json.usage }) }}",
     "options": {
      "timeout": 60000,
      "response": {
@@ -387,6 +322,63 @@
     "resume": "timeInterval",
     "amount": 65,
     "unit": "seconds"
+   }
+  },
+  {
+   "id": "c3f2e8f4-0012-4c9a-9c33-000000000012",
+   "name": "Extract claims",
+   "notes": "LLM call per batch, straight to Groq's API: P4 turns sentences into structured claims. Not the n8n LLM-chain node, because it cannot set reasoning_effort or Groq's strict JSON schema: with default reasoning, gpt-oss used its whole output budget thinking and returned nothing (F-013). Groq only: a draft is never sent to the Gemini free tier (D12). Errors (rate limit, empty output) go to 'Record LLM error', then the batch is served again.",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2,
+   "position": [
+    1760,
+    200
+   ],
+   "onError": "continueErrorOutput",
+   "parameters": {
+    "method": "POST",
+    "url": "https://api.groq.com/openai/v1/chat/completions",
+    "authentication": "predefinedCredentialType",
+    "nodeCredentialType": "groqApi",
+    "sendBody": true,
+    "specifyBody": "json",
+    "jsonBody": "={{ JSON.stringify({ model: 'openai/gpt-oss-20b', temperature: 0, reasoning_effort: 'low', include_reasoning: false, max_completion_tokens: 3500, messages: [{ role: 'system', content: $json.system }, { role: 'user', content: $json.user }], response_format: { type: 'json_schema', json_schema: { name: 'claims', strict: true, schema: {\"type\": \"object\", \"properties\": {\"claims\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"properties\": {\"sentence_id\": {\"type\": \"string\"}, \"type\": {\"type\": \"string\", \"enum\": [\"result\", \"comparison\", \"figure\", \"citation\", \"other\"]}, \"claim\": {\"type\": \"string\"}, \"values\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"properties\": {\"value\": {\"type\": \"string\"}, \"metric\": {\"type\": \"string\"}, \"dataset\": {\"type\": \"string\"}, \"system\": {\"type\": \"string\"}, \"setting\": {\"type\": \"string\"}}, \"required\": [\"value\", \"metric\", \"dataset\", \"system\", \"setting\"], \"additionalProperties\": false}}, \"comparison\": {\"type\": [\"object\", \"null\"], \"properties\": {\"system\": {\"type\": \"string\"}, \"baseline\": {\"type\": \"string\"}, \"difference\": {\"type\": \"string\"}, \"kind\": {\"type\": \"string\", \"enum\": [\"absolute\", \"relative\", \"unspecified\"]}, \"direction\": {\"type\": \"string\", \"enum\": [\"better\", \"worse\", \"equal\"]}}, \"required\": [\"system\", \"baseline\", \"difference\", \"kind\", \"direction\"], \"additionalProperties\": false}, \"refers_to\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}}, \"cites\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}}}, \"required\": [\"sentence_id\", \"type\", \"claim\", \"values\", \"comparison\", \"refers_to\", \"cites\"], \"additionalProperties\": false}}}, \"required\": [\"claims\"], \"additionalProperties\": false} } } }) }}",
+    "options": {
+     "timeout": 120000
+    }
+   },
+   "credentials": {
+    "groqApi": {
+     "id": "ppGroqCredent001",
+     "name": "Groq (PaperPilot)"
+    }
+   }
+  },
+  {
+   "id": "c3f2e8f4-0018-4c9a-9c33-000000000018",
+   "name": "Record LLM error",
+   "notes": "Stores why an LLM call failed (rate limit, empty output, HTTP error) as a run step, so a failed batch is never silent.",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2,
+   "position": [
+    1980,
+    400
+   ],
+   "parameters": {
+    "method": "POST",
+    "url": "={{ $env.PP_TOOLS_URL }}/audit/{{ $('Called by router').first().json.run_id }}/claims/error",
+    "sendBody": true,
+    "specifyBody": "json",
+    "jsonBody": "={{ JSON.stringify({ batch: $('Next claim batch').last().json.batch, error: JSON.stringify($json).slice(0, 2000) }) }}",
+    "options": {
+     "timeout": 30000,
+     "response": {
+      "response": {
+       "fullResponse": true,
+       "neverError": true
+      }
+     }
+    }
    }
   }
  ],
@@ -529,7 +521,7 @@
     ],
     [
      {
-      "node": "Next claim batch",
+      "node": "Record LLM error",
       "type": "main",
       "index": 0
      }
@@ -547,23 +539,12 @@
     ]
    ]
   },
-  "Groq gpt-oss-20b (claims)": {
-   "ai_languageModel": [
+  "Record LLM error": {
+   "main": [
     [
      {
-      "node": "Extract claims",
-      "type": "ai_languageModel",
-      "index": 0
-     }
-    ]
-   ]
-  },
-  "Claims schema": {
-   "ai_outputParser": [
-    [
-     {
-      "node": "Extract claims",
-      "type": "ai_outputParser",
+      "node": "Next claim batch",
+      "type": "main",
       "index": 0
      }
     ]

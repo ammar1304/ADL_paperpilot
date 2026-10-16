@@ -74,6 +74,34 @@ def stub_url():
     server.shutdown()
 
 
+def test_raw_model_text_is_parsed_and_llm_errors_are_recorded(tmp_path, test_db_url, stub_url):
+    from fastapi.testclient import TestClient
+
+    from app.config import Settings
+    from app.main import create_app
+
+    settings = Settings(
+        APP_DATABASE_URL=test_db_url, QDRANT_URL="local::memory:", EMBEDDER_URL=stub_url, PARSER_URL=stub_url,
+        AUDIT_ALLOW_PRIVATE_URLS=True, CACHE_DIR=tmp_path / "cache", CORPUS_DIR=tmp_path / "corpus",
+        PROMPTS_DIR=REPO / "prompts", LOG_LEVEL="WARNING",
+    )
+    with TestClient(create_app(settings)) as client:
+        run_id = client.post("/runs", json={"request": {"mode": "audit", "draft_pdf_url": f"{stub_url}/pdf/2101.00001v2"}}).json()["run_id"]
+        job = client.post(f"/audit/{run_id}/parse").json()["job_id"]
+        for _ in range(100):
+            if client.get(f"/jobs/{job}").json()["status"] in ("done", "failed"):
+                break
+            time.sleep(0.1)
+        client.post(f"/audit/{run_id}/claims/next")
+        assert client.post(f"/audit/{run_id}/claims/error", json={"batch": 0, "error": "429 rate limit"}).json()["recorded"] is True
+        assert client.post(f"/audit/{run_id}/claims", json={"batch": 0, "output_text": "{not json"}).status_code == 409
+        text = json.dumps({"claims": [_claim()]})
+        saved = client.post(f"/audit/{run_id}/claims", json={"batch": 0, "output_text": text, "usage": {"total_tokens": 4321}}).json()
+        assert saved == {"batch": 0, "kept": 1, "dropped": 0}
+        result = client.post(f"/audit/{run_id}/result").json()
+        assert result["coverage"]["llm_errors"] == 1 and len(result["claims"]) == 1
+
+
 def test_claims_through_the_api(tmp_path, test_db_url, stub_url):
     from fastapi.testclient import TestClient
 
@@ -122,14 +150,34 @@ def _node(name):
     return next(n for n in AUDIT_WF["nodes"] if n["name"] == name)
 
 
-def test_claims_schema_matches_the_pydantic_contract():
-    schema = json.loads(_node("Claims schema")["parameters"]["inputSchema"])
+def _groq_body():
+    body = _node("Extract claims")["parameters"]["jsonBody"]
+    schema_text = body.split("strict: true, schema: ", 1)[1].rsplit(" } } }) }}", 1)[0]
+    return body, json.loads(schema_text)
+
+
+def test_claims_schema_matches_the_pydantic_contract_and_groq_strict_rules():
+    body, schema = _groq_body()
     item = schema["properties"]["claims"]["items"]
-    assert set(item["properties"]) == set(Claim.model_fields)
+    assert set(item["properties"]) == set(Claim.model_fields) == set(item["required"])  # strict: all required
     assert item["properties"]["type"]["enum"] == ["result", "comparison", "figure", "citation", "other"]
     assert set(item["properties"]["values"]["items"]["properties"]) == set(ClaimValue.model_fields)
     assert set(item["properties"]["comparison"]["properties"]) == set(Comparison.model_fields)
+    assert item["properties"]["comparison"]["type"] == ["object", "null"]
     assert set(schema["properties"]) == set(ClaimsOutput.model_fields)
+
+    def objects(node):
+        if isinstance(node, dict):
+            if node.get("type") == "object" or node.get("type") == ["object", "null"]:
+                yield node
+            for v in node.values():
+                yield from objects(v)
+        elif isinstance(node, list):
+            for v in node:
+                yield from objects(v)
+
+    assert all(o.get("additionalProperties") is False for o in objects(schema))
+    assert "reasoning_effort: 'low'" in body and "strict: true" in body  # F-013
 
 
 def test_p4_example_satisfies_the_contract():
@@ -137,15 +185,16 @@ def test_p4_example_satisfies_the_contract():
 
     system = PromptLibrary(REPO / "prompts").load("P4-claim-extractor").system
     example = system.split("Answer:", 1)[1].split("The third sentence", 1)[0].strip()
-    ClaimsOutput.model_validate(json.loads(example)["output"])
+    ClaimsOutput.model_validate(json.loads(example))
 
 
-def test_audit_llm_nodes_never_use_gemini():
+def test_audit_llm_calls_never_use_gemini():
     """D12: a draft is never sent to the Gemini free tier."""
-    types = {n["type"] for n in AUDIT_WF["nodes"]}
-    assert "@n8n/n8n-nodes-langchain.lmChatGoogleGemini" not in types
-    assert _node("Extract claims")["parameters"]["needsFallback"] is False
-    assert _node("Groq gpt-oss-20b (claims)")["parameters"]["model"] == "openai/gpt-oss-20b"
+    text = json.dumps(AUDIT_WF)
+    assert "lmChatGoogleGemini" not in text and "generativelanguage.googleapis.com" not in text
+    node = _node("Extract claims")
+    assert node["parameters"]["url"] == "https://api.groq.com/openai/v1/chat/completions"
+    assert node["parameters"]["nodeCredentialType"] == "groqApi" and "openai/gpt-oss-20b" in node["parameters"]["jsonBody"]
 
 
 def test_audit_workflow_asks_pp_tools_for_each_batch_and_recovers_from_llm_errors():
@@ -154,19 +203,27 @@ def test_audit_workflow_asks_pp_tools_for_each_batch_and_recovers_from_llm_error
     assert [o[0]["node"] for o in conns["Parse status"]["main"]] == ["Next claim batch", "Parse failed", "Polled too long?"]
     assert [o[0]["node"] for o in conns["More batches?"]["main"]] == ["Pause 65 s", "Assemble result"]
     assert conns["Pause 65 s"]["main"][0][0]["node"] == "Extract claims"
-    assert [o[0]["node"] for o in conns["Extract claims"]["main"]] == ["Save claims", "Next claim batch"]  # success, error
+    assert [o[0]["node"] for o in conns["Extract claims"]["main"]] == ["Save claims", "Record LLM error"]  # success, error
+    assert conns["Record LLM error"]["main"][0][0]["node"] == "Next claim batch"
     assert _node("Extract claims")["onError"] == "continueErrorOutput"
     assert conns["Save claims"]["main"][0][0]["node"] == "Next claim batch"
     assert _node("Save claims")["parameters"]["options"]["response"]["response"]["neverError"] is True
 
 
 def test_one_claims_request_fits_groqs_per_request_limit():
-    """Groq refused every first-version request: input + max output came to 8,069-8,213 > 8,000 tokens."""
-    from app.audit.steps import BATCH_TOKENS
+    """F-011: Groq refused every first-version request: input + max output came to 8,069-8,213 > 8,000 tokens."""
+    import re
 
-    max_out = _node("Groq gpt-oss-20b (claims)")["parameters"]["options"]["maxTokensToSample"]
-    prompt_overhead = 2600  # system prompt + n8n format instructions + tables list, in real tokens
-    assert BATCH_TOKENS * 1.4 + prompt_overhead + max_out <= 7000  # 1.4: our counter undercounts real tokens
+    from app.audit.steps import BATCH_TOKENS
+    from app.prompts import PromptLibrary
+    from app.textutil import count_tokens
+
+    max_out = int(re.search(r"max_completion_tokens: (\d+)", _node("Extract claims")["parameters"]["jsonBody"]).group(1))
+    p4 = PromptLibrary(REPO / "prompts").load("P4-claim-extractor")
+    schema_tokens = count_tokens(json.dumps(_groq_body()[1]))
+    tables_and_title = 500
+    real = 1.4  # our counter undercounts real tokens by 20-40%
+    assert (count_tokens(p4.system) + schema_tokens + BATCH_TOKENS) * real + tables_and_title + max_out <= 7600
 
 
 def test_next_batch_serves_each_batch_until_saved_or_three_attempts(tmp_path, test_db_url, stub_url):
