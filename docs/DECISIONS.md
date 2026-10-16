@@ -359,7 +359,7 @@ The container registries were not reachable from the development sandbox, so the
   1. **Code selects the candidate sentences:** those with a decimal or percent number, a table or figure reference, or a citation, outside References, Acknowledgements and Limitations.
      - On the spike papers: CRAG 79 of 304 sentences, Adaptive-RAG 71 of 212, Self-RAG 123 of 507.
      - That is about 3,000 to 4,700 tokens, so 3 or 4 calls per paper.
-  2. **The LLM (gpt-oss-20b) turns each batch of about 1,800 tokens into typed claims:**
+  2. **The LLM (gpt-oss-20b) turns each batch of about 700 counted tokens into typed claims:**
      - five types: `result`, `comparison`, `figure`, `citation`, `other`;
      - values copied as written, with their system, dataset, metric and setting;
      - table and figure references only when the sentence names them;
@@ -369,5 +369,9 @@ The container registries were not reachable from the development sandbox, so the
      - unknown sentence ids are dropped;
      - references to tables or figures the paper does not contain are kept but flagged.
 - **Why this split:** finding "is there a number here" is exact and free in code. Deciding which system and dataset a number belongs to, and whether a sentence is a comparison, needs reading. Validating the reading against the source text stops the LLM from being the weak link.
-- **Rate limits:** n8n loops over the batches one at a time, with a 20-second pause after each, to stay under Groq's free-tier tokens per minute.
+- **Rate limits:** n8n loops over the batches one at a time, with a 40-second pause after each.
+  - Groq's free tier refuses any single request above 8,000 tokens per minute, and it counts the input plus the output budget.
+  - The first version (batches of 1,800 tokens, 4,096 reserved for the answer) was refused on every call (F-011).
+  - A batch is now 700 counted tokens (about 1,000 real) with 3,000 reserved for the answer, about 6,500 per request. A test keeps the budget under 7,000.
+  - Cost: 5 to 7 calls and about 5 minutes per paper. The daily cap (about 200,000 tokens per model) allows roughly 4 to 6 papers a day, so evaluations must be spread over days.
 - **Privacy:** the audit's LLM nodes are Groq only, with no Gemini fallback. A draft is unpublished work, and the Gemini free tier uses content to improve Google's products (D12). If Groq is down, the audit fails visibly instead of sending the draft elsewhere.

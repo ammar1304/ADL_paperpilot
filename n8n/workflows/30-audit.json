@@ -240,7 +240,7 @@
   {
    "id": "c3f2e8f4-0011-4c9a-9c33-000000000011",
    "name": "Loop over batches",
-   "notes": "One batch at a time, with a pause after each: Groq's free tier allows about 8,000 tokens per minute for gpt-oss-20b (D12).",
+   "notes": "One batch at a time, with a 40 s pause after each: Groq's free tier allows 8,000 tokens per minute for gpt-oss-20b, counting input plus the output budget (D12, D33).",
    "type": "n8n-nodes-base.splitInBatches",
    "typeVersion": 3,
    "position": [
@@ -255,7 +255,7 @@
   {
    "id": "c3f2e8f4-0012-4c9a-9c33-000000000012",
    "name": "Extract claims",
-   "notes": "LLM call per batch: P4 turns sentences into structured claims. Groq gpt-oss-20b only: a draft is never sent to the Gemini free tier (D12).",
+   "notes": "LLM call per batch: P4 turns sentences into structured claims. Groq gpt-oss-20b only: a draft is never sent to the Gemini free tier (D12). A rate-limit refusal (429) is retried after 30 s, up to 3 tries.",
    "type": "@n8n/n8n-nodes-langchain.chainLlm",
    "typeVersion": 1.9,
    "position": [
@@ -264,7 +264,7 @@
    ],
    "retryOnFail": true,
    "maxTries": 3,
-   "waitBetweenTries": 20000,
+   "waitBetweenTries": 30000,
    "parameters": {
     "promptType": "define",
     "text": "={{ $json.user }}",
@@ -294,7 +294,7 @@
     "model": "openai/gpt-oss-20b",
     "options": {
      "temperature": 0,
-     "maxTokensToSample": 4096
+     "maxTokensToSample": 3000
     }
    },
    "credentials": {
@@ -345,7 +345,7 @@
   },
   {
    "id": "c3f2e8f4-0016-4c9a-9c33-000000000016",
-   "name": "Pause 20 s",
+   "name": "Pause 40 s",
    "type": "n8n-nodes-base.wait",
    "typeVersion": 1.1,
    "position": [
@@ -355,9 +355,10 @@
    "webhookId": "03000000-0000-0000-0000-000000000016",
    "parameters": {
     "resume": "timeInterval",
-    "amount": 20,
+    "amount": 40,
     "unit": "seconds"
-   }
+   },
+   "notes": "Groq's free tier: 8,000 tokens per minute for gpt-oss-20b, and one call uses about 6,500 (input plus output budget). 40 s lets the window drain."
   },
   {
    "id": "c3f2e8f4-0017-4c9a-9c33-000000000017",
@@ -525,14 +526,14 @@
    "main": [
     [
      {
-      "node": "Pause 20 s",
+      "node": "Pause 40 s",
       "type": "main",
       "index": 0
      }
     ]
    ]
   },
-  "Pause 20 s": {
+  "Pause 40 s": {
    "main": [
     [
      {

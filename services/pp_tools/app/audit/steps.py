@@ -9,7 +9,12 @@ from .claims import as_dicts, batches, candidate_sentences, objects_block, sente
 from .store import PaperStore
 
 EXTRACTOR = "P4-claim-extractor"
-BATCH_TOKENS = 1800
+# Groq's free tier refuses a single request above 8,000 tokens per minute, and it
+# counts the input plus the output budget (max tokens). With 1,800 tokens of
+# sentences every request came to 8,069-8,213 (team PC, 2026-10-16). Our token
+# count also undercounts real tokens by 20-40% (app/textutil.py). 700 counted
+# tokens of sentences + prompt (~2,600) + 3,000 for the answer stays near 6,500.
+BATCH_TOKENS = 700
 
 
 class AuditError(Exception):

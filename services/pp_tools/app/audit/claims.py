@@ -9,7 +9,8 @@ Code does the cheap, exact parts and the LLM only the part that needs reading:
    a paper costs a few LLM calls instead of one call per page (Groq's free
    tier allows about 8,000 tokens per minute, D12).
 2. ``batches``: candidates grouped under a token budget, each batch one call
-   of P4-claim-extractor.
+   of P4-claim-extractor (the budget is set by Groq's per-request limit, see
+   ``steps.BATCH_TOKENS``).
 3. ``validate``: every claim the LLM returns is checked against the paper.
    The sentence must exist; every number it extracted must appear in that
    sentence as written (an extractor that invents or "corrects" a number
@@ -96,8 +97,8 @@ def sentences_block(batch: list[Sentence]) -> str:
 
 def objects_block(paper: dict[str, Any]) -> str:
     """Tables and figures the paper contains, so the extractor only links to real ones."""
-    lines = [f"{t['id']}: {t['caption'][:140] or '(no caption)'}" for t in paper["tables"] if t["number"] is not None]
-    lines += [f"{f['id']}: {f['caption'][:140] or '(no caption)'}" for f in paper["figures"] if f["number"] is not None]
+    lines = [f"{t['id']}: {t['caption'][:80] or '(no caption)'}" for t in paper["tables"] if t["number"] is not None]
+    lines += [f"{f['id']}: {f['caption'][:80] or '(no caption)'}" for f in paper["figures"] if f["number"] is not None]
     return "\n".join(lines) or "(none found)"
 
 

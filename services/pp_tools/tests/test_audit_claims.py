@@ -151,6 +151,15 @@ def test_audit_llm_nodes_never_use_gemini():
 def test_audit_workflow_loops_over_batches_and_polls_the_parse_job():
     conns = AUDIT_WF["connections"]
     assert [o[0]["node"] for o in conns["Loop over batches"]["main"]] == ["Assemble result", "Extract claims"]
-    assert conns["Pause 20 s"]["main"][0][0]["node"] == "Loop over batches"
+    assert conns["Pause 40 s"]["main"][0][0]["node"] == "Loop over batches"
     assert [o[0]["node"] for o in conns["Parse status"]["main"]] == ["Render claim prompts", "Parse failed", "Polled too long?"]
     assert _node("Assemble result")["executeOnce"] is True
+
+
+def test_one_claims_request_fits_groqs_per_request_limit():
+    """Groq refused every first-version request: input + max output came to 8,069-8,213 > 8,000 tokens."""
+    from app.audit.steps import BATCH_TOKENS
+
+    max_out = _node("Groq gpt-oss-20b (claims)")["parameters"]["options"]["maxTokensToSample"]
+    prompt_overhead = 2600  # system prompt + n8n format instructions + tables list, in real tokens
+    assert BATCH_TOKENS * 1.4 + prompt_overhead + max_out <= 7000  # 1.4: our counter undercounts real tokens

@@ -152,3 +152,8 @@ The agent added nothing, for two different reasons:
 **Other observations.**
 - Speculative decoding without the agent: closest work was 1 or 2 RAG papers rated `partial` task / `different` method. That is a weak but honest "nothing close here". The out-of-domain idea stayed at 0 overlap in both configurations.
 - The planner's web queries for speculative decoding were vague ("auxiliary model token suggestion for parallel decoding"). Whether they find the right papers is now measurable, since web results are scored.
+
+## Audit, step 3: first runs (2026-10-16)
+
+**F-011 (pipeline, not prompt): every P4 call was refused by Groq.** First audit run on the team PC (`eval/results/20261016-170157-audit-claims`, 3 papers, all HTTP 500). n8n's log: `413 Request too large for model openai/gpt-oss-20b ... tokens per minute (TPM): Limit 8000, Requested 8069`. Groq counts a request as input plus the output budget (`max_tokens`). Batches of 1,800 counted tokens of sentences plus the prompt, the parser's format instructions and a 4,096-token output budget came to 8,069 to 8,213. Fix: batches of 700 counted tokens, a 3,000-token output budget, a 40 s pause between batches, 30 s between retries, and a test that keeps the estimate under 7,000 (D33).
+
