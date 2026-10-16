@@ -30,6 +30,7 @@ from .audit.steps import (
     claim_prompts,
     claims as audit_claims,
     next_claim_batch,
+    number_check,
     record_llm_error,
     save_claims,
 )
@@ -597,6 +598,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @app.get("/audit/{run_id}/claims")
     async def audit_get_claims(run_id: UUID) -> Any:
         return await run_in_threadpool(_audit_errors, audit_claims, db, run_id)
+
+    @app.post("/audit/{run_id}/check-numbers")
+    async def audit_check_numbers(run_id: UUID) -> Any:
+        return await run_in_threadpool(_audit_errors, number_check, db, papers, run_id)
 
     @app.post("/audit/{run_id}/result")
     async def audit_assemble(run_id: UUID) -> Any:

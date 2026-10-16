@@ -133,7 +133,13 @@ def test_claims_through_the_api(tmp_path, test_db_url, stub_url):
         assert client.post(f"/audit/{run_id}/claims", json={"batch": 5, "output": {"claims": []}}).status_code == 409
         out = client.post(f"/audit/{run_id}/result").json()
         assert out["implemented"] == "parse+claims" and out["paper"]["tables"] == ["table:1", "table:u1"]  # the stub PDF has no "Table 2" caption
-        assert len(out["claims"]) == 1 and out["coverage"]["batches_done"] == 1
+        assert len(out["claims"]) == 1 and out["coverage"]["batches_done"] == 1 and out["number_checks"] is None
+        # step 4: "our method ... 47.8 EM on NQ" is the "Ours" row of Table 1
+        summary = client.post(f"/audit/{run_id}/check-numbers").json()
+        assert (summary["checks"], summary["supported"], summary["contradicted"]) == (1, 1, 0)
+        out = client.post(f"/audit/{run_id}/result").json()
+        assert out["implemented"] == "parse+claims+numbers"
+        assert out["number_checks"]["checks"][0]["cell"]["row"] == "Ours"
         assert out["prompt_versions"] == {"P4-claim-extractor": "v1"}
 
 
@@ -207,7 +213,9 @@ def test_audit_workflow_asks_pp_tools_for_each_batch_and_recovers_from_llm_error
     """F-012: n8n's retries wait at most 5 s; the loop's state lives in pp-tools instead."""
     conns = AUDIT_WF["connections"]
     assert [o[0]["node"] for o in conns["Parse status"]["main"]] == ["Next claim batch", "Parse failed", "Polled too long?"]
-    assert [o[0]["node"] for o in conns["More batches?"]["main"]] == ["Pause before call", "Assemble result"]
+    assert [o[0]["node"] for o in conns["More batches?"]["main"]] == ["Pause before call", "Check numbers"]
+    assert conns["Check numbers"]["main"][0][0]["node"] == "Assemble result"
+    assert _node("Check numbers")["parameters"]["url"].endswith("/check-numbers")
     assert conns["Pause before call"]["main"][0][0]["node"] == "Extract claims"
     assert _node("Pause before call")["parameters"]["amount"] == "={{ $json.wait_s }}"  # pp-tools decides (F-017)
     error_body = _node("Record LLM error")["parameters"]["jsonBody"]

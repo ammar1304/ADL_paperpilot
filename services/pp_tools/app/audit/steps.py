@@ -9,6 +9,7 @@ from uuid import UUID
 from ..db import Database
 from ..prompts import PromptLibrary
 from .claims import CLAIMS_FALLBACK_MODELS, CLAIMS_MODEL, as_dicts, batches, claims_request, candidate_sentences, objects_block, sentences_block, validate
+from .numbers import check_claims
 from .store import PaperStore
 
 EXTRACTOR = "P4-claim-extractor"
@@ -217,6 +218,14 @@ def claims(db: Database, run_id: UUID) -> dict[str, Any]:
     }
 
 
+def number_check(db: Database, papers: PaperStore, run_id: UUID) -> dict[str, Any]:
+    """Step 4: every number of every claim against the paper's own tables (D35, no LLM)."""
+    paper = papers.paper(parsed_digest(db, run_id))
+    result = check_claims(paper, claims(db, run_id)["claims"])
+    db.add_step(run_id, "number_check", "done", result)
+    return result["summary"]
+
+
 def audit_result(db: Database, papers: PaperStore, run_id: UUID) -> dict[str, Any]:
     """The audit result so far (milestone 3 builds it up step by step): the parsed paper and its claims."""
     parse = [s for s in db.get_steps(run_id, "parse") if s["status"] == "done"]
@@ -224,14 +233,16 @@ def audit_result(db: Database, papers: PaperStore, run_id: UUID) -> dict[str, An
         raise AuditError("the run's PDF has not been parsed yet")
     p = parse[-1]["detail"]
     extracted = claims(db, run_id)
+    numbers = [st["detail"] for st in db.get_steps(run_id, "number_check")]
     return {
         "branch": "audit",
-        "implemented": "parse+claims",  # the checks come next (steps 4 to 6)
+        "implemented": "parse+claims+numbers" if numbers else "parse+claims",  # figures and citations: steps 5 and 6
         "run_id": str(run_id),
         "paper": {k: p[k] for k in ("title", "pages", "sha256", "numbered", "items", "references") if k in p}
                  | {"tables": [t["id"] for t in p["tables"]], "figures": [f["id"] for f in p["figures"]]},
         "claims": extracted["claims"],
         "claims_dropped": len(extracted["dropped"]),
+        "number_checks": numbers[-1] if numbers else None,
         "coverage": {k: extracted[k] for k in ("total_sentences", "candidate_sentences", "batches", "batches_done", "batches_skipped", "llm_errors",
                                                    "rate_limited", "models", "stopped", "by_type")},
         "prompt_versions": {EXTRACTOR: extracted["prompt_version"]},

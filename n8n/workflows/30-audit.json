@@ -232,13 +232,34 @@
    }
   },
   {
-   "id": "c3f2e8f4-0017-4c9a-9c33-000000000017",
-   "name": "Assemble result",
-   "notes": "The audit result so far: parsed paper and claims. Steps 4 to 6 add the checks.",
+   "id": "c3f2e8f4-0019-4c9a-9c33-000000000019",
+   "name": "Check numbers",
+   "notes": "Step 4, deterministic (D35): every number of every claim is compared with the paper's own tables. Each table becomes cells with their row, column and section labels; the claim's system, dataset, metric and setting locate the cell; a stated margin is recomputed from the two rows. Verdicts: supported, contradicted, unverifiable. No LLM: exact arithmetic is what code does best.",
    "type": "n8n-nodes-base.httpRequest",
    "typeVersion": 4.2,
    "position": [
     1540,
+    0
+   ],
+   "retryOnFail": true,
+   "maxTries": 3,
+   "waitBetweenTries": 2000,
+   "parameters": {
+    "method": "POST",
+    "url": "={{ $env.PP_TOOLS_URL }}/audit/{{ $('Called by router').first().json.run_id }}/check-numbers",
+    "options": {
+     "timeout": 60000
+    }
+   }
+  },
+  {
+   "id": "c3f2e8f4-0017-4c9a-9c33-000000000017",
+   "name": "Assemble result",
+   "notes": "The audit result so far: parsed paper, claims and number checks. Steps 5 and 6 add the figure and citation checks.",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2,
+   "position": [
+    1760,
     0
    ],
    "retryOnFail": true,
@@ -492,7 +513,7 @@
     ],
     [
      {
-      "node": "Assemble result",
+      "node": "Check numbers",
       "type": "main",
       "index": 0
      }
@@ -544,6 +565,17 @@
     [
      {
       "node": "Next claim batch",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Check numbers": {
+   "main": [
+    [
+     {
+      "node": "Assemble result",
       "type": "main",
       "index": 0
      }
