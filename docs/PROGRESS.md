@@ -385,7 +385,9 @@ Branch `eval/m2-final-runs`. Details in `prompts/failure_log.md` (section "M2 fi
 - [x] Team PC: E2 `--idea-chars 600`: the reranker is still below the fused order, so truncation hypothesis rejected; E2 measures related work, not overlap (failure_log)
 - [x] Team PC: E7 agent off and on with the 3 outside-library ideas and out-of-domain: 0/8 both; found F-009 (web papers never reached the reranker) and F-010 (planner took "uses" for "introduces")
 - [x] F-009 fixed in code (web papers a round fetched are always reranked); P2 v3 for F-010
-- [ ] Team PC: rebuild pp-tools; agent on with P2 v2 (code fix alone) and P2 v3 (fix + prompt), outside-library ideas plus two in-library ideas as a regression check
+- [x] Team PC: fix confirmed (web closest work 0 → 5 in 8 runs; real prior work for the protein and speculative-decoding ideas); P2 v3 rejected (never searched, F-010 unfixed), P2 v2 stays active
+
+**Milestone 2 closed (2026-10-16).** Reranker with hybrid order (D28, D30), search agent with an LLM planner over local and web search and limits in code (D29), evaluations E2, E7 and E8 with every result and failure in `prompts/failure_log.md`. Known limitations carried forward: F-010 (a paper that uses a technique can be credited as the work that introduced it); E2 measures related work rather than overlap; 2 agent-added papers at most.
 
 ## Next: milestone 2, part 2
 

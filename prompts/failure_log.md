@@ -152,3 +152,32 @@ The agent added nothing, for two different reasons:
 **Other observations.**
 - Speculative decoding without the agent: closest work was 1 or 2 RAG papers rated `partial` task / `different` method. That is a weak but honest "nothing close here". The out-of-domain idea stayed at 0 overlap in both configurations.
 - The planner's web queries for speculative decoding were vague ("auxiliary model token suggestion for parallel decoding"). Whether they find the right papers is now measurable, since web results are scored.
+
+## After the F-009 fix: P2 v2 vs v3 (2026-10-16)
+
+Results: `eval/results/20261016-002334-fix-p2v2` (code fix, P2 v2) and `20261016-003747-fix-p2v3` (code fix, P2 v3, plus two in-library ideas as a regression check). Agent on, 2 repeats each.
+
+| Idea (closest work outside the library) | Agent off | Fix + P2 v2 | Fix + P2 v3 |
+| --- | --- | --- | --- |
+| out-of-domain (diffusion for protein structure) | nothing found (2/2) | real web prior work in closest work, 2/2 runs | stopped without searching, 2/2 |
+| draft-and-verify (speculative decoding) | RAG papers, `partial`/`different` | 1/2 runs: a speculative-decoding paper from the web, `same`/`same` | stopped without searching, 2/2 |
+| low-rank fine-tuning (LoRA) | a paper that uses LoRA, `same`/`same` | same, stopped (F-010) | same, stopped (F-010) |
+| verify own answer (CoVe) | a paper that applies CoVe | same, stopped (F-010) | same, stopped (F-010) |
+| Closest work from the web, total | 0 | 5 | 0 |
+| Original papers (expected list) among candidates | 0/8 | 0/8 | 0/8 |
+
+**F-009 fix: confirmed.** With the code fix, web papers reach the reranker and the judge.
+- Out-of-domain, repeat 1: "Protein structure generation via folding diffusion" (2209.15611) and a diffusion model for inverse folding (2412.07815), both `same` on method and `different` on task, which is fair.
+- Out-of-domain, repeat 2: a review of diffusion for protein structure prediction (`same` task, `partial` method) and a CASP assessment paper.
+- Speculative decoding, repeat 2: a 2025 paper on collaborative decoding through speculation (2502.01662), judged `same`/`same`.
+
+These are real prior works that the library cannot contain. The original papers in our expected lists (speculative decoding 2022/2023, LoRA, CoVe) were never among Semantic Scholar's top 10 for the planner's queries, which described the mechanism rather than naming it. So "expected papers" stays at 0/8 even though the agent now finds relevant work. For outside-library ideas, the expected-list metric measures whether the agent finds the original paper, not whether it finds prior work.
+
+**Admission limit observed.** In out-of-domain repeat 1, the second round's web papers scored up to 0.97 but could not be admitted: both extra slots were used in round 1 (`slots: 0`). Raising `NOVELTY_AGENT_EXTRA_PAPERS` would show more web papers, at the cost of a longer judge prompt. Not changed.
+
+**P2 v3: rejected (negative result).** v3 made the planner worse:
+- It never searched in 12 runs. For out-of-domain and speculative decoding it reasoned that "the local library contains only RAG papers ... no further searches will help since the tool is designed" for RAG, although the web tool is described in the same prompt. v2 searched the web for both.
+- It did not fix F-010 either. It used the new rule's wording to stop: "Candidate 1 cites the foundational work introducing low-rank adaptation", treating a citation of the original as the original.
+- In-library ideas were unaffected: adaptive-retrieval 9/10, reflection-tokens 2/2, no searches.
+
+Likely cause: the new paragraph made the prompt about the provenance of a technique. The model then reasoned more about the library's scope and less about the web tool, and a 20B model cannot tell "cites X" from "is X" from 1,200-character passages. **P2 v2 stays active.** F-010 remains a known limitation: the verdict "not novel" is right, but the credited paper may only use the technique. A sturdier fix would not be a prompt sentence. It would be a code check that compares a candidate's title and year against the papers its passage cites. That is future work.
