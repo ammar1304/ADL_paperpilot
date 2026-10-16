@@ -203,68 +203,15 @@
    }
   },
   {
-   "id": "c3f2e8f4-0009-4c9a-9c33-000000000009",
-   "name": "Render claim prompts",
-   "notes": "pp-tools selects the sentences that can carry a checkable claim and renders P4-claim-extractor once per batch (about 1,800 tokens of sentences).",
-   "type": "n8n-nodes-base.httpRequest",
-   "typeVersion": 4.2,
-   "position": [
-    1100,
-    100
-   ],
-   "retryOnFail": true,
-   "maxTries": 3,
-   "waitBetweenTries": 2000,
-   "parameters": {
-    "method": "POST",
-    "url": "={{ $env.PP_TOOLS_URL }}/audit/{{ $('Called by router').first().json.run_id }}/claim-prompts",
-    "options": {
-     "timeout": 60000
-    }
-   }
-  },
-  {
-   "id": "c3f2e8f4-0010-4c9a-9c33-000000000010",
-   "name": "One item per batch",
-   "type": "n8n-nodes-base.splitOut",
-   "typeVersion": 1,
-   "position": [
-    1320,
-    100
-   ],
-   "parameters": {
-    "fieldToSplitOut": "batches",
-    "options": {}
-   }
-  },
-  {
-   "id": "c3f2e8f4-0011-4c9a-9c33-000000000011",
-   "name": "Loop over batches",
-   "notes": "One batch at a time, with a 40 s pause after each: Groq's free tier allows 8,000 tokens per minute for gpt-oss-20b, counting input plus the output budget (D12, D33).",
-   "type": "n8n-nodes-base.splitInBatches",
-   "typeVersion": 3,
-   "position": [
-    1540,
-    100
-   ],
-   "parameters": {
-    "batchSize": 1,
-    "options": {}
-   }
-  },
-  {
    "id": "c3f2e8f4-0012-4c9a-9c33-000000000012",
    "name": "Extract claims",
-   "notes": "LLM call per batch: P4 turns sentences into structured claims. Groq gpt-oss-20b only: a draft is never sent to the Gemini free tier (D12). A rate-limit refusal (429) is retried after 30 s, up to 3 tries.",
+   "notes": "LLM call per batch: P4 turns sentences into structured claims. Groq gpt-oss-20b only: a draft is never sent to the Gemini free tier (D12). On an error (rate limit, invalid JSON) the error output goes back to 'Next claim batch', which serves the batch again after the pause; n8n's own retries wait at most 5 s, too short for Groq's per-minute window.",
    "type": "@n8n/n8n-nodes-langchain.chainLlm",
    "typeVersion": 1.9,
    "position": [
     1760,
     200
    ],
-   "retryOnFail": true,
-   "maxTries": 3,
-   "waitBetweenTries": 30000,
    "parameters": {
     "promptType": "define",
     "text": "={{ $json.user }}",
@@ -279,7 +226,8 @@
      ]
     },
     "batching": {}
-   }
+   },
+   "onError": "continueErrorOutput"
   },
   {
    "id": "c3f2e8f4-0013-4c9a-9c33-000000000013",
@@ -322,14 +270,13 @@
   {
    "id": "c3f2e8f4-0015-4c9a-9c33-000000000015",
    "name": "Save claims",
-   "notes": "pp-tools validates the batch again and drops any claim whose numbers are not in its sentence.",
+   "notes": "pp-tools validates the batch again and drops any claim whose numbers are not in its sentence. An invalid output (HTTP 409) does not stop the run: the batch is served again, up to 3 attempts.",
    "type": "n8n-nodes-base.httpRequest",
    "typeVersion": 4.2,
    "position": [
     1980,
     200
    ],
-   "retryOnFail": true,
    "maxTries": 3,
    "waitBetweenTries": 2000,
    "parameters": {
@@ -337,37 +284,26 @@
     "url": "={{ $env.PP_TOOLS_URL }}/audit/{{ $('Called by router').first().json.run_id }}/claims",
     "sendBody": true,
     "specifyBody": "json",
-    "jsonBody": "={{ JSON.stringify({ batch: $('Loop over batches').item.json.batch, output: $json.output }) }}",
+    "jsonBody": "={{ JSON.stringify({ batch: $('Next claim batch').last().json.batch, output: $json.output }) }}",
     "options": {
-     "timeout": 60000
+     "timeout": 60000,
+     "response": {
+      "response": {
+       "fullResponse": true,
+       "neverError": true
+      }
+     }
     }
    }
   },
   {
-   "id": "c3f2e8f4-0016-4c9a-9c33-000000000016",
-   "name": "Pause 40 s",
-   "type": "n8n-nodes-base.wait",
-   "typeVersion": 1.1,
-   "position": [
-    2200,
-    200
-   ],
-   "webhookId": "03000000-0000-0000-0000-000000000016",
-   "parameters": {
-    "resume": "timeInterval",
-    "amount": 40,
-    "unit": "seconds"
-   },
-   "notes": "Groq's free tier: 8,000 tokens per minute for gpt-oss-20b, and one call uses about 6,500 (input plus output budget). 40 s lets the window drain."
-  },
-  {
    "id": "c3f2e8f4-0017-4c9a-9c33-000000000017",
    "name": "Assemble result",
-   "notes": "The audit result so far: parsed paper and claims. Steps 4 to 6 add the checks. Runs once: the loop's done output carries one item per batch.",
+   "notes": "The audit result so far: parsed paper and claims. Steps 4 to 6 add the checks.",
    "type": "n8n-nodes-base.httpRequest",
    "typeVersion": 4.2,
    "position": [
-    1760,
+    1540,
     0
    ],
    "retryOnFail": true,
@@ -379,8 +315,79 @@
     "options": {
      "timeout": 60000
     }
-   },
-   "executeOnce": true
+   }
+  },
+  {
+   "id": "c3f2e8f4-0009-4c9a-9c33-000000000009",
+   "name": "Next claim batch",
+   "notes": "pp-tools serves the next batch of candidate sentences with P4 rendered, or {done: true}. It keeps the loop's state: a batch is finished once a valid output is saved or after 3 attempts (F-012), so a rate-limited call is simply served again.",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2,
+   "position": [
+    1100,
+    100
+   ],
+   "retryOnFail": true,
+   "maxTries": 3,
+   "waitBetweenTries": 2000,
+   "parameters": {
+    "method": "POST",
+    "url": "={{ $env.PP_TOOLS_URL }}/audit/{{ $('Called by router').first().json.run_id }}/claims/next",
+    "options": {
+     "timeout": 60000
+    }
+   }
+  },
+  {
+   "id": "c3f2e8f4-0010-4c9a-9c33-000000000010",
+   "name": "More batches?",
+   "type": "n8n-nodes-base.if",
+   "typeVersion": 2.2,
+   "position": [
+    1320,
+    100
+   ],
+   "parameters": {
+    "conditions": {
+     "options": {
+      "caseSensitive": true,
+      "leftValue": "",
+      "typeValidation": "loose",
+      "version": 2
+     },
+     "conditions": [
+      {
+       "id": "c3000010-0000-4000-8000-000000000010",
+       "leftValue": "={{ $json.done }}",
+       "rightValue": false,
+       "operator": {
+        "type": "boolean",
+        "operation": "false",
+        "singleValue": true
+       }
+      }
+     ],
+     "combinator": "and"
+    },
+    "options": {}
+   }
+  },
+  {
+   "id": "c3f2e8f4-0016-4c9a-9c33-000000000016",
+   "name": "Pause 65 s",
+   "notes": "Before every LLM call. gpt-oss-20b's hidden reasoning makes one call use 6,000 to 7,000 of the 8,000 tokens Groq's free tier allows per minute (F-012), so calls are a minute apart.",
+   "type": "n8n-nodes-base.wait",
+   "typeVersion": 1.1,
+   "position": [
+    1540,
+    200
+   ],
+   "webhookId": "03000000-0000-0000-0000-000000000016",
+   "parameters": {
+    "resume": "timeInterval",
+    "amount": 65,
+    "unit": "seconds"
+   }
   }
  ],
  "connections": {
@@ -432,7 +439,7 @@
    "main": [
     [
      {
-      "node": "Render claim prompts",
+      "node": "Next claim batch",
       "type": "main",
       "index": 0
      }
@@ -471,37 +478,37 @@
     ]
    ]
   },
-  "Render claim prompts": {
+  "Next claim batch": {
    "main": [
     [
      {
-      "node": "One item per batch",
+      "node": "More batches?",
       "type": "main",
       "index": 0
      }
     ]
    ]
   },
-  "One item per batch": {
+  "More batches?": {
    "main": [
     [
      {
-      "node": "Loop over batches",
+      "node": "Pause 65 s",
       "type": "main",
       "index": 0
      }
-    ]
-   ]
-  },
-  "Loop over batches": {
-   "main": [
+    ],
     [
      {
       "node": "Assemble result",
       "type": "main",
       "index": 0
      }
-    ],
+    ]
+   ]
+  },
+  "Pause 65 s": {
+   "main": [
     [
      {
       "node": "Extract claims",
@@ -519,6 +526,13 @@
       "type": "main",
       "index": 0
      }
+    ],
+    [
+     {
+      "node": "Next claim batch",
+      "type": "main",
+      "index": 0
+     }
     ]
    ]
   },
@@ -526,18 +540,7 @@
    "main": [
     [
      {
-      "node": "Pause 40 s",
-      "type": "main",
-      "index": 0
-     }
-    ]
-   ]
-  },
-  "Pause 40 s": {
-   "main": [
-    [
-     {
-      "node": "Loop over batches",
+      "node": "Next claim batch",
       "type": "main",
       "index": 0
      }

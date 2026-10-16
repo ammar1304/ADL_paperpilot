@@ -24,7 +24,7 @@ from pydantic import ValidationError
 
 from .audit.parse_job import parse_paper
 from .audit.parser import DoclingClient
-from .audit.steps import AuditError, audit_result, claim_prompts, claims as audit_claims, save_claims
+from .audit.steps import AuditError, audit_result, claim_prompts, claims as audit_claims, next_claim_batch, save_claims
 from .audit.store import PaperStore
 from .config import Settings, get_settings
 from .corpus.arxiv import ArxivClient
@@ -555,6 +555,11 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     async def audit_claim_prompts(run_id: UUID) -> Any:
         """P4 rendered once per batch of candidate sentences (step 3)."""
         return await run_in_threadpool(_audit_errors, claim_prompts, db, library, papers, run_id)
+
+    @app.post("/audit/{run_id}/claims/next")
+    async def audit_next_claim_batch(run_id: UUID) -> Any:
+        """The next batch for the LLM, or {"done": true}; pp-tools keeps the loop's state (F-012)."""
+        return await run_in_threadpool(_audit_errors, next_claim_batch, db, library, papers, run_id)
 
     @app.post("/audit/{run_id}/claims")
     async def audit_save_claims(run_id: UUID, body: dict[str, Any]) -> Any:

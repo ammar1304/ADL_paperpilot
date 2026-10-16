@@ -369,9 +369,10 @@ The container registries were not reachable from the development sandbox, so the
      - unknown sentence ids are dropped;
      - references to tables or figures the paper does not contain are kept but flagged.
 - **Why this split:** finding "is there a number here" is exact and free in code. Deciding which system and dataset a number belongs to, and whether a sentence is a comparison, needs reading. Validating the reading against the source text stops the LLM from being the weak link.
-- **Rate limits:** n8n loops over the batches one at a time, with a 40-second pause after each.
+- **Rate limits and the loop:** pp-tools, not n8n, keeps the loop's state (`POST /audit/{run}/claims/next`). n8n asks for the next batch, waits 65 seconds, calls the LLM and saves the output. An LLM error goes back to "next", which serves the same batch again; a batch is skipped after 3 attempts, and a rerun resumes where it stopped (F-012).
   - Groq's free tier refuses any single request above 8,000 tokens per minute, and it counts the input plus the output budget.
   - The first version (batches of 1,800 tokens, 4,096 reserved for the answer) was refused on every call (F-011).
   - A batch is now 700 counted tokens (about 1,000 real) with 3,000 reserved for the answer, about 6,500 per request. A test keeps the budget under 7,000.
-  - Cost: 5 to 7 calls and about 5 minutes per paper. The daily cap (about 200,000 tokens per model) allows roughly 4 to 6 papers a day, so evaluations must be spread over days.
+  - gpt-oss-20b's hidden reasoning tokens count too, so one call uses 6,000 to 7,000 tokens, and calls must be a minute apart (F-012). n8n's own retries cannot do this: they wait at most 5 seconds.
+  - Cost: 5 to 9 calls and 7 to 12 minutes per paper. The daily cap (about 200,000 tokens per model) allows roughly 4 to 6 papers a day, so evaluations must be spread over days.
 - **Privacy:** the audit's LLM nodes are Groq only, with no Gemini fallback. A draft is unpublished work, and the Gemini free tier uses content to improve Google's products (D12). If Groq is down, the audit fails visibly instead of sending the draft elsewhere.

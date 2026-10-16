@@ -157,3 +157,13 @@ The agent added nothing, for two different reasons:
 
 **F-011 (pipeline, not prompt): every P4 call was refused by Groq.** First audit run on the team PC (`eval/results/20261016-170157-audit-claims`, 3 papers, all HTTP 500). n8n's log: `413 Request too large for model openai/gpt-oss-20b ... tokens per minute (TPM): Limit 8000, Requested 8069`. Groq counts a request as input plus the output budget (`max_tokens`). Batches of 1,800 counted tokens of sentences plus the prompt, the parser's format instructions and a 4,096-token output budget came to 8,069 to 8,213. Fix: batches of 700 counted tokens, a 3,000-token output budget, a 40 s pause between batches, 30 s between retries, and a test that keeps the estimate under 7,000 (D33).
 
+**F-012 (pipeline): after the F-011 fix, calls were still refused, now for the minute's total.** Second run (`eval/results/20261016-171408-audit-claims`, 3 papers, HTTP 500). Groq's message: `Limit 8000, Used 7303, Requested 5578. Please try again in 36.6s`. Each request now fits, but two things combined:
+- gpt-oss-20b is a reasoning model, and its hidden reasoning tokens count, so one call really uses 6,000 to 7,000 tokens.
+- n8n's node retries wait at most 5 seconds (`waitBetweenTries` is capped), so the retries fired inside the same minute and failed too.
+
+Fix:
+- **The loop's state moved to pp-tools.** `POST /audit/{run}/claims/next` serves the first batch without a saved valid output.
+- **n8n waits 65 s before every call.** An LLM error goes through the node's error output straight back to "Next claim batch", which serves the same batch again after the pause.
+- **A batch is skipped and recorded after 3 attempts,** so a run always ends.
+- **A rerun resumes** where the previous one stopped.
+

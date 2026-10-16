@@ -148,12 +148,16 @@ def test_audit_llm_nodes_never_use_gemini():
     assert _node("Groq gpt-oss-20b (claims)")["parameters"]["model"] == "openai/gpt-oss-20b"
 
 
-def test_audit_workflow_loops_over_batches_and_polls_the_parse_job():
+def test_audit_workflow_asks_pp_tools_for_each_batch_and_recovers_from_llm_errors():
+    """F-012: n8n's retries wait at most 5 s; the loop's state lives in pp-tools instead."""
     conns = AUDIT_WF["connections"]
-    assert [o[0]["node"] for o in conns["Loop over batches"]["main"]] == ["Assemble result", "Extract claims"]
-    assert conns["Pause 40 s"]["main"][0][0]["node"] == "Loop over batches"
-    assert [o[0]["node"] for o in conns["Parse status"]["main"]] == ["Render claim prompts", "Parse failed", "Polled too long?"]
-    assert _node("Assemble result")["executeOnce"] is True
+    assert [o[0]["node"] for o in conns["Parse status"]["main"]] == ["Next claim batch", "Parse failed", "Polled too long?"]
+    assert [o[0]["node"] for o in conns["More batches?"]["main"]] == ["Pause 65 s", "Assemble result"]
+    assert conns["Pause 65 s"]["main"][0][0]["node"] == "Extract claims"
+    assert [o[0]["node"] for o in conns["Extract claims"]["main"]] == ["Save claims", "Next claim batch"]  # success, error
+    assert _node("Extract claims")["onError"] == "continueErrorOutput"
+    assert conns["Save claims"]["main"][0][0]["node"] == "Next claim batch"
+    assert _node("Save claims")["parameters"]["options"]["response"]["response"]["neverError"] is True
 
 
 def test_one_claims_request_fits_groqs_per_request_limit():
@@ -163,3 +167,44 @@ def test_one_claims_request_fits_groqs_per_request_limit():
     max_out = _node("Groq gpt-oss-20b (claims)")["parameters"]["options"]["maxTokensToSample"]
     prompt_overhead = 2600  # system prompt + n8n format instructions + tables list, in real tokens
     assert BATCH_TOKENS * 1.4 + prompt_overhead + max_out <= 7000  # 1.4: our counter undercounts real tokens
+
+
+def test_next_batch_serves_each_batch_until_saved_or_three_attempts(tmp_path, test_db_url, stub_url):
+    from fastapi.testclient import TestClient
+
+    from app.config import Settings
+    from app.main import create_app
+
+    settings = Settings(
+        APP_DATABASE_URL=test_db_url, QDRANT_URL="local::memory:", EMBEDDER_URL=stub_url, PARSER_URL=stub_url,
+        AUDIT_ALLOW_PRIVATE_URLS=True, CACHE_DIR=tmp_path / "cache", CORPUS_DIR=tmp_path / "corpus",
+        PROMPTS_DIR=REPO / "prompts", LOG_LEVEL="WARNING",
+    )
+    with TestClient(create_app(settings)) as client:
+        run_id = client.post("/runs", json={"request": {"mode": "audit", "draft_pdf_url": f"{stub_url}/pdf/2101.00001v2"}}).json()["run_id"]
+        job = client.post(f"/audit/{run_id}/parse").json()["job_id"]
+        for _ in range(100):
+            if client.get(f"/jobs/{job}").json()["status"] in ("done", "failed"):
+                break
+            time.sleep(0.1)
+        first = client.post(f"/audit/{run_id}/claims/next").json()
+        assert (first["done"], first["batch"], first["attempt"]) == (False, 0, 1) and "[b:1/s:0]" in first["user"]
+        # the LLM call failed (rate limit): n8n asks again and gets the same batch
+        again = client.post(f"/audit/{run_id}/claims/next").json()
+        assert (again["batch"], again["attempt"]) == (0, 2)
+        client.post(f"/audit/{run_id}/claims", json={"batch": 0, "output": {"claims": [_claim()]}})
+        assert client.post(f"/audit/{run_id}/claims/next").json() == {"done": True, "batches": 1, "finished": 1}
+
+        # a batch that never gets a valid output is skipped after 3 attempts
+        run2 = client.post("/runs", json={"request": {"mode": "audit", "draft_pdf_url": f"{stub_url}/pdf/2101.00001v2"}}).json()["run_id"]
+        job = client.post(f"/audit/{run2}/parse").json()["job_id"]
+        for _ in range(100):
+            if client.get(f"/jobs/{job}").json()["status"] in ("done", "failed"):
+                break
+            time.sleep(0.1)
+        for attempt in (1, 2, 3):
+            assert client.post(f"/audit/{run2}/claims/next").json()["attempt"] == attempt
+            assert client.post(f"/audit/{run2}/claims", json={"batch": 0, "output": {"claims": [{"bad": 1}]}}).status_code == 409
+        assert client.post(f"/audit/{run2}/claims/next").json()["done"] is True
+        result = client.post(f"/audit/{run2}/result").json()
+        assert result["coverage"]["batches_skipped"] == [0] and result["claims"] == []
