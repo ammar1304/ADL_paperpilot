@@ -385,6 +385,7 @@ The container registries were not reachable from the development sandbox, so the
   - `reasoning_effort: "low"` and `include_reasoning: false`;
   - `max_completion_tokens: 2500`;
   - `response_format` with a strict JSON schema: every field required, optional ones nullable, `additionalProperties: false`.
+- **Fallback model and rate limits:** `openai/gpt-oss-120b` when gpt-oss-20b's daily tokens are spent (Groq's limits are per model). A 429 does not use one of a batch's attempts; pp-tools tells n8n how long to wait, or stops the run when both models are spent (F-017).
 - **Who builds the body:** pp-tools returns the full request with each batch (`claims_request()`), and the node posts it unchanged. The schema was first written inline in the node; n8n cut the expression at the first `}}` and every call failed (F-016).
 - **Why it is still the automation platform's job:** n8n makes the call, handles its errors (error output to "Record LLM error") and controls the pacing. pp-tools still renders the prompt from the library and validates the output.
 - **Measured (probe, CRAG batch 0):** 2,586 tokens in total (2,351 in, 235 out, of which 133 reasoning), 1.2 s, valid JSON. Calls are therefore paced 30 s apart instead of 65 s.

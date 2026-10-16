@@ -582,7 +582,17 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     async def audit_llm_error(run_id: UUID, body: dict[str, Any]) -> Any:
         if not isinstance(body.get("batch"), int):
             raise HTTPException(status_code=422, detail="batch (integer) is required")
-        return await run_in_threadpool(_audit_errors, record_llm_error, db, run_id, body["batch"], str(body.get("error", "")))
+        def num(key: str) -> float | None:
+            try:
+                return float(body[key]) if body.get(key) not in (None, "") else None
+            except (TypeError, ValueError):
+                return None
+
+        status = num("status")
+        return await run_in_threadpool(
+            _audit_errors, record_llm_error, db, run_id, body["batch"], str(body.get("error", "")),
+            int(status) if status is not None else None, num("retry_after"), body.get("model") or None,
+        )
 
     @app.get("/audit/{run_id}/claims")
     async def audit_get_claims(run_id: UUID) -> Any:

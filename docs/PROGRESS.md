@@ -409,6 +409,9 @@ Branch `feat/m3-parser-spike`. Decision D31: Docling (CPU) instead of MinerU.
 - [x] Team PC: `scripts/audit_parse_check.py`. CRAG fetched from arXiv and parsed through the stack in 179 s; 10/10 tables and figures numbered (Table 6's caption recovered from the PDF text layer); figure PNG served; the second run came from the cache in 2.7 s
 - [x] Claim extraction (D33): candidate sentences in code, P4-claim-extractor v1 (gpt-oss-20b, Groq only), validation that drops invented numbers; `POST /audit/{run}/claim-prompts`, `POST|GET /audit/{run}/claims`, `POST /audit/{run}/result`; branch `feat/m3-claims`
 - [x] n8n `30-audit` v1: parse job polling → claim prompts → loop over batches (20 s pause) → result (the router stores it)
-- [ ] Team PC: `scripts/audit_run.py` on CRAG, Adaptive-RAG and Self-RAG; read the claims by hand (precision, missed claims)
+- [x] First full runs on the team PC (2026-10-16). Run 1: 0 claims, every call failed inside n8n (F-016, inline schema cut at `}}`). Run 2 (`eval/results/20261016-194137-audit-claims/`): 6 of 22 batches done, 28 claims kept; the other 16 batches hit Groq's daily token limit, which today's debugging had used up, and each 429 wasted an attempt (F-017).
+- [x] Read the 28 claims by hand: all are faithful to their sentence (no invented numbers, no wrong system or dataset); the CRAG results paragraph gives 13 clean comparisons (system, baseline, margin, metric, dataset, backbone). Four repairable defects, fixed in code (F-018): units ("0.77B") wrongly dropped, a typo in a sentence id, a lowercase "table 1" not linked, margins also listed as values. Replayed on the stored outputs: 28 → 30 claims, 7 more table links, 13 margins marked.
+- [x] Rate limits (F-017): a 429 no longer uses an attempt; pp-tools tells n8n how long to wait; a daily-limit 429 switches to gpt-oss-120b (its own 200K tokens a day), and when both are spent the run stops and reports it.
+- [ ] Team PC: rerun the three papers with every batch done; count missed claims on one paper (recall)
 - [ ] Table-number check, with E3 (planted errors)
 

@@ -57,8 +57,8 @@ def test_validation_drops_invented_numbers_and_flags_unknown_tables():
     ghost = _claim(refers_to=["table:7", "figure:1"])
     wrong_id = _claim(sentence_id="b:99/s:0")
     kept, dropped = validate({"claims": [good, invented, diff, ghost, wrong_id]}, ids, sents, paper())
-    assert len(kept) == 2 and kept[0]["refers_to"] == ["table:1"] and kept[0]["sentence"] == SENTENCE
-    assert kept[1]["refers_to"] == ["figure:1"] and kept[1]["unknown_refs"] == ["table:7"]
+    assert len(kept) == 2 and kept[0]["refers_to"] == ["table:1", "figure:1"] and kept[0]["sentence"] == SENTENCE  # figure:1 from the sentence
+    assert kept[1]["refers_to"] == ["figure:1", "table:1"] and kept[1]["unknown_refs"] == ["table:7"]
     reasons = [d["reason"] for d in dropped]
     assert reasons[0] == "values not in the sentence: ['48.0']"
     assert reasons[1] == "values not in the sentence: ['6.6']"  # a computed difference the sentence never states
@@ -207,8 +207,11 @@ def test_audit_workflow_asks_pp_tools_for_each_batch_and_recovers_from_llm_error
     """F-012: n8n's retries wait at most 5 s; the loop's state lives in pp-tools instead."""
     conns = AUDIT_WF["connections"]
     assert [o[0]["node"] for o in conns["Parse status"]["main"]] == ["Next claim batch", "Parse failed", "Polled too long?"]
-    assert [o[0]["node"] for o in conns["More batches?"]["main"]] == ["Pause 30 s", "Assemble result"]
-    assert conns["Pause 30 s"]["main"][0][0]["node"] == "Extract claims"
+    assert [o[0]["node"] for o in conns["More batches?"]["main"]] == ["Pause before call", "Assemble result"]
+    assert conns["Pause before call"]["main"][0][0]["node"] == "Extract claims"
+    assert _node("Pause before call")["parameters"]["amount"] == "={{ $json.wait_s }}"  # pp-tools decides (F-017)
+    error_body = _node("Record LLM error")["parameters"]["jsonBody"]
+    assert all(k in error_body for k in ("status:", "retry_after:", "'retry-after'", "model:"))
     assert [o[0]["node"] for o in conns["Extract claims"]["main"]] == ["Save claims", "Record LLM error"]  # success, error
     assert conns["Record LLM error"]["main"][0][0]["node"] == "Next claim batch"
     assert _node("Extract claims")["onError"] == "continueErrorOutput"
@@ -303,3 +306,76 @@ def test_next_batch_hands_n8n_a_ready_groq_request():
     assert body["messages"] == [{"role": "system", "content": "S"}, {"role": "user", "content": "U"}]
     assert body["response_format"]["json_schema"]["schema"] is CLAIMS_SCHEMA
     json.dumps(body)  # serialisable as is
+
+
+def test_validation_repairs_what_the_model_gets_slightly_wrong():
+    """F-018, seen in the first full run: units, a typo in the id, a lowercase table reference, a margin read as a score."""
+    sid = "b:53/s:1"
+    sentence = "As shown in table 1, CRAG outperformed RAG by margins of 7.0% accuracy on PopQA; the evaluator is 0.77B parameters vs 7B."
+    ids, sents = {sid, "b:53/s:2"}, {sid: sentence, "b:53/s:2": "Other."}
+    margin = _claim(sentence_id=sid, refers_to=[],
+                    values=[{"value": "7.0%", "metric": "accuracy", "dataset": "PopQA", "system": "CRAG", "setting": ""}],
+                    comparison={"system": "CRAG", "baseline": "RAG", "difference": "7.0%", "kind": "absolute", "direction": "better"})
+    units = _claim(sentence_id="b:53/s/1", comparison=None, refers_to=[],
+                   values=[{"value": "0.77B vs 7B", "metric": "parameters", "dataset": "", "system": "CRAG", "setting": ""}])
+    ambiguous = _claim(sentence_id="b:53", comparison=None, values=[])
+    kept, dropped = validate({"claims": [margin, units, ambiguous]}, ids, sents, paper())
+    assert [d["reason"] for d in dropped] == ["unknown sentence id"]
+    assert kept[0]["values"][0]["role"] == "difference" and kept[0]["refers_to"] == ["table:1"]
+    assert kept[1]["sentence_id"] == sid and kept[1]["repaired_id"] == "b:53/s/1"
+    assert kept[1]["values"][0]["role"] == "value"
+
+
+def _parsed_run(client, stub_url):
+    run_id = client.post("/runs", json={"request": {"mode": "audit", "draft_pdf_url": f"{stub_url}/pdf/2101.00001v2"}}).json()["run_id"]
+    job = client.post(f"/audit/{run_id}/parse").json()["job_id"]
+    for _ in range(100):
+        if client.get(f"/jobs/{job}").json()["status"] in ("done", "failed"):
+            break
+        time.sleep(0.1)
+    return run_id
+
+
+def test_rate_limits_wait_switch_model_then_stop_without_burning_attempts(tmp_path, test_db_url, stub_url):
+    """F-017: a 429 cost one of three attempts, so a spent daily quota skipped every batch in 90 s."""
+    from fastapi.testclient import TestClient
+
+    from app.audit.claims import CLAIMS_FALLBACK_MODELS, CLAIMS_MODEL
+    from app.config import Settings
+    from app.main import create_app
+
+    settings = Settings(
+        APP_DATABASE_URL=test_db_url, QDRANT_URL="local::memory:", EMBEDDER_URL=stub_url, PARSER_URL=stub_url,
+        AUDIT_ALLOW_PRIVATE_URLS=True, CACHE_DIR=tmp_path / "cache", CORPUS_DIR=tmp_path / "corpus",
+        PROMPTS_DIR=REPO / "prompts", LOG_LEVEL="WARNING",
+    )
+    with TestClient(create_app(settings)) as client:
+        run_id = _parsed_run(client, stub_url)
+        first = client.post(f"/audit/{run_id}/claims/next").json()
+        assert (first["model"], first["wait_s"], first["request"]["model"]) == (CLAIMS_MODEL, 30, CLAIMS_MODEL)
+
+        # per-minute limit: same model, wait for retry-after, the attempt is given back
+        client.post(f"/audit/{run_id}/claims/error", json={"batch": 0, "status": 429, "retry_after": "70", "model": CLAIMS_MODEL, "error": "429"})
+        nxt = client.post(f"/audit/{run_id}/claims/next").json()
+        assert (nxt["batch"], nxt["attempt"], nxt["model"]) == (0, 1, CLAIMS_MODEL) and 70 <= nxt["wait_s"] <= 72
+
+        # daily limit on the main model: the fallback takes over at once
+        client.post(f"/audit/{run_id}/claims/error", json={"batch": 0, "status": 429, "retry_after": "1009", "model": CLAIMS_MODEL, "error": "429"})
+        nxt = client.post(f"/audit/{run_id}/claims/next").json()
+        assert (nxt["attempt"], nxt["model"], nxt["wait_s"]) == (1, CLAIMS_FALLBACK_MODELS[0], 30)
+        assert nxt["request"]["model"] == CLAIMS_FALLBACK_MODELS[0]
+
+        # every model spent: the run stops and says why, instead of skipping batch after batch
+        client.post(f"/audit/{run_id}/claims/error", json={"batch": 0, "status": 429, "retry_after": "2000", "model": CLAIMS_FALLBACK_MODELS[0], "error": "429"})
+        done = client.post(f"/audit/{run_id}/claims/next").json()
+        assert done["done"] is True and "daily token limit" in done["stopped"]
+        cov = client.post(f"/audit/{run_id}/result").json()["coverage"]
+        assert cov["batches_skipped"] == [0] and cov["rate_limited"] == 3 and "daily token limit" in cov["stopped"]
+        assert cov["models"] == sorted([CLAIMS_MODEL, CLAIMS_FALLBACK_MODELS[0]])
+
+        # other errors still use attempts
+        run2 = _parsed_run(client, stub_url)
+        for attempt in (1, 2, 3):
+            assert client.post(f"/audit/{run2}/claims/next").json()["attempt"] == attempt
+            client.post(f"/audit/{run2}/claims/error", json={"batch": 0, "status": 500, "error": "server error"})
+        assert client.post(f"/audit/{run2}/claims/next").json()["done"] is True

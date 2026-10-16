@@ -139,33 +139,78 @@ class ClaimsOutput(BaseModel):
     claims: list[Claim] = Field(default_factory=list, max_length=60)
 
 
+_NUMBER = re.compile(r"\d[\d,]*(?:\.\d+)?")
+_REF = re.compile(r"\b(table|tab\.|figure|fig\.)\s*(\d+)", re.I)
+
+
 def _norm_number(s: str) -> str:
-    return re.sub(r"[\s,]", "", s).rstrip("%").lstrip("+")
+    return s.replace(",", "")
+
+
+def _numbers(text: str) -> list[str]:
+    """Every number in the text, without thousands separators: "0.77B vs 7B" -> ["0.77", "7"]."""
+    return [_norm_number(m) for m in _NUMBER.findall(text)]
+
+
+def _sentence_refs(sentence: str, objects: set[str]) -> list[str]:
+    """"Table 1", "table 1", "Fig. 3" written in the sentence, as object ids that exist."""
+    found = []
+    for kind, n in _REF.findall(sentence):
+        oid = f"{'table' if kind.lower().startswith('tab') else 'figure'}:{n}"
+        if oid in objects and oid not in found:
+            found.append(oid)
+    return found
+
+
+def _canon_id(sid: str) -> str:
+    return re.sub(r"[^0-9a-z]+", ":", sid.lower()).strip(":")
 
 
 def validate(output: Any, batch_ids: set[str], sentences: dict[str, str], paper: dict[str, Any]) -> tuple[list[dict], list[dict]]:
-    """(kept claims, dropped claims with reasons). Raises ValueError if the output is not a ClaimsOutput."""
+    """(kept claims, dropped claims with reasons). Raises ValueError if the output is not a ClaimsOutput.
+
+    Deterministic repairs after the LLM (F-018), each one cheaper and more
+    reliable in code than in the prompt:
+      - a sentence id with a typo ("b:60/s/9") is mapped back when only one id matches;
+      - every number of a value must be in the sentence; units are ignored ("0.77B");
+      - a value equal to the comparison's difference is marked role="difference",
+        so the number check does not read a margin as the system's score;
+      - table and figure references written in the sentence are added when the
+        model missed them (it skips a lowercase "table 1").
+    """
     try:
         parsed = ClaimsOutput.model_validate(output)
     except ValidationError as exc:
         raise ValueError(f"claims output does not match the schema: {exc.errors()[:3]}") from exc
     objects = {t["id"] for t in paper["tables"]} | {f["id"] for f in paper["figures"]}
+    canon: dict[str, list[str]] = {}
+    for sid in batch_ids:
+        canon.setdefault(_canon_id(sid), []).append(sid)
     kept, dropped = [], []
     for c in parsed.claims:
         d = c.model_dump()
-        if c.sentence_id not in batch_ids:
-            dropped.append({**d, "reason": "unknown sentence id"})
-            continue
-        sentence = sentences[c.sentence_id]
-        digits = {_norm_number(m.group(0)) for m in re.finditer(r"[+-]?\d[\d,]*(\.\d+)?\s?%?", sentence)}
-        invented = [v.value for v in c.values if _norm_number(v.value) not in digits]
-        if c.comparison and c.comparison.difference and _norm_number(c.comparison.difference) not in digits:
-            invented.append(c.comparison.difference)
+        sid = c.sentence_id
+        if sid not in batch_ids:
+            match = canon.get(_canon_id(sid), [])
+            if len(match) != 1:
+                dropped.append({**d, "reason": "unknown sentence id"})
+                continue
+            d["sentence_id"] = sid = match[0]
+            d["repaired_id"] = c.sentence_id
+        sentence = sentences[sid]
+        digits = set(_numbers(sentence))
+        invented = [v.value for v in c.values if not _numbers(v.value) or not set(_numbers(v.value)) <= digits]
+        diff = c.comparison.difference if c.comparison else ""
+        if diff and not set(_numbers(diff)) <= digits:
+            invented.append(diff)
         if invented:
             dropped.append({**d, "reason": f"values not in the sentence: {invented}"})
             continue
+        for v in d["values"]:
+            v["role"] = "difference" if diff and _numbers(v["value"]) == _numbers(diff) else "value"
+        refs = [r for r in c.refers_to if r in objects]
         d["unknown_refs"] = [r for r in c.refers_to if r not in objects]
-        d["refers_to"] = [r for r in c.refers_to if r in objects]
+        d["refers_to"] = refs + [r for r in _sentence_refs(sentence, objects) if r not in refs]
         d["sentence"] = sentence
         kept.append(d)
     return kept, dropped
@@ -179,6 +224,9 @@ def validate(output: Any, batch_ids: set[str], sentences: dict[str, str], paper:
 # schema next to the Pydantic models it mirrors.
 
 CLAIMS_MODEL = "openai/gpt-oss-20b"
+# Groq's limits are per model, so the larger sibling has its own 200K tokens a
+# day; it accepts the same parameters and strict schema (F-017).
+CLAIMS_FALLBACK_MODELS = ("openai/gpt-oss-120b",)
 CLAIMS_MAX_OUTPUT = 2500  # Groq counts input + this budget against 8,000 tokens per minute (F-011)
 CLAIMS_SCHEMA: dict[str, Any] = {
     "type": "object",
@@ -309,7 +357,7 @@ CLAIMS_SCHEMA: dict[str, Any] = {
 }
 
 
-def claims_request(system: str, user: str) -> dict[str, Any]:
+def claims_request(system: str, user: str, model: str = CLAIMS_MODEL) -> dict[str, Any]:
     """Body for POST https://api.groq.com/openai/v1/chat/completions (D34).
 
     Low reasoning effort and hidden reasoning, or gpt-oss spends the whole
@@ -317,7 +365,7 @@ def claims_request(system: str, user: str) -> dict[str, Any]:
     answer is always parseable JSON.
     """
     return {
-        "model": CLAIMS_MODEL,
+        "model": model,
         "temperature": 0,
         "reasoning_effort": "low",
         "include_reasoning": False,

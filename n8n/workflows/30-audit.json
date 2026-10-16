@@ -309,8 +309,8 @@
   },
   {
    "id": "c3f2e8f4-0016-4c9a-9c33-000000000016",
-   "name": "Pause 30 s",
-   "notes": "Before every LLM call. Measured with reasoning_effort low: about 2,600 tokens per call (2,350 in, 235 out). Groq counts the request as input plus max_completion_tokens (about 4,850), and allows 8,000 per minute, so calls 30 s apart stay under it.",
+   "name": "Pause before call",
+   "notes": "Before every LLM call, for as long as pp-tools says (wait_s): normally 30 s, since a call is about 2,600-4,200 tokens and Groq allows 8,000 per minute; longer after a per-minute 429 (its retry-after). A daily-limit 429 is handled in pp-tools by switching model or stopping the run (F-017).",
    "type": "n8n-nodes-base.wait",
    "typeVersion": 1.1,
    "position": [
@@ -320,7 +320,7 @@
    "webhookId": "03000000-0000-0000-0000-000000000016",
    "parameters": {
     "resume": "timeInterval",
-    "amount": 30,
+    "amount": "={{ $json.wait_s }}",
     "unit": "seconds"
    }
   },
@@ -357,7 +357,7 @@
   {
    "id": "c3f2e8f4-0018-4c9a-9c33-000000000018",
    "name": "Record LLM error",
-   "notes": "Stores why an LLM call failed (rate limit, empty output, HTTP error) as a run step, so a failed batch is never silent.",
+   "notes": "Stores why an LLM call failed (rate limit, empty output, HTTP error) as a run step, so a failed batch is never silent. Sends the HTTP status and Groq's retry-after: a 429 does not use one of the batch's attempts, and pp-tools uses retry-after to wait or switch model (F-017).",
    "type": "n8n-nodes-base.httpRequest",
    "typeVersion": 4.2,
    "position": [
@@ -369,7 +369,7 @@
     "url": "={{ $env.PP_TOOLS_URL }}/audit/{{ $('Called by router').first().json.run_id }}/claims/error",
     "sendBody": true,
     "specifyBody": "json",
-    "jsonBody": "={{ JSON.stringify({ batch: $('Next claim batch').last().json.batch, error: JSON.stringify({ error: $json.error, message: $json.message, status: $json.statusCode }).slice(0, 2000) }) }}",
+    "jsonBody": "={{ JSON.stringify({ batch: $('Next claim batch').last().json.batch, model: $('Next claim batch').last().json.model, status: ($json.error || {}).status, retry_after: ((($json.error || {}).response || {}).headers || {})['retry-after'], error: String(($json.error || {}).message || $json.message || '').slice(0, 300) + ' ' + JSON.stringify((($json.error || {}).response || {}).data || '').slice(0, 1500) }) }}",
     "options": {
      "timeout": 30000,
      "response": {
@@ -485,7 +485,7 @@
    "main": [
     [
      {
-      "node": "Pause 30 s",
+      "node": "Pause before call",
       "type": "main",
       "index": 0
      }
@@ -499,7 +499,7 @@
     ]
    ]
   },
-  "Pause 30 s": {
+  "Pause before call": {
    "main": [
     [
      {

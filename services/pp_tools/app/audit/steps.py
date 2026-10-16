@@ -1,13 +1,14 @@
 """Audit pipeline steps that n8n calls between LLM nodes (the novelty branch's pattern, D21)."""
 
 import json
+import time
 
 from typing import Any
 from uuid import UUID
 
 from ..db import Database
 from ..prompts import PromptLibrary
-from .claims import as_dicts, batches, claims_request, candidate_sentences, objects_block, sentences_block, validate
+from .claims import CLAIMS_FALLBACK_MODELS, CLAIMS_MODEL, as_dicts, batches, claims_request, candidate_sentences, objects_block, sentences_block, validate
 from .store import PaperStore
 
 EXTRACTOR = "P4-claim-extractor"
@@ -17,6 +18,10 @@ EXTRACTOR = "P4-claim-extractor"
 # count also undercounts real tokens by 20-40% (app/textutil.py). 700 counted
 # tokens of sentences + prompt (~2,600) + 3,000 for the answer stays near 6,500.
 BATCH_TOKENS = 700
+PACE_S = 30  # between calls: one call is ~2,600-4,200 tokens against 8,000 per minute
+# A 429 whose retry-after is longer than this is the daily limit, not the
+# per-minute one: switch model, or stop the run with what is done (F-017).
+MAX_WAIT_S = 90
 
 
 class AuditError(Exception):
@@ -53,15 +58,32 @@ def claim_prompts(db: Database, library: PromptLibrary, papers: PaperStore, run_
 MAX_BATCH_ATTEMPTS = 3
 
 
-def next_claim_batch(db: Database, library: PromptLibrary, papers: PaperStore, run_id: UUID) -> dict[str, Any]:
-    """The next batch n8n should send to the LLM, or {"done": true}.
+def _model_blocks(db: Database, run_id: UUID) -> dict[str, float]:
+    """{model: unix time until which Groq refuses it}, from the rate limits seen in this run."""
+    until: dict[str, float] = {}
+    for st in db.get_steps(run_id, "claims_llm_error"):
+        d = st["detail"]
+        if d.get("rate_limited") and d.get("model"):
+            until[d["model"]] = max(until.get(d["model"], 0.0), d["until"])
+    return until
+
+
+def next_claim_batch(db: Database, library: PromptLibrary, papers: PaperStore, run_id: UUID,
+                     now: float | None = None) -> dict[str, Any]:
+    """The next batch n8n should send to the LLM, how long to wait first, or {"done": true}.
 
     pp-tools keeps the loop's state, not n8n: a batch counts as finished once a
     valid output was saved, or once it was served MAX_BATCH_ATTEMPTS times (then
-    it is recorded as skipped). A rate-limited or invalid call therefore costs
-    one attempt, and n8n simply asks again after its pause. n8n's own retries
-    wait at most 5 s, too short for Groq's per-minute window (F-012).
+    it is recorded as skipped). n8n's own retries wait at most 5 s, too short for
+    Groq's per-minute window (F-012).
+
+    A rate limit (429) is not the batch's fault, so it does not use an attempt
+    (F-017). A short retry-after is waited out (``wait_s``); a long one means the
+    model's daily tokens are spent, so the next model is used, and when every
+    model is spent the run stops: the remaining batches are recorded as skipped
+    with that reason, and the result reports what was done.
     """
+    now = time.time() if now is None else now
     if not db.get_steps(run_id, "claim_prompts"):
         claim_prompts(db, library, papers, run_id)
     detail = _prompts_step(db, run_id)
@@ -70,22 +92,46 @@ def next_claim_batch(db: Database, library: PromptLibrary, papers: PaperStore, r
     attempts: dict[int, int] = {}
     for s in db.get_steps(run_id, "claims_attempt"):
         attempts[s["detail"]["batch"]] = attempts.get(s["detail"]["batch"], 0) + 1
-    for i, ids in enumerate(detail["batches"]):
+    for s in db.get_steps(run_id, "claims_llm_error"):
+        if s["detail"].get("rate_limited"):
+            attempts[s["detail"]["batch"]] = attempts.get(s["detail"]["batch"], 0) - 1
+    open_batches = []
+    for i in range(len(detail["batches"])):
         if i in finished:
             continue
         if attempts.get(i, 0) >= MAX_BATCH_ATTEMPTS:
             db.add_step(run_id, "claims_batch", "skipped", {"batch": i, "reason": f"no valid output after {MAX_BATCH_ATTEMPTS} attempts"})
+            finished.add(i)
             continue
-        db.add_step(run_id, "claims_attempt", "done", {"batch": i, "attempt": attempts.get(i, 0) + 1})
-        group = [c for c in detail["candidates"] if c["id"] in set(ids)]
-        rendered = library.load(EXTRACTOR, detail["prompt_version"]).render({
-            "title": paper["title"], "objects_block": objects_block(paper),
-            "sentences_block": "\n".join(f"[{c['id']}] ({(c['section'] or 'no section')[:60]}) {c['text']}" for c in group),
-        })
-        return {"done": False, "batch": i, "batches": len(detail["batches"]), "attempt": attempts.get(i, 0) + 1,
-                "system": rendered.system, "user": rendered.user, "version": rendered.version,
-                "request": claims_request(rendered.system, rendered.user)}
-    return {"done": True, "batches": len(detail["batches"]), "finished": len(finished)}
+        open_batches.append(i)
+    if not open_batches:
+        return {"done": True, "batches": len(detail["batches"]), "finished": len(finished)}
+
+    blocked = _model_blocks(db, run_id)
+    models = (CLAIMS_MODEL, *CLAIMS_FALLBACK_MODELS)
+    waits = {m: max(0.0, blocked.get(m, 0.0) - now) for m in models}
+    model = min(models, key=lambda m: (waits[m] > MAX_WAIT_S, models.index(m)))
+    if waits[model] > MAX_WAIT_S:
+        reason = "Groq daily token limit reached on " + ", ".join(models)
+        for i in open_batches:
+            db.add_step(run_id, "claims_batch", "skipped", {"batch": i, "reason": reason})
+        db.add_step(run_id, "claims_stopped", "done", {"reason": reason, "batches_left": open_batches,
+                                                        "retry_in_s": round(min(waits.values()))})
+        return {"done": True, "batches": len(detail["batches"]), "finished": len(finished) + len(open_batches),
+                "stopped": reason}
+
+    i = open_batches[0]
+    db.add_step(run_id, "claims_attempt", "done", {"batch": i, "attempt": attempts.get(i, 0) + 1, "model": model})
+    ids = set(detail["batches"][i])
+    group = [c for c in detail["candidates"] if c["id"] in ids]
+    rendered = library.load(EXTRACTOR, detail["prompt_version"]).render({
+        "title": paper["title"], "objects_block": objects_block(paper),
+        "sentences_block": "\n".join(f"[{c['id']}] ({(c['section'] or 'no section')[:60]}) {c['text']}" for c in group),
+    })
+    return {"done": False, "batch": i, "batches": len(detail["batches"]), "attempt": attempts.get(i, 0) + 1,
+            "model": model, "wait_s": max(PACE_S, round(waits[model]) + 1),
+            "system": rendered.system, "user": rendered.user, "version": rendered.version,
+            "request": claims_request(rendered.system, rendered.user, model)}
 
 
 def _prompts_step(db: Database, run_id: UUID) -> dict[str, Any]:
@@ -121,12 +167,23 @@ def save_claims(
     return {"batch": batch, "kept": len(kept), "dropped": len(dropped)}
 
 
-def record_llm_error(db: Database, run_id: UUID, batch: int, error: str) -> dict[str, Any]:
-    """Why an LLM call failed (rate limit, empty output...), so a skipped batch is never silent."""
+def record_llm_error(db: Database, run_id: UUID, batch: int, error: str, status: int | None = None,
+                     retry_after: float | None = None, model: str | None = None,
+                     now: float | None = None) -> dict[str, Any]:
+    """Why an LLM call failed (rate limit, empty output...), so a skipped batch is never silent.
+
+    A 429 is marked ``rate_limited`` with the time until which the model is refused.
+    """
     if db.get_run(run_id) is None:
         raise LookupError(f"run {run_id} not found")
-    db.add_step(run_id, "claims_llm_error", "failed", {"batch": batch, "error": error[:2000]})
-    return {"batch": batch, "recorded": True}
+    now = time.time() if now is None else now
+    detail: dict[str, Any] = {"batch": batch, "error": error[:2000], "status": status, "model": model}
+    if status == 429:
+        wait = float(retry_after) if retry_after is not None else 60.0
+        detail.update({"rate_limited": True, "retry_after_s": wait, "until": now + wait,
+                       "kind": "daily" if wait > MAX_WAIT_S else "per-minute"})
+    db.add_step(run_id, "claims_llm_error", "failed", detail)
+    return {"batch": batch, "recorded": True, "rate_limited": status == 429}
 
 
 def claims(db: Database, run_id: UUID) -> dict[str, Any]:
@@ -151,6 +208,9 @@ def claims(db: Database, run_id: UUID) -> dict[str, Any]:
         "batches_done": len(latest),
         "batches_skipped": skipped,
         "llm_errors": len(llm_errors),
+        "rate_limited": sum(1 for e in llm_errors if e.get("rate_limited")),
+        "models": sorted({s["detail"]["model"] for s in db.get_steps(run_id, "claims_attempt") if s["detail"].get("model")}),
+        "stopped": next((s["detail"]["reason"] for s in db.get_steps(run_id, "claims_stopped")), None),
         "claims": kept,
         "dropped": dropped,
         "by_type": by_type,
@@ -172,6 +232,7 @@ def audit_result(db: Database, papers: PaperStore, run_id: UUID) -> dict[str, An
                  | {"tables": [t["id"] for t in p["tables"]], "figures": [f["id"] for f in p["figures"]]},
         "claims": extracted["claims"],
         "claims_dropped": len(extracted["dropped"]),
-        "coverage": {k: extracted[k] for k in ("total_sentences", "candidate_sentences", "batches", "batches_done", "batches_skipped", "llm_errors", "by_type")},
+        "coverage": {k: extracted[k] for k in ("total_sentences", "candidate_sentences", "batches", "batches_done", "batches_skipped", "llm_errors",
+                                                   "rate_limited", "models", "stopped", "by_type")},
         "prompt_versions": {EXTRACTOR: extracted["prompt_version"]},
     }
