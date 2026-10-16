@@ -44,7 +44,7 @@ def synthetic_doc() -> dict:
         _text(5, "caption", "Figure 1: Accuracy as passages grow.", 2, 400),
         _text(6, "text", "Figure 2: Confusion matrix of the classifier.", 3, 300, parent="#/pictures/1"),
         _text(7, "section_header", "References", 3, 500),
-        _text(8, "list_item", "A. Author. 2020. Some cited paper. In ACL.", 3, 520),
+        _text(8, "list_item", "A. Author. 2020. Some cited paper. In ACL. arXiv:2101.00002.", 3, 520),
         _text(9, "page_footer", "3", 3, 780),
     ]
     tables = [
