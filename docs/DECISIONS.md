@@ -294,3 +294,34 @@ The container registries were not reachable from the development sandbox, so the
   A third variant, showing up to 2 extra papers (8 instead of 6) when they score above both 0.2 and the weakest of the 6, gains 3/57 (E8) and 2/22 (E7) at the cost of 16 and 9 extra papers shown, of which 13 and 7 are not expected.
 - **Decision:** keep hybrid with k=60. The Self-RAG case is a boundary case; every alternative that fixes it loses more elsewhere or mostly adds noise to the judge prompt. Any future ordering change must first be replayed on the stored pools.
 - **Limit:** E8 and E7 share the same 5 ideas, so they are not independent; E2's gold is loose (citations, D31 pending). The differences between the hybrid variants (1 or 2 papers) are within noise; only the guaranteed-slot loss on E8 is consistent.
+
+## D31. PDF layout parsing: Docling (CPU), not MinerU
+
+- **Date:** 2026-10-16, start of milestone 3. Replaces the MinerU plan in D16.
+- **Context:** the audit has to read a paper's tables as cell grids, so a number in the text can be checked against a cell. It also has to read its figures as images, so a vision model can check claims about them. The team PC has no GPU and about 9.6 GB of memory available to Docker, of which the running stack already uses about 5 GB.
+- **Options considered:**
+  - **MinerU:** strongest on scientific tables, but its pipeline lists a 4 GB VRAM floor and 16 GB of system RAM, and its better modes need a GPU.
+  - **Rule-based table detection (PyMuPDF `find_tables`):** no models.
+  - **Docling:** a layout model plus TableFormer, a CPU image, MIT licence.
+- **Measured:**
+  - **PyMuPDF.** On CRAG (2401.15884), with its 8 captioned tables, the "lines" strategy found 1 table, and it was garbled. arXiv tables have only horizontal rules. The "text" strategy called almost every page a table (16).
+  - **Docling** (`docling-serve-cpu:v1.30.0`, OCR off, TableFormer accurate) on the team PC: `eval/m3_spike/20261016-154255/summary.md`.
+
+    | Paper | Pages | Time | Tables | Pictures |
+    | --- | --- | --- | --- | --- |
+    | CRAG | 16 | 314 s (includes the first model load) | 7 | 3 |
+    | Adaptive-RAG | 15 | 139 s | 9 | 5 |
+    | Self-RAG | 30 | 169 s | 8 | 6 |
+
+    Peak container memory was 3.5 GB.
+  - **Table quality, checked by hand on CRAG:**
+    - All 6 result tables came out as correct grids, with row labels, column headers and the metric in the header ("PopQA (Accuracy)").
+    - Spot check against the PDF text: Table 2's 16 values matched in order (16/16), and so did two rows of Table 1.
+    - Figures come out as clean crops at 2× scale, readable by eye and so by a vision model.
+- **Decision:** Docling, as a separate `parser` service (the docling-serve CPU image), called by pp-tools. It runs as an asynchronous job, like the corpus build, because a paper takes 2 to 5 minutes.
+- **Known limits, from the spike:**
+  - **Captions are sometimes missing or misattached.** Self-RAG: 4 of 8 tables had no caption, and one table received a figure's caption. CRAG: 1 of 7 missing. Adaptive-RAG: 1 of 9. Docling's own table order also differs from the paper's numbering (Docling's "Table 7" is the paper's Table 11), so claims must be linked to tables through the caption number, never through the order.
+    - Fix: a caption-repair step (the nearest "Table N" caption on the same page), measured on these papers.
+  - **Some prompt boxes or appendix listings are labelled as tables, and some region crops overlap a table.** Harmless for the number check, which starts from the claims.
+  - **CPU time.** An audit of a 15 to 30-page paper takes about 3 to 5 minutes. Acceptable for an asynchronous job with progress shown; the result is cached per PDF hash.
+- **Sources:** [MinerU vs Docling vs Marker](https://builderai.tools/blog/pdf-parsing-for-rag-mineru-docling-marker-compared), [docling-serve](https://github.com/docling-project/docling-serve) and its [usage options](https://github.com/docling-project/docling-serve/blob/main/docs/usage.md).

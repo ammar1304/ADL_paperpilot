@@ -392,3 +392,18 @@ Branch `eval/m2-final-runs`. Details in `prompts/failure_log.md` (section "M2 fi
 - Reranker (`bge-reranker-v2-m3` on TEI).
 - E2 leave-one-out evaluation.
 - First prompt iterations from real failures.
+
+## Milestone 3, part 1: PDF parser spike (2026-10-16)
+
+Branch `feat/m3-parser-spike`. Decision D31: Docling (CPU) instead of MinerU.
+
+- `scripts/parse_spike.py`: sends cached library PDFs to docling-serve and records time, pages, tables (grid and caption), pictures and peak memory.
+- Team PC: CRAG, Adaptive-RAG and Self-RAG all parsed, in 139 to 314 s, at 3.5 GB peak. CRAG's tables were checked by hand against the PDF (16/16 values of Table 2).
+- PyMuPDF baseline: 1 garbled table out of 8 on CRAG, so a layout model is needed.
+
+### Next
+
+- [ ] `parser` service in docker-compose (docling-serve CPU, pinned), pp-tools client, audit parse job with progress, cache by PDF hash
+- [ ] Caption repair (nearest "Table N" caption on the same page), measured on the spike papers
+- [ ] Claim extraction (P4) and the table-number check, with E3 (planted errors)
+
