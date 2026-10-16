@@ -194,15 +194,17 @@ def test_audit_llm_calls_never_use_gemini():
     assert "lmChatGoogleGemini" not in text and "generativelanguage.googleapis.com" not in text
     node = _node("Extract claims")
     assert node["parameters"]["url"] == "https://api.groq.com/openai/v1/chat/completions"
-    assert node["parameters"]["nodeCredentialType"] == "groqApi" and "openai/gpt-oss-20b" in node["parameters"]["jsonBody"]
+    assert node["parameters"]["genericAuthType"] == "httpHeaderAuth" and "openai/gpt-oss-20b" in node["parameters"]["jsonBody"]
+    assert node["credentials"]["httpHeaderAuth"]["id"] == "ppGroqHeader0001"  # created by n8n/entrypoint.sh (F-014)
+    assert "ppGroqHeader0001" in (REPO / "n8n" / "entrypoint.sh").read_text(encoding="utf-8")
 
 
 def test_audit_workflow_asks_pp_tools_for_each_batch_and_recovers_from_llm_errors():
     """F-012: n8n's retries wait at most 5 s; the loop's state lives in pp-tools instead."""
     conns = AUDIT_WF["connections"]
     assert [o[0]["node"] for o in conns["Parse status"]["main"]] == ["Next claim batch", "Parse failed", "Polled too long?"]
-    assert [o[0]["node"] for o in conns["More batches?"]["main"]] == ["Pause 65 s", "Assemble result"]
-    assert conns["Pause 65 s"]["main"][0][0]["node"] == "Extract claims"
+    assert [o[0]["node"] for o in conns["More batches?"]["main"]] == ["Pause 30 s", "Assemble result"]
+    assert conns["Pause 30 s"]["main"][0][0]["node"] == "Extract claims"
     assert [o[0]["node"] for o in conns["Extract claims"]["main"]] == ["Save claims", "Record LLM error"]  # success, error
     assert conns["Record LLM error"]["main"][0][0]["node"] == "Next claim batch"
     assert _node("Extract claims")["onError"] == "continueErrorOutput"

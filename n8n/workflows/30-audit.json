@@ -309,8 +309,8 @@
   },
   {
    "id": "c3f2e8f4-0016-4c9a-9c33-000000000016",
-   "name": "Pause 65 s",
-   "notes": "Before every LLM call. gpt-oss-20b's hidden reasoning makes one call use 6,000 to 7,000 of the 8,000 tokens Groq's free tier allows per minute (F-012), so calls are a minute apart.",
+   "name": "Pause 30 s",
+   "notes": "Before every LLM call. Measured with reasoning_effort low: about 2,600 tokens per call (2,350 in, 235 out). Groq counts the request as input plus max_completion_tokens (about 4,850), and allows 8,000 per minute, so calls 30 s apart stay under it.",
    "type": "n8n-nodes-base.wait",
    "typeVersion": 1.1,
    "position": [
@@ -320,7 +320,7 @@
    "webhookId": "03000000-0000-0000-0000-000000000016",
    "parameters": {
     "resume": "timeInterval",
-    "amount": 65,
+    "amount": 30,
     "unit": "seconds"
    }
   },
@@ -338,19 +338,19 @@
    "parameters": {
     "method": "POST",
     "url": "https://api.groq.com/openai/v1/chat/completions",
-    "authentication": "predefinedCredentialType",
-    "nodeCredentialType": "groqApi",
+    "authentication": "genericCredentialType",
     "sendBody": true,
     "specifyBody": "json",
-    "jsonBody": "={{ JSON.stringify({ model: 'openai/gpt-oss-20b', temperature: 0, reasoning_effort: 'low', include_reasoning: false, max_completion_tokens: 3500, messages: [{ role: 'system', content: $json.system }, { role: 'user', content: $json.user }], response_format: { type: 'json_schema', json_schema: { name: 'claims', strict: true, schema: {\"type\": \"object\", \"properties\": {\"claims\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"properties\": {\"sentence_id\": {\"type\": \"string\"}, \"type\": {\"type\": \"string\", \"enum\": [\"result\", \"comparison\", \"figure\", \"citation\", \"other\"]}, \"claim\": {\"type\": \"string\"}, \"values\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"properties\": {\"value\": {\"type\": \"string\"}, \"metric\": {\"type\": \"string\"}, \"dataset\": {\"type\": \"string\"}, \"system\": {\"type\": \"string\"}, \"setting\": {\"type\": \"string\"}}, \"required\": [\"value\", \"metric\", \"dataset\", \"system\", \"setting\"], \"additionalProperties\": false}}, \"comparison\": {\"type\": [\"object\", \"null\"], \"properties\": {\"system\": {\"type\": \"string\"}, \"baseline\": {\"type\": \"string\"}, \"difference\": {\"type\": \"string\"}, \"kind\": {\"type\": \"string\", \"enum\": [\"absolute\", \"relative\", \"unspecified\"]}, \"direction\": {\"type\": \"string\", \"enum\": [\"better\", \"worse\", \"equal\"]}}, \"required\": [\"system\", \"baseline\", \"difference\", \"kind\", \"direction\"], \"additionalProperties\": false}, \"refers_to\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}}, \"cites\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}}}, \"required\": [\"sentence_id\", \"type\", \"claim\", \"values\", \"comparison\", \"refers_to\", \"cites\"], \"additionalProperties\": false}}}, \"required\": [\"claims\"], \"additionalProperties\": false} } } }) }}",
+    "jsonBody": "={{ JSON.stringify({ model: 'openai/gpt-oss-20b', temperature: 0, reasoning_effort: 'low', include_reasoning: false, max_completion_tokens: 2500, messages: [{ role: 'system', content: $json.system }, { role: 'user', content: $json.user }], response_format: { type: 'json_schema', json_schema: { name: 'claims', strict: true, schema: {\"type\": \"object\", \"properties\": {\"claims\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"properties\": {\"sentence_id\": {\"type\": \"string\"}, \"type\": {\"type\": \"string\", \"enum\": [\"result\", \"comparison\", \"figure\", \"citation\", \"other\"]}, \"claim\": {\"type\": \"string\"}, \"values\": {\"type\": \"array\", \"items\": {\"type\": \"object\", \"properties\": {\"value\": {\"type\": \"string\"}, \"metric\": {\"type\": \"string\"}, \"dataset\": {\"type\": \"string\"}, \"system\": {\"type\": \"string\"}, \"setting\": {\"type\": \"string\"}}, \"required\": [\"value\", \"metric\", \"dataset\", \"system\", \"setting\"], \"additionalProperties\": false}}, \"comparison\": {\"type\": [\"object\", \"null\"], \"properties\": {\"system\": {\"type\": \"string\"}, \"baseline\": {\"type\": \"string\"}, \"difference\": {\"type\": \"string\"}, \"kind\": {\"type\": \"string\", \"enum\": [\"absolute\", \"relative\", \"unspecified\"]}, \"direction\": {\"type\": \"string\", \"enum\": [\"better\", \"worse\", \"equal\"]}}, \"required\": [\"system\", \"baseline\", \"difference\", \"kind\", \"direction\"], \"additionalProperties\": false}, \"refers_to\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}}, \"cites\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}}}, \"required\": [\"sentence_id\", \"type\", \"claim\", \"values\", \"comparison\", \"refers_to\", \"cites\"], \"additionalProperties\": false}}}, \"required\": [\"claims\"], \"additionalProperties\": false} } } }) }}",
     "options": {
      "timeout": 120000
-    }
+    },
+    "genericAuthType": "httpHeaderAuth"
    },
    "credentials": {
-    "groqApi": {
-     "id": "ppGroqCredent001",
-     "name": "Groq (PaperPilot)"
+    "httpHeaderAuth": {
+     "id": "ppGroqHeader0001",
+     "name": "Groq API header (PaperPilot)"
     }
    }
   },
@@ -485,7 +485,7 @@
    "main": [
     [
      {
-      "node": "Pause 65 s",
+      "node": "Pause 30 s",
       "type": "main",
       "index": 0
      }
@@ -499,7 +499,7 @@
     ]
    ]
   },
-  "Pause 65 s": {
+  "Pause 30 s": {
    "main": [
     [
      {

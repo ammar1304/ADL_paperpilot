@@ -381,11 +381,12 @@ The container registries were not reachable from the development sandbox, so the
 
 - **Date:** 2026-10-16. An exception to D21 (LLM calls in n8n's AI nodes).
 - **Context:** gpt-oss-20b reasons before answering, and reasoning tokens count against the output budget and the 8,000 tokens per minute. With default reasoning it used its whole budget and returned an empty answer (F-013). n8n's Groq chat-model node cannot set `reasoning_effort`, and its output parser adds about 700 tokens of format instructions.
-- **Decision:** the "Extract claims" node is an n8n HTTP Request to `https://api.groq.com/openai/v1/chat/completions`. It uses n8n's stored Groq credential, so the key never appears in the workflow, and sends:
+- **Decision:** the "Extract claims" node is an n8n HTTP Request to `https://api.groq.com/openai/v1/chat/completions`. It authenticates with a header credential that `n8n/entrypoint.sh` creates from `GROQ_API_KEY`, so the key never appears in the workflow (F-014: the `groqApi` credential type only works in the Groq chat-model node). It sends:
   - `reasoning_effort: "low"` and `include_reasoning: false`;
-  - `max_completion_tokens: 3500`;
+  - `max_completion_tokens: 2500`;
   - `response_format` with a strict JSON schema: every field required, optional ones nullable, `additionalProperties: false`.
 - **Why it is still the automation platform's job:** n8n makes the call, handles its errors (error output to "Record LLM error") and controls the pacing. pp-tools still renders the prompt from the library and validates the output.
+- **Measured (probe, CRAG batch 0):** 2,586 tokens in total (2,351 in, 235 out, of which 133 reasoning), 1.2 s, valid JSON. Calls are therefore paced 30 s apart instead of 65 s.
 - **What the strict schema buys:** the decoder cannot produce JSON outside the schema, so the "doesn't fit required format" failures disappear by construction. pp-tools' own validation (numbers must appear in the sentence) stays, because a schema cannot check meaning.
 - **Trade-off:** the novelty branch keeps the LLM-chain nodes, with Gemini as a fallback, which the audit must not use (D12). The two styles are documented side by side; moving the novelty branch is not worth the risk now.
 - **Sources:** [Groq reasoning](https://console.groq.com/docs/reasoning), [Groq structured outputs](https://console.groq.com/docs/structured-outputs), [Groq rate limits](https://console.groq.com/docs/rate-limits).

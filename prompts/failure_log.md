@@ -177,3 +177,12 @@ Fix (D34):
 - The output budget is 3,500 tokens, with a test that keeps input plus output under about 7,600.
 - LLM errors are now stored as run steps (`claims_llm_error`) instead of disappearing into the retry loop.
 
+**F-014 (n8n credential): the direct Groq call never left n8n.** Fourth run (`eval/results/20261016-181732-audit-claims`): again 18 failed calls, but the recorded error had been cut at 2,000 characters before the error field, because the error item carries the whole prompt first. Now only the error itself is recorded. A probe (`scripts/groq_claims_probe.py`) sent the identical request from Python, and Groq answered in 1.2 s:
+- 2,586 tokens in total: 2,351 in, 235 out, of which 133 reasoning;
+- finish reason "stop";
+- valid JSON, accepted by pp-tools.
+
+So Groq, the settings and the schema were right; n8n's HTTP Request node could not use the `groqApi` credential type, which belongs to n8n's Groq chat-model node. Fix: `n8n/entrypoint.sh` also creates the Groq key as a generic header credential (`httpHeaderAuth`, `Authorization: Bearer ...`), still only from `.env` and never in a workflow file.
+
+With real usage measured (about 2,600 tokens per call, not the 6,000 to 7,000 seen with default reasoning), the pause between calls is 30 s and the output budget 2,500 tokens.
+
