@@ -64,7 +64,8 @@ def call_groq(body: dict, key: str) -> tuple[int, dict | str, dict]:
         return 0, f"network: {type(exc).__name__}: {exc}", {}
 
 
-def run_pass(figures: list[dict], prompt, key: str, cache: Path, variant: str, out: Path, attempts: int = 1) -> dict:
+def run_pass(figures: list[dict], prompt, key: str, cache: Path, variant: str, out: Path, attempts: int = 1,
+             wait_daily: bool = False) -> dict:
     """One pass over the gold figures with one request variant; writes its files to out/."""
     out.mkdir(parents=True)
     rows, calls = [], []
@@ -90,7 +91,7 @@ def run_pass(figures: list[dict], prompt, key: str, cache: Path, variant: str, o
             if n or attempt > 1:
                 time.sleep(fig.FIGURE_PACE_S)
             used = attempt
-            for _ in range(4):
+            for _ in range(40 if wait_daily else 4):
                 started = time.monotonic()
                 status, answer, headers = call_groq(body, key)
                 secs = round(time.monotonic() - started, 1)
@@ -101,10 +102,12 @@ def run_pass(figures: list[dict], prompt, key: str, cache: Path, variant: str, o
                 if status != 429:
                     break
                 wait = float(headers.get("retry-after") or headers.get("Retry-After") or 60)
-                if wait > 900:
+                if wait > 900 and not wait_daily:
                     print(f"Groq daily limit for {fig.FIGURE_MODEL}: retry in {wait:.0f} s. Stopping; results so far are saved.")
                     stop = True
                     break
+                if wait > 900:  # --wait-daily: Groq frees tokens over a rolling 24 hours; wait for them
+                    print(f"  daily limit: waiting {wait / 60:.0f} min ({time.strftime('%H:%M')})", flush=True)
                 print(f"  429, waiting {wait:.0f} s")
                 time.sleep(wait + 1)
             if status != 200 or not isinstance(answer, dict):
@@ -185,6 +188,8 @@ def main() -> int:
     ap.add_argument("--limit", type=int, default=0, help="only the first N figures")
     ap.add_argument("--variants", default=fig.FIGURE_VARIANT, help="comma-separated request variants, e.g. A,B,C")
     ap.add_argument("--attempts", type=int, default=3, help="attempts per figure, as in the workflow (1 = first-attempt reliability)")
+    ap.add_argument("--wait-daily", action="store_true",
+                    help="on the daily token limit, wait for Groq to free tokens instead of stopping (for an unattended run)")
     ap.add_argument("--label", default="e4-figures")
     args = ap.parse_args()
     key = dotenv().get("GROQ_API_KEY")
@@ -199,7 +204,7 @@ def main() -> int:
     for variant in [v.strip() for v in args.variants.split(",") if v.strip()]:
         print(f"===== variant {variant}: reasoning {fig.VARIANTS[variant][0]}, {fig.VARIANTS[variant][1]}")
         results.append(run_pass(figures, prompt, key, args.cache, variant, REPO / "eval" / "results" / f"{stamp}-{args.label}-{variant}",
-                                args.attempts))
+                                args.attempts, args.wait_daily))
         time.sleep(fig.FIGURE_PACE_S)
     if len(results) > 1:
         lines = ["| Variant | Reasoning | Format | Calls answered | Correct verdicts | False alarms | Errors caught | Errors accepted | Output tokens (mean) |",
