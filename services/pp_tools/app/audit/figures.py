@@ -15,7 +15,13 @@ from typing import Any
 from ..textutil import count_tokens
 
 FIGURE_MODEL = "qwen/qwen3.8-27b"  # the only generally available vision model on Groq (docs, 2026-10)
-FIGURE_MAX_OUTPUT = 1500
+# qwen on Groq also has a limit of 1,000 *output* tokens a minute (not on the rate-limits page,
+# seen in a 429, F-021), and Groq checks the output budget against it before answering.
+FIGURE_MAX_OUTPUT = 900
+# Request settings, chosen by E4 (scripts/e4_figure_check.py --variants): reasoning "none"
+# or "low", and the answer as a strict JSON schema ("schema") or plain JSON mode ("json").
+VARIANTS = {"A": ("none", "schema"), "B": ("none", "json"), "C": ("low", "json")}
+FIGURE_VARIANT = "A"
 MAX_CLAIMS_PER_FIGURE = 8
 # Groq counts input + output budget against 8,000 tokens a minute. An image is a flat 2,048,
 # the prompt with a long caption and the schema about 950 counted tokens (x1.4 for real
@@ -110,26 +116,34 @@ def figure_caption(paper: dict[str, Any], fid: str) -> str:
     return (fig.get("caption") or "(no caption)")[:600]
 
 
-def figure_request(system: str, user: str, image_png: bytes, model: str = FIGURE_MODEL) -> dict[str, Any]:
+def figure_request(system: str, user: str, image_png: bytes, model: str = FIGURE_MODEL,
+                   variant: str | None = None) -> dict[str, Any]:
     """Body for POST https://api.groq.com/openai/v1/chat/completions with one image (D36).
 
-    Reasoning is kept low and hidden (as for P4, F-013); with JSON output Groq
-    refuses reasoning_format "raw". The schema is strict, so the answer is
-    always parseable.
+    Reasoning is hidden (with JSON output Groq refuses reasoning_format "raw");
+    hidden reasoning still counts as output tokens, so "none" saves most of the
+    output budget. In "schema" mode Groq checks the answer against the schema
+    after generating it and refuses it with a 400 when it does not match; in
+    "json" mode only valid JSON is required, and validate() does the rest.
     """
+    reasoning, mode = VARIANTS[variant or FIGURE_VARIANT]
     data_url = "data:image/png;base64," + base64.b64encode(image_png).decode("ascii")
-    return {
+    body: dict[str, Any] = {
         "model": model,
         "temperature": 0,
-        "reasoning_effort": "low",
+        "reasoning_effort": reasoning,
         "reasoning_format": "hidden",
         "max_completion_tokens": FIGURE_MAX_OUTPUT,
         "messages": [
             {"role": "system", "content": system},
             {"role": "user", "content": [{"type": "text", "text": user}, {"type": "image_url", "image_url": {"url": data_url}}]},
         ],
-        "response_format": {"type": "json_schema", "json_schema": {"name": "figure_checks", "strict": True, "schema": FIGURE_SCHEMA}},
     }
+    if mode == "schema":
+        body["response_format"] = {"type": "json_schema", "json_schema": {"name": "figure_checks", "strict": True, "schema": FIGURE_SCHEMA}}
+    else:
+        body["response_format"] = {"type": "json_object"}
+    return body
 
 
 def validate(output: Any, job_claims: list[int]) -> tuple[str, list[dict[str, Any]]]:

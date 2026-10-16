@@ -38,8 +38,9 @@ def test_claims_block_numbers_claims_and_keeps_the_original_sentence():
 
 def test_the_request_carries_the_image_and_a_strict_schema():
     png = b"\x89PNG\r\n\x1a\nfake"
-    body = fig.figure_request("SYS", "USER", png)
-    assert body["model"] == "qwen/qwen3.8-27b" and body["reasoning_effort"] == "low" and body["reasoning_format"] == "hidden"
+    body = fig.figure_request("SYS", "USER", png, variant="A")
+    assert body["model"] == "qwen/qwen3.8-27b" and body["reasoning_effort"] == "none" and body["reasoning_format"] == "hidden"
+    assert body["max_completion_tokens"] <= 1000  # qwen's limit of 1,000 output tokens a minute (F-021)
     user = body["messages"][1]["content"]
     assert user[0] == {"type": "text", "text": "USER"}
     assert user[1]["image_url"]["url"] == "data:image/png;base64," + base64.b64encode(png).decode()
@@ -140,7 +141,7 @@ def test_figure_loop_through_the_api(tmp_path, test_db_url, stub_url):
         fc = result["figure_checks"]
         assert fc["summary"]["supported"] == 1 and fc["summary"]["rate_limited"] == 1 and fc["summary"]["jobs_done"] == 1
         assert fc["figures_read"] == {"figure:1": "A bar chart of EM for BM25 and ours."}
-        assert fc["checks"][0]["sentence_id"] == "b:1/s:0" and result["prompt_versions"]["P5-figure-checker"] == "v1"
+        assert fc["checks"][0]["sentence_id"] == "b:1/s:0" and result["prompt_versions"]["P5-figure-checker"] == "v2"
 
 
 # ---- the n8n workflow -------------------------------------------------------------------------
@@ -166,3 +167,24 @@ def test_audit_workflow_runs_the_figure_loop_after_the_number_check():
     assert "$('Next figure')" in _node("Save figure check")["parameters"]["jsonBody"]
     assert "$('Next figure')" in _node("Record figure error")["parameters"]["jsonBody"]
     assert _node("Next figure")["parameters"]["url"].endswith("/figures/next")
+
+
+def test_request_variants_for_e4():
+    """F-021: Groq checks the schema after generating; plain JSON mode leaves validation to code."""
+    a = fig.figure_request("S", "U", b"png", variant="A")
+    b = fig.figure_request("S", "U", b"png", variant="B")
+    c = fig.figure_request("S", "U", b"png", variant="C")
+    assert a["response_format"]["type"] == "json_schema" and b["response_format"] == {"type": "json_object"}
+    assert (b["reasoning_effort"], c["reasoning_effort"]) == ("none", "low")
+    assert fig.figure_request("S", "U", b"png")["reasoning_effort"] == fig.VARIANTS[fig.FIGURE_VARIANT][0]
+
+
+def test_p5_v2_spells_out_the_output_shape_for_plain_json_mode():
+    from app.prompts import PromptLibrary
+
+    prompt = PromptLibrary(REPO / "prompts").load("P5-figure-checker")
+    assert prompt.version == "v2" and "JSON" in prompt.system  # Groq's JSON mode needs the word
+    shape = prompt.system.split("in exactly this shape", 1)[1].split("\n", 2)[1]
+    import json as _json
+    description, checks = fig.validate(_json.loads(shape), [7])
+    assert checks[0]["claim"] == 7 and checks[0]["verdict"] == "supported"

@@ -421,5 +421,7 @@ Branch `feat/m3-parser-spike`. Decision D31: Docling (CPU) instead of MinerU.
 - [x] Fixes from the held-out run (F-019, F-020): contradiction needs every named detail, strict system names, margins written as values, spaced decimals, captions as mentions. After: 0 false alarms and 0 accepted errors on both sets; real-claim coverage on RAPTOR is low (3 of 16 decided). 186 tests.
 - [x] Figure check (D36): `app/audit/figures.py`, P5-figure-checker v1 (qwen/qwen3.8-27b vision on Groq), `POST /audit/{run}/figures/next`, `POST /audit/{run}/figure-checks` (+ `/error`), `GET /audit/{run}/figure-checks`; n8n loop "Next figure" → "Check figure" after "Check numbers"; the result carries `figure_checks`. Branch `feat/m3-figures`, 193 tests.
 - [x] E4 gold set: 48 claims about 14 figures (`eval/e4/figure_claims.json`), `scripts/e4_figure_check.py` (the workflow's own prompt, request and validation)
-- [ ] Team PC: E4, then a full audit of CRAG and Self-RAG through n8n with the figure check
+- [x] Team PC, first run: E4 22/22 verdicts right but 7 of 14 calls failed (F-021); audits of CRAG (3/3 figures) and Self-RAG (3/4) through n8n with the figure check, end to end
+- [x] P5 v2 (output shape in the prompt), output budget 900, request variants A/B/C; 195 tests
+- [ ] Team PC: E4 on variants A, B, C; choose the variant; final audits
 
