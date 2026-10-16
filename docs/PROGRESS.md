@@ -403,7 +403,9 @@ Branch `feat/m3-parser-spike`. Decision D31: Docling (CPU) instead of MinerU.
 
 ### Next
 
-- [ ] `parser` service in docker-compose (docling-serve CPU, pinned), pp-tools client, audit parse job with progress, cache by PDF hash
-- [ ] Caption repair (nearest "Table N" caption on the same page), measured on the spike papers
+- [x] `parser` service in docker-compose (docling-serve CPU v1.30.0), pp-tools client, audit parse job with progress, cache by PDF hash (D32); branch `feat/m3-parser-service`
+- [x] Caption repair and split-table merge: 28 → 31 of 37 tables and figures numbered, 0 wrong (D32)
+- [x] `POST /audit/{run_id}/parse`, `GET /audit/{run_id}/paper`, `GET /audit/{run_id}/figures/{figure_id}`; SSRF guard on the PDF URL; tests against a docling-serve stand-in (153 passed)
+- [ ] Team PC: `scripts/audit_parse_check.py` (CRAG from arXiv through the stack, then the cache)
 - [ ] Claim extraction (P4) and the table-number check, with E3 (planted errors)
 

@@ -5,7 +5,7 @@ Pre-submission copilot for research papers, built on n8n. Given an idea or a dra
 **Current state: milestone 2, part 1 (LLM layer and novelty check).**
 
 - **"Check my idea" works end to end:** an LLM splits the idea into facets, the knowledge base is searched, a second LLM compares the idea with the closest papers citing evidence, and a code verifier rejects anything retrieval cannot back up.
-- **The audit branch** is still a placeholder that answers `"implemented": false`.
+- **The audit branch** parses the draft PDF with Docling (tables as cell grids, figures as images, D31 and D32); the checks themselves are being built (milestone 3), so the n8n audit workflow still answers `"implemented": false`.
 - **The papers knowledge base** (RAG for question answering, from arXiv) can be selected, built through n8n, searched, and evaluated with two chunking strategies.
 
 See [docs/PROGRESS.md](docs/PROGRESS.md) for what is verified and [docs/DECISIONS.md](docs/DECISIONS.md) for why it is built this way.
@@ -45,6 +45,7 @@ Any failure ─► 90-error-handler ─► pp-tools POST /runs/fail-by-execution
 | n8n 2.42.6 | 5678 | Orchestration, webhook, routing, LLM calls (Groq, Gemini fallback) |
 | pp-tools | 8000 | Python service: validation, run state, corpus build jobs, search; later the verifier |
 | embedder (TEI cpu-1.9) | internal | Serves the BGE-M3 embedding model |
+| parser (docling-serve-cpu v1.30.0) | 127.0.0.1:5001 | PDF layout parsing for audits: tables as cell grids, figures as images (about 4.4 GB image, 3.5 GB of memory while converting) |
 | Postgres 17 | 5433 | n8n's database and the `paperpilot` app database (runs, jobs) |
 | Qdrant v1.19.2 | 6333 | Vector store: `papers_fixed` and `papers_structured` |
 

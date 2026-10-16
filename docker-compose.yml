@@ -95,6 +95,16 @@ services:
       retries: 10
       start_period: 900s
 
+  # PDF layout parsing for the audit branch (D31): Docling's layout model and
+  # TableFormer on CPU, with the models baked into the image (about 4.4 GB).
+  # About 3.5 GB of memory while converting, 2 to 5 minutes per paper.
+  # No compose healthcheck: pp-tools' /health reports it ("parser").
+  parser:
+    image: ghcr.io/docling-project/docling-serve-cpu:v1.30.0
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:${PARSER_HOST_PORT:-5001}:5001"
+
   pp-tools:
     build:
       context: ./services/pp_tools
@@ -120,6 +130,9 @@ services:
       CHUNK_TOKENS: ${CHUNK_TOKENS:-512}
       CHUNK_OVERLAP: ${CHUNK_OVERLAP:-64}
       NOVELTY_STRATEGY: ${NOVELTY_STRATEGY:-structured}
+      # Audit branch (D31): PDF layout parsing by docling-serve; empty disables audits.
+      PARSER_URL: ${PARSER_URL-http://parser:5001}
+      AUDIT_MAX_PDF_MB: ${AUDIT_MAX_PDF_MB:-30}
       LOG_LEVEL: ${LOG_LEVEL:-INFO}
     volumes:
       - ./corpus:/pp/corpus
@@ -139,6 +152,8 @@ services:
       embedder:
         condition: service_started
       reranker:
+        condition: service_started
+      parser:
         condition: service_started
     # Healthcheck is defined in services/pp_tools/Dockerfile (GET /health).
 
