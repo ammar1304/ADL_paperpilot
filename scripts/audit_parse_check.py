@@ -42,6 +42,11 @@ def run_parse(pp: str, url: str, timeout_s: float) -> tuple[str, dict]:
 
 
 def main() -> int:
+    # The Windows console (cp1252) cannot print characters such as "∼" found in
+    # CRAG's Table 6; the first run on the team PC stopped there.
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8", errors="replace")
     env = _dotenv()
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--url", default="https://arxiv.org/pdf/2401.15884v3")  # CRAG
