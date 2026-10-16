@@ -1,0 +1,13 @@
+config,idea,ok,repeat,error,expected,expected_added_by_agent,expected_in_candidates,expected_in_closest,false_overlap,judge_attempts,llm_coverage_claim_unspecified,llm_discusses_unspecified,llm_overclaims,llm_states_scope,n_closest,n_judged,n_queries,overlap_found,query_similarity,run_id,search_rounds,seconds,unverified,web_closest,web_queries
+fix-p2v3,adaptive-retrieval,True,1,,5,0,5,5,False,1,False,False,False,True,6,6,4,True,0.068,8f14e4bc-9f0e-4db0-80fa-67d5058b4d02,0,43.5,0,0,0
+fix-p2v3,adaptive-retrieval,True,2,,5,0,4,4,False,1,False,False,False,True,6,6,4,True,0.133,8c5cfbaf-5b37-48c9-834b-2cb8e160f539,0,30.0,0,0,0
+fix-p2v3,reflection-tokens,True,1,,1,0,1,1,False,1,False,False,False,True,4,6,4,True,0.153,6c6e2d54-5370-4ba6-ac4a-9471980a0d6a,0,31.0,0,0,0
+fix-p2v3,reflection-tokens,True,2,,1,0,1,1,False,1,False,False,False,True,6,6,4,True,0.173,1b99c6ce-8531-458f-8c9c-d3f1d70f95a6,0,28.6,0,0,0
+fix-p2v3,out-of-domain,True,1,,0,0,0,0,False,1,False,False,False,True,0,6,5,False,0.213,9ad480a0-305e-458f-b2e0-fa5b2ce44a21,0,24.8,0,0,0
+fix-p2v3,out-of-domain,True,2,,0,0,0,0,False,1,False,False,False,True,0,6,4,False,0.111,3817a085-297b-43ac-8a70-8b2f4633e701,0,24.9,0,0,0
+fix-p2v3,draft-and-verify-decoding,True,1,,2,0,0,0,False,1,False,False,False,True,4,6,4,True,0.101,b06fd679-11f3-4121-97ff-19fa30382165,0,23.3,0,0,0
+fix-p2v3,draft-and-verify-decoding,True,2,,2,0,0,0,False,1,False,False,False,True,4,6,4,True,0.087,c6a6fad1-10cd-446e-81e0-a6bc7467d4d0,0,23.0,0,0,0
+fix-p2v3,low-rank-finetuning,True,1,,1,0,0,0,False,1,False,False,False,True,6,6,4,True,0.245,c1e5b164-9ef6-4c52-b31c-5b201cc6914d,0,25.3,0,0,0
+fix-p2v3,low-rank-finetuning,True,2,,1,0,0,0,False,1,False,False,False,True,5,6,4,True,0.208,a18e5437-4e7f-4fc3-882d-d99a61d12e20,0,30.1,0,0,0
+fix-p2v3,verify-own-answer,True,1,,1,0,0,0,False,1,False,False,False,True,6,6,4,True,0.17,44f701c9-0f74-4a96-ac94-c5e524622498,0,24.5,0,0,0
+fix-p2v3,verify-own-answer,True,2,,1,0,0,0,False,1,False,False,False,True,6,6,5,True,0.135,cc046a32-56cd-417d-95d9-2a26adf3257f,0,27.0,0,0,0

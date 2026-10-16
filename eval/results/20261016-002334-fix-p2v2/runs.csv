@@ -1,0 +1,9 @@
+config,idea,ok,repeat,error,expected,expected_added_by_agent,expected_in_candidates,expected_in_closest,false_overlap,judge_attempts,llm_coverage_claim_unspecified,llm_discusses_unspecified,llm_overclaims,llm_states_scope,n_closest,n_judged,n_queries,overlap_found,query_similarity,run_id,search_rounds,seconds,unverified,web_closest,web_queries
+fix-p2v2,out-of-domain,True,1,,0,0,0,0,False,1,False,False,False,True,2,8,5,True,0.151,62ee9eb4-f2e9-4644-b0e8-813fd684c393,2,101.5,0,2,4
+fix-p2v2,out-of-domain,True,2,,0,0,0,0,False,1,False,False,False,True,2,8,6,True,0.288,8f11cdf8-007c-4361-907e-ef80b269a136,2,69.7,0,2,2
+fix-p2v2,draft-and-verify-decoding,True,1,,2,0,0,0,False,1,False,False,False,True,4,6,6,True,0.105,5649eaed-e188-4ce9-a70d-660c9d2631f5,1,40.2,0,0,0
+fix-p2v2,draft-and-verify-decoding,True,2,,2,0,0,0,False,1,False,False,False,True,2,7,5,True,0.147,d89f5b8d-11fd-46a8-a36c-b438a3d0399e,1,74.5,0,1,1
+fix-p2v2,low-rank-finetuning,True,1,,1,0,0,0,False,1,False,False,False,True,6,6,5,True,0.145,a745f83a-18df-45cd-ada5-70f6f079ad26,0,30.7,0,0,0
+fix-p2v2,low-rank-finetuning,True,2,,1,0,0,0,False,1,False,False,False,True,1,6,5,True,0.147,1af0cfb2-b164-4b28-b833-31bdec1d658f,0,28.7,0,0,0
+fix-p2v2,verify-own-answer,True,1,,1,0,0,0,False,1,False,False,False,True,6,6,5,True,0.069,83fb5c4d-bf5d-4aaf-a614-a5ff754ef256,0,35.6,0,0,0
+fix-p2v2,verify-own-answer,True,2,,1,0,0,0,False,1,False,False,False,True,6,6,5,True,0.112,aa3295bc-b025-4a51-91a4-c404949a94e3,0,35.2,0,0,0
