@@ -122,3 +122,29 @@ def test_hybrid_order_combines_both_rankings(stub_url):
 
     scores = [hybrid(e) for e in out["pool"]]
     assert scores == sorted(scores, reverse=True)
+
+
+class ManyQueriesRetriever(FakeRetriever):
+    """Every local query hits the same 40 library papers, as when the decomposer's queries agree."""
+
+    def chunks(self, query, strategy, k):
+        self.queries.append(query)
+        return [hit(f"arxiv:L{i:02d}", "sec:1", f"library passage number {i} about retrieval") for i in range(40)][:k]
+
+
+def _web_paper():
+    from app.external.semantic_scholar import ExternalPaper
+
+    return ExternalPaper("s2:web1", "web1", "Learning When to Retrieve", "we train a small classifier to decide when retrieval is needed for each question",
+                         2023, "", "", 10)
+
+
+def test_web_papers_reach_the_reranker_only_when_always_ranked_f009(stub_url):
+    reranker = Reranker(stub_url)
+    cfg = RetrievalConfig(pool_papers=30, top_papers=6, order="hybrid")
+    queries = [f"query {i}" for i in range(5)]
+    without = rank_candidates(ManyQueriesRetriever(), reranker, IDEA, queries, cfg, external=[[_web_paper()]])
+    assert "s2:web1" not in {p["paper_id"] for p in without["pool"]}  # one list cannot beat five
+    with_ = rank_candidates(ManyQueriesRetriever(), reranker, IDEA, queries, cfg, external=[[_web_paper()]], always_rank={"s2:web1"})
+    web = next(p for p in with_["pool"] if p["paper_id"] == "s2:web1")
+    assert web["rerank_rank"] == 1 and web["source"] == "semantic_scholar"

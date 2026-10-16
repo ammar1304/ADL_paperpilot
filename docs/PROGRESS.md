@@ -383,7 +383,9 @@ Branch `eval/m2-final-runs`. Details in `prompts/failure_log.md` (section "M2 fi
 - [x] 3 ideas whose closest work is outside the library (speculative decoding, LoRA, Chain-of-Verification), with a check that those papers are absent
 - [x] Team PC: E2 build + score: influential 4/39 fused, 2/39 hybrid; the pool (top 30) holds only 15 to 18% of cited papers (failure_log)
 - [x] Team PC: E2 `--idea-chars 600`: the reranker is still below the fused order, so truncation hypothesis rejected; E2 measures related work, not overlap (failure_log)
-- [ ] Team PC: E7 agent off and on with the 3 outside-library ideas and out-of-domain
+- [x] Team PC: E7 agent off and on with the 3 outside-library ideas and out-of-domain: 0/8 both; found F-009 (web papers never reached the reranker) and F-010 (planner took "uses" for "introduces")
+- [x] F-009 fixed in code (web papers a round fetched are always reranked); P2 v3 for F-010
+- [ ] Team PC: rebuild pp-tools; agent on with P2 v2 (code fix alone) and P2 v3 (fix + prompt), outside-library ideas plus two in-library ideas as a regression check
 
 ## Next: milestone 2, part 2
 
