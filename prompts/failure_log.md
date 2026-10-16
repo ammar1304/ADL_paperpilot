@@ -101,3 +101,54 @@ Results: `eval/results/20261015-213516-agent-off`, `20261015-215304-agent-on`, `
 | hybrid | 11/273 (4%) | 46/273 | 0.029 |
 
 A random choice of 6 of 530 papers would find about 1%, so retrieval is 3 to 5 times better than chance, but the gold is loose. For 30 of the 40 papers no cited paper reaches the top 6. The most-missed cited papers are background citations: RAG (2005.11401, missed 33 times), DPR (18), REALM (17), the HotpotQA dataset (13), FiD (12), a RAG survey (8). A paper's abstract does not describe the methods it cites as background, so the reranker scores them low, correctly for a novelty check. This is also why the reranker loses to the fused order here, unlike E8. Next: keep only the citations Semantic Scholar marks as influential (`isInfluential`, the cited work is used or extended), and compare.
+
+**E2 with stricter gold sets (2026-10-16, run 1's stored pools re-scored, `eval/results/20261015-231007-e2-rescored`).** The reference lists were fetched again with Semantic Scholar's influence flags. 5 of 501 failed (HTTP 429); none is one of the 40 query papers, so the gold sets are complete.
+
+| Gold | Query papers | Cited papers | fused top 6 | reranked top 6 | hybrid top 6 | In the pool |
+| --- | --- | --- | --- | --- | --- | --- |
+| all | 40 | 273 | 14 (5%) | 10 (4%) | 11 (4%) | 46 (17%) |
+| influential | 19 | 39 | 4 (10%) | 2 (5%) | 2 (5%) | 7 (18%) |
+| method | 13 | 39 | 2 (5%) | 0 | 0 | 6 (15%) |
+
+- Restricting to influential citations doubles the fused hit rate (5% to 10%), as the background-citation explanation predicts, but on 39 papers the difference is 4 against 2. It is a direction, not a result.
+- The real bottleneck is the pool: whatever the gold, only 15 to 18% of cited papers are in the top 30, so no ordering can find the rest.
+- On E2 the reranker is never better than the fused order, the opposite of E7 and E8. One difference may explain it: E2's idea is a whole abstract (up to 4,000 characters), E7's ideas are one sentence. The reranker reads the idea and a passage together in at most 512 tokens (bge-reranker-base, `truncate: true`). With a 250 to 400-token abstract as the idea, most of each passage is cut off before it is scored. This is a hypothesis. Test: `e2_leave_one_out.py run --idea-chars 600 --label short-idea` gives the reranker room to read the passage.
+
+**Truncation hypothesis tested: rejected (2026-10-16, `eval/results/20261015-231237-e2-retrieval-short-idea`, idea = first 600 characters of the abstract).**
+
+| Gold | fused top 6 (4,000 → 600 chars) | reranked | hybrid | In the pool |
+| --- | --- | --- | --- | --- |
+| all (273) | 14 → 15 | 10 → 12 | 11 → 11 | 46 → 50 |
+| influential (39) | 4 → 5 | 2 → 2 | 2 → 2 | 7 → 8 |
+| method (39) | 2 → 4 | 0 → 1 | 0 → 2 | 6 → 8 |
+
+The shorter idea helps every order slightly, mostly by putting a few more cited papers in the pool. But the reranker still never beats the fused order, so truncation is not why it loses on E2.
+
+A better explanation is that E2 asks a different question. A cross-encoder scores how far a passage says the same thing as the idea. That is what a novelty check needs: E7 and E8 have known overlapping papers, and there the reranker helps. A paper's citations are, by definition, other work: earlier methods it builds on, baselines, datasets. The more similar a cited paper is to the citing paper, the less reason there was to write the new one. So a ranking tuned to find overlap should demote most citations. E2 measures "related work" retrieval, not overlap retrieval.
+
+**Decision:** keep the hybrid order (D28, D30). E2 is reported as a generalisation check of first-stage retrieval (the pool holds 17 to 18% of cited papers, about 3 times the 6% that 30 random papers would hold), with this limitation stated, not as the measure of the novelty check.
+
+## Outside-library ideas, agent off vs on (2026-10-16)
+
+Results: `eval/results/20261015-235329-agent-off`, `20261016-000420-agent-on` (branch `eval/m2-last-round-runs`). 4 ideas × 2 repeats, P1 v2, P2 v2, P3 v2. Their expected papers are not in the library (`prompt_ab.py` checked).
+
+| | Agent off | Agent on |
+| --- | --- | --- |
+| Expected papers among the judge's candidates | 0/8 | 0/8 |
+| Rounds that searched (all on the web) | 0 | 4 of 8 runs |
+| Web papers that reached the judge | 0 | 0 |
+| False overlap, out-of-domain idea (local only) | 0/2 | 0/2 |
+
+The agent added nothing, for two different reasons:
+
+**F-009 (code): web papers never reached the reranker.** For out-of-domain and speculative decoding, the planner chose the web, as P2 asks, and each query returned 10 papers. None was in the pool, so none could be admitted (`admission.admitted: []`, stop reason "the round found no new paper"). Cause: a web paper is in one ranked list (its query), while library papers collect fusion credit from all 5 or 6 local queries. A web paper's best fused score is 1/61; a library paper found by two queries already scores 2/110. So web papers could not make the pool of 30 that the reranker scores. The protein run of 2026-10-15 admitted two web papers only because the planner sent three web queries. Fix: the web papers a round fetched always join the pool and are scored by the reranker (`rank_candidates(always_rank=...)`), and admission still requires a reranker score of 0.2 and of the weakest candidate (D29). Test: `test_web_papers_reach_the_reranker_only_when_always_ranked_f009`.
+
+**F-010 (P2 v2): a paper that uses a technique was taken for the work that introduced it.**
+- LoRA, both repeats. The planner stopped at once: "Candidate 1 discusses LoRA, which freezes the base model and trains small low-rank adapters — exactly the method and task of the idea". Candidate 1 is a Ukrainian RAG system (2604.22095) that fine-tunes with LoRA. The judge labelled it `same`/`same`.
+- Chain-of-Verification, both repeats. It stopped on PAVE (2603.20673), which applies the technique.
+- In all four runs the novelty verdict was right (not novel), but the report credits papers that use the technique, and the web was never searched. This was v2's own "failure hypothesis to watch".
+- Fix: P2 v3 adds that a paper matches the method only if it proposes or studies it. If the candidates only apply, compare against or cite it, the planner searches the web for the work that introduced it.
+
+**Other observations.**
+- Speculative decoding without the agent: closest work was 1 or 2 RAG papers rated `partial` task / `different` method. That is a weak but honest "nothing close here". The out-of-domain idea stayed at 0 overlap in both configurations.
+- The planner's web queries for speculative decoding were vague ("auxiliary model token suggestion for parallel decoding"). Whether they find the right papers is now measurable, since web results are scored.

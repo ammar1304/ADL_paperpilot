@@ -381,7 +381,11 @@ Branch `eval/m2-final-runs`. Details in `prompts/failure_log.md` (section "M2 fi
 - [x] E2 gold from influential citations, and from method citations (`build` re-fetches with the flags, `score` re-scores stored pools); branch `feat/m2-last-round`
 - [x] False overlap counts local closest work only (F-008); re-scored agent-on run: 0/12
 - [x] 3 ideas whose closest work is outside the library (speculative decoding, LoRA, Chain-of-Verification), with a check that those papers are absent
-- [ ] Team PC: E2 build + score; E7 agent off and on with the 9 ideas
+- [x] Team PC: E2 build + score: influential 4/39 fused, 2/39 hybrid; the pool (top 30) holds only 15 to 18% of cited papers (failure_log)
+- [x] Team PC: E2 `--idea-chars 600`: the reranker is still below the fused order, so truncation hypothesis rejected; E2 measures related work, not overlap (failure_log)
+- [x] Team PC: E7 agent off and on with the 3 outside-library ideas and out-of-domain: 0/8 both; found F-009 (web papers never reached the reranker) and F-010 (planner took "uses" for "introduces")
+- [x] F-009 fixed in code (web papers a round fetched are always reranked); P2 v3 for F-010
+- [ ] Team PC: rebuild pp-tools; agent on with P2 v2 (code fix alone) and P2 v3 (fix + prompt), outside-library ideas plus two in-library ideas as a regression check
 
 ## Next: milestone 2, part 2
 

@@ -185,6 +185,7 @@ def rank_candidates(
     queries: list[str],
     cfg: RetrievalConfig,
     external: list[list[ExternalPaper]] | None = None,
+    always_rank: set[str] | None = None,
 ) -> dict[str, Any]:
     """Search with every query, fuse the rankings, then optionally rerank the pool.
 
@@ -196,9 +197,15 @@ def rank_candidates(
     3. The cfg.top_papers best become the judge's candidates; their evidence is the
        chunks the final ranking scored highest.
 
-    `external` holds the search agent's Semantic Scholar results, one ranked list
-    per web query. Each list joins the fusion like a local query, with the paper's
-    abstract as its only chunk, so local and external papers compete in one pool.
+    `external` holds the search agent's web results, one ranked list per web
+    query. Each list joins the fusion like a local query, with the paper's
+    abstract as its only chunk.
+
+    `always_rank` lists papers that join the pool whatever their fused rank, so
+    the reranker scores them. The agent passes the web papers it fetched: a web
+    paper appears in one list, while library papers collect fusion credit from
+    every local query, so on the fused rank alone web papers never reached the
+    pool of 30 (agent-on run of 2026-10-16, F-009).
     """
     searches = list(queries) + ([idea_text] if cfg.idea_as_query else [])
     paper_score: dict[str, float] = defaultdict(float)
@@ -232,6 +239,7 @@ def rank_candidates(
 
     fused = sorted(paper_score, key=lambda p: paper_score[p], reverse=True)
     pool = fused[: max(cfg.pool_papers, cfg.top_papers)]
+    pool += [p for p in fused if p in (always_rank or set()) and p not in pool]
     own = {
         pid: sorted((c for c in chunks.values() if c.paper_id == pid), key=lambda c: chunk_score[c.chunk_id], reverse=True)
         for pid in pool
@@ -482,7 +490,12 @@ def apply_plan(
         run = db.get_run(run_id) or {}
         idea = (run.get("input") or {}).get("idea_text") or decomposed.facets.method
         # Evidence for every pool paper, so a new paper can be added with its passages.
-        ranked = rank_candidates(retriever, reranker, idea, local_queries, replace(cfg, top_papers=cfg.pool_papers), external)
+        # The web papers this round fetched are always scored by the reranker (F-009).
+        fetched = {p_.paper_id for e in executed for p_ in (ExternalPaper.from_dict(d) for d in e.get("results", []))}
+        ranked = rank_candidates(
+            retriever, reranker, idea, local_queries, replace(cfg, top_papers=cfg.pool_papers + len(fetched)), external,
+            always_rank=fetched,
+        )
 
         old_pool = {c["paper_id"] for c in before.get("pool", before["candidates"])}
         new_pool = [c["paper_id"] for c in ranked["pool"] if c["paper_id"] not in old_pool]
