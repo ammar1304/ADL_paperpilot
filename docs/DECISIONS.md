@@ -434,3 +434,13 @@ The container registries were not reachable from the development sandbox, so the
   A is used. Its failures are visible (a refused answer, an empty list) and the loop serves the figure again, up to 3 attempts: at about 30% failures per attempt, a figure fails all three about 3% of the time. B's two errors were silent wrong verdicts; one came from the model reasoning in its evidence field ("68.6 ... higher than 72.9. Wait, looking closer") and keeping the wrong answer. A wrong answer nobody can see is worse than a failure that is retried. An empty verdict list now counts as a failed answer. The samples are small (34 and 35 verdicts); the final E4 run uses A with retries, as the workflow does.
 - **Evaluation (E4, `scripts/e4_figure_check.py`):** 48 gold claims about 14 figures of 5 papers, written by looking at the figures: 25 true, 19 false (reversed trend, wrong order, wrong value), 4 that neither the image nor the caption answers. Measured: accuracy, false alarms on true claims, errors caught, errors accepted.
 
+## D38. The E1 queries were written by Claude, not by teammates (revises D19)
+
+- **Decision:** the 173 E1 queries in `eval/queries/worksheet.csv` (41 dev, 132 test; 4 section rows skipped because their section list was empty or uninformative) were written by Claude, the coding assistant, from the worksheet's context column, following `eval/queries/README.md`. D19 had planned for teammates to write them.
+- **Why:** the teammates' time goes to the demo and the defence, and the queries had to exist before tuning could start. The worksheet rules were kept and checked by a script: 8 to 25 words, no 5 consecutive words shared with the row's context (12 queries were rewritten after the check), no system names.
+- **Risks, stated in the report:**
+  - The writer saw the abstract or section text, as a teammate would have; queries may still be closer to the paper's wording than a real user's.
+  - The queries are not biased toward the retrieval model (BGE-M3 never saw them being written), but they may share an LLM's phrasing habits.
+  - Only the source paper is marked relevant; another paper answering a broad query counts as a miss for both strategies equally, so the A vs B comparison stays fair while absolute recall is a lower bound.
+- **Mitigation:** a teammate reviews a sample of 20 test queries before the single test run, and the queries are frozen after the first evaluation (rule 7).
+
