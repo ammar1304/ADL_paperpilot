@@ -456,3 +456,12 @@ The container registries were not reachable from the development sandbox, so the
   - Only the source paper is marked relevant; another paper answering a broad query counts as a miss for both strategies equally, so the A vs B comparison stays fair while absolute recall is a lower bound.
 - **Mitigation:** a teammate reviews a sample of 20 test queries before the single test run, and the queries are frozen after the first evaluation (rule 7).
 
+## D39. A form in n8n as the user interface, with a result page written by code
+
+- **Decision:** `05-form` uses n8n's Form Trigger (`/form/paperpilot`): pick novelty or audit, type the idea, upload a PDF or paste a link. An uploaded PDF goes to `POST /uploads` and is kept under its SHA-256; the run refers to it as `draft_pdf_upload`. The form then calls the same webhook as every other client (`/webhook/paperpilot`), and a Form Ending node shows a page that `POST /form/result` builds from the stored run.
+- **Why:**
+  - The form is a client of the system, not a second path through it: validation, run tracking, the error workflow and both branches are the ones already tested.
+  - n8n holds the browser on a waiting page until the Form Ending node runs, so a 10-minute audit needs no polling code of ours.
+  - Uploads are stored by pp-tools rather than passed through the router as base64: the run record stays small, the same file is parsed once (the hash also names the parsed-paper cache), and a URL is no longer the only way in. The download path's SSRF guard is not involved, since nothing is fetched.
+  - The page is written by code from verified steps and checks, with every string from the user, the paper or a model HTML-escaped. Problems come first; supported checks and citations outside the library are folded away. The LLM's own summary is shown only with a "not verified" label.
+- **Limits:** no authentication on the form (the stack listens on localhost only); one file per request; the result is shown once on the page and otherwise kept in the run record (`GET /runs/{id}`).

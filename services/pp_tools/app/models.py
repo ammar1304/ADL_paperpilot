@@ -21,10 +21,12 @@ class RunRequest(BaseModel):
     mode: Mode
     idea_text: str | None = Field(default=None, min_length=IDEA_MIN_CHARS, max_length=IDEA_MAX_CHARS)
     draft_pdf_url: HttpUrl | None = None
+    # A PDF sent through the form: POST /uploads returns this id (the file's SHA-256).
+    draft_pdf_upload: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
     venue: str | None = Field(default=None, max_length=200)
     query_language: Literal["en", "fr"] = "en"
 
-    @field_validator("idea_text", "venue", mode="before")
+    @field_validator("idea_text", "venue", "draft_pdf_url", "draft_pdf_upload", mode="before")
     @classmethod
     def blank_to_none(cls, v: Any) -> Any:
         # A form often sends "" for an empty field; treat it as missing.
@@ -36,8 +38,11 @@ class RunRequest(BaseModel):
     def required_fields_per_mode(self) -> "RunRequest":
         if self.mode == "novelty" and self.idea_text is None:
             raise ValueError("idea_text is required when mode is 'novelty'")
-        if self.mode == "audit" and self.draft_pdf_url is None:
-            raise ValueError("draft_pdf_url is required when mode is 'audit'")
+        if self.mode == "audit":
+            if self.draft_pdf_url is None and self.draft_pdf_upload is None:
+                raise ValueError("draft_pdf_url or draft_pdf_upload is required when mode is 'audit'")
+            if self.draft_pdf_url is not None and self.draft_pdf_upload is not None:
+                raise ValueError("give draft_pdf_url or draft_pdf_upload, not both")
         return self
 
 

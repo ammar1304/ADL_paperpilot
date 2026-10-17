@@ -35,7 +35,7 @@ def test_novelty_with_blank_idea_text_is_rejected():
 
 
 def test_audit_without_pdf_url_is_rejected():
-    with pytest.raises(ValidationError, match="draft_pdf_url is required"):
+    with pytest.raises(ValidationError, match="draft_pdf_url or draft_pdf_upload is required"):
         RunRequest.model_validate({"mode": "audit", "idea_text": IDEA})
 
 
@@ -62,3 +62,13 @@ def test_unknown_fields_are_rejected():
     with pytest.raises(ValidationError) as exc:
         RunRequest.model_validate({"mode": "novelty", "idea_text": IDEA, "temperature": 2})
     assert exc.value.errors()[0]["loc"] == ("temperature",)
+
+
+def test_audit_takes_an_upload_id_instead_of_a_url():
+    req = RunRequest.model_validate({"mode": "audit", "draft_pdf_url": "", "draft_pdf_upload": "a" * 64})
+    assert req.draft_pdf_url is None and req.draft_pdf_upload == "a" * 64
+    with pytest.raises(ValidationError, match="not both"):
+        RunRequest.model_validate({"mode": "audit", "draft_pdf_url": "https://arxiv.org/pdf/1706.03762", "draft_pdf_upload": "a" * 64})
+    with pytest.raises(ValidationError) as exc:
+        RunRequest.model_validate({"mode": "audit", "draft_pdf_upload": "../../etc/passwd"})
+    assert exc.value.errors()[0]["loc"] == ("draft_pdf_upload",)

@@ -94,6 +94,12 @@ Add `--with-llm` to also run a full novelty check with the real LLMs. This needs
 
 To test services that are already running: `python scripts/smoke_test.py --no-compose`.
 
+## Using the form
+
+Open http://localhost:5678/form/paperpilot. Choose "Check how novel an idea is" and describe the idea, or "Audit a draft paper" and upload the PDF (or paste a link). Keep the page open: a novelty check takes about a minute, an audit 5 to 15 minutes. The result page lists problems first, each with its evidence.
+
+The form is the `05-form` workflow. It calls the webhook below, so everything the webhook does applies to it.
+
 ## Calling the webhook
 
 Bash:
@@ -118,7 +124,8 @@ Request fields:
 | --- | --- | --- |
 | `mode` | yes | `novelty` or `audit` |
 | `idea_text` | for `novelty` | 20 to 5000 characters |
-| `draft_pdf_url` | for `audit` | an http(s) URL |
+| `draft_pdf_url` | for `audit`, or `draft_pdf_upload` | an http(s) URL |
+| `draft_pdf_upload` | for `audit`, or `draft_pdf_url` | the `upload_id` returned by `POST http://localhost:8000/uploads` (raw PDF bytes as the body, up to 30 MB) |
 | `venue` | no | up to 200 characters |
 | `query_language` | no | `en` (default) or `fr` |
 
@@ -204,7 +211,7 @@ TEST_DATABASE_URL=postgresql://paperpilot:<password>@localhost:5433/paperpilot_t
 docker-compose.yml        all services
 .env.example              every variable, placeholders only
 n8n/entrypoint.sh         unpublish, import, publish, then start n8n
-n8n/workflows/            00-router, 10-ingest-papers, 20-novelty, 30-audit, 90-error-handler
+n8n/workflows/            05-form, 00-router, 10-ingest-papers, 20-novelty, 30-audit, 90-error-handler
 services/pp_tools/        FastAPI service: corpus/, retrieval/, eval/, schema.sql, tests
 infra/postgres/init/      creates the app database on first start
 scripts/                  smoke test, workflow export and normalizer
