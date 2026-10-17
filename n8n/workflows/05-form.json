@@ -16,7 +16,7 @@
       "notes": "The user-facing entry point (D39). A Form node later in the workflow makes n8n hold the browser on a waiting page until the run ends.",
       "parameters": {
         "formTitle": "PaperPilot",
-        "formDescription": "Check how novel a research idea is against our library of 531 RAG papers, or audit a draft paper: its numbers against its own tables, its figures with a vision model, and its citations against the cited papers.\n\nA novelty check takes about a minute; an audit takes 5 to 15 minutes. Keep this page open.",
+        "formDescription": "Check how novel a research idea is against our library of 531 papers on retrieval-augmented generation (RAG) for question answering, extended by a web search of Semantic Scholar and OpenAlex, or audit a draft paper: its numbers against its own tables, its figures with a vision model, and its citations against the cited papers (only papers in the library can be checked).\n\nA novelty check takes about a minute; an audit takes 5 to 15 minutes. Keep this page open.",
         "formFields": {
           "values": [
             {

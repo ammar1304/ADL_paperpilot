@@ -450,3 +450,13 @@ Branch `feat/m3-parser-spike`. Decision D31: Docling (CPU) instead of MinerU.
 - [x] Final E4 (`eval/results/20261017-231104-e4-figures-final-A/`): 14/14 figures answered, 47/48 verdicts right, 19/19 planted errors caught, 1 false alarm (D36).
 - [ ] Rerun the three audits with gpt-oss-120b as the extractor (D40), next day with fresh tokens
 - [ ] E5 citation evaluation; P6 v2 for multi-citation sentences (F-024) measured by it
+
+## Finishing the code (2026-10-18)
+
+- [x] E5: gold set (40 pairs, 15 papers, written from the papers' text and checked: every evidence phrase occurs in its paper), `scripts/e5_citation_check.py`, and `POST /citations/passages` sharing the audit's retrieval code (`citation_passages()`).
+- [x] P6 v2 (judge only the part attributed to the pair's citation, F-024), not active until E5 compares it with v1.
+- [x] `PROMPT_LIBRARY.md`, the single-file prompt library, generated from `prompts/` by `scripts/build_prompt_library.py`; a test fails if it is out of date.
+- [x] `corpus/manifest.csv` and `corpus/selection.json` committed (they were only on the team PC).
+- [x] Smoke test: the old audit step expected a placeholder branch and would now run a real audit; replaced by checks of the form page, PDF uploads and request validation, with no LLM call.
+- [x] The form states the library's scope.
+- [ ] Team PC: E5 run (P6 v1 and v2), the three audits with gpt-oss-120b, one PDF upload through the form

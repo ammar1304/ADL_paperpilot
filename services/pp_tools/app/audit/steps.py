@@ -354,6 +354,18 @@ def figure_checks(db: Database, run_id: UUID) -> dict[str, Any] | None:
 # ---- step 6: citations, checked against the cited paper in the library (D37) -------------------
 
 
+def citation_passages(retriever: Any, reranker: Any, query: str, paper_id: str, strategy: str = "structured") -> list[dict[str, Any]]:
+    """The passages P6 sees for one claim and one cited paper: the paper's chunks retrieved with
+    the claim (dense search filtered to that paper), reranked by the cross-encoder, the best three
+    cut to the part that matches the claim. Shared by the audit and E5, so E5 measures what runs."""
+    hits = retriever.chunks(query, strategy, cit.RETRIEVE_K, {"paper_id": paper_id}) if query else []
+    scores = reranker.scores(query, [h.text[:1500] for h in hits]) if (reranker is not None and hits) else [h.score for h in hits]
+    ranked = sorted(zip(scores, hits), key=lambda t: -t[0])[: cit.PASSAGES]
+    return [{"id": f"E{k}", "chunk_id": h.chunk_id, "chunk_type": h.chunk_type, "section": h.section,
+             "score": round(float(sc), 4), "text": cit.best_window(h.text, query, cit.PASSAGE_CHARS)}
+            for k, (sc, h) in enumerate(ranked, 1)]
+
+
 def citation_plan(db: Database, library: PromptLibrary, papers: PaperStore, run_id: UUID, papers_library: cit.Library | None,
                   retriever: Any, reranker: Any, strategy: str = "structured") -> dict[str, Any]:
     """Resolve every citation, retrieve the cited paper's passages for each claim, batch the pairs.
@@ -374,15 +386,9 @@ def citation_plan(db: Database, library: PromptLibrary, papers: PaperStore, run_
         query = cit.query_for(extracted[job["claim"]])
         job["query"] = query
         try:
-            hits = retriever.chunks(query, strategy, cit.RETRIEVE_K, {"paper_id": job["paper_id"]}) if query else []
-            scores = reranker.scores(query, [h.text[:1500] for h in hits]) if (reranker is not None and hits) else [h.score for h in hits]
+            job["passages"] = citation_passages(retriever, reranker, query, job["paper_id"], strategy)
         except Exception as exc:  # embedder, vector store or reranker down: the pair is judged on nothing
             job["passages"], job["retrieval_error"] = [], f"{type(exc).__name__}: {str(exc)[:200]}"
-            continue
-        ranked = sorted(zip(scores, hits), key=lambda t: -t[0])[: cit.PASSAGES]
-        job["passages"] = [{"id": f"E{k}", "chunk_id": h.chunk_id, "chunk_type": h.chunk_type, "section": h.section,
-                            "score": round(float(sc), 4), "text": cit.best_window(h.text, query, cit.PASSAGE_CHARS)}
-                           for k, (sc, h) in enumerate(ranked, 1)]
     detail = {"prompt": CITATION_CHECKER, "prompt_version": prompt.version, "jobs": jobs, "findings": findings,
               "batches": cit.batches(jobs, extracted)}
     db.add_step(run_id, "citation_plan", "done", detail)

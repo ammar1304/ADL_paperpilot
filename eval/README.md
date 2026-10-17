@@ -8,7 +8,7 @@ Retrieval quality and answer quality are measured separately.
 | E2 novelty | 2 | Leave-one-out: does the system find the papers a paper builds on? | Tooling ready (`scripts/e2_leave_one_out.py`); run on the team PC |
 | E3 planted errors | 3 | Number check: false alarms on correct numbers, detection of planted errors (digit, transposed digits, inflated), on real claims and on synthetic claims from every table cell (`scripts/e3_number_check.py`, offline) | 0 false alarms and 0 errors accepted on tuning and held-out papers; real-prose coverage low (D35) |
 | E4 gold claims | 3 | Figure check (vision): verdict accuracy on 48 labelled claims about 14 figures (25 true, 19 false, 4 not shown), false alarms, errors caught (`scripts/e4_figure_check.py`, about 65K vision tokens) | Gold set ready; run on the team PC |
-| E5 citation faithfulness | 3 | Citation check: retrieval (does a passage that supports the claim reach the top 3?) measured apart from the verdict (supported / contradicted / not found) on faithful and unfaithful citation pairs | Pipeline ready (D37); gold set to write |
+| E5 citation faithfulness | 3 | Citation check: retrieval (does a passage that supports the claim reach the top 3?) measured apart from the verdict (supported / contradicted / not found) on faithful and unfaithful citation pairs | Gold set (40 pairs) and `scripts/e5_citation_check.py` ready; run pending |
 | E6 verifier on/off | 3 | Invented citations and untraceable numbers per run | Not started |
 | E8 retrieval A/B | 2 | Same stored queries, four ranking settings (fused, plus idea query, reranked, both): expected papers reaching the judge, in the pool, MRR | Tooling ready (`scripts/retrieval_ab.py`); run on the team PC |
 | E7 prompt A/B | 2 | Per prompt version: expected papers found, query diversity, false overlap, LLM summary failures (F-002, F-003), label stability across repeats | Tooling ready (`scripts/prompt_ab.py`); run on the team PC |
@@ -120,3 +120,15 @@ python scripts/prompt_ab.py --config "agent-off=P1-decomposer:v2,P2-search-plann
 Remove-Item Env:NOVELTY_MAX_SEARCH_ROUNDS; docker compose up -d --wait
 python scripts/prompt_ab.py --config "agent-on=P1-decomposer:v2,P2-search-planner:v2,P3-novelty-judge:v2" --label agent-on
 ```
+
+## E5: citation check
+
+Gold set: `eval/e5/citation_claims.json`, 40 claim-citation pairs about 15 library papers, written by reading those papers. 25 restate a statement of the cited paper (supported); 15 change its method or a number, or reverse its finding (unsupported). Eight pairs come from four sentences that cite two papers for different things (F-024). Each pair has an evidence phrase that the passage stating the fact contains.
+
+```bash
+python scripts/e5_citation_check.py --retrieval-only     # no tokens: do the passages contain the evidence?
+python scripts/e5_citation_check.py --versions v1,v2      # P6 v1 against v2 on the same passages
+```
+
+Retrieval is measured apart from the verdicts: passages come from pp-tools' `POST /citations/passages`, the code the audit runs. Verdicts: supported pairs recognised, false alarms, unsupported pairs accepted (the error that matters), unsupported pairs called contradicted.
+

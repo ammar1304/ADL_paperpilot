@@ -1,0 +1,532 @@
+arxiv_id,version,year,primary_category,fulltext,title
+2403.03187,1,2024,cs.CL,1,"Reliable, Adaptable, and Attributable Language Models with Retrieval"
+2604.07274,1,2026,cs.CL,1,A Systematic Study of Retrieval Pipeline Design for Retrieval-Augmented Medical Question Answering
+2502.18536,3,2025,cs.CV,1,FilterRAG: Zero-Shot Informed Retrieval-Augmented Generation to Mitigate Hallucinations in VQA
+2509.10467,1,2025,cs.IR,1,DSRAG: A Domain-Specific Retrieval Framework Based on Document-derived Multimodal Knowledge Graph
+2601.07054,1,2026,cs.CL,1,Fine-Tuning vs. RAG for Multi-Hop Question Answering with Novel Knowledge
+2607.01852,1,2026,cs.IR,1,Evaluating Chunking Strategies for Retrieval-Augmented Generation on Academic Texts
+2210.16773,1,2022,cs.CL,1,An Efficient Memory-Augmented Transformer for Knowledge-Intensive NLP Tasks
+2506.16037,1,2025,cs.CL,1,Enhancing Document-Level Question Answering via Multi-Hop Retrieval-Augmented Generation with LLaMA 3
+2406.02266,1,2024,cs.CL,1,Enhancing Retrieval-Augmented LMs with a Two-stage Consistency Learning Compressor
+2508.12282,1,2025,cs.CL,1,A Question Answering Dataset for Temporal-Sensitive Retrieval-Augmented Generation
+2407.03955,1,2024,cs.CL,1,Meta-prompting Optimized Retrieval-augmented Generation
+2310.09536,1,2023,cs.CL,1,CarExpert: Leveraging Large Language Models for In-Car Conversational Question Answering
+2501.15067,1,2025,cs.IR,1,CG-RAG: Research Question Answering by Citation Graph Retrieval-Augmented LLMs
+2504.08748,1,2025,cs.IR,1,A Survey of Multimodal Retrieval-Augmented Generation
+2512.05430,2,2025,cs.CL,1,"ArtistMus: A Globally Diverse, Artist-Centric Benchmark for Retrieval-Augmented Music Question Answering"
+2407.18044,2,2024,cs.LG,1,The Geometry of Queries: Query-Based Innovations in Retrieval-Augmented Generation for Healthcare QA
+2307.04642,2,2023,cs.CL,1,TRAQ: Trustworthy Retrieval Augmented Question Answering via Conformal Prediction
+2210.06345,2,2022,cs.CL,1,Variational Open-Domain Question Answering
+2509.07555,1,2025,cs.CL,1,Avoiding Knowledge Edit Skipping in Multi-hop Question Answering with Guided Decomposition
+2512.23836,1,2025,cs.CL,1,Retrieval Augmented Question Answering: When Should LLMs Admit Ignorance?
+2505.14462,2,2025,cs.CV,1,RAVENEA: A Benchmark for Multimodal Retrieval-Augmented Visual Culture Understanding
+2408.04259,2,2024,cs.CL,1,EfficientRAG: Efficient Retriever for Multi-Hop Question Answering
+2408.15399,1,2024,cs.LG,1,A Statistical Framework for Data-dependent Retrieval-Augmented Models
+2510.02243,2,2025,cs.CL,1,AccurateRAG: A Framework for Building Accurate Retrieval-Augmented Question-Answering Applications
+2307.03027,1,2023,cs.LG,1,Improving Retrieval-Augmented Large Language Models via Data Importance Learning
+2606.10381,2,2026,hep-ex,1,Agentic Hybrid RAG for Evidence-Grounded Muon Collider Analysis
+2204.03985,2,2022,cs.CL,1,KGI: An Integrated Framework for Knowledge Intensive Language Tasks
+2402.07812,2,2024,cs.CL,1,Retrieval Augmented Thought Process for Private Data Handling in Healthcare
+2509.22490,1,2025,cs.CL,1,JGU Mainz's Submission to the WMT25 Shared Task on LLMs with Limited Resources for Slavic Languages: MT and QA
+2402.11129,3,2024,cs.CL,1,BlendFilter: Advancing Retrieval-Augmented Large Language Models via Query Generation Blending and Knowledge Filtering
+2601.21733,1,2026,cs.CL,1,CE-GOCD: Central Entity-Guided Graph Optimization for Community Detection to Augment LLM Scientific Question Answering
+2604.22095,1,2026,cs.CL,1,An End-to-End Ukrainian RAG for Local Deployment. Optimized Hybrid Search and Lightweight Generation
+2405.20680,5,2024,cs.AI,1,Unraveling and Mitigating Retriever Inconsistencies in Retrieval-Augmented Large Language Models
+2603.20673,2,2026,cs.CL,1,PAVE: Premise-Aware Validation and Editing for Retrieval-Augmented LLMs
+2403.14197,1,2024,cs.CL,1,Context Quality Matters in Training Fusion-in-Decoder for Extractive Open-Domain Question Answering
+2510.10426,1,2025,cs.CV,1,Taming a Retrieval Framework to Read Images in Humanlike Manner for Augmenting Generation of MLLMs
+2412.14304,1,2024,cs.CL,1,Multi-OphthaLingua: A Multilingual Benchmark for Assessing and Debiasing LLM Ophthalmological QA in LMICs
+2309.16035,3,2023,cs.CL,1,MKRAG: Medical Knowledge Retrieval Augmented Generation for Medical Question Answering
+2506.00491,1,2025,cs.IR,0,Optimizing Question Semantic Space for Dynamic Retrieval-Augmented Multi-hop Question Answering
+2409.15815,1,2024,cs.AI,0,"AsthmaBot: Multi-modal, Multi-Lingual Retrieval Augmented Generation For Asthma Patient Support"
+2507.17399,1,2025,cs.CL,0,Millions of $\text{GeAR}$-s: Extending GraphRAG to Millions of Documents
+2303.00534,1,2023,cs.CV,1,RAMM: Retrieval-augmented Biomedical Visual Question Answering with Multi-modal Pre-training
+2310.03025,2,2023,cs.CL,1,Retrieval meets Long Context Large Language Models
+2310.12150,2,2023,cs.CL,1,Understanding Retrieval Augmentation for Long-Form Question Answering
+2505.15807,2,2025,cs.CL,0,The Atlas of In-Context Learning: How Attention Heads Shape In-Context Retrieval Augmentation
+2502.17297,2,2025,cs.AI,0,Benchmarking Retrieval-Augmented Generation in Multi-Modal Contexts
+2502.13847,1,2025,cs.CL,0,DH-RAG: A Dynamic Historical Context-Powered Retrieval-Augmented Generation Method for Multi-Turn Dialogue
+2602.19317,1,2026,cs.CL,1,Learning to Reason for Multi-Step Retrieval of Personal Context in Personalized Question Answering
+2412.15272,2,2024,cs.CL,0,SimGRAG: Leveraging Similar Subgraphs for Knowledge Graphs Driven Retrieval-Augmented Generation
+2410.17952,2,2024,cs.CL,0,SimRAG: Self-Improving Retrieval-Augmented Generation for Adapting Large Language Models to Specialized Domains
+2401.18059,1,2024,cs.CL,0,RAPTOR: Recursive Abstractive Processing for Tree-Organized Retrieval
+2502.11747,2,2025,cs.IR,0,Open-Ended and Knowledge-Intensive Video Question Answering
+2405.05508,2,2024,cs.IR,0,Redefining Information Retrieval of Structured Database via Large Language Models
+2502.13233,1,2025,cs.CL,0,SearchRAG: Can Search Engines Be Helpful for LLM-based Medical Question Answering?
+2607.22597,1,2026,cs.AI,0,HyCE-RAG: Hypergraph Chain-of-Evidence Retrieval-Augmented Generation for Explainable Multi-hop Question Answering
+2602.09817,1,2026,cs.CL,0,AnalyticsGPT: An LLM Workflow for Scientometric Question Answering
+2501.09292,3,2025,cs.CL,0,To Retrieve or Not to Retrieve? Uncertainty Detection for Dynamic Retrieval Augmented Generation
+2604.22678,1,2026,cs.CL,0,BERAG: Bayesian Ensemble Retrieval-Augmented Generation for Knowledge-based Visual Question Answering
+2512.10996,1,2025,cs.CL,0,MedBioRAG: Semantic Search and Retrieval-Augmented Generation with Large Language Models for Medical and Biological QA
+2507.02975,1,2025,cs.LG,0,Introducing Answered with Evidence -- a framework for evaluating whether LLM responses to biomedical questions are founded in evidence
+2510.15719,1,2025,cs.CL,0,Cost-Aware Retrieval-Augmentation Reasoning Models with Adaptive Retrieval Depth
+2406.01549,2,2024,cs.CL,0,An Information Bottleneck Perspective for Effective Noise Filtering on Retrieval-Augmented Generation
+2610.09026,1,2026,cs.AI,0,BEACON-SP: Ontology-Grounded GraphRAG Framework for Clinical Suicide Risk Assessment
+2208.03299,3,2022,cs.CL,1,Atlas: Few-shot Learning with Retrieval Augmented Language Models
+2506.00425,1,2025,cs.CL,0,Inter-Passage Verification for Multi-evidence Multi-answer QA
+2601.18356,1,2026,cs.LG,0,Making medical vision-language models think causally across modalities with retrieval-augmented cross-modal reasoning
+2508.18260,2,2025,cs.CL,0,MIRAGE: Scaling Test-Time Inference with Parallel Graph-Retrieval-Augmented Reasoning Chains
+2410.12837,1,2024,cs.CL,0,"A Comprehensive Survey of Retrieval-Augmented Generation (RAG): Evolution, Current Landscape and Future Directions"
+2406.04670,1,2024,cs.CL,0,MATTER: Memory-Augmented Transformer Using Heterogeneous Knowledge Sources
+2505.11626,2,2025,cs.CL,0,THELMA: Task Based Holistic Evaluation of Large Language Model Applications-RAG Question Answering
+2410.18344,1,2024,cs.CL,0,Aggregated Knowledge Model: Enhancing Domain-Specific QA with Fine-Tuned and Retrieval-Augmented Generation Models
+2502.20245,1,2025,cs.CL,0,From Retrieval to Generation: Comparing Different Approaches
+2410.14154,1,2024,cs.MM,0,RA-BLIP: Multimodal Adaptive Retrieval-Augmented Bootstrapping Language-Image Pre-training
+2410.23511,2,2024,cs.CL,0,Dynamic Strategy Planning for Efficient Question Answering with Large Language Models
+2411.09213,1,2024,cs.CL,0,Comprehensive and Practical Evaluation of Retrieval-Augmented Generation Systems for Medical Question Answering
+2403.18243,1,2024,cs.AI,0,Boosting Conversational Question Answering with Fine-Grained Retrieval-Augmentation and Self-Check
+2604.19899,1,2026,cs.IR,0,A Reproducibility Study of Metacognitive Retrieval-Augmented Generation
+2506.14035,1,2025,cs.CV,0,SimpleDoc: Multi-Modal Document Understanding with Dual-Cue Page Retrieval and Iterative Refinement
+2506.06500,1,2025,cs.CL,0,Improving LLM-Powered EDA Assistants with RAFT
+2601.03014,3,2026,cs.CL,0,SentGraph: Hierarchical Sentence Graph for Multi-hop Retrieval-Augmented Question Answering
+2601.02382,1,2025,cs.NI,0,How to Discover Knowledge for FutureG: Contextual RAG and LLM Prompting for O-RAN
+2406.07257,1,2024,cs.CL,0,Scholarly Question Answering using Large Language Models in the NFDI4DataScience Gateway
+2511.09109,3,2025,cs.CL,0,Thinking Forward and Backward: Multi-Objective Reinforcement Learning for Retrieval-Augmented Reasoning
+2607.06641,1,2026,cs.CL,0,Healthier LLMs: Retrieval-Augmented Generation for Public Health Question Answering
+2106.11517,1,2021,cs.IR,1,Fine-tune the Entire RAG Architecture (including DPR retriever) for Question-Answering
+2502.10976,1,2025,cs.IR,0,QuOTE: Question-Oriented Text Embeddings
+2506.00671,1,2025,cs.CL,0,DeepRAG: Integrating Hierarchical Reasoning and Process Supervision for Biomedical Multi-Hop QA
+2403.14403,2,2024,cs.CL,1,Adaptive-RAG: Learning to Adapt Retrieval-Augmented Large Language Models through Question Complexity
+2408.01084,2,2024,cs.CL,0,Adaptive Contrastive Decoding in Retrieval-Augmented Generation for Handling Noisy Contexts
+2509.04716,1,2025,cs.CL,0,KERAG: Knowledge-Enhanced Retrieval-Augmented Generation for Advanced Question Answering
+2505.11271,1,2025,cs.CL,0,Semantic Caching of Contextual Summaries for Efficient Question-Answering with Language Models
+2502.13836,2,2025,cs.LG,0,Quantifying Memorization and Parametric Response Rates in Retrieval-Augmented Vision-Language Models
+2405.18111,3,2024,cs.CL,0,ATM: Adversarial Tuning Multi-agent System Makes a Robust Retrieval-Augmented Generator
+2405.08120,1,2024,cs.ET,0,From Questions to Insightful Answers: Building an Informed Chatbot for University Resources
+2505.14309,1,2025,cs.CL,0,Studying the Role of Input-Neighbor Overlap in Retrieval-Augmented Language Models Training Efficiency
+2610.18611,1,2026,cs.CL,0,Legal-R1: Agentic Retrieval for Evidence-Based Legal Reasoning
+2510.01600,2,2025,cs.CL,0,A Comparison of Independent and Joint Fine-tuning Strategies for Retrieval-Augmented Generation
+2502.11371,3,2025,cs.IR,0,RAG vs. GraphRAG: A Systematic Evaluation and Key Insights
+2608.21252,1,2026,cs.CL,0,EnSI-RAG: Entity-Structure-Indexed Retrieval-Augmented Generation for Long-Document Question Answering
+2505.09316,2,2025,cs.CL,0,Scent of Knowledge: Optimizing Search-Enhanced Reasoning with Information Foraging
+2505.20663,1,2025,cs.IR,0,TeroSeek: An AI-Powered Knowledge Base and Retrieval Generation Platform for Terpenoid Research
+2508.00476,1,2025,cs.CL,0,GETALP@AutoMin 2025: Leveraging RAG to Answer Questions based on Meeting Transcripts
+2311.12289,1,2023,cs.CL,1,ATLANTIC: Structure-Aware Retrieval-Augmented Language Model for Interdisciplinary Science
+2505.22571,3,2025,cs.CL,0,Agent-UniRAG: A Trainable Open-Source LLM Agent Framework for Unified Retrieval-Augmented Generation Systems
+2512.05959,2,2025,cs.CL,0,M4-RAG: A Massive-Scale Multilingual Multi-Cultural Multimodal RAG
+2412.12358,1,2024,cs.CL,0,BioRAGent: A Retrieval-Augmented Generation System for Showcasing Generative Query Expansion and Domain-Specific Search for Scientific Q&A
+2601.18886,1,2026,cs.IR,0,XProvence: Zero-Cost Multilingual Context Pruning for Retrieval-Augmented Generation
+2504.01309,1,2025,cs.CL,0,Biomedical Question Answering via Multi-Level Summarization on a Local Knowledge Graph
+2308.09308,3,2023,cs.IR,0,Differentiable Retrieval Augmentation via Generative Language Modeling for E-commerce Query Intent Classification
+2604.07985,3,2026,cs.CL,0,Predicting the Benefit of Retrieval Augmentation in Open-Domain Question Answering
+2506.18027,3,2025,cs.CL,0,PDF Retrieval Augmented Question Answering
+2606.07523,1,2026,cs.CL,0,Retrieval Augmented Generation Framework for the Nepali Legal Domain Question Answering
+2404.14464,1,2024,cs.CL,0,Tree of Reviews: A Tree-based Dynamic Iterative Retrieval Framework for Multi-hop Question Answering
+2509.24253,3,2025,cs.CL,0,MRAG-Suite: A Diagnostic Evaluation Platform for Visual Retrieval-Augmented Generation
+2410.22353,3,2024,cs.IR,0,RuleRAG: Rule-Guided Retrieval-Augmented Generation with Language Models for Question Answering
+2603.19281,1,2026,cs.CL,0,URAG: A Benchmark for Uncertainty Quantification in Retrieval-Augmented Large Language Models
+2411.16133,2,2024,cs.LG,0,Context Awareness Gate For Retrieval Augmented Generation
+2602.01348,3,2026,cs.CL,0,Does Faithfulness-Guided Alignment Hurt Accuracy? Unlocking Accurate and Faithful Post-Retrieval Reasoning
+2402.01767,4,2024,cs.CL,0,HiQA: A Hierarchical Contextual Augmentation RAG for Multi-Documents QA
+2307.11019,3,2023,cs.CL,0,Investigating the Factual Knowledge Boundary of Large Language Models with Retrieval Augmentation
+2412.20619,1,2024,cs.LG,0,Audiopedia: Audio QA with Knowledge
+2210.05758,1,2022,cs.CL,1,Decoupled Context Processing for Context Augmented Language Modeling
+2411.02832,2,2024,cs.CL,0,PersianRAG: A Retrieval-Augmented Generation System for Persian Language
+2509.09651,2,2025,cs.IR,0,Retrieval-Augmented Generation for Reliable Interpretation of Radio Regulations
+2511.06582,2,2025,cs.CL,0,TabRAG: Improving Tabular Document Question Answering for Retrieval Augmented Generation via Structured Representations
+2406.11290,3,2024,cs.IR,0,An Iterative Utility Judgment Framework Inspired by Philosophical Relevance via LLMs
+2508.05498,2,2025,cs.AI,0,GRAIL:Learning to Interact with Large Knowledge Graphs for Retrieval Augmented Reasoning
+2510.21068,1,2025,cs.CL,0,Bridging Language Gaps with Adaptive RAG: Improving Indonesian Language Question Answering
+2607.15283,1,2026,cs.IR,0,Adaptive Retrieval Strategies for Biomedical Question Answering
+2412.08985,4,2024,cs.CL,0,KnowShiftQA: How Robust are RAG Systems when Textbook Knowledge Shifts in K-12 Education?
+2402.13178,2,2024,cs.CL,0,Benchmarking Retrieval-Augmented Generation for Medicine
+2502.10596,2,2025,cs.CL,0,Post-training an LLM for RAG? Train on Self-Generated Demonstrations
+2607.22841,1,2026,cs.IR,0,Language-Routed RAG and Direct Option Scoring for Multilingual Financial QA: DS@GT at FinMMEval
+2506.23026,1,2025,cs.IR,0,Machine Assistant with Reliable Knowledge: Enhancing Student Learning via RAG-based Retrieval
+2409.17648,3,2024,cs.CL,0,Efficient In-Domain Question Answering for Resource-Constrained Environments
+2609.00513,1,2026,cs.AI,0,ISO-RAG: Isoperimetric Noise Control for Retrieval-Augmented Generation
+2509.09272,1,2025,cs.AI,0,Fusing Knowledge and Language: A Comparative Study of Knowledge Graph-Based Question Answering with LLMs
+2506.00054,1,2025,cs.IR,0,"Retrieval-Augmented Generation: A Comprehensive Survey of Architectures, Enhancements, and Robustness Frontiers"
+2605.14192,1,2026,cs.CL,0,Why Retrieval-Augmented Generation Fails: A Graph Perspective
+2504.08893,1,2025,cs.LG,0,Knowledge Graph-extended Retrieval Augmented Generation for Question Answering
+2601.17212,1,2026,cs.CL,0,DF-RAG: Query-Aware Diversity for Retrieval-Augmented Generation
+2506.23136,1,2025,cs.CL,0,LLM-Assisted Question-Answering on Technical Documents Using Structured Data-Aware Retrieval Augmented Generation
+2504.10861,2,2025,cs.CL,0,Ai2 Scholar QA: Organized Literature Synthesis with Attribution
+2407.09394,2,2024,cs.IR,0,PersonaRAG: Enhancing Retrieval-Augmented Generation Systems with User-Centric Agents
+2506.06015,1,2025,cs.IR,0,On the Merits of LLM-Based Corpus Enrichment
+2306.01061,1,2023,cs.CL,0,Reimagining Retrieval Augmented Language Models for Answering Queries
+2510.01612,3,2025,cs.CL,0,RAG-BioQA: A Retrieval-Augmented Generation Framework for Long-Form Biomedical Question Answering
+2505.22752,1,2025,cs.CL,0,Climate Finance Bench
+2407.12101,2,2024,cs.CL,0,Better RAG using Relevant Information Gain
+2503.10677,3,2025,cs.CL,0,A Survey on Knowledge-Oriented Retrieval-Augmented Generation
+2503.13563,1,2025,cs.CL,0,"MES-RAG: Bringing Multi-modal, Entity-Storage, and Secure Enhancements to RAG"
+2509.22713,1,2025,cs.CL,0,RAR$^2$: Retrieval-Augmented Medical Reasoning via Thought-Driven Retrieval
+2604.14170,1,2026,cs.CL,0,Stateful Evidence-Driven Retrieval-Augmented Generation with Iterative Reasoning
+2412.18431,2,2024,cs.CL,0,GeAR: Graph-enhanced Agent for Retrieval-augmented Generation
+2510.17354,1,2025,cs.CL,0,Towards Mixed-Modal Retrieval for Universal Retrieval-Augmented Generation
+2411.07773,2,2024,cs.CL,0,Pointwise Mutual Information as a Performance Gauge for Retrieval-Augmented Generation
+2506.16768,1,2025,cs.IR,0,eSapiens: A Real-World NLP Framework for Multimodal Document Understanding and Enterprise Knowledge Processing
+2507.21585,1,2025,cs.AI,0,SafeDriveRAG: Towards Safe Autonomous Driving with Knowledge Graph-based Retrieval-Augmented Generation
+2310.13682,2,2023,cs.CL,0,Optimizing Retrieval-augmented Reader Models via Token Elimination
+2506.21098,2,2025,cs.CL,0,ComRAG: Retrieval-Augmented Generation with Dynamic Vector Stores for Real-time Community Question Answering in Industry
+2510.19181,1,2025,cs.CL,0,Interpretable Question Answering with Knowledge Graphs
+2501.07523,2,2025,cs.AI,0,Parallel Key-Value Cache Fusion for Position Invariant RAG
+2501.09940,1,2025,cs.CL,0,Passage Segmentation of Documents for Extractive Question Answering
+2610.16008,1,2026,cs.CL,0,Improving the Evaluation of Biomedical Question Answering with Few Human Preference Signals
+2406.02110,1,2024,cs.CL,0,UniOQA: A Unified Framework for Knowledge Graph Question Answering with Large Language Models
+2407.11638,2,2024,cs.CL,0,A Comprehensive Evaluation of Large Language Models on Temporal Event Forecasting
+2508.07308,1,2025,cs.CL,0,HealthBranches: Synthesizing Clinically-Grounded Question Answering Datasets via Decision Pathways
+2402.17497,2,2024,cs.CL,0,REAR: A Relevance-Aware Retrieval-Augmented Framework for Open-Domain Question Answering
+2508.02532,1,2025,cs.CL,0,Contextual Graph Transformer: A Small Language Model for Enhanced Engineering Document Information Extraction
+2509.04502,1,2025,cs.CL,0,VaccineRAG: Boosting Multimodal Large Language Models' Immunity to Harmful RAG Samples
+2406.07348,3,2024,cs.LG,0,DR-RAG: Applying Dynamic Document Relevance to Retrieval-Augmented Generation for Question-Answering
+2410.08182,2,2024,cs.CV,0,MRAG-Bench: Vision-Centric Evaluation for Retrieval-Augmented Multimodal Models
+2604.22843,1,2026,cs.IR,0,Structure Guided Retrieval-Augmented Generation for Factual Queries
+2408.02795,1,2024,cs.IR,0,Entity Retrieval for Answering Entity-Centric Questions
+2605.14053,1,2026,cs.CL,0,Derivation Prompting: A Logic-Based Method for Improving Retrieval-Augmented Generation
+2407.12468,3,2024,cs.IR,0,Evaluating Search Engines and Large Language Models for Answering Health Questions
+2503.23095,1,2025,cs.CL,0,Memory-Aware and Uncertainty-Guided Retrieval for Multi-Hop Question Answering
+2504.05163,2,2025,cs.AI,0,Evaluating Knowledge Graph Based Retrieval Augmented Generation Methods under Knowledge Incompleteness
+2607.11159,1,2026,cs.IR,0,NGM-RAG: Neural Graph Matching based Retrieval-Augmented Generation
+2402.17887,4,2024,cs.CL,0,JMLR: Joint Medical LLM and Retrieval Training for Enhancing Reasoning and Professional Question Answering Capability
+2310.15205,2,2023,cs.CL,0,DISC-FinLLM: A Chinese Financial Large Language Model based on Multiple Experts Fine-tuning
+2603.24580,1,2026,cs.CL,0,Retrieval Improvements Do Not Guarantee Better Answers: A Study of RAG for AI Policy QA
+2509.21324,1,2025,cs.IR,0,From Search to Reasoning: A Five-Level RAG Capability Framework for Enterprise Data
+2510.18468,1,2025,cs.CL,0,IMB: An Italian Medical Benchmark for Question Answering
+2602.19240,1,2026,cs.AI,0,Topology of Reasoning: Retrieved Cell Complex-Augmented Generation for Textual Graph Question Answering
+2504.10074,3,2025,cs.AI,0,MMKB-RAG: A Multi-Modal Knowledge-Based Retrieval-Augmented Generation Framework
+2408.01107,2,2024,cs.CL,0,BioRAG: A RAG-LLM Framework for Biological Question Reasoning
+2403.19631,2,2024,cs.CL,0,Retrieval-enhanced Knowledge Editing in Language Models for Multi-Hop Question Answering
+2504.02411,1,2025,cs.CL,0,Adapting Large Language Models for Multi-Domain Retrieval-Augmented-Generation
+2409.19753,4,2024,cs.CL,0,CoTKR: Chain-of-Thought Enhanced Knowledge Rewriting for Complex Knowledge Graph Question Answering
+2502.17839,2,2025,cs.CL,0,"Say Less, Mean More: Leveraging Pragmatics in Retrieval-Augmented Generation"
+2510.12668,2,2025,cs.IR,0,Understanding Parametric Knowledge Injection in Retrieval-Augmented Generation
+2510.20193,1,2025,cs.IR,0,Multimedia-Aware Question Answering: A Review of Retrieval and Cross-Modal Reasoning Architectures
+2603.18012,1,2026,cs.CL,0,DynaRAG: Bridging Static and Dynamic Knowledge in Retrieval-Augmented Generation
+2606.06748,2,2026,cs.CL,0,Evidence Graph Consistency in Retrieval-Augmented Generation: A Model-Dependent Analysis of Hallucination Detection
+2405.02816,1,2024,cs.CL,0,Stochastic RAG: End-to-End Retrieval-Augmented Generation through Expected Utility Maximization
+2504.16121,1,2025,cs.IR,0,LegalRAG: A Hybrid RAG System for Multilingual Legal Information Retrieval
+2608.26386,2,2026,cs.CL,0,Co-Evolving Structured Knowledge and Reasoning in Language Models
+2504.14955,1,2025,cs.LG,0,Efficient Document Retrieval with G-Retriever
+2510.22956,1,2025,cs.CL,0,Tagging-Augmented Generation: Assisting Language Models in Finding Intricate Knowledge In Long Contexts
+2610.07622,1,2026,cs.IR,0,DBRAG: Multi-Table Retrieval-Augmented Generation for Complex Database Queries
+2307.05915,2,2023,cs.LG,0,Prompt Generate Train (PGT): Few-shot Domain Adaption of Retrieval Augmented Generation Models for Open Book Question-Answering
+2608.13588,1,2026,cs.CL,0,IterCOMP: Reasoning-aware Adaptive Prompt Compression for Multi-hop Question Answering
+2504.06276,1,2025,cs.IR,0,Can we repurpose multiple-choice question-answering models to rerank retrieved documents?
+2609.37171,1,2026,cs.CL,0,Bridging Semantic Gaps in RAG through Generated Context Knowledge Fusion
+2406.14938,1,2024,cs.CL,0,Towards Retrieval Augmented Generation over Large Video Libraries
+2501.07572,3,2025,cs.CL,0,WebWalker: Benchmarking LLMs in Web Traversal
+2407.13101,2,2024,cs.CL,0,"Retrieve, Summarize, Plan: Advancing Multi-hop Question Answering with an Iterative Approach"
+2404.04302,1,2024,cs.CL,0,CBR-RAG: Case-Based Reasoning for Retrieval Augmented Generation in LLMs for Legal Question Answering
+2506.10380,2,2025,cs.CL,0,TableRAG: A Retrieval Augmented Generation Framework for Heterogeneous Document Reasoning
+2605.28004,1,2026,cs.CL,0,Beyond Chunk-Local Extraction: Cross-Chunk Graph Augmentation for GraphRAG
+2608.25123,1,2026,cs.CL,0,SelfGraphRAG: Bridging the Supervision Gap in Graph-Based RAG with Synthetic QA Generation
+2504.09795,1,2025,cs.CL,0,VDocRAG: Retrieval-Augmented Generation over Visually-Rich Documents
+2510.14271,1,2025,cs.CL,0,Less is More: Denoising Knowledge Graphs For Retrieval Augmented Generation
+2601.12658,2,2026,cs.CL,0,Augmenting Question Answering with A Hybrid RAG Approach
+2501.12835,2,2025,cs.CL,0,Adaptive Retrieval Without Self-Knowledge? Bringing Uncertainty Back Home
+2409.00082,1,2024,cs.CL,0,"Towards Human-Level Understanding of Complex Process Engineering Schematics: A Pedagogical, Introspective Multi-Agent Framework for Open-Domain Question Answering"
+2603.14170,1,2026,cs.IR,0,"Citation-Enforced RAG for Fiscal Document Intelligence: Cited, Explainable Knowledge Retrieval in Tax Compliance"
+2507.02962,6,2025,cs.CL,0,RAG-R1: Incentivizing the Search and Reasoning Capabilities of LLMs through Multi-query Parallelism
+2412.14510,1,2024,cs.CL,0,PA-RAG: RAG Alignment via Multi-Perspective Preference Optimization
+2505.06328,1,2025,cs.AI,0,A Grounded Memory System For Smart Personal Assistants
+2506.17951,1,2025,cs.CL,0,A Comprehensive Graph Framework for Question Answering with Mode-Seeking Preference Alignment
+2609.00689,2,2026,cs.CL,0,SCoNE: Selective Context-aware Neuron Editing for Robust Retrieval-Augmented Generation
+2605.17101,2,2026,cs.CL,0,SEMA-RAG: A Self-Evolving Multi-Agent Retrieval-Augmented Generation Framework for Medical Reasoning
+2406.14783,2,2024,cs.IR,0,Evaluating RAG-Fusion with RAGElo: an Automated Elo-based Framework
+2605.22829,1,2026,cs.IR,0,LFRAG: Layout-oriented Fine-grained Retrieval-Augmented Generation on Multimodal Document Understanding
+2502.16636,2,2025,cs.CL,0,Visual-RAG: Benchmarking Text-to-Image Retrieval Augmented Generation for Visual Knowledge Intensive Queries
+2502.20964,3,2025,cs.CV,0,Fine-Grained Knowledge Structuring and Retrieval for Visual Question Answering
+2608.08445,1,2026,cs.AI,0,Forgotten History or Test-of-Time? Retrospect and Prospect on RAG from an IR Perspective
+2511.01643,1,2025,cs.CL,0,A Graph-based RAG for Energy Efficiency Question Answering
+2506.16035,2,2025,cs.LG,0,Vision-Guided Chunking Is All You Need: Enhancing RAG with Multimodal Document Understanding
+2404.17723,2,2024,cs.IR,0,Retrieval-Augmented Generation with Knowledge Graphs for Customer Service Question Answering
+2602.14784,1,2026,cs.IR,0,Intent-Driven Dynamic Chunking: Segmenting Documents to Reflect Predicted Information Needs
+2405.16933,1,2024,cs.CL,0,Empowering Large Language Models to Set up a Knowledge Retrieval Indexer via Self-Learning
+2508.21238,1,2025,cs.AI,0,Addressing accuracy and hallucination of LLMs in Alzheimer's disease research through knowledge graphs
+2503.08890,4,2025,cs.CL,0,PlainQAFact: Retrieval-augmented Factual Consistency Evaluation Metric for Biomedical Plain Language Summarization
+2405.00465,3,2024,cs.CL,0,BiomedRAG: A Retrieval Augmented Large Language Model for Biomedicine
+2510.09733,2,2025,cs.CL,0,VisRAG2.0: Mitigating Visual Hallucinations via Evidence-Guided Multi-Image Reasoning in Visual Retrieval-Augmented Generation
+2601.19060,2,2026,cs.CV,0,PixSearch: Region-Grounded Retrieval for Knowledgeable Large Multimodal Models
+2412.16500,3,2024,eess.AS,0,Speech Retrieval-Augmented Generation without Automatic Speech Recognition
+2508.05318,2,2025,cs.CV,0,mKG-RAG: Leveraging Multimodal Knowledge Graphs in Retrieval-Augmented Generation for Knowledge-intensive VQA
+2608.26194,1,2026,cs.CL,0,A Reranker for Orchestrating Heterogeneous Speech and Text Retrievers
+2410.14167,1,2024,cs.IR,0,Optimizing Retrieval-Augmented Generation with Elasticsearch for Enhanced Question-Answering Systems
+2304.09649,1,2023,cs.CL,0,BRENT: Bidirectional Retrieval Enhanced Norwegian Transformer
+2504.01883,1,2025,cs.AI,0,CoRAG: Collaborative Retrieval-Augmented Generation
+2502.13361,1,2025,cs.CL,0,RGAR: Recurrence Generation-augmented Retrieval for Factual-aware Medical Question Answering
+2601.16478,1,2026,cs.CL,0,DeepEra: A Deep Evidence Reranking Agent for Scientific Retrieval-Augmented Generated Question Answering
+2404.02022,3,2024,cs.CL,0,Improving Retrieval Augmented Open-Domain Question-Answering with Vectorized Contexts
+2509.23071,2,2025,cs.CL,0,From Evidence to Trajectory: Abductive Reasoning Path Synthesis for Retrieval-Augmented Generation Agents Development
+2607.03615,2,2026,cs.IR,0,The Powerless Noise: How Experimental Settings Shape the Reported Power of Noise
+2412.05937,1,2024,cs.LG,0,Accelerating Manufacturing Scale-Up from Material Discovery Using Agentic Web Navigation and Retrieval-Augmented AI for Process Engineering Schematics Design
+2501.16075,1,2025,cs.CL,0,PISCO: Pretty Simple Compression for Retrieval-Augmented Generation
+2610.12617,1,2026,cs.CL,0,GeopoliticalQA: Benchmarking Retrieval and Generation over Intelligence Reports
+2501.13297,1,2025,cs.CL,0,RAMQA: A Unified Framework for Retrieval-Augmented Multi-Modal Question Answering
+2505.13520,2,2025,cs.IR,0,Beyond Retrieval: Joint Supervision and Multimodal Document Ranking for Textbook Question Answering
+2405.00175,1,2024,cs.CL,0,Towards a Search Engine for Machines: Unified Ranking for Multiple Retrieval-Augmented Large Language Models
+2502.14280,1,2025,cs.CL,0,EpMAN: Episodic Memory AttentioN for Generalizing to Longer Contexts
+2606.11945,1,2026,cs.CL,0,uva-irlab-conv at SemEval-2026 Task 8: Multi-Turn RAG with Learned Sparse Retrieval and Listwise Reranking
+2410.15805,2,2024,cs.AI,0,RAG4ITOps: A Supervised Fine-Tunable and Comprehensive RAG Framework for IT Operations and Maintenance
+2508.08149,2,2025,cs.CL,0,REX-RAG: Reasoning Exploration with Policy Correction in Retrieval-Augmented Generation
+2403.19216,2,2024,cs.IR,0,Are Large Language Models Good at Utility Judgments?
+2410.10584,2,2024,cs.AI,0,STACKFEED: Structured Textual Actor-Critic Knowledge Base Editing with FeedBack
+2508.05647,1,2025,cs.IR,0,Query-Aware Graph Neural Networks for Enhanced Retrieval-Augmented Generation
+2410.03754,1,2024,cs.CL,0,Enhancing Retrieval in QA Systems with Derived Feature Association
+2407.01796,2,2024,cs.CL,0,Ground Every Sentence: Improving Retrieval-Augmented LLMs with Interleaved Reference-Claim Generation
+2310.01558,2,2023,cs.CL,0,Making Retrieval-Augmented Language Models Robust to Irrelevant Context
+2404.07220,2,2024,cs.IR,0,Blended RAG: Improving RAG (Retriever-Augmented Generation) Accuracy with Semantic Search and Hybrid Query-Based Retrievers
+2308.10633,2,2023,cs.CL,0,RaLLe: A Framework for Developing and Evaluating Retrieval-Augmented Large Language Models
+2501.14883,2,2025,cs.CL,0,Verify with Caution: The Pitfalls of Relying on Imperfect Factuality Metrics
+2602.08221,1,2026,cs.CL,0,CoRect: Context-Aware Logit Contrast for Hidden State Rectification to Resolve Knowledge Conflicts
+2603.07931,1,2026,cs.CL,0,BRIDGE: Benchmark for multi-hop Reasoning In long multimodal Documents with Grounded Evidence
+2601.11443,3,2026,cs.CL,0,Predict the Retrieval! Test time adaptation for Retrieval Augmented Generation
+2606.16629,1,2026,cs.CL,0,Islamic Large Language Models: From Knowledge Acquisition to Trustworthy and Hallucination-Resistant AI
+2609.00479,1,2026,cs.AI,0,EGT-KG: Evidence-Grounded Typed KG Retrieval for Practical Scientific QA with Small Language Models
+2412.15235,1,2024,cs.CL,0,OG-RAG: Ontology-Grounded Retrieval-Augmented Generation For Large Language Models
+2403.14666,2,2024,cs.CY,0,SyllabusQA: A Course Logistics Question Answering Dataset
+2505.20368,3,2025,cs.IR,0,Hierarchical Retrieval with Evidence Curation for Open-Domain Financial Question Answering on Standardized Documents
+2212.05221,2,2022,cs.CV,1,REVEAL: Retrieval-Augmented Visual-Language Pre-Training with Multi-Source Multimodal Knowledge Memory
+2405.09980,1,2024,cs.CL,0,FinTextQA: A Dataset for Long-form Financial Question Answering
+2403.00982,1,2024,cs.CL,0,"LocalRQA: From Generating Data to Locally Training, Testing, and Deploying Retrieval-Augmented QA Systems"
+2104.08108,1,2021,cs.CV,1,Cross-Modal Retrieval Augmentation for Multi-Modal Classification
+2407.09014,3,2024,cs.CL,0,CompAct: Compressing Retrieved Documents Actively for Question Answering
+2411.07396,1,2024,cs.CL,0,Toward Optimal Search and Retrieval for RAG
+2607.10151,1,2026,cs.IR,0,MC-RAG System: A Structure-Driven RAG System for Multi-Constraint Queries
+2506.20642,2,2025,cs.CL,0,$π$-CoT: Prolog-Initialized Chain-of-Thought Prompting for Multi-Hop Question-Answering
+2509.15577,2,2025,cs.CL,0,Relevance to Utility: Process-Supervised Rewrite for RAG
+2512.05863,1,2025,cs.CL,0,Optimizing Medical Question-Answering Systems: A Comparative Study of Fine-Tuned and Zero-Shot Large Language Models with RAG Framework
+2409.01666,1,2024,cs.CL,0,In Defense of RAG in the Era of Long-Context Language Models
+2406.11258,2,2024,cs.CL,0,SeRTS: Self-Rewarding Tree Search for Biomedical Retrieval-Augmented Generation
+2511.01059,1,2025,cs.AI,0,Efficient Test-Time Retrieval Augmented Generation
+2410.09629,1,2024,cs.CL,0,Synthetic Knowledge Ingestion: Towards Knowledge Refinement and Injection for Enhancing Large Language Models
+2508.09893,1,2025,cs.AI,0,RAGulating Compliance: A Multi-Agent Knowledge Graph for Regulatory QA
+2505.21072,5,2025,cs.CL,0,Faithfulness-Aware Uncertainty Quantification for Fact-Checking the Output of Retrieval Augmented Generation
+2507.06838,2,2025,cs.CL,0,Shifting from Ranking to Set Selection for Retrieval Augmented Generation
+2409.03708,2,2024,cs.CL,0,RAG based Question-Answering for Contextual Response Prediction System
+2606.05901,2,2026,cs.CL,0,Reducing Hallucinations in Complex Question Answering using Simple Graph-based Retrieval-Augmented Generation (long version)
+2405.02659,2,2024,cs.CL,0,R4: Reinforced Retriever-Reorder-Responder for Retrieval-Augmented Large Language Models
+2510.13975,2,2025,cs.CL,0,Classifying and Addressing the Diversity of Errors in Retrieval-Augmented Generation Systems
+2603.23554,1,2026,cs.IR,0,Mixture of Demonstrations for Textual Graph Understanding and Question Answering
+2502.03004,1,2025,cs.CL,0,MedBioLM: Optimizing Medical and Biological QA with Fine-Tuned Large Language Models and Retrieval-Augmented Generation
+2408.11875,1,2024,cs.CL,0,Hierarchical Retrieval-Augmented Generation Model with Rethink for Multi-hop Question Answering
+2603.14458,1,2026,cs.CL,0,Distilling Reasoning Without Knowledge: A Framework for Reliable LLMs
+2506.05167,2,2025,cs.CL,0,ECoRAG: Evidentiality-guided Compression for Long Context RAG
+2607.11933,1,2026,cs.CL,0,Transforming LLMs into Efficient Cross-Encoders via Knowledge Distillation for RAG Reranking
+2609.02486,2,2026,cs.IR,0,ViSAR: Training-Free Adaptive-$k$ Retrieval for Visual Document Question Answering
+2502.14864,1,2025,cs.AI,0,Benchmarking Multimodal RAG through a Chart-based Document Question-Answering Generation Framework
+2605.03989,2,2026,cs.AI,0,An Agent-Oriented Pluggable Experience-RAG Skill for Experience-Driven Retrieval Strategy Orchestration
+2509.25669,1,2025,cs.AI,0,GroundSight: Augmenting Vision-Language Models with Grounding Information and De-hallucination
+2502.18108,3,2025,cs.CL,0,Uncertainty Quantification in Retrieval Augmented Question Answering
+2606.25960,1,2026,cs.AI,0,Agentic System as Compressor: Quantifying System Intelligence in Bits
+2608.20246,1,2026,cs.IR,0,What Makes a Good Fiqh Retriever? Answer Retrieval for Arabic Islamic Jurisprudence
+2605.05806,3,2026,cs.LG,0,Retrieval from Within: An Intrinsic Capability of Attention-Based Models
+2508.10695,2,2025,cs.CL,0,Learning from Natural Language Feedback for Personalized Question Answering
+2412.16311,2,2024,cs.LG,0,HybGRAG: Hybrid Retrieval-Augmented Generation on Textual and Relational Knowledge Bases
+2509.21237,1,2025,cs.CL,0,Query-Centric Graph Retrieval Augmented Generation
+2607.19867,1,2026,cs.CL,0,Overview of FinMMEval 2026 Task 2: Multilingual Financial Short-Answer Question Answering
+2609.36392,1,2026,cs.AI,0,ARCagent: An Adaptive Retrieval Calibration Agent for Clinical Question Answering
+2510.25816,1,2025,cs.CL,0,Beyond Long Context: When Semantics Matter More than Tokens
+2406.14891,2,2024,cs.CL,0,Generate-then-Ground in Retrieval-Augmented Generation for Multi-hop Question Answering
+2305.15294,2,2023,cs.CL,0,Enhancing Retrieval-Augmented Large Language Models with Iterative Retrieval-Generation Synergy
+2505.11995,1,2025,cs.CL,0,Unveiling Knowledge Utilization Mechanisms in LLM-based Retrieval-Augmented Generation
+2507.19666,2,2025,cs.CL,0,RoD-TAL: A Benchmark for Answering Questions in Romanian Driving License Exams
+2601.04377,5,2026,cs.CL,0,Disco-RAG: Discourse-Aware Retrieval-Augmented Generation
+2603.28773,2,2026,cs.IR,0,UltRAG: a Universal Simple Scalable Recipe for Knowledge Graph RAG
+2508.01480,1,2025,cs.CL,0,Harnessing Collective Intelligence of LLMs for Robust Biomedical QA: A Multi-Model Approach
+2506.04252,1,2025,cs.AI,0,A Graph-Retrieval-Augmented Generation Framework Enhances Decision-Making in the Circular Economy
+2402.12174,2,2024,cs.CL,0,BIDER: Bridging Knowledge Inconsistency for Efficient Retrieval-Augmented LLMs via Key Supporting Evidence
+2505.11180,1,2025,cs.IR,0,"mmRAG: A Modular Benchmark for Retrieval-Augmented Generation over Text, Tables, and Knowledge Graphs"
+2505.18583,2,2025,cs.IR,0,The Silent Saboteur: Imperceptible Adversarial Attacks against Black-Box Retrieval-Augmented Generation Systems
+2410.13192,4,2024,cs.CL,0,Evaluating Self-Generated Documents for Enhancing Retrieval-Augmented Generation with Large Language Models
+2507.04069,1,2025,cs.CL,0,Beyond Independent Passages: Adaptive Passage Combination Retrieval for Retrieval Augmented Open-Domain Question Answering
+2603.16415,2,2026,cs.CL,0,IndexRAG: Index-Time Reasoning for Multi-Hop Retrieval-Augmented Generation
+2608.07458,1,2026,cs.CL,0,CoinRAG: Contextualized Information Nugget KV Cache Reuse for Long-Context RAG
+2502.10993,1,2025,cs.CL,0,RoseRAG: Robust Retrieval-augmented Generation with Small-scale LLMs via Margin-aware Preference Optimization
+2508.15849,1,2025,cs.CL,0,MedCoT-RAG: Causal Chain-of-Thought RAG for Medical Question Answering
+2405.15028,1,2024,cs.CL,0,AGRaME: Any-Granularity Ranking with Multi-Vector Embeddings
+2407.01219,1,2024,cs.CL,0,Searching for Best Practices in Retrieval-Augmented Generation
+2403.17359,2,2024,cs.CL,0,Chain-of-Action: Faithful and Multimodal Question Answering through Large Language Models
+2504.05634,2,2025,cs.DB,0,Simplifying Data Integration: SLM-Driven Systems for Unified Semantic Queries Across Heterogeneous Databases
+2507.09638,1,2025,cs.CL,0,Can Group Relative Policy Optimization Improve Thai Legal Reasoning and Question Answering?
+2606.29090,1,2026,cs.CL,0,AB-RAG: Adaptive Budgeted Retrieval-Augmented Generation for Reliable Question Answering
+2605.12516,1,2026,cs.CL,0,Domain Adaptation of Large Language Models for Polymer-Composite Additive Manufacturing Using Retrieval-Augmented Generation and Fine-Tuning
+2607.24663,1,2026,physics.acc-ph,0,A corrective agentic hybrid RAG and an operations-grounded evaluation for a scientific facility
+2505.15444,1,2025,cs.CL,0,"Single LLM, Multiple Roles: A Unified Retrieval-Augmented Generation Framework Using Role-Specific Token Optimization"
+2602.03652,1,2026,cs.CL,0,RAGTurk: Best Practices for Retrieval Augmented Generation in Turkish
+2404.07060,1,2024,cs.CL,0,Groundedness in Retrieval-augmented Long-form Generation: An Empirical Study
+2501.04899,1,2025,cs.CL,0,SUGAR: Leveraging Contextual Confidence for Smarter Retrieval
+2508.02841,1,2025,cs.AI,0,A Multi-Agent System for Complex Reasoning in Radiology Visual Question Answering
+2605.27706,1,2026,cs.CL,0,Chain-based Adaptive Reconfiguration Over Lattices for Hallucination Reduction
+2408.04414,1,2024,cs.CL,0,Enhancing Robustness of Retrieval-Augmented Language Models with In-Context Learning
+2410.15801,1,2024,cs.CL,0,Improve Dense Passage Retrieval with Entailment Tuning
+2608.26192,2,2026,cs.CL,0,Comparing Chunking and Embedding Strategies for Turkish RAG Systems
+2405.08151,3,2024,cs.CL,0,"Benchmarking Retrieval-Augmented Large Language Models in Biomedical NLP: Application, Robustness, and Self-Awareness"
+2406.14732,2,2024,cs.CL,0,TTQA-RS- A break-down prompting approach for Multi-hop Table-Text Question Answering with Reasoning and Summarization
+2412.04741,1,2024,cs.AI,0,Question Answering for Decisionmaking in Green Building Design: A Multimodal Data Reasoning Method Driven by Large Language Models
+2305.01526,1,2023,cs.CL,0,"Huatuo-26M, a Large-scale Chinese Medical QA Dataset"
+2412.17690,3,2024,cs.CL,0,RAGONITE: Iterative Retrieval on Induced Databases and Verbalized RDF for Conversational QA over KGs with RAG
+2502.09017,2,2025,cs.CL,0,Diversity Enhances an LLM's Performance in RAG and Long-context Task
+2602.04579,1,2026,cs.IR,0,AIANO: Enhancing Information Retrieval with AI-Augmented Annotation
+2603.18011,1,2026,cs.CL,0,Controllable Evidence Selection in Retrieval-Augmented Question Answering via Deterministic Utility Gating
+2605.10168,1,2026,cs.CL,0,ASTRA-QA: A Benchmark for Abstract Question Answering over Documents
+2406.12169,1,2024,cs.IR,0,Intermediate Distillation: Data-Efficient Distillation from Black-Box LLMs for Information Retrieval
+2510.05363,2,2025,cs.AI,0,"MHA-RAG: Improving Efficiency, Accuracy, and Consistency by Encoding Exemplars as Soft Prompts"
+2508.01990,1,2025,cs.CL,0,Contextually Aware E-Commerce Product Question Answering using RAG
+2502.20188,1,2025,cs.IR,0,Bisecting K-Means in RAG for Enhancing Question-Answering Tasks Performance in Telecommunications
+2603.05353,3,2026,cs.LG,0,InfoFlow KV: Information-Flow-Aware KV Recomputation for Long Context
+2509.10843,1,2025,cs.CL,0,Evaluating Large Language Models for Evidence-Based Clinical Question Answering
+2602.00238,2,2026,cs.CL,0,DIVERGE: Diversity-Enhanced RAG for Open-Ended Information Seeking
+2301.10448,2,2023,cs.CL,0,Pre-computed memory or on-the-fly encoding? A hybrid approach to retrieval augmentation makes the most of your compute
+2407.02233,2,2024,cs.CL,0,Synthetic Multimodal Question Generation
+2604.08549,1,2026,cs.IR,0,VerifAI: A Verifiable Open-Source Search Engine for Biomedical Question Answering
+2506.11117,1,2025,cs.CL,0,ScIRGen: Synthesize Realistic and Large-Scale RAG Dataset for Scientific Research
+2506.09657,2,2025,cs.CL,0,Team Anotheroption at SemEval-2025 Task 8: Bridging the Gap Between Open-Source and Proprietary LLMs in Table QA
+2603.08877,1,2026,cs.AI,0,Quantifying the Accuracy and Cost Impact of Design Decisions in Budget-Constrained Agentic LLM Search
+2002.08909,1,2020,cs.CL,1,REALM: Retrieval-Augmented Language Model Pre-Training
+2504.19101,1,2025,cs.CL,0,Privacy-Preserving Federated Embedding Learning for Localized Retrieval-Augmented Generation
+2505.03970,1,2025,cs.CL,0,A Reasoning-Focused Legal Retrieval Benchmark
+2506.15246,1,2025,cs.CL,0,TopClustRAG at SIGIR 2025 LiveRAG Challenge
+2507.21520,1,2025,cs.IR,0,Solution for Meta KDD Cup'25: A Comprehensive Three-Step Framework for Vision Question Answering
+2406.16383,2,2024,cs.IR,0,Context-augmented Retrieval: A Novel Framework for Fast Information Retrieval based Response Generation using Large Language Model
+2603.09222,2,2026,cs.CL,0,EnComp: Lightweight Encoder-Only Context Compression for Retrieval-Augmented Question Answering
+2608.30163,1,2026,cs.IR,0,Doc-REFRAG: Rethinking Multimodal Document Retrieval-Augmented Generation
+2510.25621,1,2025,cs.CL,0,FARSIQA: Faithful and Advanced RAG System for Islamic Question Answering
+2410.12812,1,2024,cs.IR,0,Optimizing and Evaluating Enterprise Retrieval-Augmented Generation (RAG): A Content Design Perspective
+2505.23277,3,2025,cs.CL,0,Sentinel: Decoding Context Utilization via Attention Probing for Efficient LLM Context Compression
+2504.00409,2,2025,cs.CL,0,Semantic Mastery: Enhancing LLMs with Advanced Natural Language Understanding
+2501.13567,3,2025,cs.CL,0,K-COMP: Retrieval-Augmented Medical Domain Question Answering With Knowledge-Injected Compressor
+2502.16641,1,2025,cs.CV,0,Retrieval-Augmented Visual Question Answering via Built-in Autoregressive Search Engines
+2502.18470,5,2025,cs.IR,0,Spatial-RAG: Spatial Retrieval Augmented Generation for Real-World Geospatial Reasoning Questions
+2609.04598,1,2026,cs.CL,0,PetQA: Benchmarking Veterinary Knowledge and Clinical Reasoning
+2606.22681,2,2026,cs.CL,0,Only Ask What You Don't Know: Grounded Delta Planning for Efficient Multi-step RAG
+2407.10245,1,2024,cs.CL,0,GenSco: Can Question Decomposition based Passage Alignment improve Question Answering?
+2512.10422,3,2025,cs.CL,0,Cooperative Retrieval-Augmented Generation for Question Answering: Mutual Information Exchange and Ranking by Contrasting Layers
+2507.00477,2,2025,cs.IR,0,Read the Docs Before Rewriting: Equip Rewriter with Domain Knowledge via Continual Pre-training
+2510.01800,3,2025,cs.AI,0,REBot: From RAG to CatRAG with Semantic Enrichment and Graph Routing
+2609.11572,1,2026,cs.IR,0,TimelyRAG: Semantic-Temporal Hybrid Retrieval for Time-Critical Question Answering in Overlapping-Evolving Documents
+2412.15540,2,2024,cs.CL,0,MRAG: A Modular Retrieval Framework for Time-Sensitive Question Answering
+2511.09831,1,2025,cs.CL,0,Answering Students' Questions on Course Forums Using Multiple Chain-of-Thought Reasoning and Finetuning RAG-Enabled LLM
+2306.01069,1,2023,cs.CL,0,TimelineQA: A Benchmark for Question Answering over Timelines
+2411.06237,2,2024,cs.IR,0,Leveraging Retrieval-Augmented Generation for Persian University Knowledge Retrieval
+2405.15556,2,2024,cs.LG,0,Certifiably Robust RAG against Retrieval Corruption
+2505.20243,4,2025,cs.CL,0,It's High Time: A Survey of Temporal Question Answering
+2408.08521,2,2024,cs.IR,0,MuRAR: A Simple and Effective Multimodal Retrieval and Answer Refinement Framework for Multimodal Question Answering
+2412.05547,2,2024,cs.IR,0,KG-Retriever: Efficient Knowledge Indexing for Retrieval-Augmented Large Language Models
+2604.12047,1,2026,cs.CL,0,Empirical Evaluation of PDF Parsing and Chunking for Financial Question Answering with RAG
+2608.13004,1,2026,cs.CL,0,HybridRAG-BN: A Retrieval-Augmented Framework with Fine-Tuned Verification for Bangla KBQA
+2602.15353,4,2026,cs.CL,0,NeuroSymActive: Differentiable Neural-Symbolic Reasoning with Active Exploration for Knowledge Graph Question Answering
+2609.23056,1,2026,cs.CL,0,Bridging Static and Agentic RAG for Taiwanese Historical Question Answering
+2505.05949,1,2025,cs.CL,0,NeoQA: Evidence-based Question Answering with Generated News Events
+2210.01296,2,2022,cs.CL,1,Recitation-Augmented Language Models
+2305.17740,2,2023,cs.CL,0,Bridging the Language Gap: Dynamic Learning Strategies for Improving Multilingual Performance in LLMs
+2406.06458,1,2024,cs.CL,0,Evaluating the Retrieval Component in LLM-Based Question Answering Systems
+2502.13622,2,2025,cs.CL,0,REFIND at SemEval-2025 Task 3: Retrieval-Augmented Factuality Hallucination Detection in Large Language Models
+2507.04942,2,2025,cs.CL,0,SIGIR 2025 -- LiveRAG Challenge Report
+2604.06737,2,2026,cs.CL,0,WisdomInterrogatory (LuWen): An Open-Source Legal Large Language Model Technical Report
+2602.17911,3,2026,cs.CL,0,Condition-Gated Reasoning for Context-Dependent Biomedical Question Answering
+2412.10151,1,2024,cs.CV,0,VLR-Bench: Multilingual Benchmark Dataset for Vision-Language Retrieval Augmented Generation
+2503.06709,1,2025,cs.CL,0,Delusions of Large Language Models
+2602.17450,1,2026,cs.IR,0,Beyond Pipelines: A Fundamental Study on the Rise of Generative-Retrieval Architectures in Web Research
+2605.09533,1,2026,cs.CL,0,Assessment of RAG and Fine-Tuning for Industrial Question-Answering-Applications
+2602.00083,1,2026,cs.IR,0,SPARC-RAG: Adaptive Sequential-Parallel Scaling with Context Management for Retrieval-Augmented Generation
+2502.14245,2,2025,cs.CL,0,Mitigating Lost-in-Retrieval Problems in Retrieval Augmented Multi-Hop Question Answering
+2504.08256,2,2025,cs.IR,0,RAG-VR: Leveraging Retrieval-Augmented Generation for 3D Question Answering in VR Environments
+2411.07820,4,2024,cs.CL,0,Query Optimization for Parametric Knowledge Refinement in Retrieval-Augmented Large Language Models
+2510.13856,1,2025,cs.CL,0,Multimodal Retrieval-Augmented Generation with Large Language Models for Medical VQA
+2510.14337,1,2025,cs.LG,0,Stop-RAG: Value-Based Retrieval Control for Iterative RAG
+2601.21162,2,2026,cs.IR,0,A2RAG: Adaptive Agentic Graph Retrieval for Cost-Aware and Reliable Reasoning
+2510.15339,3,2025,cs.CL,0,AutoGraph-R1: End-to-End Reinforcement Learning for Knowledge Graph Construction
+2604.23276,1,2026,cs.CV,0,Lightweight and Production-Ready PDF Visual Element Parsing
+2506.19967,1,2025,cs.CL,0,Inference Scaled GraphRAG: Improving Multi Hop Question Answering on Knowledge Graphs
+2603.21460,1,2026,cs.IR,0,When Documents Disagree: Measuring Institutional Variation in Transplant Guidance with Retrieval-Augmented Language Models
+2510.20548,4,2025,cs.CL,0,GlobalRAG: Enhancing Global Reasoning in Multi-hop Question Answering via Reinforcement Learning
+2511.07328,2,2025,cs.LG,0,Q-RAG: Long Context Multi-step Retrieval via Value-based Embedder Training
+2407.15831,2,2024,cs.IR,0,NV-Retriever: Improving text embedding models with effective hard-negative mining
+2505.00506,1,2025,cs.CL,0,"HalluMix: A Task-Agnostic, Multi-Domain Benchmark for Real-World Hallucination Detection"
+2511.05901,2,2025,cs.CL,0,"Retrieval-Augmented Generation in Medicine: A Scoping Review of Technical Implementations, Clinical Applications, and Ethical Considerations"
+2604.05350,2,2026,cs.CL,0,DQA: Diagnostic Question Answering for IT Support
+2505.04847,2,2025,cs.CL,0,Benchmarking LLM Faithfulness in RAG with Evolving Leaderboards
+2607.00013,1,2026,cs.IR,0,"GRACE-RAG: Governed Retrieval Architecture for Canonical Evidence Synthesis, Enabling Lightweight Deployment in Closed-Domain Institutional Settings"
+2502.19545,2,2025,cs.CL,0,Winning Big with Small Models: Knowledge Distillation vs. Self-Training for Reducing Hallucination in Product QA Agents
+2503.04796,3,2025,cs.CL,0,Optimizing Multi-Hop Document Retrieval Through Intermediate Representations
+2512.25052,1,2025,cs.CL,0,AdaGReS:Adaptive Greedy Context Selection via Redundancy-Aware Scoring for Token-Budgeted RAG
+2608.03860,1,2026,cs.CL,0,SciRet: A Compute-Aware Empirical Study of Retrieval and Reranking for Scientific RAG
+2511.18659,3,2025,cs.CL,0,CLaRa: Bridging Retrieval and Generation with Continuous Latent Reasoning
+2509.20953,1,2025,cs.AI,0,Beyond Stars: Bridging the Gap Between Ratings and Review Sentiment with LLM
+2609.13768,1,2026,cs.CL,0,HyperProve: Answer-Guided Hypergraph Expansion for Multi-Hop Question Answering
+2505.20285,2,2025,cs.CL,0,MaskSearch: A Universal Pre-Training Framework to Enhance Agentic Search Capability
+2501.01880,1,2024,cs.CL,0,Long Context vs. RAG for LLMs: An Evaluation and Revisits
+2401.10225,5,2024,cs.CL,0,ChatQA: Surpassing GPT-4 on Conversational QA and RAG
+2410.09623,1,2024,cs.CL,0,Quebec Automobile Insurance Question-Answering With Retrieval-Augmented Generation
+2412.17964,1,2024,cs.AI,0,Dynamic Multi-Agent Orchestration and Retrieval for Multi-Source Question-Answer Systems using Large Language Models
+2405.12035,1,2024,cs.AI,0,KG-RAG: Bridging the Gap Between Knowledge and Creativity
+2605.01399,1,2026,cs.CL,0,Verbal-R3: Verbal Reranker as the Missing Bridge between Retrieval and Reasoning
+2606.11470,2,2026,cs.CL,0,"The Periodic Table of LLM Reasoning: A Structured Survey of Reasoning Paradigms, Methods, and Failure Modes"
+2411.08324,2,2024,cs.CL,0,Are LLMs Prescient? A Continuous Evaluation using Daily News as the Oracle
+2504.14493,4,2025,cs.IR,0,FinSage: A Multi-aspect RAG System for Financial Filings Question Answering
+2607.24748,1,2026,cs.IR,0,"VLD-RAG: Agentic Vision-Language Retrieval-Augmented Generation for Long, Visually-Rich Multi-Page Documents"
+2401.06954,2,2024,cs.CL,0,Bridging the Preference Gap between Retrievers and LLMs
+2602.15850,1,2026,cs.CL,0,Large Language Models for Assisting American College Applications
+2607.07380,1,2026,cs.IR,0,Interpretable Uncertainty for Adaptive Retrieval and Reasoning in Question Answering
+2609.15999,1,2026,cs.CL,0,NepKANUN: A RAG-Based Nepali Legal Assistant
+2406.17519,2,2024,cs.CL,0,Entropy-Based Decoding for Retrieval-Augmented Large Language Models
+2509.26011,1,2025,cs.CL,0,RAGferee: Building Contextual Reward Models for Retrieval-Augmented Generation
+2501.00269,1,2024,cs.CL,0,A review of faithfulness metrics for hallucination assessment in Large Language Models
+2405.20139,1,2024,cs.CL,0,GNN-RAG: Graph Neural Retrieval for Large Language Model Reasoning
+2510.15682,1,2025,cs.IR,0,SQuAI: Scientific Question-Answering with Multi-Agent Retrieval-Augmented Generation
+2411.13773,2,2024,cs.NI,0,FastRAG: Retrieval Augmented Generation for Semi-structured Data
+2411.01022,1,2024,cs.CL,0,Provenance: A Light-weight Fact-checker for Retrieval Augmented LLM Generation Output
+2409.03171,2,2024,cs.CL,0,MARAGS: A Multi-Adapter System for Multi-Task Retrieval Augmented Generation Question Answering
+2606.04127,1,2026,cs.CL,0,When Retrieval Doesn't Help: A Large-Scale Study of Biomedical RAG
+2609.12268,1,2026,cs.CL,0,EAR: Entity-Aware Partitioning Approach for Retrieval-Augmented Generation Development
+2504.20118,4,2025,cs.IR,0,OpenTCM: A GraphRAG-Empowered LLM-based System for Traditional Chinese Medicine Knowledge Retrieval and Diagnosis
+2509.09713,1,2025,cs.CL,0,HANRAG: Heuristic Accurate Noise-resistant Retrieval-Augmented Generation for Multi-hop Question Answering
+2512.14896,2,2025,cs.CL,0,DrugRAG: Enhancing Pharmacy LLM Performance Through A Novel Retrieval-Augmented Generation Pipeline
+2604.20623,2,2026,cs.CV,0,RSRCC: A Remote Sensing Regional Change Comprehension Benchmark Constructed via Retrieval-Augmented Best-of-N Ranking
+2504.17547,2,2025,cs.CV,0,A Comprehensive Survey of Knowledge-Based Vision Question Answering Systems: The Lifecycle of Knowledge in Visual Reasoning Task
+2503.07584,3,2025,cs.IR,0,Talking to GDELT Through Knowledge Graphs
+2602.10017,1,2026,cs.CL,0,"SCORE: Specificity, Context Utilization, Robustness, and Relevance for Reference-Free LLM Evaluation"
+2406.00037,1,2024,cs.CL,0,Aligning LLMs through Multi-perspective User Preference Ranking-based Feedback for Programming Question Answering
+2411.01039,1,2024,cs.IR,0,Enhancing Question Answering Precision with Optimized Vector Retrieval and Instructions
+2510.08149,1,2025,cs.CL,0,AI Knowledge Assist: An Automated Approach for the Creation of Knowledge Bases for Conversational AI Agents
+2503.23415,1,2025,cs.CL,0,An Analysis of Decoding Methods for LLM-based Agents for Faithful Multi-Hop Question Answering
+2408.11903,2,2024,cs.CL,0,"Ancient Wisdom, Modern Tools: Exploring Retrieval-Augmented LLMs for Ancient Indian Philosophy"
+2509.10744,1,2025,cs.CL,0,Automated MCQA Benchmarking at Scale: Evaluating Reasoning Traces as Retrieval Sources for Domain Adaptation of Small Language Models
+2510.14592,1,2025,cs.LG,0,Multimodal RAG for Unstructured Data:Leveraging Modality-Aware Knowledge Graphs with Hybrid Retrieval
+2402.05128,3,2024,cs.CL,0,Enhancing textual textbook question answering with large language models and retrieval augmented generation
+2510.22694,1,2025,cs.CV,0,Windsock is Dancing: Adaptive Multimodal Retrieval-Augmented Generation
+2506.00664,1,2025,cs.AI,0,OntoRAG: Enhancing Question-Answering through Automated Ontology Derivation from Unstructured Knowledge Bases
+2601.11255,1,2026,cs.CL,0,Reasoning in Trees: Improving Retrieval-Augmented Generation for Multi-Hop Question Answering
+2602.23368,1,2025,cs.IR,0,Keyword search is all you need: Achieving RAG-Level Performance without vector databases using agentic tool use
+2511.22715,2,2025,cs.CV,0,ReAG: Reasoning-Augmented Generation for Knowledge-based Visual Question Answering
+2406.15187,2,2024,cs.AI,0,UDA: A Benchmark Suite for Retrieval Augmented Generation in Real-world Document Analysis
+2605.19806,2,2026,cs.CL,0,Chunking German Legal Code
+2410.02742,2,2024,cs.CL,0,Grounding Large Language Models In Embodied Environment With Imperfect World Models
+2506.13743,2,2025,cs.CL,0,LTRR: Learning To Rank Retrievers for LLMs
+2605.21071,4,2026,cs.CL,0,Fine-grained Claim-level RAG Benchmark for Law
+2509.07666,1,2025,cs.CL,0,MoLoRAG: Bootstrapping Document Understanding via Multi-modal Logic-aware Retrieval
+2411.13691,1,2024,cs.LG,0,Retrieval-Augmented Generation for Domain-Specific Question Answering: A Case Study on Pittsburgh and CMU
+2410.20263,2,2024,cs.RO,0,EfficientEQA: An Efficient Approach to Open-Vocabulary Embodied Question Answering
+2312.07559,2,2023,cs.CL,0,PaperQA: Retrieval-Augmented Generative Agent for Scientific Research
+2005.11401,4,2020,cs.CL,1,Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks
+2004.04906,3,2020,cs.CL,1,Dense Passage Retrieval for Open-Domain Question Answering
+2007.01282,2,2020,cs.CL,1,Leveraging Passage Retrieval with Generative Models for Open Domain Question Answering
+2112.04426,3,2021,cs.CL,0,Improving language models by retrieving from trillions of tokens
+2310.11511,1,2023,cs.CL,1,"Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection"
+2305.06983,2,2023,cs.CL,1,Active Retrieval Augmented Generation
+2301.12652,4,2023,cs.CL,0,REPLUG: Retrieval-Augmented Black-Box Language Models
+2302.00083,3,2023,cs.CL,0,In-Context Retrieval-Augmented Language Models
+2212.10511,4,2022,cs.CL,1,When Not to Trust Language Models: Investigating Effectiveness of Parametric and Non-Parametric Memories
+2401.15884,3,2024,cs.CL,1,Corrective Retrieval Augmented Generation
+2307.03172,3,2023,cs.CL,1,Lost in the Middle: How Language Models Use Long Contexts
+2310.05002,1,2023,cs.CL,1,Self-Knowledge Guided Retrieval Augmentation for Large Language Models
+2212.10509,2,2022,cs.CL,1,Interleaving Retrieval with Chain-of-Thought Reasoning for Knowledge-Intensive Multi-Step Questions
+2210.03350,3,2022,cs.CL,0,Measuring and Narrowing the Compositionality Gap in Language Models
+2210.03629,3,2022,cs.CL,0,ReAct: Synergizing Reasoning and Acting in Language Models
+2403.10081,3,2024,cs.CL,0,DRAGIN: Dynamic Retrieval Augmented Generation based on the Information Needs of Large Language Models
+2311.09210,2,2023,cs.CL,0,Chain-of-Note: Enhancing Robustness in Retrieval-Augmented Language Models
+2403.10131,2,2024,cs.CL,0,RAFT: Adapting Language Model to Domain Specific RAG
+2404.16130,2,2024,cs.CL,0,From Local to Global: A Graph RAG Approach to Query-Focused Summarization
+2004.12832,2,2020,cs.IR,0,ColBERT: Efficient and Effective Passage Search via Contextualized Late Interaction over BERT
+2112.01488,3,2021,cs.IR,0,ColBERTv2: Effective and Efficient Retrieval via Lightweight Late Interaction
+2112.09118,4,2021,cs.IR,0,Unsupervised Dense Information Retrieval with Contrastive Learning
+2212.10496,1,2022,cs.IR,0,Precise Zero-Shot Dense Retrieval without Relevance Labels
+2107.05720,1,2021,cs.IR,0,SPLADE: Sparse Lexical and Expansion Model for First Stage Ranking
+2304.09542,3,2023,cs.CL,0,Is ChatGPT Good at Search? Investigating Large Language Models as Re-Ranking Agents
+2009.02252,4,2020,cs.CL,0,KILT: a Benchmark for Knowledge Intensive Language Tasks
+2104.08663,4,2021,cs.IR,0,BEIR: A Heterogenous Benchmark for Zero-shot Evaluation of Information Retrieval Models
+1809.09600,1,2018,cs.CL,0,"HotpotQA: A Dataset for Diverse, Explainable Multi-hop Question Answering"
+2309.15217,2,2023,cs.CL,0,Ragas: Automated Evaluation of Retrieval Augmented Generation
+2311.09476,2,2023,cs.CL,0,ARES: An Automated Evaluation Framework for Retrieval-Augmented Generation Systems
+2312.10997,5,2023,cs.CL,0,Retrieval-Augmented Generation for Large Language Models: A Survey
