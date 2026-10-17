@@ -223,10 +223,13 @@ def validate(output: Any, batch_ids: set[str], sentences: dict[str, str], paper:
 # "invalid syntax" before reaching Groq (F-016). Keeping it here also puts the
 # schema next to the Pydantic models it mirrors.
 
-CLAIMS_MODEL = "openai/gpt-oss-20b"
-# Groq's limits are per model, so the larger sibling has its own 200K tokens a
+# gpt-oss-120b first (D40): on the same candidate sentences gpt-oss-20b extracted
+# far fewer citation claims (CRAG 1 against 7 to 11, Adaptive-RAG 3 against 12),
+# which left the citation check with almost nothing to check (F-023).
+CLAIMS_MODEL = "openai/gpt-oss-120b"
+# Groq's limits are per model, so the smaller sibling has its own 200K tokens a
 # day; it accepts the same parameters and strict schema (F-017).
-CLAIMS_FALLBACK_MODELS = ("openai/gpt-oss-120b",)
+CLAIMS_FALLBACK_MODELS = ("openai/gpt-oss-20b",)
 CLAIMS_MAX_OUTPUT = 2500  # Groq counts input + this budget against 8,000 tokens per minute (F-011)
 CLAIMS_SCHEMA: dict[str, Any] = {
     "type": "object",

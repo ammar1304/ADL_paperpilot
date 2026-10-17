@@ -103,11 +103,11 @@ def _audit_sample():
 
 def test_novelty_page_from_a_real_result():
     result = _novelty_sample()
-    html = novelty_page({"input": {"idea_text": "Diffusion <b>for</b> proteins"}}, result, "/form/paperpilot")
+    html = novelty_page({"input": {"idea_text": "Diffusion <b>for</b> proteins"}}, result, "/form/paperpilot-form")
     assert "No overlapping paper found" in html and "not proof of novelty" in html
     assert "Diffusion &lt;b&gt;for&lt;/b&gt; proteins" in html and "<b>for</b>" not in html
     assert result["summary"].split(";")[0][:40] in html.replace("&#x27;", "'")
-    assert "LLM-written, not verified" in html and 'href="/form/paperpilot"' in html
+    assert "LLM-written, not verified" in html and 'href="/form/paperpilot-form"' in html
 
 
 def test_novelty_page_lists_overlapping_papers_with_facet_labels():
@@ -151,7 +151,7 @@ def test_result_page_for_rejected_and_failed_runs():
 def test_form_result_endpoint_reads_the_stored_run(client):
     run_id = client.post("/runs", json={"request": {"mode": "novelty", "idea_text": "An idea that is long enough to pass."}}).json()["run_id"]
     client.patch(f"/runs/{run_id}", json={"status": "done", "result": _novelty_sample()})
-    html = client.post("/form/result", json={"status_code": 200, "body": {"run_id": run_id}, "form_url": "/form/paperpilot"}).json()["html"]
+    html = client.post("/form/result", json={"status_code": 200, "body": {"run_id": run_id}, "form_url": "/form/paperpilot-form"}).json()["html"]
     assert "Novelty check" in html and "An idea that is long enough to pass." in html
     html = client.post("/form/result", json={"status_code": "422", "body": {"errors": [{"field": "mode", "message": "bad"}]}}).json()["html"]
     assert "What to do: bad" in html
@@ -168,7 +168,7 @@ def test_form_workflow_wiring():
     conns = FORM_WF["connections"]
     trigger = _node("PaperPilot form")
     assert trigger["type"] == "n8n-nodes-base.formTrigger" and trigger["typeVersion"] == 2.4
-    assert trigger["parameters"]["options"]["path"] == "paperpilot"
+    assert trigger["parameters"]["options"]["path"] == "paperpilot-form"
     fields = {f["fieldName"]: f for f in trigger["parameters"]["formFields"]["values"]}
     assert set(fields) == {"task", "idea_text", "draft_pdf", "draft_pdf_url"} and fields["task"]["requiredField"] is True
     assert fields["draft_pdf"]["fieldType"] == "file" and fields["draft_pdf"]["multipleFiles"] is False
@@ -187,7 +187,7 @@ def test_form_workflow_wiring():
     assert store["url"] == "={{ $env.PP_TOOLS_URL }}/uploads" and store["contentType"] == "binaryData"
     assert store["inputDataFieldName"] == "draft_pdf"
     run = _node("Run PaperPilot")
-    assert run["parameters"]["url"] == "http://localhost:5678/webhook/paperpilot"  # the same entry point as every client
+    assert run["parameters"]["url"] == "http://127.0.0.1:5678/webhook/paperpilot"  # the same entry point as every client
     assert run["parameters"]["options"]["response"]["response"] == {"fullResponse": True, "neverError": True}
     assert run["parameters"]["options"]["timeout"] >= 30 * 60 * 1000
     show = _node("Show result")
@@ -222,3 +222,24 @@ def test_build_request_expression_maps_the_form_to_the_run_request():
     assert out[0] == {"mode": "novelty", "idea_text": "my idea"}
     assert out[1] == {"mode": "audit", "draft_pdf_url": "https://arxiv.org/pdf/1"}
     assert out[2] == {"mode": "audit", "draft_pdf_upload": "f" * 64}  # a file wins over a link
+
+
+def test_no_two_workflows_register_the_same_webhook():
+    """n8n keys production webhooks by path and method only. The form trigger's POST once used
+    the router's path ("paperpilot"), so n8n skipped it at publish time ("some triggers failed to
+    activate") and every submission ended on "Problem loading form" (F-027)."""
+    seen = {}
+    for f in sorted((REPO / "n8n" / "workflows").glob("*.json")):
+        wf = json.loads(f.read_text(encoding="utf-8"))
+        for n in wf["nodes"]:
+            p = n["parameters"]
+            if n["type"] == "n8n-nodes-base.webhook":
+                keys = [(p["path"], p.get("httpMethod", "GET"))]
+            elif n["type"] == "n8n-nodes-base.formTrigger":
+                path = p.get("options", {}).get("path") or p.get("path") or n.get("webhookId")
+                keys = [(path, "GET"), (path, "POST")]
+            else:
+                continue
+            for key in keys:
+                assert key not in seen, f"{key} registered by {seen[key]} and {wf['name']}/{n['name']}"
+                seen[key] = f"{wf['name']}/{n['name']}"

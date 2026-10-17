@@ -58,7 +58,7 @@
         },
         "responseMode": "onReceived",
         "options": {
-          "path": "paperpilot",
+          "path": "paperpilot-form",
           "buttonLabel": "Run PaperPilot",
           "appendAttribution": false
         }
@@ -164,7 +164,7 @@
       "notes": "Calls the same webhook as the scripts and the API, so the form adds no second path through the system.",
       "parameters": {
         "method": "POST",
-        "url": "http://localhost:5678/webhook/paperpilot",
+        "url": "http://127.0.0.1:5678/webhook/paperpilot",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify($json) }}",
@@ -197,7 +197,7 @@
         "url": "={{ $env.PP_TOOLS_URL }}/form/result",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ status_code: $json.statusCode, body: $json.body, form_url: '/form/paperpilot' }) }}",
+        "jsonBody": "={{ JSON.stringify({ status_code: $json.statusCode, body: $json.body, form_url: '/form/paperpilot-form' }) }}",
         "options": {
           "timeout": 20000
         }

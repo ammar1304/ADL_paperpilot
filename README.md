@@ -96,7 +96,7 @@ To test services that are already running: `python scripts/smoke_test.py --no-co
 
 ## Using the form
 
-Open http://localhost:5678/form/paperpilot. Choose "Check how novel an idea is" and describe the idea, or "Audit a draft paper" and upload the PDF (or paste a link). Keep the page open: a novelty check takes about a minute, an audit 5 to 15 minutes. The result page lists problems first, each with its evidence.
+Open http://localhost:5678/form/paperpilot-form. Choose "Check how novel an idea is" and describe the idea, or "Audit a draft paper" and upload the PDF (or paste a link). Keep the page open: a novelty check takes about a minute, an audit 5 to 15 minutes. The result page lists problems first, each with its evidence.
 
 The form is the `05-form` workflow. It calls the webhook below, so everything the webhook does applies to it.
 
