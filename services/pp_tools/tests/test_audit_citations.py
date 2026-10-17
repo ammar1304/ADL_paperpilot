@@ -257,3 +257,18 @@ def test_audit_workflow_runs_the_citation_loop_after_the_figures():
     assert "$('Next citations')" in _node("Save citation check")["parameters"]["jsonBody"]
     assert "$('Next citations')" in _node("Record citation error")["parameters"]["jsonBody"]
     assert _node("Next citations")["parameters"]["url"].endswith("/citations/next")
+
+
+def test_passages_keep_the_part_that_matches_the_claim():
+    """F-022: the first 700 characters of an abstract stopped before the method the claim was about."""
+    filler = " ".join(f"Background sentence {i} about language models and retrieval in general." for i in range(12))
+    text = "Robust Retrieval. Abstract.\n" + filler + " We filter retrieved passages with a natural language inference model. More text follows here."
+    window = cit.best_window(text, "designed an NLI model, a natural language inference filter", 700)
+    assert window.startswith("Robust Retrieval. Abstract.\n") and "natural language inference model" in window and len(window) <= 700
+    assert cit.best_window("short text", "anything", 700) == "short text"
+
+
+def test_queries_drop_citations_in_any_form():
+    q = cit.query_for({"claim": "Yoran et al. (2024) designed an NLI filter, unlike [3, 4] and Lewis and Fan, 2019.",
+                       "cites": ["Yoran et al., 2024"]})
+    assert "Yoran" not in q and "[3" not in q and "2019" not in q and "NLI filter" in q

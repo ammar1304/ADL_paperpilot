@@ -381,7 +381,8 @@ def citation_plan(db: Database, library: PromptLibrary, papers: PaperStore, run_
             continue
         ranked = sorted(zip(scores, hits), key=lambda t: -t[0])[: cit.PASSAGES]
         job["passages"] = [{"id": f"E{k}", "chunk_id": h.chunk_id, "chunk_type": h.chunk_type, "section": h.section,
-                            "score": round(float(sc), 4), "text": h.text[: cit.PASSAGE_CHARS]} for k, (sc, h) in enumerate(ranked, 1)]
+                            "score": round(float(sc), 4), "text": cit.best_window(h.text, query, cit.PASSAGE_CHARS)}
+                           for k, (sc, h) in enumerate(ranked, 1)]
     detail = {"prompt": CITATION_CHECKER, "prompt_version": prompt.version, "jobs": jobs, "findings": findings,
               "batches": cit.batches(jobs, extracted)}
     db.add_step(run_id, "citation_plan", "done", detail)

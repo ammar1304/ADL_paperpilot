@@ -177,12 +177,52 @@ def citation_jobs(claims: list[dict[str, Any]], references: list[str], library: 
     return jobs, findings
 
 
+_CITATION_IN_TEXT = re.compile(
+    r"\(?\b[A-Z][^\s,()]+(?:\s+et\s+al\.?|\s+(?:and|&)\s+[A-Z][^\s,()]+)?[\s,]*\(?(?:19|20)\d{2}[a-z]?\)?|\[\d{1,3}(?:[,\s\-–]+\d{1,3})*\]")
+
+
 def query_for(claim: dict[str, Any]) -> str:
-    """What to search the cited paper for: the claim, without its citation markers."""
+    """What to search the cited paper for: the claim, without its citations in any form
+    ("Yoran et al. (2024)" as well as the marker "Yoran et al., 2024", or "[12]")."""
     text = claim.get("claim") or claim.get("sentence") or ""
     for marker in claim.get("cites") or []:
         text = text.replace(f"({marker})", " ").replace(marker, " ")
-    return re.sub(r"\s+", " ", text).strip()
+    text = _CITATION_IN_TEXT.sub(" ", text)
+    return re.sub(r"\s+", " ", text).strip(" ,.;") + ("." if text.strip().endswith(".") else "")
+
+
+_STOP = set("the a an of to in on for and or with by from as is are was were be been that this these those its it their "
+            "we our they which using use used than more most can into at not no only also such".split())
+
+
+def _content_words(text: str) -> set[str]:
+    return {w for w in re.findall(r"[a-z0-9]+", text.lower()) if len(w) > 2 and w not in _STOP}
+
+
+def best_window(text: str, query: str, chars: int) -> str:
+    """The stretch of whole sentences (at most ``chars``) that shares the most words with the
+    query, keeping the chunk's first line (title and section). A chunk's first 700 characters
+    are often context; the statement the claim is about can come later (CRAG's citation of
+    Yoran et al.: the NLI filter is past the cut)."""
+    if len(text) <= chars:
+        return text
+    head, _, body = text.partition("\n")
+    if len(head) > 200:  # no title line
+        head, body = "", text
+    sentences = re.split(r"(?<=[.!?])\s+", body)
+    wanted = _content_words(query)
+    best, best_score = "", -1
+    for i in range(len(sentences)):
+        window = ""
+        for sent in sentences[i:]:
+            if window and len(head) + len(window) + len(sent) + 2 > chars:
+                break
+            window = (window + " " + sent).strip()
+        score = len(_content_words(window) & wanted)
+        if score > best_score:
+            best, best_score = window, score
+    out = (head + "\n" + best) if head else best
+    return out[:chars]
 
 
 # ---- the judge (P6) ---------------------------------------------------------------------------
