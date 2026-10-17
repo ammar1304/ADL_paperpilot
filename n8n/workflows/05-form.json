@@ -164,7 +164,7 @@
       "notes": "Calls the same webhook as the scripts and the API, so the form adds no second path through the system.",
       "parameters": {
         "method": "POST",
-        "url": "http://localhost:5678/webhook/paperpilot",
+        "url": "http://127.0.0.1:5678/webhook/paperpilot",
         "sendBody": true,
         "specifyBody": "json",
         "jsonBody": "={{ JSON.stringify($json) }}",

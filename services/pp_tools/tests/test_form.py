@@ -187,7 +187,7 @@ def test_form_workflow_wiring():
     assert store["url"] == "={{ $env.PP_TOOLS_URL }}/uploads" and store["contentType"] == "binaryData"
     assert store["inputDataFieldName"] == "draft_pdf"
     run = _node("Run PaperPilot")
-    assert run["parameters"]["url"] == "http://localhost:5678/webhook/paperpilot"  # the same entry point as every client
+    assert run["parameters"]["url"] == "http://127.0.0.1:5678/webhook/paperpilot"  # the same entry point as every client
     assert run["parameters"]["options"]["response"]["response"] == {"fullResponse": True, "neverError": True}
     assert run["parameters"]["options"]["timeout"] >= 30 * 60 * 1000
     show = _node("Show result")
