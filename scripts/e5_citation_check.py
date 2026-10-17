@@ -39,7 +39,18 @@ from pathlib import Path
 REPO = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(REPO / "services" / "pp_tools"))
 from app.audit import citations as cit  # noqa: E402
-from app.audit.claims import CLAIMS_FALLBACK_MODELS, CLAIMS_MODEL  # noqa: E402
+
+
+def _models() -> tuple[str, tuple[str, ...]]:
+    """The audit's model order, read from app/audit/claims.py without importing it (it needs
+    pydantic, which the host Python running this script may not have)."""
+    src = (REPO / "services" / "pp_tools" / "app" / "audit" / "claims.py").read_text(encoding="utf-8")
+    first = re.search(r'^CLAIMS_MODEL = "([^"]+)"', src, re.M).group(1)
+    rest = tuple(re.findall(r'"([^"]+)"', re.search(r"^CLAIMS_FALLBACK_MODELS = \(([^)]*)\)", src, re.M).group(1)))
+    return first, rest
+
+
+CLAIMS_MODEL, CLAIMS_FALLBACK_MODELS = _models()
 from app.prompts import PromptLibrary  # noqa: E402
 
 GROQ = "https://api.groq.com/openai/v1/chat/completions"
