@@ -1,0 +1,1242 @@
+{
+ "url": "https://arxiv.org/pdf/2305.06983v2",
+ "run_id": "7862556c-4636-49e1-9616-efd01655e80b",
+ "result": {
+  "paper": {
+   "items": 13,
+   "pages": 24,
+   "title": "Active Retrieval Augmented Generation",
+   "sha256": "2425bd04de6e082512ef576298ec24df770a7f576bb2c23d09b3fd498f716c52",
+   "tables": [
+    "table:1",
+    "table:2",
+    "table:3",
+    "table:4",
+    "table:5",
+    "table:6",
+    "table:7",
+    "table:9"
+   ],
+   "figures": [
+    "figure:1",
+    "figure:2",
+    "figure:3",
+    "figure:4",
+    "figure:5"
+   ],
+   "numbered": 13,
+   "references": 69
+  },
+  "branch": "audit",
+  "claims": [],
+  "run_id": "7862556c-4636-49e1-9616-efd01655e80b",
+  "coverage": {
+   "models": [
+    "openai/gpt-oss-120b",
+    "openai/gpt-oss-20b"
+   ],
+   "batches": 6,
+   "by_type": {},
+   "stopped": "Groq daily token limit reached on openai/gpt-oss-20b, openai/gpt-oss-120b",
+   "llm_errors": 2,
+   "batches_done": 0,
+   "rate_limited": 2,
+   "batches_skipped": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5
+   ],
+   "total_sentences": 613,
+   "candidate_sentences": 75
+  },
+  "implemented": "parse+claims+numbers+figures+citations",
+  "figure_checks": {
+   "checks": [],
+   "summary": {
+    "jobs": 0,
+    "checks": 0,
+    "figures": 0,
+    "skipped": [],
+    "stopped": null,
+    "jobs_done": 0,
+    "not_shown": 0,
+    "supported": 0,
+    "llm_errors": 0,
+    "contradicted": 0,
+    "not_answered": 0,
+    "rate_limited": 0,
+    "missing_figure": 0
+   },
+   "figures_read": {},
+   "prompt_version": "v2"
+  },
+  "number_checks": {
+   "checks": [],
+   "summary": {
+    "checks": 0,
+    "supported": 0,
+    "contradicted": 0,
+    "unverifiable": 0,
+    "cells_indexed": 143
+   }
+  },
+  "claims_dropped": 0,
+  "citation_checks": {
+   "checks": [],
+   "summary": {
+    "batches": 0,
+    "stopped": null,
+    "citations": 0,
+    "not_found": 0,
+    "supported": 0,
+    "in_library": 0,
+    "llm_errors": 0,
+    "batches_done": 0,
+    "contradicted": 0,
+    "not_answered": 0,
+    "rate_limited": 0,
+    "not_in_library": 0,
+    "retrieval_errors": 0,
+    "unresolved_reference": 0
+   },
+   "prompt_version": "v1"
+  },
+  "prompt_versions": {
+   "P5-figure-checker": "v2",
+   "P4-claim-extractor": "v1",
+   "P6-citation-checker": "v1"
+  }
+ },
+ "steps": [
+  {
+   "step_id": 1236,
+   "step_name": "parse",
+   "status": "done",
+   "detail": {
+    "items": 13,
+    "pages": 24,
+    "title": "Active Retrieval Augmented Generation",
+    "blocks": 289,
+    "cached": true,
+    "sha256": "2425bd04de6e082512ef576298ec24df770a7f576bb2c23d09b3fd498f716c52",
+    "tables": [
+     {
+      "id": "table:1",
+      "page": 7,
+      "rows": 9,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:2",
+      "page": 8,
+      "rows": 8,
+      "caption_source": "repaired"
+     },
+     {
+      "id": "table:3",
+      "page": 8,
+      "rows": 4,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:4",
+      "page": 8,
+      "rows": 5,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:5",
+      "page": 9,
+      "rows": 5,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:6",
+      "page": 9,
+      "rows": 4,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:7",
+      "page": 16,
+      "rows": 10,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:9",
+      "page": 16,
+      "rows": 5,
+      "caption_source": "docling"
+     }
+    ],
+    "figures": [
+     {
+      "id": "figure:1",
+      "page": 2,
+      "has_image": true,
+      "caption_source": "docling"
+     },
+     {
+      "id": "figure:2",
+      "page": 4,
+      "has_image": true,
+      "caption_source": "docling"
+     },
+     {
+      "id": "figure:3",
+      "page": 5,
+      "has_image": true,
+      "caption_source": "docling"
+     },
+     {
+      "id": "figure:4",
+      "page": 7,
+      "has_image": true,
+      "caption_source": "docling"
+     },
+     {
+      "id": "figure:5",
+      "page": 8,
+      "has_image": true,
+      "caption_source": "docling"
+     }
+    ],
+    "seconds": 4.6,
+    "numbered": 13,
+    "references": 69
+   },
+   "finished_at": "2026-10-17T00:02:51.963Z"
+  },
+  {
+   "step_id": 1237,
+   "step_name": "claim_prompts",
+   "status": "done",
+   "detail": {
+    "prompt": "P4-claim-extractor",
+    "batches": [
+     [
+      "b:9/s:0",
+      "b:9/s:1",
+      "b:9/s:2",
+      "b:12/s:0",
+      "b:12/s:1",
+      "b:13/s:0",
+      "b:15/s:1",
+      "b:15/s:2"
+     ],
+     [
+      "b:16/s:2",
+      "b:16/s:3",
+      "b:16/s:6",
+      "b:17/s:1",
+      "b:17/s:2",
+      "b:22/s:1",
+      "b:32/s:0",
+      "b:32/s:1",
+      "b:33/s:2",
+      "b:39/s:0"
+     ],
+     [
+      "b:43/s:0",
+      "b:44/s:0",
+      "b:47/s:1",
+      "b:48/s:0",
+      "b:48/s:3",
+      "b:49/s:1",
+      "b:50/s:3",
+      "b:50/s:6",
+      "b:57/s:0",
+      "b:58/s:2",
+      "b:62/s:0",
+      "b:64/s:0",
+      "b:66/s:0",
+      "b:67/s:0"
+     ],
+     [
+      "b:68/s:1",
+      "b:71/s:0",
+      "b:71/s:1",
+      "b:71/s:2",
+      "b:71/s:3",
+      "b:72/s:1",
+      "b:75/s:1",
+      "b:77/s:0",
+      "b:77/s:1",
+      "b:78/s:0",
+      "b:79/s:0",
+      "b:79/s:1",
+      "b:80/s:0",
+      "b:84/s:1"
+     ],
+     [
+      "b:86/s:1",
+      "b:86/s:6",
+      "b:87/s:0",
+      "b:90/s:4",
+      "b:91/s:1",
+      "b:92/s:4",
+      "b:92/s:5",
+      "b:92/s:6",
+      "b:93/s:1",
+      "b:93/s:3",
+      "b:95/s:0",
+      "b:96/s:0",
+      "b:96/s:2",
+      "b:97/s:0",
+      "b:106/s:4",
+      "b:109/s:0"
+     ],
+     [
+      "b:109/s:1",
+      "b:111/s:0",
+      "b:113/s:2",
+      "b:113/s:3",
+      "b:114/s:0",
+      "b:114/s:3",
+      "b:116/s:3",
+      "b:116/s:6",
+      "b:118/s:0",
+      "b:120/s:1",
+      "b:135/s:0",
+      "b:200/s:0",
+      "b:287/s:6"
+     ]
+    ],
+    "candidates": [
+     {
+      "id": "b:9/s:0",
+      "page": 1,
+      "text": "Generative language models (LMs) (Brown et al., 2020; Ouyang et al., 2022; OpenAI, 2023; Chowdhery et al., 2022; Zhang et al., 2022; Touvron et al., 2023; Zhao et al., 2023) have become a foundational component in natural language processing (NLP) systems with their remarkable abilities.",
+      "block": "b:9",
+      "section": "1 Introduction",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:9/s:1",
+      "page": 1,
+      "text": "Although LMs have memorized some world knowledge during training (Petroni et al., 2019; Roberts et al., 2020; Jiang et al., 2020), they still tend to hallucinate and create imaginary content (Maynez et al., 2020; Zhou et al., 2021).",
+      "block": "b:9",
+      "section": "1 Introduction",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:9/s:2",
+      "page": 1,
+      "text": "Augmenting LMs with retrieval components that look up relevant information from external knowledge resources is a promising direction to address hallucination (Khandelwal et al., 2020; Izacard et al., 2022).",
+      "block": "b:9",
+      "section": "1 Introduction",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:12/s:0",
+      "page": 1,
+      "text": "Retrieval augmented LMs commonly use a retrieve-and-generate setup where they retrieve documents based on the user's input, and then generate a complete answer conditioning on the retrieved documents (Chen et al., 2017; Guu et al., 2020; Lewis et al., 2020; Izacard and Grave, 2021; Sachan et al., 2021; Lee et al., 2021; Jiang et al., 2022; Izacard et al., 2022; Nakano et al., 2021; Qian et al., 2023; Lazaridou et al., 2022; Shi et al., 2023).",
+      "block": "b:12",
+      "section": "1 Introduction",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:12/s:1",
+      "page": 1,
+      "text": "These single-time retrieval augmented LMs outperform purely parametric LMs, particularly for shortform knowledge-intensive generation tasks such as factoid question answering (QA) (Kwiatkowski et al., 2019; Joshi et al., 2017), where the information needs are clear in the user's input, and it is sufficient to retrieve relevant knowledge once solely based on the input .",
+      "block": "b:12",
+      "section": "1 Introduction",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:13/s:0",
+      "page": 1,
+      "text": "Increasingly powerful large LMs have also demonstrated abilities in more complex tasks that involve generating long-form output, such as longform QA (Fan et al., 2019; Stelmakh et al., 2022), open-domain summarization (Cohen et al., 2021; Hayashi et al., 2021; Giorgi et al., 2022), and (chain-of-thought; CoT) reasoning (Wei et al., 2022; Ho et al., 2020; Geva et al., 2021; Hendrycks et al., 2020).",
+      "block": "b:13",
+      "section": "1 Introduction",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:15/s:1",
+      "page": 2,
+      "text": "These attempts include methods that passively use the past context to retrieve additional information at a fixed interval (Khandelwal et al., 2020; Borgeaud et al., 2022; Ram et al., 2023; Trivedi et al., 2022) which might not accurately reflect what LMs intend to generate in the future or retrieve at inappropriate points.",
+      "block": "b:15",
+      "section": "1 Introduction",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:15/s:2",
+      "page": 2,
+      "text": "Some works in multihop QA decompose the full question into sub-questions, each of which is used to retrieve extra information (Press et al., 2022; Yao et al., 2022; Khot et al., 2022; Khattab et al., 2022).",
+      "block": "b:15",
+      "section": "1 Introduction",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:16/s:2",
+      "page": 2,
+      "text": "Our hypothesis regarding when to retrieve is that LMs should retrieve information only when they lack the required knowledge to avoid unnecessary or inappropriate retrieval that occurs in passive retrieval augmented LMs (Khandelwal et al., 2020; Borgeaud et al., 2022; Ram et al., 2023; Trivedi et al., 2022).",
+      "block": "b:16",
+      "section": "1 Introduction",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:16/s:3",
+      "page": 2,
+      "text": "Given the observation that large LMs tend to be well-calibrated and low probability/confidence often indicates a lack of knowledge (Kadavath et al., 2022), we adopt an active retrieval strategy that only retrieves when LMs generate lowprobability tokens.",
+      "block": "b:16",
+      "section": "1 Introduction",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:16/s:6",
+      "page": 2,
+      "text": "Combining the two aspects, we propose F orwardL ooking A ctive RE trieval augmented generation ( FLARE ), as illustrated in Figure 1.",
+      "block": "b:16",
+      "section": "1 Introduction",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:17/s:1",
+      "page": 2,
+      "text": "Considering the impressive performance achieved by GPT-3.5 (Ouyang et al., 2022) on a variety of tasks, we examine the effectiveness of our methods on text-davinci-003 .",
+      "block": "b:17",
+      "section": "1 Introduction",
+      "signals": [
+       "number",
+       "citation"
+      ]
+     },
+     {
+      "id": "b:17/s:2",
+      "page": 2,
+      "text": "We evaluate FLARE on 4 diverse tasks/datasets involving generating long outputs, including multihop QA (2WikiMultihopQA), commonsense reasoning (StrategyQA), long-form QA (ASQA), and open-domain summarization (WikiAsp) (Ho et al., 2020; Geva et al., 2021; Stelmakh et al., 2022; Hayashi et al., 2021).",
+      "block": "b:17",
+      "section": "1 Introduction",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:22/s:1",
+      "page": 3,
+      "text": "Since we focus on examining various methods of determining when and what to retrieve, we follow existing methods (Ram et al., 2023; Trivedi et al., 2022) to prepend the retrieved documents before the user input to aid future generation for both baselines and our method for fair comparisons: y = LM ([ D q , x ]) , where [ · , · ] is concatenation following the specified order.",
+      "block": "b:22",
+      "section": "2.1 Notations and Definitions",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:32/s:0",
+      "page": 3,
+      "text": "Inspired by Toolformer (Schick et al., 2023), a straightforward way of expressing information needs for retrieval is to generate '[Search(query)]' when additional information is needed (Schick et al., 2023), e.g., 'The colors on the flag of Ghana have the following meanings.",
+      "block": "b:32",
+      "section": "3.1 FLARE with Retrieval Instructions",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:32/s:1",
+      "page": 3,
+      "text": "Red is for [Search(Ghana flag red meaning)] the blood of martyrs, ...' When working with GPT-3.5 models that offer only API access, we elicit such behavior by few-shot prompting (Brown et al., 2020).",
+      "block": "b:32",
+      "section": "3.1 FLARE with Retrieval Instructions",
+      "signals": [
+       "number",
+       "citation"
+      ]
+     },
+     {
+      "id": "b:33/s:2",
+      "page": 4,
+      "text": "The structure of the prompt is shown in Prompt 3.1, and full details can be found in Prompt D.3.",
+      "block": "b:33",
+      "section": "3.1 FLARE with Retrieval Instructions",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:39/s:0",
+      "page": 4,
+      "text": "As shown in Figure 2, when the LM generates '[Search(query)]' (shown in gray italic ), we stop the generation and use the query terms to retrieve relevant documents, which are prepended before the user input to aid future generation until the next search query is generated or reaches the end.",
+      "block": "b:39",
+      "section": "Prompt 3.1: retrieval instructions",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:43/s:0",
+      "page": 4,
+      "text": "As shown in Figure 1, at step t , we first generate a temporary next sentence ˆ s t = LM ([ x , y <t ]) without conditioning on retrieved documents.",
+      "block": "b:43",
+      "section": "3.2.1 Confidence-based Active Retrieval",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:44/s:0",
+      "page": 4,
+      "text": "Since LMs tend to be well-calibrated that low probability/confidence often indicates a lack of knowledge (Jiang et al., 2021; Kadavath et al., 2022; Varshney et al., 2022), we actively trigger retrieval if any token of ˆ s t has a probability lower than a threshold θ ∈ [0 , 1] . θ = 0 means retrieval is never triggered, while θ = 1 triggers retrieval every sentence.",
+      "block": "b:44",
+      "section": "3.2.1 Confidence-based Active Retrieval",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:47/s:1",
+      "page": 4,
+      "text": "This shares a similar spirit with methods that use generated hypothetical titles or paragraphs from LMs as retrieval queries or evidences (Gao et al., 2022; Sun et al., 2022; Yu et al., 2022; Mao et al., 2021).",
+      "block": "b:47",
+      "section": "3.2.2 Confidence-based Query Formulation",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:48/s:0",
+      "page": 4,
+      "text": "We found retrieving with the next sentence achieves significantly better results than with the previous context, as shown later in subsection 6.2.",
+      "block": "b:48",
+      "section": "3.2.2 Confidence-based Query Formulation",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:48/s:3",
+      "page": 4,
+      "text": "We propose two simple methods to overcome this issue as illustrated in Figure 3.",
+      "block": "b:48",
+      "section": "3.2.2 Confidence-based Query Formulation",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:49/s:1",
+      "page": 5,
+      "text": "The first method masks out low-confidence tokens in ˆ s t with probabilities below a threshold β ∈ [0 , 1] , where a higher β results in more aggressive masking.",
+      "block": "b:49",
+      "section": "3.2.2 Confidence-based Query Formulation",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:50/s:3",
+      "page": 5,
+      "text": "Self-ask (Press et al., 2022) achieved this by manually inserting follow-up questions into downstream task exemplars as shown later in Prompt D.2, which requires task-specific annotation efforts.",
+      "block": "b:50",
+      "section": "3.2.2 Confidence-based Query Formulation",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:50/s:6",
+      "page": 5,
+      "text": "For each extracted span z , we prompt gpt-3.5-turbo to generate a question q t, z that can be answered with the span:",
+      "block": "b:50",
+      "section": "3.2.2 Confidence-based Query Formulation",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:57/s:0",
+      "page": 5,
+      "text": "Base LM We validate our method on one of the most advanced GPT-3.5 LMs text-davinci-003 by iteratively querying their API. 2",
+      "block": "b:57",
+      "section": "3.3 Implementation Details",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:58/s:2",
+      "page": 5,
+      "text": "For datasets that mainly rely on knowledge from Wikipedia, we use the Wikipedia dump from Karpukhin et al. (2020) and employ BM25 (Robertson and Zaragoza, 2009) as the retriever.",
+      "block": "b:58",
+      "section": "3.3 Implementation Details",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:62/s:0",
+      "page": 5,
+      "text": "Existing passive multi-time retrieval augmented LMs can also be formulated using our framework (subsection 2.3).",
+      "block": "b:62",
+      "section": "4 Multi-time Retrieval Baselines",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:64/s:0",
+      "page": 5,
+      "text": "Some existing methods in this category are RETRO (Borgeaud et al., 2022), IC-RALM (Ram et al.,",
+      "block": "b:64",
+      "section": "4 Multi-time Retrieval Baselines",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:66/s:0",
+      "page": 6,
+      "text": "2023), which retrieve every few tokens, and KNNLM (Khandelwal et al., 2020), which retrieves every token. 4 We follow Ram et al. (2023) to use a window size of l = 16 .",
+      "block": "b:66",
+      "section": "4 Multi-time Retrieval Baselines",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:67/s:0",
+      "page": 6,
+      "text": "Previous-sentence approaches trigger retrieval every sentence and use the previous sentence as the query, and IRCoT (Trivedi et al., 2022) belongs to this category:",
+      "block": "b:67",
+      "section": "4 Multi-time Retrieval Baselines",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:68/s:1",
+      "page": 6,
+      "text": "For example, self-ask (Press et al., 2022), a method in this category, manually inserts sub-questions in exemplars using Prompt D.2.",
+      "block": "b:68",
+      "section": "4 Multi-time Retrieval Baselines",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:71/s:0",
+      "page": 6,
+      "text": "We evaluate the effectiveness of FLARE on 4 diverse knowledge-intensive tasks using few-shot incontext learning (Radford et al., 2019; Brown et al., 2020; Liu et al., 2023).",
+      "block": "b:71",
+      "section": "5 Experimental Setup",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:71/s:1",
+      "page": 6,
+      "text": "We follow previous works (Trivedi et al., 2022) to sub-sample at most 500 examples from each dataset due to the cost of running experiments.",
+      "block": "b:71",
+      "section": "5 Experimental Setup",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:71/s:2",
+      "page": 6,
+      "text": "Datasets, metrics, and settings are summarized in Table 7 of Appendix B.",
+      "block": "b:71",
+      "section": "5 Experimental Setup",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:71/s:3",
+      "page": 6,
+      "text": "The hyperparameters of FLARE are selected based on the development set and listed in Table 9.",
+      "block": "b:71",
+      "section": "5 Experimental Setup",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:72/s:1",
+      "page": 6,
+      "text": "We use 2WikiMultihopQA (Ho et al., 2020) which contains 2-hop complex questions sourced from Wikipedia articles that require composition, comparison, or inference, e.g., 'Why did the founder of Versus die?' We follow Wang et al. (2022) to generate both the chain-ofthought and the final answer.",
+      "block": "b:72",
+      "section": "5 Experimental Setup",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:75/s:1",
+      "page": 6,
+      "text": "We use StrategyQA (Geva et al., 2021) which is a collection of crowdsourced yes/no questions, e.g., 'Would a pear sink in water?' We follow Wei et al. (2022) to generate both the chain-of-thought and the final yes/no answer.",
+      "block": "b:75",
+      "section": "5 Experimental Setup",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:77/s:0",
+      "page": 6,
+      "text": "Long-form QA Long-form QA aims to generate comprehensive answers to questions seeking complex information (Fan et al., 2019; Stelmakh et al., 2022).",
+      "block": "b:77",
+      "section": "5 Experimental Setup",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:77/s:1",
+      "page": 6,
+      "text": "We use ASQA (Stelmakh et al., 2022) as our testbed where inputs are ambiguous questions with multiple interpretations, and outputs should cover all of them.",
+      "block": "b:77",
+      "section": "5 Experimental Setup",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:78/s:0",
+      "page": 6,
+      "text": "We use metrics from Stelmakh et al. (2022), including EM, RoBERTa-based QA score (DisambigF 1 ), ROUGE (Lin, 2004), and an overall score combining Disambig-F 1 and ROUGE (DR).",
+      "block": "b:78",
+      "section": "5 Experimental Setup",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:79/s:0",
+      "page": 6,
+      "text": "Open-domain summarization The goal of opendomain summarization is to generate a comprehensive summary about a topic by gathering information from open web (Giorgi et al., 2022).",
+      "block": "b:79",
+      "section": "5 Experimental Setup",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:79/s:1",
+      "page": 6,
+      "text": "We use WikiAsp (Hayashi et al., 2021) which aims to generate aspect-based summaries about entities from 20 domains in Wikipedia, e.g., 'Generate a summary about Echo School (Oregon) including the following aspects: academics, history.' Experimental setting details are included in Appendix B.",
+      "block": "b:79",
+      "section": "5 Experimental Setup",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:80/s:0",
+      "page": 7,
+      "text": "Metrics include ROUGE, named entity-based F 1 , and UniEval (Zhong et al., 2022) which measures factual consistency.",
+      "block": "b:80",
+      "section": "5 Experimental Setup",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:84/s:1",
+      "page": 7,
+      "text": "The overall performance of FLARE and baseline across all tasks/datasets are reported in Figure 4.",
+      "block": "b:84",
+      "section": "6.1 Comparison with Baselines",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:86/s:1",
+      "page": 7,
+      "text": "The performance of all baselines on 2WikiMultihopQA are reported in Table 1.",
+      "block": "b:86",
+      "section": "6.1 Comparison with Baselines",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:86/s:6",
+      "page": 7,
+      "text": "Among all baselines, the question decomposition approach (Press et al., 2022) achieves the best performance. which is not surprising since the incontext exemplars manually annotated with decomposed sub-questions (Prompt D.2) guide LMs to generate sub-questions that align with the topic/intent of future generations.",
+      "block": "b:86",
+      "section": "6.1 Comparison with Baselines",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:87/s:0",
+      "page": 7,
+      "text": "We report all metrics for the other datasets in Table 2.",
+      "block": "b:87",
+      "section": "6.1 Comparison with Baselines",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:90/s:4",
+      "page": 8,
+      "text": "As shown in Table 3, using the next sentence to retrieve is clearly better than using the previous sentence, confirming our hypothesis.",
+      "block": "b:90",
+      "section": "6.2 Ablation Study",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:91/s:1",
+      "page": 8,
+      "text": "As shown in Table 4, using too many tokens ( > 32 ) in the past hurts the performance, further confirming our hypothesis that previous context might not be relevant to intent of future generations.",
+      "block": "b:91",
+      "section": "6.2 Ablation Study",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:92/s:4",
+      "page": 8,
+      "text": "As shown in Figure 5, on 2WikiMultihopQA, the performance plateaus when the retrieval percentage exceeds 60%, indicating that retrieval when LMs are confident is not necessary.",
+      "block": "b:92",
+      "section": "6.2 Ablation Study",
+      "signals": [
+       "number",
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:92/s:5",
+      "page": 8,
+      "text": "On StrategyQA, the performance drops when the retrieval percentage exceeds 50%, indicating that unnecessary retrieval can introduce noise and impede the original generation process.",
+      "block": "b:92",
+      "section": "6.2 Ablation Study",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:92/s:6",
+      "page": 8,
+      "text": "We found triggering retrieval for 40%-80% of sentences usually leads to a good performance across tasks/datasets.",
+      "block": "b:92",
+      "section": "6.2 Ablation Study",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:93/s:1",
+      "page": 8,
+      "text": "In Table 5, we compare the performance of FLARE with different masking thresholds β .",
+      "block": "b:93",
+      "section": "6.2 Ablation Study",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:93/s:3",
+      "page": 8,
+      "text": "We compare implicit and explicit query formulation methods in Table 6.",
+      "block": "b:93",
+      "section": "6.2 Ablation Study",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:95/s:0",
+      "page": 9,
+      "text": "We refer to subsection 2.2 and section 4 for extensively discussion on single-time and multi-time retrieval augmented LMs, which is the most relevant area to this paper.",
+      "block": "b:95",
+      "section": "7 Related Work",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:96/s:0",
+      "page": 9,
+      "text": "Iterative and adaptive retrieval Iterative retrieval and refinement has been studied in both text and code generation tasks (Peng et al., 2023; Zhang et al., 2023; Zemlyanskiy et al., 2022; Yu et al., 2023).",
+      "block": "b:96",
+      "section": "7 Related Work",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:96/s:2",
+      "page": 9,
+      "text": "Adaptive retrieval has been studied in single-time retrieval scenarios based on either question popularity or generation probabilities (Mallen et al., 2022; Li et al., 2023), while we focus on long-form generation requiring active information access.",
+      "block": "b:96",
+      "section": "7 Related Work",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:97/s:0",
+      "page": 9,
+      "text": "Browser-enhanced LMs WebGPT (Nakano et al., 2021) and WebCPM (Qin et al., 2023) train LMs to interact with browser to enhance factuality using reinforcement learning or supervised training where multiple queries can be triggered before generation.",
+      "block": "b:97",
+      "section": "7 Related Work",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:106/s:4",
+      "page": 14,
+      "text": "First, we increase the logit of the token '[' by 2.0 to improve the chances of LMs generating '[Search(query)]'.",
+      "block": "b:106",
+      "section": "A FLARE Implementation Details",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:109/s:0",
+      "page": 14,
+      "text": "Efficiency As shown in subsection 6.2, on average retrieval is triggered for 30% ∼ 60% of sentences depending on downstream tasks.",
+      "block": "b:109",
+      "section": "A FLARE Implementation Details",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:109/s:1",
+      "page": 14,
+      "text": "In comparision, KNN-LM (Khandelwal et al., 2020) retrieves every token, RETRO or IC-RALM (Borgeaud et al., 2022; Ram et al., 2023) retrievers every 4 ∼ 32 tokens, and IRCoT (Trivedi et al., 2022) retrieves every sentence.",
+      "block": "b:109",
+      "section": "A FLARE Implementation Details",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:111/s:0",
+      "page": 14,
+      "text": "Datasets, metrics, and experimental settings are summarized in Table 7.",
+      "block": "b:111",
+      "section": "B Datasets and Settings",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:113/s:2",
+      "page": 14,
+      "text": "So the answer is shot.' We use 8 exemplars from Trivedi et al. (2022) listed in Prompt D.4 for in-context learning, BM25 as the retriever, and Wikipedia articles as the retrieval corpus.",
+      "block": "b:113",
+      "section": "B Datasets and Settings",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:113/s:3",
+      "page": 14,
+      "text": "Similar to the observation in Trivedi et al. (2022), we found incorporating retrieval results for exemplars improves the performance, we use the input x of each exemplar to retrieve several documents and then add them using the format in Prompt D.1.",
+      "block": "b:113",
+      "section": "B Datasets and Settings",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:114/s:0",
+      "page": 14,
+      "text": "Commonsense Reasoning For 'Would a pear sink in water?', the output we aim to generate is 'The density of a pear is about 0.6g/cm 3 , which is less than water.",
+      "block": "b:114",
+      "section": "B Datasets and Settings",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:114/s:3",
+      "page": 14,
+      "text": "So the final answer is no.' We use 6 exemplars from Wei et al. (2022) listed in Prompt D.5, BM25 on the Wikipedia corpus, and 3 retrieved documents to run experiments.",
+      "block": "b:114",
+      "section": "B Datasets and Settings",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:116/s:3",
+      "page": 14,
+      "text": "In 2008, 91% of the school's seniors received their high school diploma... # History.",
+      "block": "b:116",
+      "section": "B Datasets and Settings",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:116/s:6",
+      "page": 14,
+      "text": "To avoid leaking, we exclude several Wikipedia-related domains listed in Table 8 from Bing's search results.",
+      "block": "b:116",
+      "section": "B Datasets and Settings",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:118/s:0",
+      "page": 15,
+      "text": "Hyperparameters of FLARE on different datasets are listed in Table 9.",
+      "block": "b:118",
+      "section": "C Hyperparameters",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:120/s:1",
+      "page": 15,
+      "text": "The prompt used in selfask (Press et al., 2022) is shown in Prompt D.2.",
+      "block": "b:120",
+      "section": "D Prompts and Few-shot exemplars",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:135/s:0",
+      "page": 16,
+      "text": "Table 8: Wikipedia-related domains excluded from Bing's search results.",
+      "block": "b:135",
+      "section": "Prompt D.2: multihop QA with self-ask",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:200/s:0",
+      "page": 19,
+      "text": "Answer: The density of a pear is about 0.6g/cm 3 , which is less than water.",
+      "block": "b:200",
+      "section": "Prompt D.5: exemplars of StrategyQA",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:287/s:6",
+      "page": 24,
+      "text": "The house and its surviving 10 acres (4.0 ha) of grounds were listed on the Places in Peril in 2012 due to the immediate threat of its acquisition by developers.",
+      "block": "b:287",
+      "section": "Prompt D.10: exemplars of WikiAsp",
+      "signals": [
+       "number"
+      ]
+     }
+    ],
+    "prompt_version": "v1",
+    "total_sentences": 613
+   },
+   "finished_at": "2026-10-17T00:02:57.426Z"
+  },
+  {
+   "step_id": 1238,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 0,
+    "model": "openai/gpt-oss-20b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-17T00:02:57.449Z"
+  },
+  {
+   "step_id": 1239,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "kind": "daily",
+    "batch": 0,
+    "error": "Try spacing your requests out using the batching settings under 'Options' \"\"",
+    "model": "openai/gpt-oss-20b",
+    "until": 1792196403.093603,
+    "status": 429,
+    "rate_limited": true,
+    "retry_after_s": 994.0
+   },
+   "finished_at": "2026-10-17T00:03:29.093Z"
+  },
+  {
+   "step_id": 1240,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 0,
+    "model": "openai/gpt-oss-120b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-17T00:03:29.127Z"
+  },
+  {
+   "step_id": 1241,
+   "step_name": "claims_llm_error",
+   "status": "failed",
+   "detail": {
+    "kind": "daily",
+    "batch": 0,
+    "error": "Try spacing your requests out using the batching settings under 'Options' \"\"",
+    "model": "openai/gpt-oss-120b",
+    "until": 1792195624.7445364,
+    "status": 429,
+    "rate_limited": true,
+    "retry_after_s": 185.0
+   },
+   "finished_at": "2026-10-17T00:03:59.744Z"
+  },
+  {
+   "step_id": 1242,
+   "step_name": "claims_batch",
+   "status": "skipped",
+   "detail": {
+    "batch": 0,
+    "reason": "Groq daily token limit reached on openai/gpt-oss-20b, openai/gpt-oss-120b"
+   },
+   "finished_at": "2026-10-17T00:03:59.811Z"
+  },
+  {
+   "step_id": 1243,
+   "step_name": "claims_batch",
+   "status": "skipped",
+   "detail": {
+    "batch": 1,
+    "reason": "Groq daily token limit reached on openai/gpt-oss-20b, openai/gpt-oss-120b"
+   },
+   "finished_at": "2026-10-17T00:03:59.815Z"
+  },
+  {
+   "step_id": 1244,
+   "step_name": "claims_batch",
+   "status": "skipped",
+   "detail": {
+    "batch": 2,
+    "reason": "Groq daily token limit reached on openai/gpt-oss-20b, openai/gpt-oss-120b"
+   },
+   "finished_at": "2026-10-17T00:03:59.818Z"
+  },
+  {
+   "step_id": 1245,
+   "step_name": "claims_batch",
+   "status": "skipped",
+   "detail": {
+    "batch": 3,
+    "reason": "Groq daily token limit reached on openai/gpt-oss-20b, openai/gpt-oss-120b"
+   },
+   "finished_at": "2026-10-17T00:03:59.822Z"
+  },
+  {
+   "step_id": 1246,
+   "step_name": "claims_batch",
+   "status": "skipped",
+   "detail": {
+    "batch": 4,
+    "reason": "Groq daily token limit reached on openai/gpt-oss-20b, openai/gpt-oss-120b"
+   },
+   "finished_at": "2026-10-17T00:03:59.824Z"
+  },
+  {
+   "step_id": 1247,
+   "step_name": "claims_batch",
+   "status": "skipped",
+   "detail": {
+    "batch": 5,
+    "reason": "Groq daily token limit reached on openai/gpt-oss-20b, openai/gpt-oss-120b"
+   },
+   "finished_at": "2026-10-17T00:03:59.827Z"
+  },
+  {
+   "step_id": 1248,
+   "step_name": "claims_stopped",
+   "status": "done",
+   "detail": {
+    "reason": "Groq daily token limit reached on openai/gpt-oss-20b, openai/gpt-oss-120b",
+    "retry_in_s": 185,
+    "batches_left": [
+     0,
+     1,
+     2,
+     3,
+     4,
+     5
+    ]
+   },
+   "finished_at": "2026-10-17T00:03:59.829Z"
+  },
+  {
+   "step_id": 1249,
+   "step_name": "number_check",
+   "status": "done",
+   "detail": {
+    "checks": [],
+    "summary": {
+     "checks": 0,
+     "supported": 0,
+     "contradicted": 0,
+     "unverifiable": 0,
+     "cells_indexed": 143
+    }
+   },
+   "finished_at": "2026-10-17T00:03:59.874Z"
+  },
+  {
+   "step_id": 1250,
+   "step_name": "figure_plan",
+   "status": "done",
+   "detail": {
+    "jobs": [],
+    "prompt": "P5-figure-checker",
+    "findings": [],
+    "prompt_version": "v2"
+   },
+   "finished_at": "2026-10-17T00:03:59.922Z"
+  },
+  {
+   "step_id": 1251,
+   "step_name": "citation_plan",
+   "status": "done",
+   "detail": {
+    "jobs": [],
+    "prompt": "P6-citation-checker",
+    "batches": [],
+    "findings": [],
+    "prompt_version": "v1"
+   },
+   "finished_at": "2026-10-17T00:03:59.986Z"
+  }
+ ]
+}
