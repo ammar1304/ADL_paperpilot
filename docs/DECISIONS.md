@@ -459,7 +459,7 @@ The container registries were not reachable from the development sandbox, so the
 
 ## D39. A form in n8n as the user interface, with a result page written by code
 
-- **Decision:** `05-form` uses n8n's Form Trigger (`/form/paperpilot`): pick novelty or audit, type the idea, upload a PDF or paste a link. An uploaded PDF goes to `POST /uploads` and is kept under its SHA-256; the run refers to it as `draft_pdf_upload`. The form then calls the same webhook as every other client (`/webhook/paperpilot`), and a Form Ending node shows a page that `POST /form/result` builds from the stored run.
+- **Decision:** `05-form` uses n8n's Form Trigger (`/form/paperpilot-form`): pick novelty or audit, type the idea, upload a PDF or paste a link. An uploaded PDF goes to `POST /uploads` and is kept under its SHA-256; the run refers to it as `draft_pdf_upload`. The form then calls the same webhook as every other client (`/webhook/paperpilot`), and a Form Ending node shows a page that `POST /form/result` builds from the stored run.
 - **Why:**
   - The form is a client of the system, not a second path through it: validation, run tracking, the error workflow and both branches are the ones already tested.
   - n8n holds the browser on a waiting page until the Form Ending node runs, so a 10-minute audit needs no polling code of ours.

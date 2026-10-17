@@ -433,7 +433,7 @@ Branch `feat/m3-parser-spike`. Decision D31: Docling (CPU) instead of MinerU.
 
 ## Interface: the form (2026-10-17)
 
-- [x] `05-form` (D39): Form Trigger at `/form/paperpilot` → upload the PDF if there is one (`POST /uploads`) → the existing webhook → `POST /form/result` → Form Ending page. Branch `feat/form-ui`, 220 tests.
+- [x] `05-form` (D39): Form Trigger at `/form/paperpilot-form` → upload the PDF if there is one (`POST /uploads`) → the existing webhook → `POST /form/result` → Form Ending page. Branch `feat/form-ui`, 220 tests.
 - [x] Audits accept `draft_pdf_upload` (the file's SHA-256) instead of a URL; tested end to end with the parser stand-in and private URLs refused, so only the upload path could work.
 - [x] Result page from code: novelty (summary, facets, closest work with facet labels, agent rounds, coverage, the LLM summary labelled unverified) and audit (contradictions first, partial-audit notice, numbers, figures, citations with evidence); rendered from the stored CRAG audit and a novelty run, desktop and phone width.
 - [ ] Team PC: submit one idea and one PDF through the browser.

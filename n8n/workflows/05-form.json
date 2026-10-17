@@ -58,7 +58,7 @@
         },
         "responseMode": "onReceived",
         "options": {
-          "path": "paperpilot",
+          "path": "paperpilot-form",
           "buttonLabel": "Run PaperPilot",
           "appendAttribution": false
         }
@@ -197,7 +197,7 @@
         "url": "={{ $env.PP_TOOLS_URL }}/form/result",
         "sendBody": true,
         "specifyBody": "json",
-        "jsonBody": "={{ JSON.stringify({ status_code: $json.statusCode, body: $json.body, form_url: '/form/paperpilot' }) }}",
+        "jsonBody": "={{ JSON.stringify({ status_code: $json.statusCode, body: $json.body, form_url: '/form/paperpilot-form' }) }}",
         "options": {
           "timeout": 20000
         }
