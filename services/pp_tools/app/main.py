@@ -28,12 +28,15 @@ from .audit.steps import (
     AuditError,
     audit_result,
     claim_prompts,
+    citation_checks,
     claims as audit_claims,
     figure_checks,
+    next_citation_batch,
     next_claim_batch,
     next_figure_check,
     number_check,
     record_llm_error,
+    save_citation_check,
     save_claims,
     save_figure_check,
 )
@@ -602,6 +605,42 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @app.get("/audit/{run_id}/claims")
     async def audit_get_claims(run_id: UUID) -> Any:
         return await run_in_threadpool(_audit_errors, audit_claims, db, run_id)
+
+    def _papers_library():
+        """The library papers from corpus/manifest.csv, for the citation check; None if unreadable."""
+        from .audit.citations import Library, LibraryPaper
+
+        try:
+            rows = read_manifest(settings.manifest_path)
+        except (ManifestError, OSError):
+            return None
+        return Library(LibraryPaper(r.paper_id, r.arxiv_id, r.title, r.fulltext) for r in rows)
+
+    @app.post("/audit/{run_id}/citations/next")
+    async def audit_next_citations(run_id: UUID) -> Any:
+        return await run_in_threadpool(_audit_errors, next_citation_batch, db, library, papers, run_id, _papers_library(),
+                                       retriever, reranker)
+
+    @app.post("/audit/{run_id}/citation-checks")
+    async def audit_save_citation_check(run_id: UUID, body: dict[str, Any]) -> Any:
+        if not isinstance(body.get("batch"), int):
+            raise HTTPException(status_code=422, detail="batch (integer) is required")
+        return await run_in_threadpool(_audit_errors, save_citation_check, db, run_id, body["batch"], body.get("output"),
+                                       body.get("output_text"), body.get("usage"))
+
+    @app.post("/audit/{run_id}/citation-checks/error")
+    async def audit_citation_error(run_id: UUID, body: dict[str, Any]) -> Any:
+        if not isinstance(body.get("batch"), int):
+            raise HTTPException(status_code=422, detail="batch (integer) is required")
+        status, retry = _num(body, "status"), _num(body, "retry_after")
+        return await run_in_threadpool(
+            _audit_errors, record_llm_error, db, run_id, body["batch"], str(body.get("error", "")),
+            int(status) if status is not None else None, retry, body.get("model") or None, None, "citations",
+        )
+
+    @app.get("/audit/{run_id}/citation-checks")
+    async def audit_get_citation_checks(run_id: UUID) -> Any:
+        return await run_in_threadpool(_audit_errors, citation_checks, db, run_id)
 
     @app.post("/audit/{run_id}/figures/next")
     async def audit_next_figure(run_id: UUID) -> Any:

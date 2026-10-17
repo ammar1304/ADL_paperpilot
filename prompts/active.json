@@ -3,5 +3,6 @@
   "P2-search-planner": "v2",
   "P3-novelty-judge": "v2",
   "P4-claim-extractor": "v1",
-  "P5-figure-checker": "v2"
+  "P5-figure-checker": "v2",
+  "P6-citation-checker": "v1"
 }

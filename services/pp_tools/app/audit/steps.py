@@ -8,6 +8,7 @@ from uuid import UUID
 
 from ..db import Database
 from ..prompts import PromptLibrary
+from . import citations as cit
 from . import figures as fig
 from .claims import CLAIMS_FALLBACK_MODELS, CLAIMS_MODEL, as_dicts, batches, claims_request, candidate_sentences, objects_block, sentences_block, validate
 from .numbers import check_claims
@@ -15,6 +16,7 @@ from .store import PaperStore
 
 EXTRACTOR = "P4-claim-extractor"
 FIGURE_CHECKER = "P5-figure-checker"
+CITATION_CHECKER = "P6-citation-checker"
 # Groq's free tier refuses a single request above 8,000 tokens per minute, and it
 # counts the input plus the output budget (max tokens). With 1,800 tokens of
 # sentences every request came to 8,069-8,213 (team PC, 2026-10-16). Our token
@@ -349,6 +351,127 @@ def figure_checks(db: Database, run_id: UUID) -> dict[str, Any] | None:
             "figures_read": {latest[b]["figure"]: latest[b]["description"] for b in sorted(latest)}, "checks": checks}
 
 
+# ---- step 6: citations, checked against the cited paper in the library (D37) -------------------
+
+
+def citation_plan(db: Database, library: PromptLibrary, papers: PaperStore, run_id: UUID, papers_library: cit.Library | None,
+                  retriever: Any, reranker: Any, strategy: str = "structured") -> dict[str, Any]:
+    """Resolve every citation, retrieve the cited paper's passages for each claim, batch the pairs.
+
+    Retrieval happens once, here, and is stored: the judge loop and the report then
+    show the same passages, and a retried call does not search again.
+    """
+    paper = papers.paper(parsed_digest(db, run_id))
+    extracted = claims(db, run_id)["claims"]
+    prompt = library.load(CITATION_CHECKER)
+    if papers_library is None:
+        detail = {"prompt": CITATION_CHECKER, "prompt_version": prompt.version, "jobs": [], "findings": [], "batches": [],
+                  "error": "the library manifest (corpus/manifest.csv) could not be read"}
+        db.add_step(run_id, "citation_plan", "done", detail)
+        return {"jobs": 0, "error": detail["error"]}
+    jobs, findings = cit.citation_jobs(extracted, paper.get("references") or [], papers_library)
+    for job in jobs:
+        query = cit.query_for(extracted[job["claim"]])
+        job["query"] = query
+        try:
+            hits = retriever.chunks(query, strategy, cit.RETRIEVE_K, {"paper_id": job["paper_id"]}) if query else []
+            scores = reranker.scores(query, [h.text[:1500] for h in hits]) if (reranker is not None and hits) else [h.score for h in hits]
+        except Exception as exc:  # embedder, vector store or reranker down: the pair is judged on nothing
+            job["passages"], job["retrieval_error"] = [], f"{type(exc).__name__}: {str(exc)[:200]}"
+            continue
+        ranked = sorted(zip(scores, hits), key=lambda t: -t[0])[: cit.PASSAGES]
+        job["passages"] = [{"id": f"E{k}", "chunk_id": h.chunk_id, "chunk_type": h.chunk_type, "section": h.section,
+                            "score": round(float(sc), 4), "text": cit.best_window(h.text, query, cit.PASSAGE_CHARS)}
+                           for k, (sc, h) in enumerate(ranked, 1)]
+    detail = {"prompt": CITATION_CHECKER, "prompt_version": prompt.version, "jobs": jobs, "findings": findings,
+              "batches": cit.batches(jobs, extracted)}
+    db.add_step(run_id, "citation_plan", "done", detail)
+    return {"jobs": len(jobs), "findings": len(findings), "batches": len(detail["batches"])}
+
+
+def _citation_plan(db: Database, run_id: UUID) -> dict[str, Any]:
+    steps = db.get_steps(run_id, "citation_plan")
+    if not steps:
+        raise AuditError("citation checks were not planned for this run")
+    return steps[-1]["detail"]
+
+
+def next_citation_batch(db: Database, library: PromptLibrary, papers: PaperStore, run_id: UUID, papers_library: cit.Library | None,
+                        retriever: Any, reranker: Any, now: float | None = None) -> dict[str, Any]:
+    """The next batch of claim-passage pairs for P6, how long to wait first, or {"done": true}.
+    Same loop and models as the claims (gpt-oss-20b, then 120b on the daily limit)."""
+    now = time.time() if now is None else now
+    if not db.get_steps(run_id, "citation_plan"):
+        citation_plan(db, library, papers, run_id, papers_library, retriever, reranker)
+    plan = _citation_plan(db, run_id)
+    state = _loop_state(db, run_id, "citations", len(plan["batches"]), (CLAIMS_MODEL, *CLAIMS_FALLBACK_MODELS), now)
+    if state["done"]:
+        return {"done": True, "batches": len(plan["batches"]), "finished": state["finished"],
+                **({"stopped": state["stopped"]} if state.get("stopped") else {})}
+    i = state["batch"]
+    extracted = claims(db, run_id)["claims"]
+    jobs = plan["jobs"]
+    block = "\n\n".join(cit.pair_block(k, extracted[jobs[j]["claim"]], jobs[j]) for k, j in enumerate(plan["batches"][i], 1))
+    rendered = library.load(CITATION_CHECKER, plan["prompt_version"]).render({"pairs_block": block})
+    return {"done": False, "batch": i, "batches": len(plan["batches"]), "pairs": len(plan["batches"][i]),
+            "attempt": state["attempt"], "model": state["model"], "wait_s": max(PACE_S, round(state["wait"]) + 1),
+            "version": rendered.version, "request": cit.citation_request(rendered.system, rendered.user, state["model"])}
+
+
+def save_citation_check(db: Database, run_id: UUID, batch: int, output: Any = None, output_text: str | None = None,
+                        usage: dict[str, Any] | None = None) -> dict[str, Any]:
+    plan = _citation_plan(db, run_id)
+    if not 0 <= batch < len(plan["batches"]):
+        raise AuditError(f"citation batch {batch} does not exist (0..{len(plan['batches']) - 1})")
+    try:
+        checks = cit.validate(output if output is not None else (output_text or ""), plan["batches"][batch], plan["jobs"])
+    except ValueError as exc:
+        db.add_step(run_id, "citations_batch", "failed", {"batch": batch, "error": str(exc)[:500], "output_text": (output_text or "")[:2000]})
+        raise AuditError(f"the model's output is not usable: {exc}") from exc
+    db.add_step(run_id, "citations_batch", "done", {"batch": batch, "checks": checks, "usage": usage})
+    counts: dict[str, int] = {}
+    for c in checks:
+        counts[c["verdict"]] = counts.get(c["verdict"], 0) + 1
+    return {"batch": batch, **counts}
+
+
+def citation_checks(db: Database, run_id: UUID) -> dict[str, Any] | None:
+    """Every citation: what it resolved to, the passages retrieved, and the verdict."""
+    if not db.get_steps(run_id, "citation_plan"):
+        return None
+    plan = _citation_plan(db, run_id)
+    extracted = claims(db, run_id)["claims"]
+    latest: dict[int, dict[str, Any]] = {}
+    for st in db.get_steps(run_id, "citations_batch"):
+        if st["status"] == "done":
+            latest[st["detail"]["batch"]] = st["detail"]
+    checks = []
+    for b in sorted(latest):
+        for c in latest[b]["checks"]:
+            job = plan["jobs"][c["job"]]
+            claim = extracted[job["claim"]]
+            quoted = [p for p in job.get("passages") or [] if p["id"] in c["evidence"]]
+            checks.append({"verdict": c["verdict"], "reason": c["reason"], "marker": job["marker"], "cited_paper": job["paper_id"],
+                           "cited_title": job["title"], "fulltext": job["fulltext"], "sentence_id": claim.get("sentence_id"),
+                           "text": claim.get("claim"), "evidence": [{"chunk_id": p["chunk_id"], "text": p["text"]} for p in quoted]})
+    for f in plan["findings"]:
+        claim = extracted[f["claim"]]
+        checks.append({"verdict": f["verdict"], "reason": f.get("detail") or "", "marker": f["marker"], "cited_paper": None,
+                       "reference": f.get("reference"), "sentence_id": claim.get("sentence_id"), "text": claim.get("claim"), "evidence": []})
+    summary: dict[str, Any] = {"citations": len(plan["jobs"]) + len(plan["findings"]), "in_library": len(plan["jobs"]),
+                               "batches": len(plan["batches"]), "batches_done": len(latest)}
+    for v in (*cit.VERDICTS, "not_answered", "not_in_library", "unresolved_reference"):
+        summary[v] = sum(1 for c in checks if c["verdict"] == v)
+    summary["retrieval_errors"] = sum(1 for j in plan["jobs"] if j.get("retrieval_error"))
+    errors = [st["detail"] for st in db.get_steps(run_id, "citations_llm_error")]
+    summary["llm_errors"] = len(errors)
+    summary["rate_limited"] = sum(1 for e in errors if e.get("rate_limited"))
+    summary["stopped"] = next((st["detail"]["reason"] for st in db.get_steps(run_id, "citations_stopped")), None)
+    if plan.get("error"):
+        summary["error"] = plan["error"]
+    return {"summary": summary, "prompt_version": plan["prompt_version"], "checks": checks}
+
+
 def audit_result(db: Database, papers: PaperStore, run_id: UUID) -> dict[str, Any]:
     """The audit result so far (milestone 3 builds it up step by step): the parsed paper and its claims."""
     parse = [s for s in db.get_steps(run_id, "parse") if s["status"] == "done"]
@@ -358,7 +481,8 @@ def audit_result(db: Database, papers: PaperStore, run_id: UUID) -> dict[str, An
     extracted = claims(db, run_id)
     numbers = [st["detail"] for st in db.get_steps(run_id, "number_check")]
     figures = figure_checks(db, run_id)
-    implemented = "parse+claims" + ("+numbers" if numbers else "") + ("+figures" if figures else "")  # citations: step 6
+    citations = citation_checks(db, run_id)
+    implemented = "parse+claims" + ("+numbers" if numbers else "") + ("+figures" if figures else "") + ("+citations" if citations else "")
     return {
         "branch": "audit",
         "implemented": implemented,
@@ -369,7 +493,9 @@ def audit_result(db: Database, papers: PaperStore, run_id: UUID) -> dict[str, An
         "claims_dropped": len(extracted["dropped"]),
         "number_checks": numbers[-1] if numbers else None,
         "figure_checks": figures,
+        "citation_checks": citations,
         "coverage": {k: extracted[k] for k in ("total_sentences", "candidate_sentences", "batches", "batches_done", "batches_skipped", "llm_errors",
                                                    "rate_limited", "models", "stopped", "by_type")},
-        "prompt_versions": {EXTRACTOR: extracted["prompt_version"]} | ({FIGURE_CHECKER: figures["prompt_version"]} if figures else {}),
+        "prompt_versions": {EXTRACTOR: extracted["prompt_version"]} | ({FIGURE_CHECKER: figures["prompt_version"]} if figures else {})
+                           | ({CITATION_CHECKER: citations["prompt_version"]} if citations else {}),
     }

@@ -16,7 +16,7 @@ This folder is a graded deliverable (20% of the grade).
 
 | [P5-figure-checker](P5-figure-checker/v2.md) | v2 (v1 kept) | Audit, multimodal: checks the claims about a figure against the figure image (supported, contradicted, not shown), after describing what the figure shows | qwen/qwen3.8-27b (Groq vision, `reasoning_effort: low`, hidden reasoning, request settings chosen by E4, D36), **no fallback** | Image-as-evidence rule (the caption identifies, it does not prove), read-before-judge, explicit "not shown", tolerance for approximate plot reading, numbered claims, JSON output; code groups claims per figure and validates | 30-audit "Check figure" |
 
-The citation-check prompt comes with step 6 of milestone 3.
+| [P6-citation-checker](P6-citation-checker/v1.md) | v1 | Audit, RAG: judges whether passages retrieved from the cited library paper support what the draft attributes to it | gpt-oss-20b (Groq API, `reasoning_effort: low`, strict JSON schema), gpt-oss-120b on the daily limit, **no Gemini** | Retrieval-grounded judging, absence is "not found" never "contradicted", weakest-part rule, evidence ids required, JSON output; code resolves the citation, retrieves and reranks the passages, and validates | 30-audit "Check citations" |
 
 ## How the prompts are protected
 
