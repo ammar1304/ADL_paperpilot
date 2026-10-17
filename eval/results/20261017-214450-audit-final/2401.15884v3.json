@@ -1,0 +1,3422 @@
+{
+ "url": "https://arxiv.org/pdf/2401.15884v3",
+ "run_id": "32e0ec36-701b-4a64-b0a4-8cc92bd86898",
+ "result": {
+  "paper": {
+   "items": 10,
+   "pages": 16,
+   "title": "Corrective Retrieval Augmented Generation",
+   "sha256": "975aa1fd3c1b603126e93ff99d6504858b61301bf1d34c9df88ebe53a0b026cb",
+   "tables": [
+    "table:1",
+    "table:2",
+    "table:3",
+    "table:4",
+    "table:5",
+    "table:6",
+    "table:11"
+   ],
+   "figures": [
+    "figure:1",
+    "figure:2",
+    "figure:3"
+   ],
+   "numbered": 10,
+   "references": 43
+  },
+  "branch": "audit",
+  "claims": [
+   {
+    "type": "figure",
+    "cites": [
+     "Zhang et al., 2023b"
+    ],
+    "claim": "Figure 1 shows that a low-quality retriever is prone to introducing a substantial amount of irrelevant information, impeding the models from acquiring accurate knowledge and potentially misleading them, resulting in issues such as hallucinations.",
+    "values": [],
+    "sentence": "As Figure 1 shows that a low-quality retriever is prone to introducing a substantial amount of irrelevant information, impeding the models from acquiring accurate knowledge and potentially misleading them, resulting in issues such as hallucinations (Zhang et al., 2023b).",
+    "refers_to": [
+     "figure:1"
+    ],
+    "comparison": null,
+    "sentence_id": "b:10/s:4",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Figure 2 shows an overview of CRAG at inference.",
+    "values": [],
+    "sentence": "Figure 2 and Algorithm 1 present an overview of CRAG at inference, which designs corrective strategies to improve the robustness of generation.",
+    "refers_to": [
+     "figure:2"
+    ],
+    "comparison": null,
+    "sentence_id": "b:24/s:0",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Table 1 presents the results on four datasets.",
+    "values": [],
+    "sentence": "Table 1 presents the results on four datasets.",
+    "refers_to": [
+     "table:1"
+    ],
+    "comparison": null,
+    "sentence_id": "b:52/s:0",
+    "unknown_refs": []
+   },
+   {
+    "type": "comparison",
+    "cites": [],
+    "claim": "CRAG outperforms RAG on PopQA accuracy by 7.0%.",
+    "values": [
+     {
+      "role": "difference",
+      "value": "7.0%",
+      "metric": "accuracy",
+      "system": "CRAG",
+      "dataset": "PopQA",
+      "setting": "SelfRAG-LLaMA27b"
+     }
+    ],
+    "sentence": "Specifically, as shown in table 1, CRAG outperformed RAG by margins of 7.0% accuracy on PopQA, 14.9% FactScore on Biography, 36.6% accuracy on PubHealth, and 15.4% accuracy on Arc-Challenge when based on SelfRAG-LLaMA27b , as well as by margins of 4.4% accuracy on PopQA, 2.8% FactScore on Biography, and 10.3% on Arc-Challenge when based on LLaMA2hf-7b .",
+    "refers_to": [
+     "table:1"
+    ],
+    "comparison": {
+     "kind": "absolute",
+     "system": "CRAG",
+     "baseline": "RAG",
+     "direction": "better",
+     "difference": "7.0%"
+    },
+    "sentence_id": "b:53/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "comparison",
+    "cites": [],
+    "claim": "CRAG outperforms RAG on Biography FactScore by 14.9%.",
+    "values": [
+     {
+      "role": "difference",
+      "value": "14.9%",
+      "metric": "FactScore",
+      "system": "CRAG",
+      "dataset": "Biography",
+      "setting": "SelfRAG-LLaMA27b"
+     }
+    ],
+    "sentence": "Specifically, as shown in table 1, CRAG outperformed RAG by margins of 7.0% accuracy on PopQA, 14.9% FactScore on Biography, 36.6% accuracy on PubHealth, and 15.4% accuracy on Arc-Challenge when based on SelfRAG-LLaMA27b , as well as by margins of 4.4% accuracy on PopQA, 2.8% FactScore on Biography, and 10.3% on Arc-Challenge when based on LLaMA2hf-7b .",
+    "refers_to": [
+     "table:1"
+    ],
+    "comparison": {
+     "kind": "absolute",
+     "system": "CRAG",
+     "baseline": "RAG",
+     "direction": "better",
+     "difference": "14.9%"
+    },
+    "sentence_id": "b:53/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "comparison",
+    "cites": [],
+    "claim": "CRAG outperforms RAG on PubHealth accuracy by 36.6%.",
+    "values": [
+     {
+      "role": "difference",
+      "value": "36.6%",
+      "metric": "accuracy",
+      "system": "CRAG",
+      "dataset": "PubHealth",
+      "setting": "SelfRAG-LLaMA27b"
+     }
+    ],
+    "sentence": "Specifically, as shown in table 1, CRAG outperformed RAG by margins of 7.0% accuracy on PopQA, 14.9% FactScore on Biography, 36.6% accuracy on PubHealth, and 15.4% accuracy on Arc-Challenge when based on SelfRAG-LLaMA27b , as well as by margins of 4.4% accuracy on PopQA, 2.8% FactScore on Biography, and 10.3% on Arc-Challenge when based on LLaMA2hf-7b .",
+    "refers_to": [
+     "table:1"
+    ],
+    "comparison": {
+     "kind": "absolute",
+     "system": "CRAG",
+     "baseline": "RAG",
+     "direction": "better",
+     "difference": "36.6%"
+    },
+    "sentence_id": "b:53/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "comparison",
+    "cites": [],
+    "claim": "CRAG outperforms RAG on Arc-Challenge accuracy by 15.4%.",
+    "values": [
+     {
+      "role": "difference",
+      "value": "15.4%",
+      "metric": "accuracy",
+      "system": "CRAG",
+      "dataset": "Arc-Challenge",
+      "setting": "SelfRAG-LLaMA27b"
+     }
+    ],
+    "sentence": "Specifically, as shown in table 1, CRAG outperformed RAG by margins of 7.0% accuracy on PopQA, 14.9% FactScore on Biography, 36.6% accuracy on PubHealth, and 15.4% accuracy on Arc-Challenge when based on SelfRAG-LLaMA27b , as well as by margins of 4.4% accuracy on PopQA, 2.8% FactScore on Biography, and 10.3% on Arc-Challenge when based on LLaMA2hf-7b .",
+    "refers_to": [
+     "table:1"
+    ],
+    "comparison": {
+     "kind": "absolute",
+     "system": "CRAG",
+     "baseline": "RAG",
+     "direction": "better",
+     "difference": "15.4%"
+    },
+    "sentence_id": "b:53/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "comparison",
+    "cites": [],
+    "claim": "CRAG outperforms RAG on PopQA accuracy by 4.4%.",
+    "values": [
+     {
+      "role": "difference",
+      "value": "4.4%",
+      "metric": "accuracy",
+      "system": "CRAG",
+      "dataset": "PopQA",
+      "setting": "LLaMA2hf-7b"
+     }
+    ],
+    "sentence": "Specifically, as shown in table 1, CRAG outperformed RAG by margins of 7.0% accuracy on PopQA, 14.9% FactScore on Biography, 36.6% accuracy on PubHealth, and 15.4% accuracy on Arc-Challenge when based on SelfRAG-LLaMA27b , as well as by margins of 4.4% accuracy on PopQA, 2.8% FactScore on Biography, and 10.3% on Arc-Challenge when based on LLaMA2hf-7b .",
+    "refers_to": [
+     "table:1"
+    ],
+    "comparison": {
+     "kind": "absolute",
+     "system": "CRAG",
+     "baseline": "RAG",
+     "direction": "better",
+     "difference": "4.4%"
+    },
+    "sentence_id": "b:53/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "comparison",
+    "cites": [],
+    "claim": "CRAG outperforms RAG on Biography FactScore by 2.8%.",
+    "values": [
+     {
+      "role": "difference",
+      "value": "2.8%",
+      "metric": "FactScore",
+      "system": "CRAG",
+      "dataset": "Biography",
+      "setting": "LLaMA2hf-7b"
+     }
+    ],
+    "sentence": "Specifically, as shown in table 1, CRAG outperformed RAG by margins of 7.0% accuracy on PopQA, 14.9% FactScore on Biography, 36.6% accuracy on PubHealth, and 15.4% accuracy on Arc-Challenge when based on SelfRAG-LLaMA27b , as well as by margins of 4.4% accuracy on PopQA, 2.8% FactScore on Biography, and 10.3% on Arc-Challenge when based on LLaMA2hf-7b .",
+    "refers_to": [
+     "table:1"
+    ],
+    "comparison": {
+     "kind": "absolute",
+     "system": "CRAG",
+     "baseline": "RAG",
+     "direction": "better",
+     "difference": "2.8%"
+    },
+    "sentence_id": "b:53/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "comparison",
+    "cites": [],
+    "claim": "CRAG outperforms RAG on Arc-Challenge by 10.3%.",
+    "values": [
+     {
+      "role": "difference",
+      "value": "10.3%",
+      "metric": "accuracy",
+      "system": "CRAG",
+      "dataset": "Arc-Challenge",
+      "setting": "LLaMA2hf-7b"
+     }
+    ],
+    "sentence": "Specifically, as shown in table 1, CRAG outperformed RAG by margins of 7.0% accuracy on PopQA, 14.9% FactScore on Biography, 36.6% accuracy on PubHealth, and 15.4% accuracy on Arc-Challenge when based on SelfRAG-LLaMA27b , as well as by margins of 4.4% accuracy on PopQA, 2.8% FactScore on Biography, and 10.3% on Arc-Challenge when based on LLaMA2hf-7b .",
+    "refers_to": [
+     "table:1"
+    ],
+    "comparison": {
+     "kind": "absolute",
+     "system": "CRAG",
+     "baseline": "RAG",
+     "direction": "better",
+     "difference": "10.3%"
+    },
+    "sentence_id": "b:53/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "comparison",
+    "cites": [],
+    "claim": "Self-CRAG outperforms Self-RAG on PopQA accuracy by 20.0%.",
+    "values": [
+     {
+      "role": "difference",
+      "value": "20.0%",
+      "metric": "accuracy",
+      "system": "Self-CRAG",
+      "dataset": "PopQA",
+      "setting": "LLaMA2-hf-7b"
+     }
+    ],
+    "sentence": "Compared with the current state-of-theart Self-RAG, Self-CRAG outperformed it by margins of 20.0% accuracy on PopQA, 36.9% FactScore on Biography, and 4.0% accuracy on Arc-Challenge when based on LLaMA2-hf-7b , as well as by margins of 6.9% accuracy on PopQA, 5.0% FactScore on Biography, and 2.4% accuracy on PubHealth, when based on SelfRAG-LLaMA27b .",
+    "refers_to": [],
+    "comparison": {
+     "kind": "absolute",
+     "system": "Self-CRAG",
+     "baseline": "Self-RAG",
+     "direction": "better",
+     "difference": "20.0%"
+    },
+    "sentence_id": "b:53/s:2",
+    "unknown_refs": []
+   },
+   {
+    "type": "comparison",
+    "cites": [],
+    "claim": "Self-CRAG outperforms Self-RAG on Biography FactScore by 36.9%.",
+    "values": [
+     {
+      "role": "difference",
+      "value": "36.9%",
+      "metric": "FactScore",
+      "system": "Self-CRAG",
+      "dataset": "Biography",
+      "setting": "LLaMA2-hf-7b"
+     }
+    ],
+    "sentence": "Compared with the current state-of-theart Self-RAG, Self-CRAG outperformed it by margins of 20.0% accuracy on PopQA, 36.9% FactScore on Biography, and 4.0% accuracy on Arc-Challenge when based on LLaMA2-hf-7b , as well as by margins of 6.9% accuracy on PopQA, 5.0% FactScore on Biography, and 2.4% accuracy on PubHealth, when based on SelfRAG-LLaMA27b .",
+    "refers_to": [],
+    "comparison": {
+     "kind": "absolute",
+     "system": "Self-CRAG",
+     "baseline": "Self-RAG",
+     "direction": "better",
+     "difference": "36.9%"
+    },
+    "sentence_id": "b:53/s:2",
+    "unknown_refs": []
+   },
+   {
+    "type": "comparison",
+    "cites": [],
+    "claim": "Self-CRAG outperforms Self-RAG on Arc-Challenge accuracy by 4.0%.",
+    "values": [
+     {
+      "role": "difference",
+      "value": "4.0%",
+      "metric": "accuracy",
+      "system": "Self-CRAG",
+      "dataset": "Arc-Challenge",
+      "setting": "LLaMA2-hf-7b"
+     }
+    ],
+    "sentence": "Compared with the current state-of-theart Self-RAG, Self-CRAG outperformed it by margins of 20.0% accuracy on PopQA, 36.9% FactScore on Biography, and 4.0% accuracy on Arc-Challenge when based on LLaMA2-hf-7b , as well as by margins of 6.9% accuracy on PopQA, 5.0% FactScore on Biography, and 2.4% accuracy on PubHealth, when based on SelfRAG-LLaMA27b .",
+    "refers_to": [],
+    "comparison": {
+     "kind": "absolute",
+     "system": "Self-CRAG",
+     "baseline": "Self-RAG",
+     "direction": "better",
+     "difference": "4.0%"
+    },
+    "sentence_id": "b:53/s:2",
+    "unknown_refs": []
+   },
+   {
+    "type": "comparison",
+    "cites": [],
+    "claim": "Self-CRAG outperforms Self-RAG on PopQA accuracy by 6.9%.",
+    "values": [
+     {
+      "role": "difference",
+      "value": "6.9%",
+      "metric": "accuracy",
+      "system": "Self-CRAG",
+      "dataset": "PopQA",
+      "setting": "SelfRAG-LLaMA27b"
+     }
+    ],
+    "sentence": "Compared with the current state-of-theart Self-RAG, Self-CRAG outperformed it by margins of 20.0% accuracy on PopQA, 36.9% FactScore on Biography, and 4.0% accuracy on Arc-Challenge when based on LLaMA2-hf-7b , as well as by margins of 6.9% accuracy on PopQA, 5.0% FactScore on Biography, and 2.4% accuracy on PubHealth, when based on SelfRAG-LLaMA27b .",
+    "refers_to": [],
+    "comparison": {
+     "kind": "absolute",
+     "system": "Self-CRAG",
+     "baseline": "Self-RAG",
+     "direction": "better",
+     "difference": "6.9%"
+    },
+    "sentence_id": "b:53/s:2",
+    "unknown_refs": []
+   },
+   {
+    "type": "comparison",
+    "cites": [],
+    "claim": "Self-CRAG outperforms Self-RAG on Biography FactScore by 5.0%.",
+    "values": [
+     {
+      "role": "difference",
+      "value": "5.0%",
+      "metric": "FactScore",
+      "system": "Self-CRAG",
+      "dataset": "Biography",
+      "setting": "SelfRAG-LLaMA27b"
+     }
+    ],
+    "sentence": "Compared with the current state-of-theart Self-RAG, Self-CRAG outperformed it by margins of 20.0% accuracy on PopQA, 36.9% FactScore on Biography, and 4.0% accuracy on Arc-Challenge when based on LLaMA2-hf-7b , as well as by margins of 6.9% accuracy on PopQA, 5.0% FactScore on Biography, and 2.4% accuracy on PubHealth, when based on SelfRAG-LLaMA27b .",
+    "refers_to": [],
+    "comparison": {
+     "kind": "absolute",
+     "system": "Self-CRAG",
+     "baseline": "Self-RAG",
+     "direction": "better",
+     "difference": "5.0%"
+    },
+    "sentence_id": "b:53/s:2",
+    "unknown_refs": []
+   },
+   {
+    "type": "comparison",
+    "cites": [],
+    "claim": "Self-CRAG outperforms Self-RAG on PubHealth accuracy by 2.4%.",
+    "values": [
+     {
+      "role": "difference",
+      "value": "2.4%",
+      "metric": "accuracy",
+      "system": "Self-CRAG",
+      "dataset": "PubHealth",
+      "setting": "SelfRAG-LLaMA27b"
+     }
+    ],
+    "sentence": "Compared with the current state-of-theart Self-RAG, Self-CRAG outperformed it by margins of 20.0% accuracy on PopQA, 36.9% FactScore on Biography, and 4.0% accuracy on Arc-Challenge when based on LLaMA2-hf-7b , as well as by margins of 6.9% accuracy on PopQA, 5.0% FactScore on Biography, and 2.4% accuracy on PubHealth, when based on SelfRAG-LLaMA27b .",
+    "refers_to": [],
+    "comparison": {
+     "kind": "absolute",
+     "system": "Self-CRAG",
+     "baseline": "Self-RAG",
+     "direction": "better",
+     "difference": "2.4%"
+    },
+    "sentence_id": "b:53/s:2",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Table 2 shows ablation tests for removing each single action in the proposed method.",
+    "values": [],
+    "sentence": "To further verify the effectiveness of triggered actions designed in the retrieval evaluator, ablation tests for removing each single action in the proposed method were conducted as shown in Table 2.",
+    "refers_to": [
+     "table:2"
+    ],
+    "comparison": null,
+    "sentence_id": "b:57/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Table 3 shows how performance changes when a key knowledge utilization operation is ablated.",
+    "values": [],
+    "sentence": "Table 3 illustrated how the performance changed if a key knowledge utilization operation was ablated.",
+    "refers_to": [
+     "table:3"
+    ],
+    "comparison": null,
+    "sentence_id": "b:58/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Table 4 shows the assessment accuracy on PopQA for our retrieval evaluator and ChatGPT.",
+    "values": [],
+    "sentence": "The assessment accuracy on the PopQA dataset of our retrieval evaluator and the commercial LLM ChatGPT on the document retrieval results was shown in Table 4.",
+    "refers_to": [
+     "table:4"
+    ],
+    "comparison": null,
+    "sentence_id": "b:60/s:2",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Figure 3 shows the performance change of Self-RAG and SelfCRAG on PopQA.",
+    "values": [],
+    "sentence": "Figure 3 demonstrated the performance change of Self-RAG and SelfCRAG on the PopQA dataset.",
+    "refers_to": [
+     "figure:3"
+    ],
+    "comparison": null,
+    "sentence_id": "b:62/s:2",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Table 6 shows computational overhead assessment of RAG, CRAG, Self-CRAG, and Self-RAG in FLOPs per token on GPUs and execution time per instance.",
+    "values": [],
+    "sentence": "Meanwhile, it is also crucial to confirm that the primary improvements in our method stem from the self-correction mech- Table 6: computational overhead assessment of RAG, CRAG, Self-CRAG, and Self-RAG about FLOPs per token on GPUs and executing time per instance.",
+    "refers_to": [
+     "table:6"
+    ],
+    "comparison": null,
+    "sentence_id": "b:64/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Table 5 shows that supplementing RAG or Self-RAG with web search knowledge improves performance in most cases, except Self-RAG with web using the original LLaMA2 model.",
+    "values": [],
+    "sentence": "The results in Table 5 show that consistently supplementing RAG or Self-RAG with web search knowledge can improve the performance in most cases (except Self-RAG w. web using the original LLaMA2 model), though the improvement remains limited.",
+    "refers_to": [
+     "table:5"
+    ],
+    "comparison": null,
+    "sentence_id": "b:65/s:2",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Table 6 shows predicted FLOPs per token on GPUs using FLOPs prediction formulas.",
+    "values": [],
+    "sentence": "FLOPs prediction formulas in Narayanan et al. (2021) were employed, with the results presented in Table 6 which shows the predicted FLOPs per token on GPUs.",
+    "refers_to": [
+     "table:6"
+    ],
+    "comparison": null,
+    "sentence_id": "b:67/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Table 6 shows average execution time per instance on PopQA in practice.",
+    "values": [],
+    "sentence": "Additionally, we conducted the experiments on PopQA to assess the average execution time per instance in practice, as detailed in Table 6.",
+    "refers_to": [
+     "table:6"
+    ],
+    "comparison": null,
+    "sentence_id": "b:67/s:4",
+    "unknown_refs": []
+   }
+  ],
+  "run_id": "32e0ec36-701b-4a64-b0a4-8cc92bd86898",
+  "coverage": {
+   "models": [
+    "openai/gpt-oss-20b"
+   ],
+   "batches": 6,
+   "by_type": {
+    "figure": 11,
+    "comparison": 13
+   },
+   "stopped": null,
+   "llm_errors": 0,
+   "batches_done": 6,
+   "rate_limited": 0,
+   "batches_skipped": [],
+   "total_sentences": 304,
+   "candidate_sentences": 79
+  },
+  "implemented": "parse+claims+numbers+figures+citations",
+  "figure_checks": {
+   "checks": [
+    {
+     "text": "Figure 1 shows that a low-quality retriever is prone to introducing a substantial amount of irrelevant information, impeding the models from acquiring accurate knowledge and potentially misleading them, resulting in issues such as hallucinations.",
+     "claim": 0,
+     "figure": "figure:1",
+     "verdict": "supported",
+     "evidence": "The figure shows a 'Retriever' box leading to 'Inaccurate Documents' (specifically about a Batman film) for the question 'Who was the screenwriter for Death of a Batman?'. The 'Generator' then outputs 'Hamm.' with a red 'X' next to it, indicating an incorrect or misleading answer. This visualizes the concept of a low-quality retriever introducing irrelevant information that misleads the model.",
+     "read_values": [
+      "Inaccurate Documents",
+      "Hamm.",
+      "X"
+     ],
+     "sentence_id": "b:10/s:4"
+    },
+    {
+     "text": "Figure 2 shows an overview of CRAG at inference.",
+     "claim": 1,
+     "figure": "figure:2",
+     "verdict": "supported",
+     "evidence": "The figure is a diagram illustrating a process with stages labeled 'Retrieval', 'Knowledge Correction', and 'Generation'. It shows a flow from an input query to a generator, which aligns with an overview of a system at inference.",
+     "read_values": [
+      "Retrieval",
+      "Knowledge Correction",
+      "Generation"
+     ],
+     "sentence_id": "b:24/s:0"
+    },
+    {
+     "text": "Figure 3 shows the performance change of Self-RAG and SelfCRAG on PopQA.",
+     "claim": 19,
+     "figure": "figure:3",
+     "verdict": "supported",
+     "evidence": "The figure is a line plot with 'Accuracy of generation' on the y-axis and 'Accuracy of retrieval' on the x-axis. The legend identifies two series: 'Self-RAG' and 'Self-CRAG'. The caption confirms the dataset is PopQA.",
+     "read_values": [
+      "Self-RAG",
+      "Self-CRAG"
+     ],
+     "sentence_id": "b:62/s:2"
+    }
+   ],
+   "summary": {
+    "jobs": 3,
+    "checks": 3,
+    "figures": 3,
+    "skipped": [],
+    "stopped": null,
+    "jobs_done": 3,
+    "not_shown": 0,
+    "supported": 3,
+    "llm_errors": 2,
+    "contradicted": 0,
+    "not_answered": 0,
+    "rate_limited": 0,
+    "missing_figure": 0
+   },
+   "figures_read": {
+    "figure:1": "A diagram illustrating a Retrieval-Augmented Generation (RAG) process. It shows two examples. The left example shows a question about Henry Feilden's occupation, a 'Retriever' finding 'Accurate Documents' (about him being a politician), and a 'Generator' correctly answering 'Politician.' with a green checkmark. The right example shows a question about the screenwriter of 'Death of a Batman', a 'Retriever' finding 'Inaccurate Documents' (about a 1989 Batman film and a character named Hamm), a",
+    "figure:2": "This is a flowchart diagram illustrating a multi-stage process. The diagram is divided into three main horizontal sections labeled 'Retrieval', 'Knowledge Correction', and 'Generation'. The 'Retrieval' section shows an input query 'x' and 'Retrieved Documents' d1, d2. The 'Knowledge Correction' section features a 'Retrieval Evaluator' that branches into three paths: 'Correct', 'Ambiguous', and 'Incorrect'. The 'Correct' path leads to a 'Knowledge Refinement' block, while the 'Ambiguous' and ",
+    "figure:3": "Line plot showing 'Accuracy of generation' (y-axis, 20-70) versus 'Accuracy of retrieval' (x-axis, 10-69.8). Two lines are plotted: 'Self-RAG' (green stars) and 'Self-CRAG' (grey diamonds). A horizontal dashed blue line labeled 'no retrieval' is shown at approximately 28."
+   },
+   "prompt_version": "v2"
+  },
+  "number_checks": {
+   "checks": [
+    {
+     "cell": {
+      "row": "CRAG",
+      "text": "59.8",
+      "table": "table:1",
+      "column": "PopQA (Accuracy)",
+      "section": "SelfRAG-LLaMA2-7b"
+     },
+     "kind": "difference",
+     "note": "59.8 vs 52.8: absolute difference",
+     "claim": 3,
+     "pairs": 1,
+     "metric": "accuracy",
+     "system": "CRAG",
+     "claimed": "7.0%",
+     "dataset": "PopQA",
+     "setting": "SelfRAG-LLaMA27b",
+     "verdict": "supported",
+     "absolute": 7,
+     "baseline": "RAG",
+     "relative": 13.26,
+     "direction": "better",
+     "matched_as": "absolute",
+     "sentence_id": "b:53/s:1",
+     "baseline_cell": {
+      "row": "RAG",
+      "text": "52.8",
+      "table": "table:1",
+      "column": "PopQA (Accuracy)",
+      "section": "SelfRAG-LLaMA2-7b"
+     }
+    },
+    {
+     "cell": {
+      "row": "CRAG",
+      "text": "74.1",
+      "table": "table:1",
+      "column": "Bio (FactScore)",
+      "section": "SelfRAG-LLaMA2-7b"
+     },
+     "kind": "difference",
+     "note": "74.1 vs 59.2: absolute difference",
+     "claim": 4,
+     "pairs": 1,
+     "metric": "FactScore",
+     "system": "CRAG",
+     "claimed": "14.9%",
+     "dataset": "Biography",
+     "setting": "SelfRAG-LLaMA27b",
+     "verdict": "supported",
+     "absolute": 14.9,
+     "baseline": "RAG",
+     "relative": 25.17,
+     "direction": "better",
+     "matched_as": "absolute",
+     "sentence_id": "b:53/s:1",
+     "baseline_cell": {
+      "row": "RAG",
+      "text": "59.2",
+      "table": "table:1",
+      "column": "Bio (FactScore)",
+      "section": "SelfRAG-LLaMA2-7b"
+     }
+    },
+    {
+     "cell": {
+      "row": "CRAG",
+      "text": "75.6",
+      "table": "table:1",
+      "column": "Pub (Accuracy)",
+      "section": "SelfRAG-LLaMA2-7b"
+     },
+     "kind": "difference",
+     "note": "75.6 vs 39.0: absolute difference",
+     "claim": 5,
+     "pairs": 1,
+     "metric": "accuracy",
+     "system": "CRAG",
+     "claimed": "36.6%",
+     "dataset": "PubHealth",
+     "setting": "SelfRAG-LLaMA27b",
+     "verdict": "supported",
+     "absolute": 36.6,
+     "baseline": "RAG",
+     "relative": 93.85,
+     "direction": "better",
+     "matched_as": "absolute",
+     "sentence_id": "b:53/s:1",
+     "baseline_cell": {
+      "row": "RAG",
+      "text": "39.0",
+      "table": "table:1",
+      "column": "Pub (Accuracy)",
+      "section": "SelfRAG-LLaMA2-7b"
+     }
+    },
+    {
+     "cell": {
+      "row": "CRAG",
+      "text": "68.6",
+      "table": "table:1",
+      "column": "ARC (Accuracy)",
+      "section": "SelfRAG-LLaMA2-7b"
+     },
+     "kind": "difference",
+     "note": "68.6 vs 53.2: absolute difference",
+     "claim": 6,
+     "pairs": 1,
+     "metric": "accuracy",
+     "system": "CRAG",
+     "claimed": "15.4%",
+     "dataset": "Arc-Challenge",
+     "setting": "SelfRAG-LLaMA27b",
+     "verdict": "supported",
+     "absolute": 15.4,
+     "baseline": "RAG",
+     "relative": 28.95,
+     "direction": "better",
+     "matched_as": "absolute",
+     "sentence_id": "b:53/s:1",
+     "baseline_cell": {
+      "row": "RAG",
+      "text": "53.2",
+      "table": "table:1",
+      "column": "ARC (Accuracy)",
+      "section": "SelfRAG-LLaMA2-7b"
+     }
+    },
+    {
+     "cell": {
+      "row": "CRAG",
+      "text": "54.9",
+      "table": "table:1",
+      "column": "PopQA (Accuracy)",
+      "section": "LLaMA2-hf-7b"
+     },
+     "kind": "difference",
+     "note": "54.9 vs 50.5: absolute difference",
+     "claim": 7,
+     "pairs": 1,
+     "metric": "accuracy",
+     "system": "CRAG",
+     "claimed": "4.4%",
+     "dataset": "PopQA",
+     "setting": "LLaMA2hf-7b",
+     "verdict": "supported",
+     "absolute": 4.4,
+     "baseline": "RAG",
+     "relative": 8.71,
+     "direction": "better",
+     "matched_as": "absolute",
+     "sentence_id": "b:53/s:1",
+     "baseline_cell": {
+      "row": "RAG",
+      "text": "50.5",
+      "table": "table:1",
+      "column": "PopQA (Accuracy)",
+      "section": "LLaMA2-hf-7b"
+     }
+    },
+    {
+     "cell": {
+      "row": "CRAG",
+      "text": "47.7",
+      "table": "table:1",
+      "column": "Bio (FactScore)",
+      "section": "LLaMA2-hf-7b"
+     },
+     "kind": "difference",
+     "note": "47.7 vs 44.9: absolute difference",
+     "claim": 8,
+     "pairs": 1,
+     "metric": "FactScore",
+     "system": "CRAG",
+     "claimed": "2.8%",
+     "dataset": "Biography",
+     "setting": "LLaMA2hf-7b",
+     "verdict": "supported",
+     "absolute": 2.8,
+     "baseline": "RAG",
+     "relative": 6.24,
+     "direction": "better",
+     "matched_as": "absolute",
+     "sentence_id": "b:53/s:1",
+     "baseline_cell": {
+      "row": "RAG",
+      "text": "44.9",
+      "table": "table:1",
+      "column": "Bio (FactScore)",
+      "section": "LLaMA2-hf-7b"
+     }
+    },
+    {
+     "cell": {
+      "row": "CRAG",
+      "text": "53.7",
+      "table": "table:1",
+      "column": "ARC (Accuracy)",
+      "section": "LLaMA2-hf-7b"
+     },
+     "kind": "difference",
+     "note": "53.7 vs 43.4: absolute difference",
+     "claim": 9,
+     "pairs": 1,
+     "metric": "accuracy",
+     "system": "CRAG",
+     "claimed": "10.3%",
+     "dataset": "Arc-Challenge",
+     "setting": "LLaMA2hf-7b",
+     "verdict": "supported",
+     "absolute": 10.3,
+     "baseline": "RAG",
+     "relative": 23.73,
+     "direction": "better",
+     "matched_as": "absolute",
+     "sentence_id": "b:53/s:1",
+     "baseline_cell": {
+      "row": "RAG",
+      "text": "43.4",
+      "table": "table:1",
+      "column": "ARC (Accuracy)",
+      "section": "LLaMA2-hf-7b"
+     }
+    },
+    {
+     "cell": {
+      "row": "Self-CRAG",
+      "text": "49.0",
+      "table": "table:1",
+      "column": "PopQA (Accuracy)",
+      "section": "LLaMA2-hf-7b"
+     },
+     "kind": "difference",
+     "note": "49.0 vs 29.0: absolute difference",
+     "claim": 10,
+     "pairs": 1,
+     "metric": "accuracy",
+     "system": "Self-CRAG",
+     "claimed": "20.0%",
+     "dataset": "PopQA",
+     "setting": "LLaMA2-hf-7b",
+     "verdict": "supported",
+     "absolute": 20,
+     "baseline": "Self-RAG",
+     "relative": 68.97,
+     "direction": "better",
+     "matched_as": "absolute",
+     "sentence_id": "b:53/s:2",
+     "baseline_cell": {
+      "row": "Self-RAG*",
+      "text": "29.0",
+      "table": "table:1",
+      "column": "PopQA (Accuracy)",
+      "section": "LLaMA2-hf-7b"
+     }
+    },
+    {
+     "cell": {
+      "row": "Self-CRAG",
+      "text": "69.1",
+      "table": "table:1",
+      "column": "Bio (FactScore)",
+      "section": "LLaMA2-hf-7b"
+     },
+     "kind": "difference",
+     "note": "69.1 vs 32.2: absolute difference",
+     "claim": 11,
+     "pairs": 1,
+     "metric": "FactScore",
+     "system": "Self-CRAG",
+     "claimed": "36.9%",
+     "dataset": "Biography",
+     "setting": "LLaMA2-hf-7b",
+     "verdict": "supported",
+     "absolute": 36.9,
+     "baseline": "Self-RAG",
+     "relative": 114.6,
+     "direction": "better",
+     "matched_as": "absolute",
+     "sentence_id": "b:53/s:2",
+     "baseline_cell": {
+      "row": "Self-RAG*",
+      "text": "32.2",
+      "table": "table:1",
+      "column": "Bio (FactScore)",
+      "section": "LLaMA2-hf-7b"
+     }
+    },
+    {
+     "cell": {
+      "row": "Self-CRAG",
+      "text": "27.9",
+      "table": "table:1",
+      "column": "ARC (Accuracy)",
+      "section": "LLaMA2-hf-7b"
+     },
+     "kind": "difference",
+     "note": "27.9 vs 23.9: absolute difference",
+     "claim": 12,
+     "pairs": 1,
+     "metric": "accuracy",
+     "system": "Self-CRAG",
+     "claimed": "4.0%",
+     "dataset": "Arc-Challenge",
+     "setting": "LLaMA2-hf-7b",
+     "verdict": "supported",
+     "absolute": 4,
+     "baseline": "Self-RAG",
+     "relative": 16.74,
+     "direction": "better",
+     "matched_as": "absolute",
+     "sentence_id": "b:53/s:2",
+     "baseline_cell": {
+      "row": "Self-RAG*",
+      "text": "23.9",
+      "table": "table:1",
+      "column": "ARC (Accuracy)",
+      "section": "LLaMA2-hf-7b"
+     }
+    },
+    {
+     "cell": {
+      "row": "Self-CRAG",
+      "text": "61.8",
+      "table": "table:1",
+      "column": "PopQA (Accuracy)",
+      "section": "SelfRAG-LLaMA2-7b"
+     },
+     "kind": "difference",
+     "note": "61.8 vs 54.9: absolute difference",
+     "claim": 13,
+     "pairs": 1,
+     "metric": "accuracy",
+     "system": "Self-CRAG",
+     "claimed": "6.9%",
+     "dataset": "PopQA",
+     "setting": "SelfRAG-LLaMA27b",
+     "verdict": "supported",
+     "absolute": 6.9,
+     "baseline": "Self-RAG",
+     "relative": 12.57,
+     "direction": "better",
+     "matched_as": "absolute",
+     "sentence_id": "b:53/s:2",
+     "baseline_cell": {
+      "row": "Self-RAG",
+      "text": "54.9",
+      "table": "table:1",
+      "column": "PopQA (Accuracy)",
+      "section": "SelfRAG-LLaMA2-7b"
+     }
+    },
+    {
+     "cell": {
+      "row": "Self-CRAG",
+      "text": "86.2",
+      "table": "table:1",
+      "column": "Bio (FactScore)",
+      "section": "SelfRAG-LLaMA2-7b"
+     },
+     "kind": "difference",
+     "note": "86.2 vs 81.2: absolute difference",
+     "claim": 14,
+     "pairs": 1,
+     "metric": "FactScore",
+     "system": "Self-CRAG",
+     "claimed": "5.0%",
+     "dataset": "Biography",
+     "setting": "SelfRAG-LLaMA27b",
+     "verdict": "supported",
+     "absolute": 5,
+     "baseline": "Self-RAG",
+     "relative": 6.16,
+     "direction": "better",
+     "matched_as": "absolute",
+     "sentence_id": "b:53/s:2",
+     "baseline_cell": {
+      "row": "Self-RAG",
+      "text": "81.2",
+      "table": "table:1",
+      "column": "Bio (FactScore)",
+      "section": "SelfRAG-LLaMA2-7b"
+     }
+    },
+    {
+     "cell": {
+      "row": "Self-CRAG",
+      "text": "74.8",
+      "table": "table:1",
+      "column": "Pub (Accuracy)",
+      "section": "SelfRAG-LLaMA2-7b"
+     },
+     "kind": "difference",
+     "note": "74.8 vs 72.4: absolute difference",
+     "claim": 15,
+     "pairs": 1,
+     "metric": "accuracy",
+     "system": "Self-CRAG",
+     "claimed": "2.4%",
+     "dataset": "PubHealth",
+     "setting": "SelfRAG-LLaMA27b",
+     "verdict": "supported",
+     "absolute": 2.4,
+     "baseline": "Self-RAG",
+     "relative": 3.31,
+     "direction": "better",
+     "matched_as": "absolute",
+     "sentence_id": "b:53/s:2",
+     "baseline_cell": {
+      "row": "Self-RAG",
+      "text": "72.4",
+      "table": "table:1",
+      "column": "Pub (Accuracy)",
+      "section": "SelfRAG-LLaMA2-7b"
+     }
+    }
+   ],
+   "summary": {
+    "checks": 13,
+    "supported": 13,
+    "contradicted": 0,
+    "unverifiable": 0,
+    "cells_indexed": 153
+   }
+  },
+  "claims_dropped": 0,
+  "citation_checks": {
+   "checks": [
+    {
+     "text": "Figure 1 shows that a low-quality retriever is prone to introducing a substantial amount of irrelevant information, impeding the models from acquiring accurate knowledge and potentially misleading them, resulting in issues such as hallucinations.",
+     "marker": "Zhang et al., 2023b",
+     "reason": "",
+     "verdict": "not_in_library",
+     "evidence": [],
+     "reference": "Yue Zhang, Yafu Li, Leyang Cui, Deng Cai, Lemao Liu, Tingchen Fu, Xinting Huang, Enbo Zhao, Yu Zhang, Yulong Chen, Longyue Wang, Anh Tuan Luu, Wei Bi, Freda Shi, and Shuming Shi. 2023b. Siren's song in the AI ocean: A survey on hallucination in large language models. CoRR , abs/2309.01219.",
+     "cited_paper": null,
+     "sentence_id": "b:10/s:4"
+    }
+   ],
+   "summary": {
+    "batches": 0,
+    "stopped": null,
+    "citations": 1,
+    "not_found": 0,
+    "supported": 0,
+    "in_library": 0,
+    "llm_errors": 0,
+    "batches_done": 0,
+    "contradicted": 0,
+    "not_answered": 0,
+    "rate_limited": 0,
+    "not_in_library": 1,
+    "retrieval_errors": 0,
+    "unresolved_reference": 0
+   },
+   "prompt_version": "v1"
+  },
+  "prompt_versions": {
+   "P5-figure-checker": "v2",
+   "P4-claim-extractor": "v1",
+   "P6-citation-checker": "v1"
+  }
+ },
+ "steps": [
+  {
+   "step_id": 1252,
+   "step_name": "parse",
+   "status": "done",
+   "detail": {
+    "items": 10,
+    "pages": 16,
+    "title": "Corrective Retrieval Augmented Generation",
+    "blocks": 128,
+    "cached": true,
+    "sha256": "975aa1fd3c1b603126e93ff99d6504858b61301bf1d34c9df88ebe53a0b026cb",
+    "tables": [
+     {
+      "id": "table:1",
+      "page": 7,
+      "rows": 29,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:2",
+      "page": 8,
+      "rows": 9,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:3",
+      "page": 8,
+      "rows": 9,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:4",
+      "page": 9,
+      "rows": 5,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:5",
+      "page": 9,
+      "rows": 8,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:6",
+      "page": 10,
+      "rows": 5,
+      "caption_source": "pdf-text"
+     },
+     {
+      "id": "table:11",
+      "page": 16,
+      "rows": 9,
+      "caption_source": "docling"
+     }
+    ],
+    "figures": [
+     {
+      "id": "figure:1",
+      "page": 1,
+      "has_image": true,
+      "caption_source": "docling"
+     },
+     {
+      "id": "figure:2",
+      "page": 4,
+      "has_image": true,
+      "caption_source": "docling"
+     },
+     {
+      "id": "figure:3",
+      "page": 9,
+      "has_image": true,
+      "caption_source": "docling"
+     }
+    ],
+    "seconds": 1.0,
+    "numbered": 10,
+    "references": 43
+   },
+   "finished_at": "2026-10-17T21:44:52.040Z"
+  },
+  {
+   "step_id": 1253,
+   "step_name": "claim_prompts",
+   "status": "done",
+   "detail": {
+    "prompt": "P4-claim-extractor",
+    "batches": [
+     [
+      "b:7/s:0",
+      "b:7/s:1",
+      "b:10/s:0",
+      "b:10/s:1",
+      "b:10/s:2",
+      "b:10/s:3",
+      "b:10/s:4",
+      "b:10/s:5",
+      "b:11/s:5",
+      "b:12/s:0",
+      "b:12/s:1"
+     ],
+     [
+      "b:15/s:0",
+      "b:15/s:1",
+      "b:16/s:0",
+      "b:17/s:0",
+      "b:17/s:2",
+      "b:17/s:3",
+      "b:17/s:4",
+      "b:17/s:5",
+      "b:17/s:7",
+      "b:18/s:0",
+      "b:20/s:0",
+      "b:24/s:0",
+      "b:24/s:1",
+      "b:24/s:2",
+      "b:24/s:4"
+     ],
+     [
+      "b:24/s:6",
+      "b:27/s:1",
+      "b:27/s:2",
+      "b:27/s:3",
+      "b:27/s:5",
+      "b:27/s:6",
+      "b:27/s:11",
+      "b:27/s:14",
+      "b:33/s:3",
+      "b:34/s:4",
+      "b:38/s:4",
+      "b:40/s:3",
+      "b:40/s:7",
+      "b:44/s:0",
+      "b:44/s:2"
+     ],
+     [
+      "b:47/s:1",
+      "b:49/s:1",
+      "b:49/s:2",
+      "b:50/s:1",
+      "b:50/s:2",
+      "b:50/s:3",
+      "b:52/s:0",
+      "b:53/s:1",
+      "b:53/s:2",
+      "b:54/s:1",
+      "b:57/s:1"
+     ],
+     [
+      "b:58/s:1",
+      "b:60/s:2",
+      "b:62/s:2",
+      "b:64/s:1",
+      "b:65/s:2",
+      "b:67/s:1",
+      "b:67/s:4",
+      "b:72/s:0",
+      "b:82/s:0",
+      "b:83/s:0",
+      "b:92/s:0",
+      "b:111/s:0",
+      "b:111/s:2",
+      "b:112/s:0",
+      "b:112/s:1",
+      "b:113/s:0",
+      "b:114/s:0",
+      "b:116/s:2"
+     ],
+     [
+      "b:118/s:0",
+      "b:118/s:1",
+      "b:118/s:2",
+      "b:118/s:7",
+      "b:119/s:3",
+      "b:121/s:1",
+      "b:121/s:3",
+      "b:122/s:0",
+      "b:125/s:0"
+     ]
+    ],
+    "candidates": [
+     {
+      "id": "b:7/s:0",
+      "page": 1,
+      "text": "Large language models (LLMs) have attracted increasing attention and exhibited impressive abilities to understand instructions and generate fluent language texts (Brown et al., 2020; Ouyang et al., 2022; Touvron et al., 2023a).",
+      "block": "b:7",
+      "section": "1 Introduction",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:7/s:1",
+      "page": 1,
+      "text": "Nevertheless, LLMs inevitably manifest hallucinations (Ji et al., 2023) due to their struggle with factual errors (Mallen et al., 2023; Min et al., 2023) and inability to secure the accuracy of generated texts solely by the parametric knowledge they encapsulate (Zhang et al., 2023b; Muhlgay et al., 2023).",
+      "block": "b:7",
+      "section": "1 Introduction",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:10/s:0",
+      "page": 1,
+      "text": "Retrieved Documents Prior research has introduced the retrieval techniques to incorporate the knowledge relevant to input and augment generation, as exemplified by retrieval-augmented generation (RAG) (Lewis et al., 2020).",
+      "block": "b:10",
+      "section": "1 Introduction",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:10/s:1",
+      "page": 1,
+      "text": "In this framework, the input to models is augmented by prepending relevant documents that are retrieved from an external knowledge corpus (Guu et al., 2020).",
+      "block": "b:10",
+      "section": "1 Introduction",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:10/s:2",
+      "page": 1,
+      "text": "While RAG serves as a practicable complement to LLMs, its effectiveness is contingent upon the relevance and accuracy of the retrieved documents (Li et al., 2022; Tan et al., 2022).",
+      "block": "b:10",
+      "section": "1 Introduction",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:10/s:3",
+      "page": 1,
+      "text": "The heavy reliance of generation on the retrieved knowledge raises significant concerns about the model's behavior and performance in scenarios where retrieval may fail or return inaccurate results (Shi et al., 2023).",
+      "block": "b:10",
+      "section": "1 Introduction",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:10/s:4",
+      "page": 1,
+      "text": "As Figure 1 shows that a low-quality retriever is prone to introducing a substantial amount of irrelevant information, impeding the models from acquiring accurate knowledge and potentially misleading them, resulting in issues such as hallucinations (Zhang et al., 2023b).",
+      "block": "b:10",
+      "section": "1 Introduction",
+      "signals": [
+       "table_figure",
+       "citation"
+      ]
+     },
+     {
+      "id": "b:10/s:5",
+      "page": 1,
+      "text": "However, most conventional RAG approaches indiscriminately incorporate the retrieved documents, regardless of whether these documents are relevant or not (Rony et al., 2022).",
+      "block": "b:10",
+      "section": "1 Introduction",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:11/s:5",
+      "page": 2,
+      "text": "For the latter two actions, large-scale web searches (Piktus et al., 2021; Komeili et al., 2022) are integrated as a strategic extension, since retrieval from static and limited corpora can only return sub-optimal documents in terms of scope and diversity.",
+      "block": "b:11",
+      "section": "1 Introduction",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:12/s:0",
+      "page": 2,
+      "text": "CRAG is plug-and-play and experimentally implemented into RAG (Lewis et al., 2020) and Self-RAG (Asai et al., 2024) for demonstrating its adaptability to RAG-based approaches.",
+      "block": "b:12",
+      "section": "1 Introduction",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:12/s:1",
+      "page": 2,
+      "text": "Results on four datasets of PopQA (Mallen et al., 2023), Biography (Min et al., 2023), Pub Health (Zhang et al., 2023a), and Arc-Challenge (Bhakthavatsalam et al., 2021) show that CRAG can significantly improve the performance of standard RAG and state-of-theart Self-RAG, demonstrating its generalizability across both short- and long-form generation tasks.",
+      "block": "b:12",
+      "section": "1 Introduction",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:15/s:0",
+      "page": 2,
+      "text": "Hallucinations of LLMs Although LLMs have exhibited impressive abilities to understand instructions and generate fluent language texts (Bang et al., 2023; Qin et al., 2023; Zhong et al., 2023), one of the most severe issues that LLMs have still been struggling with is hallucinations.",
+      "block": "b:15",
+      "section": "2 Related Work",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:15/s:1",
+      "page": 2,
+      "text": "As many studies found (Tonmoy et al., 2024; Zhang et al., 2023b; Shuster et al., 2021), either outdated information or incorrect knowledge that is activated would seriously result in hallucinations.",
+      "block": "b:15",
+      "section": "2 Related Work",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:16/s:0",
+      "page": 2,
+      "text": "Retrieval-Augmented Generation RAG (Lewis et al., 2020; Guu et al., 2020) is regarded as a useful method to address the issues above, which enhances the input questions of generative LMs with retrieved documents.",
+      "block": "b:16",
+      "section": "2 Related Work",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:17/s:0",
+      "page": 3,
+      "text": "Advanced RAG Many advanced approaches have been developed from the original RAG in recent years (Zhang et al., 2024; Kim et al., 2024; Wang et al., 2024; Liu et al., 2024).",
+      "block": "b:17",
+      "section": "2 Related Work",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:17/s:2",
+      "page": 3,
+      "text": "SelfRAG (Asai et al., 2024) is proposed to selectively retrieve knowledge and introduce a critic model to decide whether to retrieve.",
+      "block": "b:17",
+      "section": "2 Related Work",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:17/s:3",
+      "page": 3,
+      "text": "Yoran et al. (2024) designed an NLI model to identify the irrelevant context and improve robustness.",
+      "block": "b:17",
+      "section": "2 Related Work",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:17/s:4",
+      "page": 3,
+      "text": "SAIL (Luo et al., 2023) is tuned on instructions to insert retrieved documents before instructions.",
+      "block": "b:17",
+      "section": "2 Related Work",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:17/s:5",
+      "page": 3,
+      "text": "While Toolformer (Schick et al., 2023) is pre-trained for calling APIs such as Wikipedia.",
+      "block": "b:17",
+      "section": "2 Related Work",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:17/s:7",
+      "page": 3,
+      "text": "Jiang et al. (2023) actively anticipate future content and decide when and what to retrieve in long-form generation.",
+      "block": "b:17",
+      "section": "2 Related Work",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:18/s:0",
+      "page": 3,
+      "text": "Compared with recent studies (Schick et al., 2023; Luo et al., 2023; Asai et al., 2024) that are the most relevant to our work, a main difference should be highlighted.",
+      "block": "b:18",
+      "section": "2 Related Work",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:20/s:0",
+      "page": 3,
+      "text": "Following previous work (Lewis et al., 2020; Asai et al., 2024), given input X and an accessible corpus containing a large amount of knowledge documents C = { d 1 , ..., d N } , the system is expected to generate the output Y .",
+      "block": "b:20",
+      "section": "3 Task Formulation",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:24/s:0",
+      "page": 3,
+      "text": "Figure 2 and Algorithm 1 present an overview of CRAG at inference, which designs corrective strategies to improve the robustness of generation.",
+      "block": "b:24",
+      "section": "4.1 Overview of Model Inference",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:24/s:1",
+      "page": 3,
+      "text": "Given an input query and the retrieved documents from any retriever, a lightweight retrieval evaluator is constructed to estimate the relevance score of retrieved documents to the input query (Section 4.2).",
+      "block": "b:24",
+      "section": "4.1 Overview of Model Inference",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:24/s:2",
+      "page": 3,
+      "text": "The relevance score is quantified into a total of three confidence degrees and then triggered the corresponding actions: { Correct , Incorrect , Ambiguous } (Section 4.3).",
+      "block": "b:24",
+      "section": "4.1 Overview of Model Inference",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:24/s:4",
+      "page": 3,
+      "text": "This refinement operation involves knowledge decomposition, filter, and recomposition (Section 4.4).",
+      "block": "b:24",
+      "section": "4.1 Overview of Model Inference",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:24/s:6",
+      "page": 3,
+      "text": "Instead, web searches are resorted to and regarded as complementary knowledge sources for corrections (Section 4.5).",
+      "block": "b:24",
+      "section": "4.1 Overview of Model Inference",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:27/s:1",
+      "page": 4,
+      "text": "Specifically, T5-large (Raffel et al., 2020) is adopted for initializing the retrieval evaluator and fine-tuned.",
+      "block": "b:27",
+      "section": "4.2 Retrieval Evaluator",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:27/s:2",
+      "page": 4,
+      "text": "Its parameter size is much smaller than the most current LLMs (Touvron et al., 2023a,b; Chowdhery et al., 2023; Anil et al., 2023; Brown et al., 2020; Ouyang et al., 2022; OpenAI, 2023).",
+      "block": "b:27",
+      "section": "4.2 Retrieval Evaluator",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:27/s:3",
+      "page": 4,
+      "text": "To ensure all experimental results were comparable with Self-RAG (Asai et al., 2024), the same retrieval results through Contriever (Izacard et al., 2022) provided by Self-RAG were also adopted in our experiments.",
+      "block": "b:27",
+      "section": "4.2 Retrieval Evaluator",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:27/s:5",
+      "page": 4,
+      "text": "For example, PopQA (Mallen et al., 2023) provides the golden subject wiki title from wikipedia for each question.",
+      "block": "b:27",
+      "section": "4.2 Retrieval Evaluator",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:27/s:6",
+      "page": 4,
+      "text": "We can use that to track a not 100% relevant but rather high-quality passage.",
+      "block": "b:27",
+      "section": "4.2 Retrieval Evaluator",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:27/s:11",
+      "page": 4,
+      "text": "We also tried to prompt ChatGPT to identify the retrieval relevance for comparison, but it underperforms as elaborated in Section 5.5.",
+      "block": "b:27",
+      "section": "4.2 Retrieval Evaluator",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:27/s:14",
+      "page": 4,
+      "text": "Compared with the critic model of Self-RAG (Asai et al., 2024) that instructiontuned LLaMA-2 (7B), the evaluator designed in CRAG demonstrates the advantages of being quite lightweight (0.77B).",
+      "block": "b:27",
+      "section": "4.2 Retrieval Evaluator",
+      "signals": [
+       "number",
+       "citation"
+      ]
+     },
+     {
+      "id": "b:33/s:3",
+      "page": 5,
+      "text": "To extract the most critical knowledge strips within this document, a knowledge refinement method is further designed which will be elaborated in Section 4.4.",
+      "block": "b:33",
+      "section": "4.3 Action Trigger",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:34/s:4",
+      "page": 5,
+      "text": "Here, web search is introduced to search from the Internet as elaborated in Section 4.5.",
+      "block": "b:34",
+      "section": "4.3 Action Trigger",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:38/s:4",
+      "page": 6,
+      "text": "Then, the retrieval evaluator finetuned in Section 4.2 is employed to calculate the relevance score of each knowledge strip.",
+      "block": "b:38",
+      "section": "4.4 Knowledge Refinement",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:40/s:3",
+      "page": 6,
+      "text": "Since retrieval from static and limited corpora can only return sub-optimal documents in terms of scope and diversity, large-scale web searches (Piktus et al., 2021; Komeili et al., 2022) are integrated as a strategic extension of RAG.",
+      "block": "b:40",
+      "section": "4.5 Web Search",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:40/s:7",
+      "page": 6,
+      "text": "Moreover, we utilize the URL links to navigate web pages, transcribe their content, and employ the same knowledge refinement method as Section 4.4 to derive the relevant web knowledge, namely external knowledge.",
+      "block": "b:40",
+      "section": "4.5 Web Search",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:44/s:0",
+      "page": 6,
+      "text": "CRAG was evaluated on four datasets, including PopQA (Mallen et al., 2023) ( short -form generation), Biography (Min et al., 2023) ( long -form generation), PubHealth (Zhang et al., 2023a) ( trueor-false question), and Arc-Challenge (Bhakthavatsalam et al., 2021) ( multiple-choice question).",
+      "block": "b:44",
+      "section": "5.1 Tasks, Datasets and Metrics",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:44/s:2",
+      "page": 6,
+      "text": "FactScore (Min et al., 2023) was adopted as the evaluation metric for Biography.",
+      "block": "b:44",
+      "section": "5.1 Tasks, Datasets and Metrics",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:47/s:1",
+      "page": 6,
+      "text": "Weevaluated some public LLMs, LLaMA2-7B,13B (Touvron et al., 2023b), instruction-tuned models, Alpaca-7B,13B (Dubois et al., 2023), and CoVE 65 B (Dhuliawala et al., 2024) which introduces iterative engineering to improve the factuality of LLM generations.",
+      "block": "b:47",
+      "section": "5.2 Baselines",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:49/s:1",
+      "page": 7,
+      "text": "We evaluated the standard RAG (Lewis et al., 2020) where an LM generates output given the query prepended with the top retrieved documents using the same retriever as in our system.",
+      "block": "b:49",
+      "section": "5.2 Baselines",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:49/s:2",
+      "page": 7,
+      "text": "Here we adopted several public instruction-tuned LLMs, including LLaMA27B, 13B (Touvron et al., 2023b), Alpaca-7B,13B (Dubois et al., 2023), as well as LLaMA2-7B instruction-tuned in Self-RAG (Asai et al., 2024).",
+      "block": "b:49",
+      "section": "5.2 Baselines",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:50/s:1",
+      "page": 7,
+      "text": "(1) SAIL (Luo et al., 2023) that instruction-tuned an LM on the Alpaca instructiontuning data with top retrieved documents inserted before instructions.",
+      "block": "b:50",
+      "section": "5.2 Baselines",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:50/s:2",
+      "page": 7,
+      "text": "(2) Self-RAG (Asai et al., 2024) that tuned the LLaMA2 on the instructiontuning data comtaining several sets of reflection tokens which were labeled by GPT-4 (OpenAI, 2023).",
+      "block": "b:50",
+      "section": "5.2 Baselines",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:50/s:3",
+      "page": 7,
+      "text": "(3) Following Asai et al. (2024), we also cited the results of retrieval-augmented baselines trained with private data: Ret-ChatGPT and RetLLaMA-chat, which deploy the same augmentation technique above, as well as perplexity.ai, an InstructGPT-based production search system.",
+      "block": "b:50",
+      "section": "5.2 Baselines",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:52/s:0",
+      "page": 7,
+      "text": "Table 1 presents the results on four datasets.",
+      "block": "b:52",
+      "section": "5.3 Results",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:53/s:1",
+      "page": 8,
+      "text": "Specifically, as shown in table 1, CRAG outperformed RAG by margins of 7.0% accuracy on PopQA, 14.9% FactScore on Biography, 36.6% accuracy on PubHealth, and 15.4% accuracy on Arc-Challenge when based on SelfRAG-LLaMA27b , as well as by margins of 4.4% accuracy on PopQA, 2.8% FactScore on Biography, and 10.3% on Arc-Challenge when based on LLaMA2hf-7b .",
+      "block": "b:53",
+      "section": "5.3 Results",
+      "signals": [
+       "number",
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:53/s:2",
+      "page": 8,
+      "text": "Compared with the current state-of-theart Self-RAG, Self-CRAG outperformed it by margins of 20.0% accuracy on PopQA, 36.9% FactScore on Biography, and 4.0% accuracy on Arc-Challenge when based on LLaMA2-hf-7b , as well as by margins of 6.9% accuracy on PopQA, 5.0% FactScore on Biography, and 2.4% accuracy on PubHealth, when based on SelfRAG-LLaMA27b .",
+      "block": "b:53",
+      "section": "5.3 Results",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:54/s:1",
+      "page": 8,
+      "text": "In particular, these benchmarks reported in Table 1 respectively represent different practical scenarios including short-form entity generation (PopQA), long-form generation (Biography), and closed-set tasks (PubHealth, ArcChallenge).",
+      "block": "b:54",
+      "section": "5.3 Results",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:57/s:1",
+      "page": 8,
+      "text": "To further verify the effectiveness of triggered actions designed in the retrieval evaluator, ablation tests for removing each single action in the proposed method were conducted as shown in Table 2.",
+      "block": "b:57",
+      "section": "5.4 Ablation Study",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:58/s:1",
+      "page": 9,
+      "text": "Table 3 illustrated how the performance changed if a key knowledge utilization operation was ablated.",
+      "block": "b:58",
+      "section": "5.4 Ablation Study",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:60/s:2",
+      "page": 9,
+      "text": "The assessment accuracy on the PopQA dataset of our retrieval evaluator and the commercial LLM ChatGPT on the document retrieval results was shown in Table 4.",
+      "block": "b:60",
+      "section": "5.5 Accuracy of the Retrieval Evaluator",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:62/s:2",
+      "page": 9,
+      "text": "Figure 3 demonstrated the performance change of Self-RAG and SelfCRAG on the PopQA dataset.",
+      "block": "b:62",
+      "section": "5.6 Robustness to Retrieval Performance",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:64/s:1",
+      "page": 9,
+      "text": "Meanwhile, it is also crucial to confirm that the primary improvements in our method stem from the self-correction mech- Table 6: computational overhead assessment of RAG, CRAG, Self-CRAG, and Self-RAG about FLOPs per token on GPUs and executing time per instance.",
+      "block": "b:64",
+      "section": "5.7 Consistent Supplementation of Web Search Knowledge",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:65/s:2",
+      "page": 10,
+      "text": "The results in Table 5 show that consistently supplementing RAG or Self-RAG with web search knowledge can improve the performance in most cases (except Self-RAG w. web using the original LLaMA2 model), though the improvement remains limited.",
+      "block": "b:65",
+      "section": "5.7 Consistent Supplementation of Web Search Knowledge",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:67/s:1",
+      "page": 10,
+      "text": "FLOPs prediction formulas in Narayanan et al. (2021) were employed, with the results presented in Table 6 which shows the predicted FLOPs per token on GPUs.",
+      "block": "b:67",
+      "section": "5.8 Computational Overhead Analysis",
+      "signals": [
+       "table_figure",
+       "citation"
+      ]
+     },
+     {
+      "id": "b:67/s:4",
+      "page": 10,
+      "text": "Additionally, we conducted the experiments on PopQA to assess the average execution time per instance in practice, as detailed in Table 6.",
+      "block": "b:67",
+      "section": "5.8 Computational Overhead Analysis",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:72/s:0",
+      "page": 14,
+      "text": "The prompts for generating knowledge keywords as web search queries were illustrated in Table 7.",
+      "block": "b:72",
+      "section": "A Task Prompts",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:82/s:0",
+      "page": 14,
+      "text": "The prompts to instruct ChatGPT as the evaluator were illustrated in Table 8, Table 9, and Table 10 respectively.",
+      "block": "b:82",
+      "section": "A Task Prompts",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:83/s:0",
+      "page": 14,
+      "text": "Table 8: The direct prompt to GPT-3.5 Turbo as the evaluator.",
+      "block": "b:83",
+      "section": "A Task Prompts",
+      "signals": [
+       "number",
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:92/s:0",
+      "page": 14,
+      "text": "Table 10: The few-shot prompt to GPT-3.5 Turbo as the evaluator.",
+      "block": "b:92",
+      "section": "A Task Prompts",
+      "signals": [
+       "number",
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:111/s:0",
+      "page": 15,
+      "text": "PopQA (Mallen et al., 2023) is a short -form generation task.",
+      "block": "b:111",
+      "section": "B.1 Tasks, Datasets and Metrics",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:111/s:2",
+      "page": 15,
+      "text": "In our experiments, we exactly followed the setting in Self-RAG (Asai et al., 2024) which evaluated methods on a long-tail subset consisting of 1,399 rare entity queries whose monthly Wikipedia page views are less than 100.",
+      "block": "b:111",
+      "section": "B.1 Tasks, Datasets and Metrics",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:112/s:0",
+      "page": 15,
+      "text": "Biography (Min et al., 2023) is a long -form generation task that is tasked to generate a detailed biography about a certain entity.",
+      "block": "b:112",
+      "section": "B.1 Tasks, Datasets and Metrics",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:112/s:1",
+      "page": 15,
+      "text": "Following previous work, FactScore (Min et al., 2023) was adopted to evaluate the generated biographies.",
+      "block": "b:112",
+      "section": "B.1 Tasks, Datasets and Metrics",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:113/s:0",
+      "page": 15,
+      "text": "PubHealth (Zhang et al., 2023a) is a task in health care domain consisting of true-or-false questions.",
+      "block": "b:113",
+      "section": "B.1 Tasks, Datasets and Metrics",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:114/s:0",
+      "page": 15,
+      "text": "Arc-Challenge (Bhakthavatsalam et al., 2021) is a multiple-choice question task about some daily commonsense science phenomena.",
+      "block": "b:114",
+      "section": "B.1 Tasks, Datasets and Metrics",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:116/s:2",
+      "page": 15,
+      "text": "For T5-large (0.77B) fine-tuning, it takes much less compared with LLaMA-2.",
+      "block": "b:116",
+      "section": "B.2 Experiments compute Resources",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:118/s:0",
+      "page": 15,
+      "text": "Retrieval Evaluator: We fine-tuned the retrieval evaluator based on the lightweight T5-large (Raffel et al., 2020) pre-trained model.",
+      "block": "b:118",
+      "section": "B.3 Implementation Details",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:118/s:1",
+      "page": 15,
+      "text": "The dataset we used is the version provided by Self-RAG (Asai et al., 2024).",
+      "block": "b:118",
+      "section": "B.3 Implementation Details",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:118/s:2",
+      "page": 15,
+      "text": "Specifically, the original PopQA dataset consists of 14k samples, 1,399 of which were used for testing following Self-RAG (Asai et al., 2024), and the remaining were used for fine-tuning to avoid information leakage.",
+      "block": "b:118",
+      "section": "B.3 Implementation Details",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:118/s:7",
+      "page": 15,
+      "text": "Specifically, they were set as (0.59, -0.99) in PopQA, (0.5, -0.91) in PubQA and ArcChallenge, as well as (0.95, -0.91) in Biography.",
+      "block": "b:118",
+      "section": "B.3 Implementation Details",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:119/s:3",
+      "page": 15,
+      "text": "We directly adopted the evaluator again for knowledge strips filtering, and the top-k is set to 5, filter threshold as -0.5.",
+      "block": "b:119",
+      "section": "B.3 Implementation Details",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:121/s:1",
+      "page": 15,
+      "text": "To be consistent with baselines for comparison, we adopted LLaMA2 (Touvron et al., 2023b) for the generation.",
+      "block": "b:121",
+      "section": "B.3 Implementation Details",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:121/s:3",
+      "page": 15,
+      "text": "Since Self-RAG (Asai et al., 2024) fine-tuned LLaMA2 and reached a new state-of-the-art performance on several tasks, we further utilized the launched model, SelfRAG-LLaMA2-7b , as a new generator to be consistent with their work and study the specific improvement of our method.",
+      "block": "b:121",
+      "section": "B.3 Implementation Details",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:122/s:0",
+      "page": 15,
+      "text": "Self-CRAG: To demonstrate that our plug-andplay approach can be utilized in other concurrent studies, we specifically designed to insert our CRAG into the Self-RAG (Asai et al., 2024) framework and named it Self-CRAG.",
+      "block": "b:122",
+      "section": "B.3 Implementation Details",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:125/s:0",
+      "page": 16,
+      "text": "Ablation Study: The following results in Table 11 demonstrate the ablation study by triggering one action only for all instances.",
+      "block": "b:125",
+      "section": "B.4 More Detailed Results",
+      "signals": [
+       "table_figure"
+      ]
+     }
+    ],
+    "prompt_version": "v1",
+    "total_sentences": 304
+   },
+   "finished_at": "2026-10-17T21:45:01.156Z"
+  },
+  {
+   "step_id": 1254,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 0,
+    "model": "openai/gpt-oss-20b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-17T21:45:01.171Z"
+  },
+  {
+   "step_id": 1255,
+   "step_name": "claims_batch",
+   "status": "done",
+   "detail": {
+    "kept": [
+     {
+      "type": "figure",
+      "cites": [
+       "Zhang et al., 2023b"
+      ],
+      "claim": "Figure 1 shows that a low-quality retriever is prone to introducing a substantial amount of irrelevant information, impeding the models from acquiring accurate knowledge and potentially misleading them, resulting in issues such as hallucinations.",
+      "values": [],
+      "sentence": "As Figure 1 shows that a low-quality retriever is prone to introducing a substantial amount of irrelevant information, impeding the models from acquiring accurate knowledge and potentially misleading them, resulting in issues such as hallucinations (Zhang et al., 2023b).",
+      "refers_to": [
+       "figure:1"
+      ],
+      "comparison": null,
+      "sentence_id": "b:10/s:4",
+      "unknown_refs": []
+     }
+    ],
+    "batch": 0,
+    "usage": {
+     "queue_time": 0.207797568,
+     "total_time": 0.494140851,
+     "prompt_time": 0.128579394,
+     "total_tokens": 2708,
+     "prompt_tokens": 2351,
+     "completion_time": 0.365561457,
+     "completion_tokens": 357,
+     "completion_tokens_details": {
+      "reasoning_tokens": 255
+     }
+    },
+    "dropped": []
+   },
+   "finished_at": "2026-10-17T21:45:32.229Z"
+  },
+  {
+   "step_id": 1256,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 1,
+    "model": "openai/gpt-oss-20b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-17T21:45:32.249Z"
+  },
+  {
+   "step_id": 1257,
+   "step_name": "claims_batch",
+   "status": "done",
+   "detail": {
+    "kept": [
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Figure 2 shows an overview of CRAG at inference.",
+      "values": [],
+      "sentence": "Figure 2 and Algorithm 1 present an overview of CRAG at inference, which designs corrective strategies to improve the robustness of generation.",
+      "refers_to": [
+       "figure:2"
+      ],
+      "comparison": null,
+      "sentence_id": "b:24/s:0",
+      "unknown_refs": []
+     }
+    ],
+    "batch": 1,
+    "usage": {
+     "queue_time": 0.017532098,
+     "total_time": 0.304039891,
+     "prompt_time": 0.120790823,
+     "total_tokens": 2592,
+     "prompt_tokens": 2415,
+     "completion_time": 0.183249068,
+     "completion_tokens": 177,
+     "completion_tokens_details": {
+      "reasoning_tokens": 115
+     }
+    },
+    "dropped": []
+   },
+   "finished_at": "2026-10-17T21:46:02.895Z"
+  },
+  {
+   "step_id": 1258,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 2,
+    "model": "openai/gpt-oss-20b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-17T21:46:02.914Z"
+  },
+  {
+   "step_id": 1259,
+   "step_name": "claims_batch",
+   "status": "done",
+   "detail": {
+    "kept": [],
+    "batch": 2,
+    "usage": {
+     "queue_time": 0.016997605,
+     "total_time": 0.203113067,
+     "prompt_time": 0.143182696,
+     "total_tokens": 2517,
+     "prompt_tokens": 2459,
+     "completion_time": 0.059930371,
+     "completion_tokens": 58,
+     "completion_tokens_details": {
+      "reasoning_tokens": 44
+     }
+    },
+    "dropped": []
+   },
+   "finished_at": "2026-10-17T21:46:33.414Z"
+  },
+  {
+   "step_id": 1260,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 3,
+    "model": "openai/gpt-oss-20b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-17T21:46:33.432Z"
+  },
+  {
+   "step_id": 1261,
+   "step_name": "claims_batch",
+   "status": "done",
+   "detail": {
+    "kept": [
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Table 1 presents the results on four datasets.",
+      "values": [],
+      "sentence": "Table 1 presents the results on four datasets.",
+      "refers_to": [
+       "table:1"
+      ],
+      "comparison": null,
+      "sentence_id": "b:52/s:0",
+      "unknown_refs": []
+     },
+     {
+      "type": "comparison",
+      "cites": [],
+      "claim": "CRAG outperforms RAG on PopQA accuracy by 7.0%.",
+      "values": [
+       {
+        "role": "difference",
+        "value": "7.0%",
+        "metric": "accuracy",
+        "system": "CRAG",
+        "dataset": "PopQA",
+        "setting": "SelfRAG-LLaMA27b"
+       }
+      ],
+      "sentence": "Specifically, as shown in table 1, CRAG outperformed RAG by margins of 7.0% accuracy on PopQA, 14.9% FactScore on Biography, 36.6% accuracy on PubHealth, and 15.4% accuracy on Arc-Challenge when based on SelfRAG-LLaMA27b , as well as by margins of 4.4% accuracy on PopQA, 2.8% FactScore on Biography, and 10.3% on Arc-Challenge when based on LLaMA2hf-7b .",
+      "refers_to": [
+       "table:1"
+      ],
+      "comparison": {
+       "kind": "absolute",
+       "system": "CRAG",
+       "baseline": "RAG",
+       "direction": "better",
+       "difference": "7.0%"
+      },
+      "sentence_id": "b:53/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "comparison",
+      "cites": [],
+      "claim": "CRAG outperforms RAG on Biography FactScore by 14.9%.",
+      "values": [
+       {
+        "role": "difference",
+        "value": "14.9%",
+        "metric": "FactScore",
+        "system": "CRAG",
+        "dataset": "Biography",
+        "setting": "SelfRAG-LLaMA27b"
+       }
+      ],
+      "sentence": "Specifically, as shown in table 1, CRAG outperformed RAG by margins of 7.0% accuracy on PopQA, 14.9% FactScore on Biography, 36.6% accuracy on PubHealth, and 15.4% accuracy on Arc-Challenge when based on SelfRAG-LLaMA27b , as well as by margins of 4.4% accuracy on PopQA, 2.8% FactScore on Biography, and 10.3% on Arc-Challenge when based on LLaMA2hf-7b .",
+      "refers_to": [
+       "table:1"
+      ],
+      "comparison": {
+       "kind": "absolute",
+       "system": "CRAG",
+       "baseline": "RAG",
+       "direction": "better",
+       "difference": "14.9%"
+      },
+      "sentence_id": "b:53/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "comparison",
+      "cites": [],
+      "claim": "CRAG outperforms RAG on PubHealth accuracy by 36.6%.",
+      "values": [
+       {
+        "role": "difference",
+        "value": "36.6%",
+        "metric": "accuracy",
+        "system": "CRAG",
+        "dataset": "PubHealth",
+        "setting": "SelfRAG-LLaMA27b"
+       }
+      ],
+      "sentence": "Specifically, as shown in table 1, CRAG outperformed RAG by margins of 7.0% accuracy on PopQA, 14.9% FactScore on Biography, 36.6% accuracy on PubHealth, and 15.4% accuracy on Arc-Challenge when based on SelfRAG-LLaMA27b , as well as by margins of 4.4% accuracy on PopQA, 2.8% FactScore on Biography, and 10.3% on Arc-Challenge when based on LLaMA2hf-7b .",
+      "refers_to": [
+       "table:1"
+      ],
+      "comparison": {
+       "kind": "absolute",
+       "system": "CRAG",
+       "baseline": "RAG",
+       "direction": "better",
+       "difference": "36.6%"
+      },
+      "sentence_id": "b:53/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "comparison",
+      "cites": [],
+      "claim": "CRAG outperforms RAG on Arc-Challenge accuracy by 15.4%.",
+      "values": [
+       {
+        "role": "difference",
+        "value": "15.4%",
+        "metric": "accuracy",
+        "system": "CRAG",
+        "dataset": "Arc-Challenge",
+        "setting": "SelfRAG-LLaMA27b"
+       }
+      ],
+      "sentence": "Specifically, as shown in table 1, CRAG outperformed RAG by margins of 7.0% accuracy on PopQA, 14.9% FactScore on Biography, 36.6% accuracy on PubHealth, and 15.4% accuracy on Arc-Challenge when based on SelfRAG-LLaMA27b , as well as by margins of 4.4% accuracy on PopQA, 2.8% FactScore on Biography, and 10.3% on Arc-Challenge when based on LLaMA2hf-7b .",
+      "refers_to": [
+       "table:1"
+      ],
+      "comparison": {
+       "kind": "absolute",
+       "system": "CRAG",
+       "baseline": "RAG",
+       "direction": "better",
+       "difference": "15.4%"
+      },
+      "sentence_id": "b:53/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "comparison",
+      "cites": [],
+      "claim": "CRAG outperforms RAG on PopQA accuracy by 4.4%.",
+      "values": [
+       {
+        "role": "difference",
+        "value": "4.4%",
+        "metric": "accuracy",
+        "system": "CRAG",
+        "dataset": "PopQA",
+        "setting": "LLaMA2hf-7b"
+       }
+      ],
+      "sentence": "Specifically, as shown in table 1, CRAG outperformed RAG by margins of 7.0% accuracy on PopQA, 14.9% FactScore on Biography, 36.6% accuracy on PubHealth, and 15.4% accuracy on Arc-Challenge when based on SelfRAG-LLaMA27b , as well as by margins of 4.4% accuracy on PopQA, 2.8% FactScore on Biography, and 10.3% on Arc-Challenge when based on LLaMA2hf-7b .",
+      "refers_to": [
+       "table:1"
+      ],
+      "comparison": {
+       "kind": "absolute",
+       "system": "CRAG",
+       "baseline": "RAG",
+       "direction": "better",
+       "difference": "4.4%"
+      },
+      "sentence_id": "b:53/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "comparison",
+      "cites": [],
+      "claim": "CRAG outperforms RAG on Biography FactScore by 2.8%.",
+      "values": [
+       {
+        "role": "difference",
+        "value": "2.8%",
+        "metric": "FactScore",
+        "system": "CRAG",
+        "dataset": "Biography",
+        "setting": "LLaMA2hf-7b"
+       }
+      ],
+      "sentence": "Specifically, as shown in table 1, CRAG outperformed RAG by margins of 7.0% accuracy on PopQA, 14.9% FactScore on Biography, 36.6% accuracy on PubHealth, and 15.4% accuracy on Arc-Challenge when based on SelfRAG-LLaMA27b , as well as by margins of 4.4% accuracy on PopQA, 2.8% FactScore on Biography, and 10.3% on Arc-Challenge when based on LLaMA2hf-7b .",
+      "refers_to": [
+       "table:1"
+      ],
+      "comparison": {
+       "kind": "absolute",
+       "system": "CRAG",
+       "baseline": "RAG",
+       "direction": "better",
+       "difference": "2.8%"
+      },
+      "sentence_id": "b:53/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "comparison",
+      "cites": [],
+      "claim": "CRAG outperforms RAG on Arc-Challenge by 10.3%.",
+      "values": [
+       {
+        "role": "difference",
+        "value": "10.3%",
+        "metric": "accuracy",
+        "system": "CRAG",
+        "dataset": "Arc-Challenge",
+        "setting": "LLaMA2hf-7b"
+       }
+      ],
+      "sentence": "Specifically, as shown in table 1, CRAG outperformed RAG by margins of 7.0% accuracy on PopQA, 14.9% FactScore on Biography, 36.6% accuracy on PubHealth, and 15.4% accuracy on Arc-Challenge when based on SelfRAG-LLaMA27b , as well as by margins of 4.4% accuracy on PopQA, 2.8% FactScore on Biography, and 10.3% on Arc-Challenge when based on LLaMA2hf-7b .",
+      "refers_to": [
+       "table:1"
+      ],
+      "comparison": {
+       "kind": "absolute",
+       "system": "CRAG",
+       "baseline": "RAG",
+       "direction": "better",
+       "difference": "10.3%"
+      },
+      "sentence_id": "b:53/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "comparison",
+      "cites": [],
+      "claim": "Self-CRAG outperforms Self-RAG on PopQA accuracy by 20.0%.",
+      "values": [
+       {
+        "role": "difference",
+        "value": "20.0%",
+        "metric": "accuracy",
+        "system": "Self-CRAG",
+        "dataset": "PopQA",
+        "setting": "LLaMA2-hf-7b"
+       }
+      ],
+      "sentence": "Compared with the current state-of-theart Self-RAG, Self-CRAG outperformed it by margins of 20.0% accuracy on PopQA, 36.9% FactScore on Biography, and 4.0% accuracy on Arc-Challenge when based on LLaMA2-hf-7b , as well as by margins of 6.9% accuracy on PopQA, 5.0% FactScore on Biography, and 2.4% accuracy on PubHealth, when based on SelfRAG-LLaMA27b .",
+      "refers_to": [],
+      "comparison": {
+       "kind": "absolute",
+       "system": "Self-CRAG",
+       "baseline": "Self-RAG",
+       "direction": "better",
+       "difference": "20.0%"
+      },
+      "sentence_id": "b:53/s:2",
+      "unknown_refs": []
+     },
+     {
+      "type": "comparison",
+      "cites": [],
+      "claim": "Self-CRAG outperforms Self-RAG on Biography FactScore by 36.9%.",
+      "values": [
+       {
+        "role": "difference",
+        "value": "36.9%",
+        "metric": "FactScore",
+        "system": "Self-CRAG",
+        "dataset": "Biography",
+        "setting": "LLaMA2-hf-7b"
+       }
+      ],
+      "sentence": "Compared with the current state-of-theart Self-RAG, Self-CRAG outperformed it by margins of 20.0% accuracy on PopQA, 36.9% FactScore on Biography, and 4.0% accuracy on Arc-Challenge when based on LLaMA2-hf-7b , as well as by margins of 6.9% accuracy on PopQA, 5.0% FactScore on Biography, and 2.4% accuracy on PubHealth, when based on SelfRAG-LLaMA27b .",
+      "refers_to": [],
+      "comparison": {
+       "kind": "absolute",
+       "system": "Self-CRAG",
+       "baseline": "Self-RAG",
+       "direction": "better",
+       "difference": "36.9%"
+      },
+      "sentence_id": "b:53/s:2",
+      "unknown_refs": []
+     },
+     {
+      "type": "comparison",
+      "cites": [],
+      "claim": "Self-CRAG outperforms Self-RAG on Arc-Challenge accuracy by 4.0%.",
+      "values": [
+       {
+        "role": "difference",
+        "value": "4.0%",
+        "metric": "accuracy",
+        "system": "Self-CRAG",
+        "dataset": "Arc-Challenge",
+        "setting": "LLaMA2-hf-7b"
+       }
+      ],
+      "sentence": "Compared with the current state-of-theart Self-RAG, Self-CRAG outperformed it by margins of 20.0% accuracy on PopQA, 36.9% FactScore on Biography, and 4.0% accuracy on Arc-Challenge when based on LLaMA2-hf-7b , as well as by margins of 6.9% accuracy on PopQA, 5.0% FactScore on Biography, and 2.4% accuracy on PubHealth, when based on SelfRAG-LLaMA27b .",
+      "refers_to": [],
+      "comparison": {
+       "kind": "absolute",
+       "system": "Self-CRAG",
+       "baseline": "Self-RAG",
+       "direction": "better",
+       "difference": "4.0%"
+      },
+      "sentence_id": "b:53/s:2",
+      "unknown_refs": []
+     },
+     {
+      "type": "comparison",
+      "cites": [],
+      "claim": "Self-CRAG outperforms Self-RAG on PopQA accuracy by 6.9%.",
+      "values": [
+       {
+        "role": "difference",
+        "value": "6.9%",
+        "metric": "accuracy",
+        "system": "Self-CRAG",
+        "dataset": "PopQA",
+        "setting": "SelfRAG-LLaMA27b"
+       }
+      ],
+      "sentence": "Compared with the current state-of-theart Self-RAG, Self-CRAG outperformed it by margins of 20.0% accuracy on PopQA, 36.9% FactScore on Biography, and 4.0% accuracy on Arc-Challenge when based on LLaMA2-hf-7b , as well as by margins of 6.9% accuracy on PopQA, 5.0% FactScore on Biography, and 2.4% accuracy on PubHealth, when based on SelfRAG-LLaMA27b .",
+      "refers_to": [],
+      "comparison": {
+       "kind": "absolute",
+       "system": "Self-CRAG",
+       "baseline": "Self-RAG",
+       "direction": "better",
+       "difference": "6.9%"
+      },
+      "sentence_id": "b:53/s:2",
+      "unknown_refs": []
+     },
+     {
+      "type": "comparison",
+      "cites": [],
+      "claim": "Self-CRAG outperforms Self-RAG on Biography FactScore by 5.0%.",
+      "values": [
+       {
+        "role": "difference",
+        "value": "5.0%",
+        "metric": "FactScore",
+        "system": "Self-CRAG",
+        "dataset": "Biography",
+        "setting": "SelfRAG-LLaMA27b"
+       }
+      ],
+      "sentence": "Compared with the current state-of-theart Self-RAG, Self-CRAG outperformed it by margins of 20.0% accuracy on PopQA, 36.9% FactScore on Biography, and 4.0% accuracy on Arc-Challenge when based on LLaMA2-hf-7b , as well as by margins of 6.9% accuracy on PopQA, 5.0% FactScore on Biography, and 2.4% accuracy on PubHealth, when based on SelfRAG-LLaMA27b .",
+      "refers_to": [],
+      "comparison": {
+       "kind": "absolute",
+       "system": "Self-CRAG",
+       "baseline": "Self-RAG",
+       "direction": "better",
+       "difference": "5.0%"
+      },
+      "sentence_id": "b:53/s:2",
+      "unknown_refs": []
+     },
+     {
+      "type": "comparison",
+      "cites": [],
+      "claim": "Self-CRAG outperforms Self-RAG on PubHealth accuracy by 2.4%.",
+      "values": [
+       {
+        "role": "difference",
+        "value": "2.4%",
+        "metric": "accuracy",
+        "system": "Self-CRAG",
+        "dataset": "PubHealth",
+        "setting": "SelfRAG-LLaMA27b"
+       }
+      ],
+      "sentence": "Compared with the current state-of-theart Self-RAG, Self-CRAG outperformed it by margins of 20.0% accuracy on PopQA, 36.9% FactScore on Biography, and 4.0% accuracy on Arc-Challenge when based on LLaMA2-hf-7b , as well as by margins of 6.9% accuracy on PopQA, 5.0% FactScore on Biography, and 2.4% accuracy on PubHealth, when based on SelfRAG-LLaMA27b .",
+      "refers_to": [],
+      "comparison": {
+       "kind": "absolute",
+       "system": "Self-CRAG",
+       "baseline": "Self-RAG",
+       "direction": "better",
+       "difference": "2.4%"
+      },
+      "sentence_id": "b:53/s:2",
+      "unknown_refs": []
+     },
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Table 2 shows ablation tests for removing each single action in the proposed method.",
+      "values": [],
+      "sentence": "To further verify the effectiveness of triggered actions designed in the retrieval evaluator, ablation tests for removing each single action in the proposed method were conducted as shown in Table 2.",
+      "refers_to": [
+       "table:2"
+      ],
+      "comparison": null,
+      "sentence_id": "b:57/s:1",
+      "unknown_refs": []
+     }
+    ],
+    "batch": 3,
+    "usage": {
+     "queue_time": 0.048448263,
+     "total_time": 1.9502835840000001,
+     "prompt_time": 0.132391477,
+     "total_tokens": 4238,
+     "prompt_tokens": 2482,
+     "completion_time": 1.817892107,
+     "completion_tokens": 1756,
+     "completion_tokens_details": {
+      "reasoning_tokens": 196
+     }
+    },
+    "dropped": []
+   },
+   "finished_at": "2026-10-17T21:47:05.909Z"
+  },
+  {
+   "step_id": 1262,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 4,
+    "model": "openai/gpt-oss-20b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-17T21:47:05.929Z"
+  },
+  {
+   "step_id": 1263,
+   "step_name": "claims_batch",
+   "status": "done",
+   "detail": {
+    "kept": [
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Table 3 shows how performance changes when a key knowledge utilization operation is ablated.",
+      "values": [],
+      "sentence": "Table 3 illustrated how the performance changed if a key knowledge utilization operation was ablated.",
+      "refers_to": [
+       "table:3"
+      ],
+      "comparison": null,
+      "sentence_id": "b:58/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Table 4 shows the assessment accuracy on PopQA for our retrieval evaluator and ChatGPT.",
+      "values": [],
+      "sentence": "The assessment accuracy on the PopQA dataset of our retrieval evaluator and the commercial LLM ChatGPT on the document retrieval results was shown in Table 4.",
+      "refers_to": [
+       "table:4"
+      ],
+      "comparison": null,
+      "sentence_id": "b:60/s:2",
+      "unknown_refs": []
+     },
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Figure 3 shows the performance change of Self-RAG and SelfCRAG on PopQA.",
+      "values": [],
+      "sentence": "Figure 3 demonstrated the performance change of Self-RAG and SelfCRAG on the PopQA dataset.",
+      "refers_to": [
+       "figure:3"
+      ],
+      "comparison": null,
+      "sentence_id": "b:62/s:2",
+      "unknown_refs": []
+     },
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Table 6 shows computational overhead assessment of RAG, CRAG, Self-CRAG, and Self-RAG in FLOPs per token on GPUs and execution time per instance.",
+      "values": [],
+      "sentence": "Meanwhile, it is also crucial to confirm that the primary improvements in our method stem from the self-correction mech- Table 6: computational overhead assessment of RAG, CRAG, Self-CRAG, and Self-RAG about FLOPs per token on GPUs and executing time per instance.",
+      "refers_to": [
+       "table:6"
+      ],
+      "comparison": null,
+      "sentence_id": "b:64/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Table 5 shows that supplementing RAG or Self-RAG with web search knowledge improves performance in most cases, except Self-RAG with web using the original LLaMA2 model.",
+      "values": [],
+      "sentence": "The results in Table 5 show that consistently supplementing RAG or Self-RAG with web search knowledge can improve the performance in most cases (except Self-RAG w. web using the original LLaMA2 model), though the improvement remains limited.",
+      "refers_to": [
+       "table:5"
+      ],
+      "comparison": null,
+      "sentence_id": "b:65/s:2",
+      "unknown_refs": []
+     },
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Table 6 shows predicted FLOPs per token on GPUs using FLOPs prediction formulas.",
+      "values": [],
+      "sentence": "FLOPs prediction formulas in Narayanan et al. (2021) were employed, with the results presented in Table 6 which shows the predicted FLOPs per token on GPUs.",
+      "refers_to": [
+       "table:6"
+      ],
+      "comparison": null,
+      "sentence_id": "b:67/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Table 6 shows average execution time per instance on PopQA in practice.",
+      "values": [],
+      "sentence": "Additionally, we conducted the experiments on PopQA to assess the average execution time per instance in practice, as detailed in Table 6.",
+      "refers_to": [
+       "table:6"
+      ],
+      "comparison": null,
+      "sentence_id": "b:67/s:4",
+      "unknown_refs": []
+     }
+    ],
+    "batch": 4,
+    "usage": {
+     "queue_time": 0.01776736,
+     "total_time": 1.895649849,
+     "prompt_time": 0.141768065,
+     "total_tokens": 4159,
+     "prompt_tokens": 2482,
+     "completion_time": 1.753881784,
+     "completion_tokens": 1677,
+     "completion_tokens_details": {
+      "reasoning_tokens": 1244
+     }
+    },
+    "dropped": []
+   },
+   "finished_at": "2026-10-17T21:47:38.128Z"
+  },
+  {
+   "step_id": 1264,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 5,
+    "model": "openai/gpt-oss-20b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-17T21:47:38.149Z"
+  },
+  {
+   "step_id": 1265,
+   "step_name": "claims_batch",
+   "status": "done",
+   "detail": {
+    "kept": [],
+    "batch": 5,
+    "usage": {
+     "queue_time": 0.047147563,
+     "total_time": 0.168634689,
+     "prompt_time": 0.114523766,
+     "total_tokens": 2201,
+     "prompt_tokens": 2148,
+     "completion_time": 0.054110923,
+     "completion_tokens": 53,
+     "completion_tokens_details": {
+      "reasoning_tokens": 39
+     }
+    },
+    "dropped": []
+   },
+   "finished_at": "2026-10-17T21:48:08.644Z"
+  },
+  {
+   "step_id": 1266,
+   "step_name": "number_check",
+   "status": "done",
+   "detail": {
+    "checks": [
+     {
+      "cell": {
+       "row": "CRAG",
+       "text": "59.8",
+       "table": "table:1",
+       "column": "PopQA (Accuracy)",
+       "section": "SelfRAG-LLaMA2-7b"
+      },
+      "kind": "difference",
+      "note": "59.8 vs 52.8: absolute difference",
+      "claim": 3,
+      "pairs": 1,
+      "metric": "accuracy",
+      "system": "CRAG",
+      "claimed": "7.0%",
+      "dataset": "PopQA",
+      "setting": "SelfRAG-LLaMA27b",
+      "verdict": "supported",
+      "absolute": 7.0,
+      "baseline": "RAG",
+      "relative": 13.26,
+      "direction": "better",
+      "matched_as": "absolute",
+      "sentence_id": "b:53/s:1",
+      "baseline_cell": {
+       "row": "RAG",
+       "text": "52.8",
+       "table": "table:1",
+       "column": "PopQA (Accuracy)",
+       "section": "SelfRAG-LLaMA2-7b"
+      }
+     },
+     {
+      "cell": {
+       "row": "CRAG",
+       "text": "74.1",
+       "table": "table:1",
+       "column": "Bio (FactScore)",
+       "section": "SelfRAG-LLaMA2-7b"
+      },
+      "kind": "difference",
+      "note": "74.1 vs 59.2: absolute difference",
+      "claim": 4,
+      "pairs": 1,
+      "metric": "FactScore",
+      "system": "CRAG",
+      "claimed": "14.9%",
+      "dataset": "Biography",
+      "setting": "SelfRAG-LLaMA27b",
+      "verdict": "supported",
+      "absolute": 14.9,
+      "baseline": "RAG",
+      "relative": 25.17,
+      "direction": "better",
+      "matched_as": "absolute",
+      "sentence_id": "b:53/s:1",
+      "baseline_cell": {
+       "row": "RAG",
+       "text": "59.2",
+       "table": "table:1",
+       "column": "Bio (FactScore)",
+       "section": "SelfRAG-LLaMA2-7b"
+      }
+     },
+     {
+      "cell": {
+       "row": "CRAG",
+       "text": "75.6",
+       "table": "table:1",
+       "column": "Pub (Accuracy)",
+       "section": "SelfRAG-LLaMA2-7b"
+      },
+      "kind": "difference",
+      "note": "75.6 vs 39.0: absolute difference",
+      "claim": 5,
+      "pairs": 1,
+      "metric": "accuracy",
+      "system": "CRAG",
+      "claimed": "36.6%",
+      "dataset": "PubHealth",
+      "setting": "SelfRAG-LLaMA27b",
+      "verdict": "supported",
+      "absolute": 36.6,
+      "baseline": "RAG",
+      "relative": 93.85,
+      "direction": "better",
+      "matched_as": "absolute",
+      "sentence_id": "b:53/s:1",
+      "baseline_cell": {
+       "row": "RAG",
+       "text": "39.0",
+       "table": "table:1",
+       "column": "Pub (Accuracy)",
+       "section": "SelfRAG-LLaMA2-7b"
+      }
+     },
+     {
+      "cell": {
+       "row": "CRAG",
+       "text": "68.6",
+       "table": "table:1",
+       "column": "ARC (Accuracy)",
+       "section": "SelfRAG-LLaMA2-7b"
+      },
+      "kind": "difference",
+      "note": "68.6 vs 53.2: absolute difference",
+      "claim": 6,
+      "pairs": 1,
+      "metric": "accuracy",
+      "system": "CRAG",
+      "claimed": "15.4%",
+      "dataset": "Arc-Challenge",
+      "setting": "SelfRAG-LLaMA27b",
+      "verdict": "supported",
+      "absolute": 15.4,
+      "baseline": "RAG",
+      "relative": 28.95,
+      "direction": "better",
+      "matched_as": "absolute",
+      "sentence_id": "b:53/s:1",
+      "baseline_cell": {
+       "row": "RAG",
+       "text": "53.2",
+       "table": "table:1",
+       "column": "ARC (Accuracy)",
+       "section": "SelfRAG-LLaMA2-7b"
+      }
+     },
+     {
+      "cell": {
+       "row": "CRAG",
+       "text": "54.9",
+       "table": "table:1",
+       "column": "PopQA (Accuracy)",
+       "section": "LLaMA2-hf-7b"
+      },
+      "kind": "difference",
+      "note": "54.9 vs 50.5: absolute difference",
+      "claim": 7,
+      "pairs": 1,
+      "metric": "accuracy",
+      "system": "CRAG",
+      "claimed": "4.4%",
+      "dataset": "PopQA",
+      "setting": "LLaMA2hf-7b",
+      "verdict": "supported",
+      "absolute": 4.4,
+      "baseline": "RAG",
+      "relative": 8.71,
+      "direction": "better",
+      "matched_as": "absolute",
+      "sentence_id": "b:53/s:1",
+      "baseline_cell": {
+       "row": "RAG",
+       "text": "50.5",
+       "table": "table:1",
+       "column": "PopQA (Accuracy)",
+       "section": "LLaMA2-hf-7b"
+      }
+     },
+     {
+      "cell": {
+       "row": "CRAG",
+       "text": "47.7",
+       "table": "table:1",
+       "column": "Bio (FactScore)",
+       "section": "LLaMA2-hf-7b"
+      },
+      "kind": "difference",
+      "note": "47.7 vs 44.9: absolute difference",
+      "claim": 8,
+      "pairs": 1,
+      "metric": "FactScore",
+      "system": "CRAG",
+      "claimed": "2.8%",
+      "dataset": "Biography",
+      "setting": "LLaMA2hf-7b",
+      "verdict": "supported",
+      "absolute": 2.8,
+      "baseline": "RAG",
+      "relative": 6.24,
+      "direction": "better",
+      "matched_as": "absolute",
+      "sentence_id": "b:53/s:1",
+      "baseline_cell": {
+       "row": "RAG",
+       "text": "44.9",
+       "table": "table:1",
+       "column": "Bio (FactScore)",
+       "section": "LLaMA2-hf-7b"
+      }
+     },
+     {
+      "cell": {
+       "row": "CRAG",
+       "text": "53.7",
+       "table": "table:1",
+       "column": "ARC (Accuracy)",
+       "section": "LLaMA2-hf-7b"
+      },
+      "kind": "difference",
+      "note": "53.7 vs 43.4: absolute difference",
+      "claim": 9,
+      "pairs": 1,
+      "metric": "accuracy",
+      "system": "CRAG",
+      "claimed": "10.3%",
+      "dataset": "Arc-Challenge",
+      "setting": "LLaMA2hf-7b",
+      "verdict": "supported",
+      "absolute": 10.3,
+      "baseline": "RAG",
+      "relative": 23.73,
+      "direction": "better",
+      "matched_as": "absolute",
+      "sentence_id": "b:53/s:1",
+      "baseline_cell": {
+       "row": "RAG",
+       "text": "43.4",
+       "table": "table:1",
+       "column": "ARC (Accuracy)",
+       "section": "LLaMA2-hf-7b"
+      }
+     },
+     {
+      "cell": {
+       "row": "Self-CRAG",
+       "text": "49.0",
+       "table": "table:1",
+       "column": "PopQA (Accuracy)",
+       "section": "LLaMA2-hf-7b"
+      },
+      "kind": "difference",
+      "note": "49.0 vs 29.0: absolute difference",
+      "claim": 10,
+      "pairs": 1,
+      "metric": "accuracy",
+      "system": "Self-CRAG",
+      "claimed": "20.0%",
+      "dataset": "PopQA",
+      "setting": "LLaMA2-hf-7b",
+      "verdict": "supported",
+      "absolute": 20.0,
+      "baseline": "Self-RAG",
+      "relative": 68.97,
+      "direction": "better",
+      "matched_as": "absolute",
+      "sentence_id": "b:53/s:2",
+      "baseline_cell": {
+       "row": "Self-RAG*",
+       "text": "29.0",
+       "table": "table:1",
+       "column": "PopQA (Accuracy)",
+       "section": "LLaMA2-hf-7b"
+      }
+     },
+     {
+      "cell": {
+       "row": "Self-CRAG",
+       "text": "69.1",
+       "table": "table:1",
+       "column": "Bio (FactScore)",
+       "section": "LLaMA2-hf-7b"
+      },
+      "kind": "difference",
+      "note": "69.1 vs 32.2: absolute difference",
+      "claim": 11,
+      "pairs": 1,
+      "metric": "FactScore",
+      "system": "Self-CRAG",
+      "claimed": "36.9%",
+      "dataset": "Biography",
+      "setting": "LLaMA2-hf-7b",
+      "verdict": "supported",
+      "absolute": 36.9,
+      "baseline": "Self-RAG",
+      "relative": 114.6,
+      "direction": "better",
+      "matched_as": "absolute",
+      "sentence_id": "b:53/s:2",
+      "baseline_cell": {
+       "row": "Self-RAG*",
+       "text": "32.2",
+       "table": "table:1",
+       "column": "Bio (FactScore)",
+       "section": "LLaMA2-hf-7b"
+      }
+     },
+     {
+      "cell": {
+       "row": "Self-CRAG",
+       "text": "27.9",
+       "table": "table:1",
+       "column": "ARC (Accuracy)",
+       "section": "LLaMA2-hf-7b"
+      },
+      "kind": "difference",
+      "note": "27.9 vs 23.9: absolute difference",
+      "claim": 12,
+      "pairs": 1,
+      "metric": "accuracy",
+      "system": "Self-CRAG",
+      "claimed": "4.0%",
+      "dataset": "Arc-Challenge",
+      "setting": "LLaMA2-hf-7b",
+      "verdict": "supported",
+      "absolute": 4.0,
+      "baseline": "Self-RAG",
+      "relative": 16.74,
+      "direction": "better",
+      "matched_as": "absolute",
+      "sentence_id": "b:53/s:2",
+      "baseline_cell": {
+       "row": "Self-RAG*",
+       "text": "23.9",
+       "table": "table:1",
+       "column": "ARC (Accuracy)",
+       "section": "LLaMA2-hf-7b"
+      }
+     },
+     {
+      "cell": {
+       "row": "Self-CRAG",
+       "text": "61.8",
+       "table": "table:1",
+       "column": "PopQA (Accuracy)",
+       "section": "SelfRAG-LLaMA2-7b"
+      },
+      "kind": "difference",
+      "note": "61.8 vs 54.9: absolute difference",
+      "claim": 13,
+      "pairs": 1,
+      "metric": "accuracy",
+      "system": "Self-CRAG",
+      "claimed": "6.9%",
+      "dataset": "PopQA",
+      "setting": "SelfRAG-LLaMA27b",
+      "verdict": "supported",
+      "absolute": 6.9,
+      "baseline": "Self-RAG",
+      "relative": 12.57,
+      "direction": "better",
+      "matched_as": "absolute",
+      "sentence_id": "b:53/s:2",
+      "baseline_cell": {
+       "row": "Self-RAG",
+       "text": "54.9",
+       "table": "table:1",
+       "column": "PopQA (Accuracy)",
+       "section": "SelfRAG-LLaMA2-7b"
+      }
+     },
+     {
+      "cell": {
+       "row": "Self-CRAG",
+       "text": "86.2",
+       "table": "table:1",
+       "column": "Bio (FactScore)",
+       "section": "SelfRAG-LLaMA2-7b"
+      },
+      "kind": "difference",
+      "note": "86.2 vs 81.2: absolute difference",
+      "claim": 14,
+      "pairs": 1,
+      "metric": "FactScore",
+      "system": "Self-CRAG",
+      "claimed": "5.0%",
+      "dataset": "Biography",
+      "setting": "SelfRAG-LLaMA27b",
+      "verdict": "supported",
+      "absolute": 5.0,
+      "baseline": "Self-RAG",
+      "relative": 6.16,
+      "direction": "better",
+      "matched_as": "absolute",
+      "sentence_id": "b:53/s:2",
+      "baseline_cell": {
+       "row": "Self-RAG",
+       "text": "81.2",
+       "table": "table:1",
+       "column": "Bio (FactScore)",
+       "section": "SelfRAG-LLaMA2-7b"
+      }
+     },
+     {
+      "cell": {
+       "row": "Self-CRAG",
+       "text": "74.8",
+       "table": "table:1",
+       "column": "Pub (Accuracy)",
+       "section": "SelfRAG-LLaMA2-7b"
+      },
+      "kind": "difference",
+      "note": "74.8 vs 72.4: absolute difference",
+      "claim": 15,
+      "pairs": 1,
+      "metric": "accuracy",
+      "system": "Self-CRAG",
+      "claimed": "2.4%",
+      "dataset": "PubHealth",
+      "setting": "SelfRAG-LLaMA27b",
+      "verdict": "supported",
+      "absolute": 2.4,
+      "baseline": "Self-RAG",
+      "relative": 3.31,
+      "direction": "better",
+      "matched_as": "absolute",
+      "sentence_id": "b:53/s:2",
+      "baseline_cell": {
+       "row": "Self-RAG",
+       "text": "72.4",
+       "table": "table:1",
+       "column": "Pub (Accuracy)",
+       "section": "SelfRAG-LLaMA2-7b"
+      }
+     }
+    ],
+    "summary": {
+     "checks": 13,
+     "supported": 13,
+     "contradicted": 0,
+     "unverifiable": 0,
+     "cells_indexed": 153
+    }
+   },
+   "finished_at": "2026-10-17T21:48:08.870Z"
+  },
+  {
+   "step_id": 1267,
+   "step_name": "figure_plan",
+   "status": "done",
+   "detail": {
+    "jobs": [
+     {
+      "claims": [
+       0
+      ],
+      "figure": "figure:1"
+     },
+     {
+      "claims": [
+       1
+      ],
+      "figure": "figure:2"
+     },
+     {
+      "claims": [
+       19
+      ],
+      "figure": "figure:3"
+     }
+    ],
+    "prompt": "P5-figure-checker",
+    "findings": [],
+    "prompt_version": "v2"
+   },
+   "finished_at": "2026-10-17T21:48:08.975Z"
+  },
+  {
+   "step_id": 1268,
+   "step_name": "figures_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 0,
+    "model": "qwen/qwen3.8-27b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-17T21:48:08.982Z"
+  },
+  {
+   "step_id": 1269,
+   "step_name": "figures_batch",
+   "status": "done",
+   "detail": {
+    "batch": 0,
+    "usage": {
+     "queue_time": 0.263318836,
+     "total_time": 0.684930833,
+     "prompt_time": 0.142818045,
+     "total_tokens": 2200,
+     "prompt_tokens": 1948,
+     "completion_time": 0.542112788,
+     "completion_tokens": 252
+    },
+    "checks": [
+     {
+      "claim": 0,
+      "verdict": "supported",
+      "evidence": "The figure shows a 'Retriever' box leading to 'Inaccurate Documents' (specifically about a Batman film) for the question 'Who was the screenwriter for Death of a Batman?'. The 'Generator' then outputs 'Hamm.' with a red 'X' next to it, indicating an incorrect or misleading answer. This visualizes the concept of a low-quality retriever introducing irrelevant information that misleads the model.",
+      "read_values": [
+       "Inaccurate Documents",
+       "Hamm.",
+       "X"
+      ]
+     }
+    ],
+    "figure": "figure:1",
+    "description": "A diagram illustrating a Retrieval-Augmented Generation (RAG) process. It shows two examples. The left example shows a question about Henry Feilden's occupation, a 'Retriever' finding 'Accurate Documents' (about him being a politician), and a 'Generator' correctly answering 'Politician.' with a green checkmark. The right example shows a question about the screenwriter of 'Death of a Batman', a 'Retriever' finding 'Inaccurate Documents' (about a 1989 Batman film and a character named Hamm), a"
+   },
+   "finished_at": "2026-10-17T21:48:55.410Z"
+  },
+  {
+   "step_id": 1270,
+   "step_name": "figures_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 1,
+    "model": "qwen/qwen3.8-27b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-17T21:48:55.426Z"
+  },
+  {
+   "step_id": 1271,
+   "step_name": "figures_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 1,
+    "error": "400 - \"{\\\"error\\\":{\\\"message\\\":\\\"Generated JSON does not match the expected schema. Please adjust your prompt. See 'failed_generation' for more details. Error: jsonschema: '' does not validate with /required: missing properties: 'figure'\\\",\\\"type\\\":\\\"invalid_request_error\\\",\\\"code\\\":\\\"json_validate_ \"\"",
+    "model": "qwen/qwen3.8-27b",
+    "status": 400
+   },
+   "finished_at": "2026-10-17T21:49:41.811Z"
+  },
+  {
+   "step_id": 1272,
+   "step_name": "figures_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 1,
+    "model": "qwen/qwen3.8-27b",
+    "attempt": 2
+   },
+   "finished_at": "2026-10-17T21:49:41.827Z"
+  },
+  {
+   "step_id": 1273,
+   "step_name": "figures_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 1,
+    "error": "400 - \"{\\\"error\\\":{\\\"message\\\":\\\"Failed to generate JSON. Please adjust your prompt. See 'failed_generation' for more details.\\\",\\\"type\\\":\\\"invalid_request_error\\\",\\\"code\\\":\\\"json_validate_failed\\\",\\\"failed_generation\\\":\\\"{\\\\\\\"checks\\\\\\\": [], \\\\\\\"figure\\\\\\\": \\\\\\\"A diagram showing the CRAG inference  \"\"",
+    "model": "qwen/qwen3.8-27b",
+    "status": 400
+   },
+   "finished_at": "2026-10-17T21:50:28.403Z"
+  },
+  {
+   "step_id": 1274,
+   "step_name": "figures_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 1,
+    "model": "qwen/qwen3.8-27b",
+    "attempt": 3
+   },
+   "finished_at": "2026-10-17T21:50:28.416Z"
+  },
+  {
+   "step_id": 1275,
+   "step_name": "figures_batch",
+   "status": "done",
+   "detail": {
+    "batch": 1,
+    "usage": {
+     "queue_time": 0.229189887,
+     "total_time": 0.650455343,
+     "prompt_time": 0.177471673,
+     "total_tokens": 2631,
+     "prompt_tokens": 2422,
+     "completion_time": 0.47298367,
+     "completion_tokens": 209
+    },
+    "checks": [
+     {
+      "claim": 1,
+      "verdict": "supported",
+      "evidence": "The figure is a diagram illustrating a process with stages labeled 'Retrieval', 'Knowledge Correction', and 'Generation'. It shows a flow from an input query to a generator, which aligns with an overview of a system at inference.",
+      "read_values": [
+       "Retrieval",
+       "Knowledge Correction",
+       "Generation"
+      ]
+     }
+    ],
+    "figure": "figure:2",
+    "description": "This is a flowchart diagram illustrating a multi-stage process. The diagram is divided into three main horizontal sections labeled 'Retrieval', 'Knowledge Correction', and 'Generation'. The 'Retrieval' section shows an input query 'x' and 'Retrieved Documents' d1, d2. The 'Knowledge Correction' section features a 'Retrieval Evaluator' that branches into three paths: 'Correct', 'Ambiguous', and 'Incorrect'. The 'Correct' path leads to a 'Knowledge Refinement' block, while the 'Ambiguous' and "
+   },
+   "finished_at": "2026-10-17T21:51:15.066Z"
+  },
+  {
+   "step_id": 1276,
+   "step_name": "figures_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 2,
+    "model": "qwen/qwen3.8-27b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-17T21:51:15.078Z"
+  },
+  {
+   "step_id": 1277,
+   "step_name": "figures_batch",
+   "status": "done",
+   "detail": {
+    "batch": 2,
+    "usage": {
+     "queue_time": 0.086378117,
+     "total_time": 0.493561547,
+     "prompt_time": 0.105841713,
+     "total_tokens": 1570,
+     "prompt_tokens": 1392,
+     "completion_time": 0.387719834,
+     "completion_tokens": 178
+    },
+    "checks": [
+     {
+      "claim": 19,
+      "verdict": "supported",
+      "evidence": "The figure is a line plot with 'Accuracy of generation' on the y-axis and 'Accuracy of retrieval' on the x-axis. The legend identifies two series: 'Self-RAG' and 'Self-CRAG'. The caption confirms the dataset is PopQA.",
+      "read_values": [
+       "Self-RAG",
+       "Self-CRAG"
+      ]
+     }
+    ],
+    "figure": "figure:3",
+    "description": "Line plot showing 'Accuracy of generation' (y-axis, 20-70) versus 'Accuracy of retrieval' (x-axis, 10-69.8). Two lines are plotted: 'Self-RAG' (green stars) and 'Self-CRAG' (grey diamonds). A horizontal dashed blue line labeled 'no retrieval' is shown at approximately 28."
+   },
+   "finished_at": "2026-10-17T21:52:01.042Z"
+  },
+  {
+   "step_id": 1278,
+   "step_name": "citation_plan",
+   "status": "done",
+   "detail": {
+    "jobs": [],
+    "prompt": "P6-citation-checker",
+    "batches": [],
+    "findings": [
+     {
+      "claim": 0,
+      "marker": "Zhang et al., 2023b",
+      "verdict": "not_in_library",
+      "reference": "Yue Zhang, Yafu Li, Leyang Cui, Deng Cai, Lemao Liu, Tingchen Fu, Xinting Huang, Enbo Zhao, Yu Zhang, Yulong Chen, Longyue Wang, Anh Tuan Luu, Wei Bi, Freda Shi, and Shuming Shi. 2023b. Siren's song in the AI ocean: A survey on hallucination in large language models. CoRR , abs/2309.01219."
+     }
+    ],
+    "prompt_version": "v1"
+   },
+   "finished_at": "2026-10-17T21:52:01.120Z"
+  }
+ ]
+}

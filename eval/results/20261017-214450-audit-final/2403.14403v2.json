@@ -1,0 +1,3044 @@
+{
+ "url": "https://arxiv.org/pdf/2403.14403v2",
+ "run_id": "6d2703a7-ec96-4cb5-8bb9-b8dae36e588d",
+ "result": {
+  "paper": {
+   "items": 13,
+   "pages": 15,
+   "title": "Adaptive-RAG: Learning to Adapt Retrieval-Augmented Large Language Models through Question Complexity",
+   "sha256": "12d262c682626c26a98bdafc7ec5dc6af3fae8247d26d4f2c712b1599dafce62",
+   "tables": [
+    "table:1",
+    "table:2",
+    "table:3",
+    "table:4",
+    "table:5",
+    "table:6",
+    "table:7",
+    "table:8"
+   ],
+   "figures": [
+    "figure:1",
+    "figure:2",
+    "figure:3",
+    "figure:4",
+    "figure:5"
+   ],
+   "numbered": 13,
+   "references": 50
+  },
+  "branch": "audit",
+  "claims": [
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Figure 1 shows that the proposed method improves overall efficiency and accuracy.",
+    "values": [],
+    "sentence": "This proposed method can offer a robust middle ground among the iterative LLM augmentation methods for complex queries, single-step methods for simpler queries, and even no-retrieval-augmented methods for the most straightforward queries (answerable by LLMs themselves), thus significantly enhancing the overall efficiency and accuracy, as shown in Figure 1.",
+    "refers_to": [
+     "figure:1"
+    ],
+    "comparison": null,
+    "sentence_id": "b:14/s:5",
+    "unknown_refs": []
+   },
+   {
+    "type": "comparison",
+    "cites": [],
+    "claim": "Our method improves overall accuracy and efficiency compared to prior adaptive strategies on multiple LLMs.",
+    "values": [],
+    "sentence": "The experimental results show that ours significantly improves the overall accuracy and efficiency, compared to the prior adaptive strategies, on multiple LLMs, such as GPT-3.5 (Brown et al., 2020) and FLAN-T5 series (Chung et al., 2022).",
+    "refers_to": [],
+    "comparison": {
+     "kind": "unspecified",
+     "system": "ours",
+     "baseline": "prior adaptive strategies",
+     "direction": "better",
+     "difference": ""
+    },
+    "sentence_id": "b:15/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "citation",
+    "cites": [
+     "Mallen et al., 2023"
+    ],
+    "claim": "Mallen et al. (2023) propose deciding query complexity based on entity frequency and using retrieval only when frequency is below a threshold.",
+    "values": [],
+    "sentence": "In this vein, Mallen et al. (2023) proposed to decide the query's complexity level based on the frequency of its entities and suggested using the retrieval modules only when the frequency falls below a certain threshold.",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:23/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "citation",
+    "cites": [
+     "Qi et al., 2021"
+    ],
+    "claim": "Qi et al. (2021) propose an approach that repeatedly performs retrieving, reading, and reranking until an answer is derived for the query.",
+    "values": [],
+    "sentence": "Additionally, Qi et al. (2021) proposed an approach that performs a fixed set of operations (retrieving, reading, and reranking) multiple times until the answer is derived for the given query, which is built upon traditional BERT-like LMs.",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:23/s:3",
+    "unknown_refs": []
+   },
+   {
+    "type": "citation",
+    "cites": [
+     "Asai et al., 2024"
+    ],
+    "claim": "Asai et al. (2024) suggest training a sophisticated model to dynamically retrieve, critique, and generate text.",
+    "values": [],
+    "sentence": "Concurrent to our work, Asai et al. (2024) suggested training a sophisticated model to dynamically retrieve, critique, and generate the text.",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:23/s:5",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Figure 2 shows that using a basic non-retrieval LLM for complex queries is ineffective, while using a multi-step approach for simple queries is inefficient.",
+    "values": [],
+    "sentence": "In other words, employing the most basic, non-retrievalbased approach LLM ( q ) to respond to the complex query q would be also ineffective (Figure 2, A); conversely, using a more elaborate multi-step approach LLM ( q , d , c ) for simple q would be inefficient (Figure 2, B).",
+    "refers_to": [
+     "figure:2"
+    ],
+    "comparison": null,
+    "sentence_id": "b:36/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "comparison",
+    "cites": [],
+    "claim": "Table 1 shows that simple retrieval-augmented strategies are less effective than the complex strategy, and the complex strategy is significantly more expensive.",
+    "values": [],
+    "sentence": "Main Results First of all, Table 1 shows our main results averaged over all considered datasets, which corroborate our hypothesis that simple retrievalaugmented strategies are less effective than the complex strategy, while the complex one is significantly more expensive than the simple ones.",
+    "refers_to": [
+     "table:1"
+    ],
+    "comparison": {
+     "kind": "unspecified",
+     "system": "simple retrieval-augmented strategies",
+     "baseline": "complex strategy",
+     "direction": "worse",
+     "difference": ""
+    },
+    "sentence_id": "b:59/s:0",
+    "unknown_refs": []
+   },
+   {
+    "type": "result",
+    "cites": [],
+    "claim": "Table 2 reports granular results with FLAN-T5-XL on each single-hop and multihop dataset, consistent with Table 1.",
+    "values": [],
+    "sentence": "In addition, we report the more granular results with FLAN-T5-XL on each of the single-hop and multihop datasets in Table 2 (and more with different LLMs in Table 7 and Table 8 of Appendix), which are consistent with the results observed in Table 1.",
+    "refers_to": [
+     "table:2",
+     "table:7",
+     "table:8",
+     "table:1"
+    ],
+    "comparison": null,
+    "sentence_id": "b:59/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "comparison",
+    "cites": [],
+    "claim": "Adaptive-RAG shows remarkable effectiveness over competitors, as shown in Table 1.",
+    "values": [],
+    "sentence": "Note that among the adaptive strategies, our Adaptive-RAG shows remarkable effectiveness over the competitors (Table 1).",
+    "refers_to": [
+     "table:1"
+    ],
+    "comparison": {
+     "kind": "unspecified",
+     "system": "Adaptive-RAG",
+     "baseline": "competitors",
+     "direction": "better",
+     "difference": ""
+    },
+    "sentence_id": "b:60/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "other",
+    "cites": [],
+    "claim": "Simple adaptive strategies are inadequate for handling complex queries in multi-hop datasets, requiring aggregated information and reasoning over multiple documents.",
+    "values": [],
+    "sentence": "Also, as shown in Table 2, such simple adaptive strategies are particularly inadequate for handling complex queries in multi-hop datasets, which require aggregated information and reasoning over multiple documents.",
+    "refers_to": [
+     "table:2"
+    ],
+    "comparison": null,
+    "sentence_id": "b:60/s:3",
+    "unknown_refs": []
+   },
+   {
+    "type": "comparison",
+    "cites": [],
+    "claim": "Our adaptive strategy is more efficient than the complex multi-step strategy across all model sizes.",
+    "values": [],
+    "sentence": "As shown in Table 1, compared to the complex multi-step strategy, our proposed adaptive strategy is significantly more efficient across all model sizes.",
+    "refers_to": [
+     "table:1"
+    ],
+    "comparison": {
+     "kind": "unspecified",
+     "system": "our adaptive strategy",
+     "baseline": "complex multi-step strategy",
+     "direction": "better",
+     "difference": ""
+    },
+    "sentence_id": "b:60/s:6",
+    "unknown_refs": []
+   },
+   {
+    "type": "comparison",
+    "cites": [],
+    "claim": "Our method achieves the best performance while being much more efficient than Adaptive-RAG without the oracle classifier.",
+    "values": [],
+    "sentence": "As shown in Table 1 and Table 2, we observe that it achieves the best performance while being much more efficient than our Adaptive-RAG without the oracle classifier.",
+    "refers_to": [
+     "table:1",
+     "table:2"
+    ],
+    "comparison": {
+     "kind": "unspecified",
+     "system": "our method",
+     "baseline": "Adaptive-RAG without the oracle classifier",
+     "direction": "better",
+     "difference": ""
+    },
+    "repaired_id": "b:60/s/9",
+    "sentence_id": "b:60/s:9",
+    "unknown_refs": []
+   },
+   {
+    "type": "comparison",
+    "cites": [],
+    "claim": "The classification accuracy of our Adaptive-RAG is better than those of other adaptive retrieval baselines, leading to overall QA performance improvements.",
+    "values": [],
+    "sentence": "As Figure 3 (Left and Center) shows, the classification accuracy of our Adaptive-RAG is better than those of the other adaptive retrieval baselines, which leads to overall QA performance improvements.",
+    "refers_to": [
+     "figure:3"
+    ],
+    "comparison": {
+     "kind": "unspecified",
+     "system": "our Adaptive-RAG",
+     "baseline": "other adaptive retrieval baselines",
+     "direction": "better",
+     "difference": ""
+    },
+    "sentence_id": "b:61/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Figure 3 (Right) shows the confusion matrix of our classifier.",
+    "values": [],
+    "sentence": "In addition to the true positive performance of our classifier averaged over all those three labels in Figure 3 (Left and Center), we further report its confusion matrix in Figure 3 (Right).",
+    "refers_to": [
+     "figure:3"
+    ],
+    "comparison": null,
+    "sentence_id": "b:61/s:3",
+    "unknown_refs": []
+   },
+   {
+    "type": "result",
+    "cites": [],
+    "claim": "The confusion matrix reveals misclassification rates: 'C (Multi)' as 'B (One)' 31%, 'B (One)' as 'C (Multi)' 23%, 'A (No)' as 'B (One)' 47%, and 'A (No)' as 'C (Multi)' 22%.",
+    "values": [
+     {
+      "role": "value",
+      "value": "31%",
+      "metric": "misclassification rate",
+      "system": "classifier",
+      "dataset": "",
+      "setting": "C (Multi) as B (One)"
+     },
+     {
+      "role": "value",
+      "value": "23%",
+      "metric": "misclassification rate",
+      "system": "classifier",
+      "dataset": "",
+      "setting": "B (One) as C (Multi)"
+     },
+     {
+      "role": "value",
+      "value": "47%",
+      "metric": "misclassification rate",
+      "system": "classifier",
+      "dataset": "",
+      "setting": "A (No) as B (One)"
+     },
+     {
+      "role": "value",
+      "value": "22%",
+      "metric": "misclassification rate",
+      "system": "classifier",
+      "dataset": "",
+      "setting": "A (No) as C (Multi)"
+     }
+    ],
+    "sentence": "We note that the confusion matrix reveals some notable trends: 'C (Multi)' is sometimes misclassified as 'B (One)' (about 31%) and 'B (One)' as 'C (Multi)' (about 23%); 'A (No)' is misclassified often as 'B (One)' (about 47%) and less frequently as 'C (Multi)' (about 22%).",
+    "refers_to": [],
+    "comparison": null,
+    "sentence_id": "b:61/s:4",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Table 1 shows relative elapsed time for each of the three different RAG strategies, and Table 3 provides the exact elapsed time per query for Adaptive-RAG and the distribution for predicted labels from the query-complexity classifier.",
+    "values": [],
+    "sentence": "Analyses on Efficiency for Classifier While Table 1 shows the relative elapsed time for each of the three different RAG strategies, we further provide the exact elapsed time per query for our AdaptiveRAG and the distribution for predicted labels from our query-complexity classifier in Table 3.",
+    "refers_to": [
+     "table:1",
+     "table:3"
+    ],
+    "comparison": null,
+    "sentence_id": "b:62/s:0",
+    "unknown_refs": []
+   },
+   {
+    "type": "result",
+    "cites": [],
+    "claim": "Efficiency can be substantially improved by identifying simple or straightforward queries.",
+    "values": [],
+    "sentence": "Similar to the results of the elapsed time in Table 1 (relative time), Table 3 (exact time) shows that efficiency can be substantially improved by identifying simple or straightforward queries.",
+    "refers_to": [
+     "table:1",
+     "table:3"
+    ],
+    "comparison": null,
+    "sentence_id": "b:62/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "comparison",
+    "cites": [],
+    "claim": "Our training strategy is significantly more efficient than the strategy relying solely on inductive bias.",
+    "values": [],
+    "sentence": "As Table 4 shows, compared to the training strategy relying solely on the data derived from inductive bias, ours is significantly more efficient.",
+    "refers_to": [
+     "table:4"
+    ],
+    "comparison": {
+     "kind": "unspecified",
+     "system": "our training strategy",
+     "baseline": "inductive bias only",
+     "direction": "better",
+     "difference": ""
+    },
+    "sentence_id": "b:63/s:2",
+    "unknown_refs": []
+   },
+   {
+    "type": "result",
+    "cites": [],
+    "claim": "There are no significant performance differences among classifiers of various sizes, even with reduced complexity and fewer parameters in smaller classifiers.",
+    "values": [],
+    "sentence": "As shown in Table 6, we observe no significant performance differences among classifiers of various sizes, even with reduced complexity and fewer parameters in smaller classifiers.",
+    "refers_to": [
+     "table:6"
+    ],
+    "comparison": null,
+    "sentence_id": "b:64/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Table 5 shows the classified complexity and the query handling patterns for both simple and complex questions.",
+    "values": [],
+    "sentence": "Table 5 shows the classified complexity and the query handling patterns for both simple and complex questions.",
+    "refers_to": [
+     "table:5"
+    ],
+    "comparison": null,
+    "sentence_id": "b:65/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Figure 4 and Figure 5 compare performance and efficiency of different retrieval-augmented generation approaches with FLAN-T5-XL and FLAN-T5XXL models.",
+    "values": [],
+    "sentence": "Performance vs Time We further provide a comparison of different retrieval-augmented generation approaches with FLAN-T5-XL and FLAN-T5XXL models in Figure 4 and Figure 5, respectively, in the context of performance and efficiency tradeoffs.",
+    "refers_to": [
+     "figure:4",
+     "figure:5"
+    ],
+    "comparison": null,
+    "sentence_id": "b:100/s:0",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Figure 1 shows that Adaptive-RAG is more effective and efficient than the GPT-3.5 model.",
+    "values": [],
+    "sentence": "Similar to the observation made from the GPT3.5 model in Figure 1, our proposed Adaptive-RAG is significantly more effective as well as efficient.",
+    "refers_to": [
+     "figure:1"
+    ],
+    "comparison": null,
+    "sentence_id": "b:100/s:1",
+    "unknown_refs": []
+   },
+   {
+    "type": "figure",
+    "cites": [],
+    "claim": "Table 2 and Table 8 present the performance of each dataset with the FLANT5-XL, FLAN-T5XXL, and GPT-3.5 models.",
+    "values": [],
+    "sentence": "Performance per Dataset In addition to detailing the performance of each dataset with the FLANT5-XL model, as shown in Table 2, we also present the results for each dataset with the FLAN-T5XXL and GPT-3.5 models in Table 2 and Table 8, respectively.",
+    "refers_to": [
+     "table:2",
+     "table:8"
+    ],
+    "comparison": null,
+    "sentence_id": "b:102/s:0",
+    "unknown_refs": []
+   }
+  ],
+  "run_id": "6d2703a7-ec96-4cb5-8bb9-b8dae36e588d",
+  "coverage": {
+   "models": [
+    "openai/gpt-oss-20b"
+   ],
+   "batches": 6,
+   "by_type": {
+    "other": 1,
+    "figure": 8,
+    "result": 4,
+    "citation": 3,
+    "comparison": 7
+   },
+   "stopped": null,
+   "llm_errors": 0,
+   "batches_done": 6,
+   "rate_limited": 0,
+   "batches_skipped": [],
+   "total_sentences": 212,
+   "candidate_sentences": 71
+  },
+  "implemented": "parse+claims+numbers+figures+citations",
+  "figure_checks": {
+   "checks": [
+    {
+     "text": "Figure 1 shows that the proposed method improves overall efficiency and accuracy.",
+     "claim": 0,
+     "figure": "figure:1",
+     "verdict": "supported",
+     "evidence": "The scatter plot shows 'Adaptive-RAG (Ours)' at the top-left (highest F1, low time), 'Multi-step Approach' at the top-right (high F1, high time), and 'Single-step Approach' at the bottom-middle (low F1, medium time). Adaptive-RAG offers a better trade-off (higher F1 than single-step, lower time than multi-step).",
+     "read_values": [
+      "Adaptive-RAG F1 ~51",
+      "Adaptive-RAG Time ~1.5",
+      "Multi-step F1 ~51",
+      "Multi-step Time ~3.4",
+      "Single-step F1 ~47",
+      "Single-step Time ~1.0"
+     ],
+     "sentence_id": "b:14/s:5"
+    },
+    {
+     "text": "Figure 1 shows that Adaptive-RAG is more effective and efficient than the GPT-3.5 model.",
+     "claim": 21,
+     "figure": "figure:1",
+     "verdict": "supported",
+     "evidence": "The plot shows 'Adaptive-RAG (Ours)' with a higher F1 score (~51) and a lower Time per Query (~1.5) compared to the 'Single-step Approach' (F1 ~47, Time ~1.0) and 'Multi-step Approach' (F1 ~51, Time ~3.4).",
+     "read_values": [
+      "Adaptive-RAG F1 ~51",
+      "Adaptive-RAG Time ~1.5",
+      "Single-step F1 ~47",
+      "Multi-step Time ~3.4"
+     ],
+     "sentence_id": "b:100/s:1"
+    },
+    {
+     "text": "Figure 2 shows that using a basic non-retrieval LLM for complex queries is ineffective, while using a multi-step approach for simple queries is inefficient.",
+     "claim": 5,
+     "figure": "figure:2",
+     "verdict": "supported",
+     "evidence": "In panel (A), the complex query path leads to an answer marked with a red 'X' and the word 'Inaccurate', indicating ineffectiveness. In panel (B), the simple query path shows a loop labeled 'k times' and is explicitly labeled 'Inefficient'.",
+     "read_values": [
+      "Inaccurate",
+      "Inefficient",
+      "k times"
+     ],
+     "sentence_id": "b:36/s:1"
+    },
+    {
+     "text": "Figure 4 and Figure 5 compare performance and efficiency of different retrieval-augmented generation approaches with FLAN-T5-XL and FLAN-T5XXL models.",
+     "claim": 20,
+     "figure": "figure:4",
+     "verdict": "not_shown",
+     "evidence": "The figure shows a scatter plot of Performance (F1) vs Time per Query for four approaches: No Retrieval, Adaptive Retrieval, Single-step Approach, and Multi-step Approach. The caption states that FLAN-T5-XL is used. The figure does not contain information about FLAN-T5XXL or Figure 5.",
+     "read_values": [
+      "FLAN-T5-XL (from caption)"
+     ],
+     "sentence_id": "b:100/s:0"
+    },
+    {
+     "text": "Figure 4 and Figure 5 compare performance and efficiency of different retrieval-augmented generation approaches with FLAN-T5-XL and FLAN-T5XXL models.",
+     "claim": 20,
+     "figure": "figure:5",
+     "verdict": "not_shown",
+     "evidence": "The figure shows a scatter plot of Performance (F1) vs Time per Query for five different approaches (No Retrieval, Adaptive Retrieval, Single-step Approach, Adaptive-RAG, Multi-step Approach). The caption states that FLAN-T5-XXL is used. The figure itself does not contain information about Figure 4 or the FLAN-T5-XL model.",
+     "read_values": [],
+     "sentence_id": "b:100/s:0"
+    }
+   ],
+   "summary": {
+    "jobs": 5,
+    "checks": 5,
+    "figures": 5,
+    "skipped": [
+     2
+    ],
+    "stopped": null,
+    "jobs_done": 4,
+    "not_shown": 2,
+    "supported": 3,
+    "llm_errors": 4,
+    "contradicted": 0,
+    "not_answered": 0,
+    "rate_limited": 0,
+    "missing_figure": 0
+   },
+   "figures_read": {
+    "figure:1": "A scatter plot titled 'Performance vs Time with GPT-3.5'. The x-axis represents 'Time per Query' ranging from 0.5 to 3.5. The y-axis represents 'Performance (F1)' ranging from 47 to 51. Four data points are plotted: 'Adaptive-RAG (Ours)' (purple star) at approximately (1.5, 51), 'Multi-step Approach' (red cross) at approximately (3.4, 51), 'No Retrieval' (blue cross) at approximately (0.7, 48.5), 'Adaptive Retrieval' (green cross) at approximately (0.9, 48.2), and 'Single-step Approach' (red",
+    "figure:2": "Figure 2 is a conceptual diagram comparing three retrieval-augmented LLM approaches: (A) Single-Step, (B) Multi-Step, and (C) Adaptive. Panel (A) shows a single retrieval step for both simple and complex queries, with the complex query resulting in an 'Inaccurate' answer. Panel (B) shows iterative retrieval ('k times') for both query types, with the simple query path labeled 'Inefficient'. Panel (C) shows a classifier routing simple queries to a single-step path and complex queries to a 'k'-",
+    "figure:4": "A scatter plot showing the trade-off between Performance (F1) on the y-axis and Time per Query on the x-axis. Four data points are plotted: 'No Retrieval' (blue x), 'Adaptive Retrieval' (green x), 'Single-step Approach' (orange x), and 'Multi-step Approach' (red x). 'Adaptive-RAG (Ours)' is labeled near the top left, corresponding to the 'Single-step Approach' point.",
+    "figure:5": "A scatter plot showing the relationship between Performance (F1) on the y-axis and Time per Query on the x-axis. The y-axis ranges from 30 to 50, and the x-axis ranges from 0.0 to 4.0. Five data points are plotted, representing different retrieval-augmented generation approaches: 'No Retrieval' (blue x), 'Adaptive Retrieval' (green x), 'Single-step Approach' (orange x), 'Adaptive-RAG (Ours)' (purple star), and 'Multi-step Approach' (red x)."
+   },
+   "prompt_version": "v2"
+  },
+  "number_checks": {
+   "checks": [
+    {
+     "kind": "value",
+     "note": "6 cells fit and none shows 31%",
+     "claim": 14,
+     "metric": "misclassification rate",
+     "system": "classifier",
+     "claimed": "31%",
+     "dataset": "",
+     "setting": "C (Multi) as B (One)",
+     "verdict": "unverifiable",
+     "candidates": [
+      {
+       "row": "Adaptive-RAG (Ours)",
+       "text": "65.45",
+       "table": "table:4",
+       "column": "Classifier (Accuracy) / Multi",
+       "section": ""
+      },
+      {
+       "row": "Adaptive-RAG (Ours) / w/o Binary",
+       "text": "39.55",
+       "table": "table:4",
+       "column": "Classifier (Accuracy) / Multi",
+       "section": ""
+      },
+      {
+       "row": "Adaptive-RAG (Ours) / w/o Silver",
+       "text": "75.91",
+       "table": "table:4",
+       "column": "Classifier (Accuracy) / Multi",
+       "section": ""
+      },
+      {
+       "row": "Small (60M)",
+       "text": "53.18",
+       "table": "table:6",
+       "column": "Classifier (Accuracy) / Multi",
+       "section": ""
+      },
+      {
+       "row": "Base (223M)",
+       "text": "56.82",
+       "table": "table:6",
+       "column": "Classifier (Accuracy) / Multi",
+       "section": ""
+      }
+     ],
+     "sentence_id": "b:61/s:4"
+    },
+    {
+     "kind": "value",
+     "note": "6 cells fit and none shows 23%",
+     "claim": 14,
+     "metric": "misclassification rate",
+     "system": "classifier",
+     "claimed": "23%",
+     "dataset": "",
+     "setting": "B (One) as C (Multi)",
+     "verdict": "unverifiable",
+     "candidates": [
+      {
+       "row": "Adaptive-RAG (Ours)",
+       "text": "65.45",
+       "table": "table:4",
+       "column": "Classifier (Accuracy) / Multi",
+       "section": ""
+      },
+      {
+       "row": "Adaptive-RAG (Ours) / w/o Binary",
+       "text": "39.55",
+       "table": "table:4",
+       "column": "Classifier (Accuracy) / Multi",
+       "section": ""
+      },
+      {
+       "row": "Adaptive-RAG (Ours) / w/o Silver",
+       "text": "75.91",
+       "table": "table:4",
+       "column": "Classifier (Accuracy) / Multi",
+       "section": ""
+      },
+      {
+       "row": "Small (60M)",
+       "text": "53.18",
+       "table": "table:6",
+       "column": "Classifier (Accuracy) / Multi",
+       "section": ""
+      },
+      {
+       "row": "Base (223M)",
+       "text": "56.82",
+       "table": "table:6",
+       "column": "Classifier (Accuracy) / Multi",
+       "section": ""
+      }
+     ],
+     "sentence_id": "b:61/s:4"
+    },
+    {
+     "kind": "value",
+     "note": "6 cells fit and none shows 47%",
+     "claim": 14,
+     "metric": "misclassification rate",
+     "system": "classifier",
+     "claimed": "47%",
+     "dataset": "",
+     "setting": "A (No) as B (One)",
+     "verdict": "unverifiable",
+     "candidates": [
+      {
+       "row": "Adaptive-RAG (Ours)",
+       "text": "65.45",
+       "table": "table:4",
+       "column": "Classifier (Accuracy) / Multi",
+       "section": ""
+      },
+      {
+       "row": "Adaptive-RAG (Ours) / w/o Binary",
+       "text": "39.55",
+       "table": "table:4",
+       "column": "Classifier (Accuracy) / Multi",
+       "section": ""
+      },
+      {
+       "row": "Adaptive-RAG (Ours) / w/o Silver",
+       "text": "75.91",
+       "table": "table:4",
+       "column": "Classifier (Accuracy) / Multi",
+       "section": ""
+      },
+      {
+       "row": "Small (60M)",
+       "text": "53.18",
+       "table": "table:6",
+       "column": "Classifier (Accuracy) / Multi",
+       "section": ""
+      },
+      {
+       "row": "Base (223M)",
+       "text": "56.82",
+       "table": "table:6",
+       "column": "Classifier (Accuracy) / Multi",
+       "section": ""
+      }
+     ],
+     "sentence_id": "b:61/s:4"
+    },
+    {
+     "kind": "value",
+     "note": "6 cells fit and none shows 22%",
+     "claim": 14,
+     "metric": "misclassification rate",
+     "system": "classifier",
+     "claimed": "22%",
+     "dataset": "",
+     "setting": "A (No) as C (Multi)",
+     "verdict": "unverifiable",
+     "candidates": [
+      {
+       "row": "Adaptive-RAG (Ours)",
+       "text": "65.45",
+       "table": "table:4",
+       "column": "Classifier (Accuracy) / Multi",
+       "section": ""
+      },
+      {
+       "row": "Adaptive-RAG (Ours) / w/o Binary",
+       "text": "39.55",
+       "table": "table:4",
+       "column": "Classifier (Accuracy) / Multi",
+       "section": ""
+      },
+      {
+       "row": "Adaptive-RAG (Ours) / w/o Silver",
+       "text": "75.91",
+       "table": "table:4",
+       "column": "Classifier (Accuracy) / Multi",
+       "section": ""
+      },
+      {
+       "row": "Small (60M)",
+       "text": "53.18",
+       "table": "table:6",
+       "column": "Classifier (Accuracy) / Multi",
+       "section": ""
+      },
+      {
+       "row": "Base (223M)",
+       "text": "56.82",
+       "table": "table:6",
+       "column": "Classifier (Accuracy) / Multi",
+       "section": ""
+      }
+     ],
+     "sentence_id": "b:61/s:4"
+    }
+   ],
+   "summary": {
+    "checks": 4,
+    "supported": 0,
+    "contradicted": 0,
+    "unverifiable": 4,
+    "cells_indexed": 777
+   }
+  },
+  "claims_dropped": 0,
+  "citation_checks": {
+   "checks": [
+    {
+     "text": "Mallen et al. (2023) propose deciding query complexity based on entity frequency and using retrieval only when frequency is below a threshold.",
+     "marker": "Mallen et al., 2023",
+     "reason": "Passages describe Adaptive Retrieval that decides when to retrieve based on entity popularity and uses retrieval only when below a threshold.",
+     "verdict": "supported",
+     "evidence": [
+      {
+       "text": "When Not to Trust Language Models: Investigating Effectiveness of Parametric and Non-Parametric Memories. Section 6.1 Method.\nAdaptive Retrieval is based on our findings: as the current best LMs have already memorized more popular knowledge, we can use retrieval only when they do not memorize the factual knowledge and thus need to find external non-parametric knowledge. In particular, we use retrieval for questions whose popularity is lower than a threshold (popularity threshold), and for more popular entities, do not use retrieval at all.",
+       "chunk_id": "arxiv:2212.10511#sec:6.1"
+      },
+      {
+       "text": "When Not to Trust Language Models: Investigating Effectiveness of Parametric and Non-Parametric Memories. Section 6 Adaptive Retrieval: Using Retrieval.\nOnly Where It Helps\n\nWhile incorporating non-parametric memories helps in long-tail distributions, powerful LMs have already memorized factual knowledge for popular entities, and retrieval augmentation can be harmful. As outlined in (RQ3), can we achieve the best of both worlds? We propose a simple-yeteffective method, Adaptive Retrieval, which decides when to retrieve passages only based on input query information and augments the input with retrieved non-parametric memories only when necessary.",
+       "chunk_id": "arxiv:2212.10511#sec:6"
+      }
+     ],
+     "fulltext": true,
+     "cited_paper": "arxiv:2212.10511",
+     "cited_title": "When Not to Trust Language Models: Investigating Effectiveness of Parametric and Non-Parametric Memories",
+     "sentence_id": "b:23/s:1"
+    },
+    {
+     "text": "Asai et al. (2024) suggest training a sophisticated model to dynamically retrieve, critique, and generate text.",
+     "marker": "Asai et al., 2024",
+     "reason": "Passages describe SELF‑RAG training a model to retrieve, generate, and critique text passages.",
+     "verdict": "supported",
+     "evidence": [
+      {
+       "text": "Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection. Section 6 CONCLUSION.\nThis work introduces SELF-RAG, a new framework to enhance the quality and factuality of LLMs through retrieval on demand and self-reflection. SELF-RAG trains an LM to learn to retrieve, generate, and critique text passages and its own generation by predicting the next tokens from its original vocabulary as well as newly added special tokens, called reflection tokens. SELF-RAG further enables the tailoring of LM behaviors at test time by leveraging reflection tokens.",
+       "chunk_id": "arxiv:2310.11511#sec:6"
+      },
+      {
+       "text": "Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection. Figure 1.\nFigure 1: Overview of SELF-RAG. SELF-RAG learns to retrieve, critique, and generate text passages to enhance overall generation quality, factuality, and verifiability.",
+       "chunk_id": "arxiv:2310.11511#fig:1"
+      },
+      {
+       "text": "Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection. Section 3.1 PROBLEM FORMALIZATION AND OVERVIEW.\nTraining overview. SELF-RAG enables an arbitrary LM to generate text with reflection tokens by unifying them as next token predictions from the expanded model vocabulary (i.e., the original vocabulary plus reflection tokens). Specifically, we train the generator model M on a curated corpus with interleaving passages retrieved by a retriever R and reflection tokens predicted by a critic model C (summarized in Appendix Algorithm 2). We train C to generate reflection tokens for evaluating retrieved passages and the quality of a given task output (Section 3.2.1).",
+       "chunk_id": "arxiv:2310.11511#sec:3.1/p2"
+      }
+     ],
+     "fulltext": true,
+     "cited_paper": "arxiv:2310.11511",
+     "cited_title": "Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection",
+     "sentence_id": "b:23/s:5"
+    },
+    {
+     "text": "Qi et al. (2021) propose an approach that repeatedly performs retrieving, reading, and reranking until an answer is derived for the query.",
+     "marker": "Qi et al., 2021",
+     "reason": "",
+     "verdict": "not_in_library",
+     "evidence": [],
+     "reference": "Peng Qi, Haejun Lee, Tg Sido, and Christopher D. Manning. 2021. Answering open-domain questions of varying reasoning steps from text. In Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing, EMNLP 2021, Virtual Event / Punta Cana, Dominican Republic, 7-11 November, ",
+     "cited_paper": null,
+     "sentence_id": "b:23/s:3"
+    }
+   ],
+   "summary": {
+    "batches": 1,
+    "stopped": null,
+    "citations": 3,
+    "not_found": 0,
+    "supported": 2,
+    "in_library": 2,
+    "llm_errors": 0,
+    "batches_done": 1,
+    "contradicted": 0,
+    "not_answered": 0,
+    "rate_limited": 0,
+    "not_in_library": 1,
+    "retrieval_errors": 0,
+    "unresolved_reference": 0
+   },
+   "prompt_version": "v1"
+  },
+  "prompt_versions": {
+   "P5-figure-checker": "v2",
+   "P4-claim-extractor": "v1",
+   "P6-citation-checker": "v1"
+  }
+ },
+ "steps": [
+  {
+   "step_id": 1279,
+   "step_name": "parse",
+   "status": "done",
+   "detail": {
+    "items": 13,
+    "pages": 15,
+    "title": "Adaptive-RAG: Learning to Adapt Retrieval-Augmented Large Language Models through Question Complexity",
+    "blocks": 103,
+    "cached": true,
+    "sha256": "12d262c682626c26a98bdafc7ec5dc6af3fae8247d26d4f2c712b1599dafce62",
+    "tables": [
+     {
+      "id": "table:1",
+      "page": 6,
+      "rows": 9,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:2",
+      "page": 7,
+      "rows": 18,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:3",
+      "page": 8,
+      "rows": 4,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:4",
+      "page": 8,
+      "rows": 5,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:5",
+      "page": 9,
+      "rows": 3,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:6",
+      "page": 9,
+      "rows": 5,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:7",
+      "page": 15,
+      "rows": 18,
+      "caption_source": "docling"
+     },
+     {
+      "id": "table:8",
+      "page": 15,
+      "rows": 18,
+      "caption_source": "docling"
+     }
+    ],
+    "figures": [
+     {
+      "id": "figure:1",
+      "page": 1,
+      "has_image": true,
+      "caption_source": "docling"
+     },
+     {
+      "id": "figure:2",
+      "page": 2,
+      "has_image": true,
+      "caption_source": "docling"
+     },
+     {
+      "id": "figure:3",
+      "page": 7,
+      "has_image": true,
+      "caption_source": "pdf-text"
+     },
+     {
+      "id": "figure:4",
+      "page": 14,
+      "has_image": true,
+      "caption_source": "docling"
+     },
+     {
+      "id": "figure:5",
+      "page": 14,
+      "has_image": true,
+      "caption_source": "docling"
+     }
+    ],
+    "seconds": 0.6,
+    "numbered": 13,
+    "references": 50
+   },
+   "finished_at": "2026-10-17T21:52:02.093Z"
+  },
+  {
+   "step_id": 1280,
+   "step_name": "claim_prompts",
+   "status": "done",
+   "detail": {
+    "prompt": "P4-claim-extractor",
+    "batches": [
+     [
+      "b:10/s:0",
+      "b:10/s:1",
+      "b:10/s:3",
+      "b:12/s:1",
+      "b:12/s:4",
+      "b:13/s:3",
+      "b:13/s:4",
+      "b:13/s:6",
+      "b:14/s:3",
+      "b:14/s:5"
+     ],
+     [
+      "b:15/s:0",
+      "b:15/s:1",
+      "b:21/s:0",
+      "b:21/s:1",
+      "b:21/s:2",
+      "b:22/s:0",
+      "b:22/s:2",
+      "b:22/s:3",
+      "b:22/s:4"
+     ],
+     [
+      "b:23/s:1",
+      "b:23/s:3",
+      "b:23/s:5",
+      "b:29/s:3",
+      "b:36/s:1",
+      "b:47/s:0",
+      "b:49/s:0",
+      "b:51/s:0",
+      "b:51/s:2",
+      "b:51/s:3"
+     ],
+     [
+      "b:53/s:2",
+      "b:55/s:0",
+      "b:55/s:1",
+      "b:55/s:2",
+      "b:55/s:3",
+      "b:55/s:4",
+      "b:55/s:5",
+      "b:55/s:6",
+      "b:56/s:0",
+      "b:59/s:0",
+      "b:59/s:1",
+      "b:60/s:1"
+     ],
+     [
+      "b:60/s:3",
+      "b:60/s:6",
+      "b:60/s:9",
+      "b:61/s:1",
+      "b:61/s:3",
+      "b:61/s:4",
+      "b:61/s:5",
+      "b:62/s:0",
+      "b:62/s:1",
+      "b:63/s:1",
+      "b:63/s:2",
+      "b:64/s:1",
+      "b:65/s:1"
+     ],
+     [
+      "b:78/s:0",
+      "b:79/s:0",
+      "b:80/s:0",
+      "b:82/s:0",
+      "b:83/s:0",
+      "b:84/s:0",
+      "b:85/s:0",
+      "b:90/s:1",
+      "b:90/s:2",
+      "b:91/s:1",
+      "b:94/s:1",
+      "b:95/s:0",
+      "b:98/s:2",
+      "b:100/s:0",
+      "b:100/s:1",
+      "b:102/s:0",
+      "b:102/s:2"
+     ]
+    ],
+    "candidates": [
+     {
+      "id": "b:10/s:0",
+      "page": 1,
+      "text": "Recent Large Language Models (LLMs) (Brown et al., 2020; OpenAI, 2023; Touvron et al., 2023; Anil et al., 2023) have shown overwhelming performances across diverse tasks, including questionanswering (QA) (Yang et al., 2018; Kwiatkowski et al., 2019).",
+      "block": "b:10",
+      "section": "1 Introduction",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:10/s:1",
+      "page": 1,
+      "text": "However, they still generate factually incorrect answers since their knowledge solely relies on their parametric memory (Kasai et al., 2022; Mallen et al., 2023).",
+      "block": "b:10",
+      "section": "1 Introduction",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:10/s:3",
+      "page": 1,
+      "text": "To address this problem, retrievalaugmented LLMs (Borgeaud et al., 2022; Izacard et al., 2023; Shi et al., 2023), which incorporate non-parametric knowledge into LLMs with additional retrieval modules, have gained much increasing attention.",
+      "block": "b:10",
+      "section": "1 Introduction",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:12/s:1",
+      "page": 1,
+      "text": "Early work on retrieval-augmented LLMs focuses primarily on single-hop queries (Lazaridou et al., 2022; Ram et al., 2023), whose answers are typically found within a single document; therefore, this approach involves retrieving a relevant document based on the query and subsequently integrating this information into QA models to formulate a response.",
+      "block": "b:12",
+      "section": "1 Introduction",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:12/s:4",
+      "page": 1,
+      "text": "Therefore, to effectively handle such complex queries, recent studies have concentrated largely on multistep and multi-reasoning QA, which requires iterative accesses to both LLMs and retrievers multiple times (Press et al., 2023; Trivedi et al., 2023), at the cost of heavy computational overheads.",
+      "block": "b:12",
+      "section": "1 Introduction",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:13/s:3",
+      "page": 2,
+      "text": "In other words, a multi-step QA approach could give rise to unnecessary computational overhead for simple queries, even though it would be vital for complex queries (see Figure 2 (A)).",
+      "block": "b:13",
+      "section": "1 Introduction",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:13/s:4",
+      "page": 2,
+      "text": "On the other hand, handling complex queries with single-step-retrieval or even non-retrieval strategies would be largely insufficient (Figure 2 (B)).",
+      "block": "b:13",
+      "section": "1 Introduction",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:13/s:6",
+      "page": 2,
+      "text": "While some recent approaches are capable of doing this based on the frequency of entities in queries (Mallen et al., 2023) or on the generated outputs from models for multi-step QA (Trivedi et al., 2023), they are still suboptimal: the former methods are overly simplistic, failing to consider multi-hop queries; meanwhile, the latter are excessively complex, terminating answer solving steps after several rounds of module access.",
+      "block": "b:13",
+      "section": "1 Introduction",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:14/s:3",
+      "page": 2,
+      "text": "In this work, we operationalize this process with a novel classifier, which is a smaller model trained to predict the complexity level of incoming queries (see Figure 2 (c)).",
+      "block": "b:14",
+      "section": "1 Introduction",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:14/s:5",
+      "page": 2,
+      "text": "This proposed method can offer a robust middle ground among the iterative LLM augmentation methods for complex queries, single-step methods for simpler queries, and even no-retrieval-augmented methods for the most straightforward queries (answerable by LLMs themselves), thus significantly enhancing the overall efficiency and accuracy, as shown in Figure 1.",
+      "block": "b:14",
+      "section": "1 Introduction",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:15/s:0",
+      "page": 2,
+      "text": "We validate Adaptive-RAG using benchmark open-domain QA datasets, covering a wide range of query complexity from single-hop (Rajpurkar et al., 2016; Joshi et al., 2017; Kwiatkowski et al., 2019) to multi-hop (Yang et al., 2018; Ho et al., 2020; Trivedi et al., 2022b) queries.",
+      "block": "b:15",
+      "section": "1 Introduction",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:15/s:1",
+      "page": 2,
+      "text": "The experimental results show that ours significantly improves the overall accuracy and efficiency, compared to the prior adaptive strategies, on multiple LLMs, such as GPT-3.5 (Brown et al., 2020) and FLAN-T5 series (Chung et al., 2022).",
+      "block": "b:15",
+      "section": "1 Introduction",
+      "signals": [
+       "number",
+       "citation"
+      ]
+     },
+     {
+      "id": "b:21/s:0",
+      "page": 3,
+      "text": "Open-domain QA Open-domain QA is the task of accurately answering a query by sourcing for query-relevant documents, and then interpreting them to provide answers (Chen et al., 2017; Zhu et al., 2021), which, thus, generally involves two modules: a retriever (Karpukhin et al., 2020; Xiong et al., 2021) and a reader (Yang et al., 2019; Izacard and Grave, 2021; Jeong et al., 2023).",
+      "block": "b:21",
+      "section": "2 Related Work",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:21/s:1",
+      "page": 3,
+      "text": "Along with the emergence of LLMs with superior reasoning capabilities thanks to their billion-sized parameters (Wei et al., 2022a), a synergy between LLMs and retrievers has led to significant advancements (Lazaridou et al., 2022; Ram et al., 2023).",
+      "block": "b:21",
+      "section": "2 Related Work",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:21/s:2",
+      "page": 3,
+      "text": "Specifically, this integration has been shown to enhance Open-domain QA by mitigating the hallucination problem from LLMs through strengthened reasoning abilities of the reader, as well as utilizing the retrieved, external documents (Cho et al., 2023).",
+      "block": "b:21",
+      "section": "2 Related Work",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:22/s:0",
+      "page": 3,
+      "text": "Multi-hop QA Multi-hop QA is an extension of conventional Open-domain QA, which additionally requires the system to comprehensively gather and contextualize information from multiple documents (often iteratively), to answer more complex queries (Trivedi et al., 2022a; Yang et al., 2018).",
+      "block": "b:22",
+      "section": "2 Related Work",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:22/s:2",
+      "page": 3,
+      "text": "Specifically, Khattab et al. (2022), Press et al. (2023), Pereira et al. (2023) and Khot et al. (2023) proposed to first decompose the multi-hop queries into simpler single-hop queries, repeatedly access the LLMs and retriever to solve these sub-queries, and merge their solutions to formulate a complete answer.",
+      "block": "b:22",
+      "section": "2 Related Work",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:22/s:3",
+      "page": 3,
+      "text": "In contrast to this decomposition-based approach, other recent studies, such as Yao et al. (2023) and Trivedi et al. (2023), explored the interleaving of Chain-ofThought reasoning (Wei et al., 2022b) - a method where a logical sequence of thoughts is generated -with document retrieval, repeatedly applying this process until the reasoning chain generates the answer.",
+      "block": "b:22",
+      "section": "2 Related Work",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:22/s:4",
+      "page": 3,
+      "text": "In addition, Jiang et al. (2023) introduced an approach to repeatedly retrieving new documents if the tokens within generated sentences have low confidence.",
+      "block": "b:22",
+      "section": "2 Related Work",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:23/s:1",
+      "page": 3,
+      "text": "In this vein, Mallen et al. (2023) proposed to decide the query's complexity level based on the frequency of its entities and suggested using the retrieval modules only when the frequency falls below a certain threshold.",
+      "block": "b:23",
+      "section": "2 Related Work",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:23/s:3",
+      "page": 3,
+      "text": "Additionally, Qi et al. (2021) proposed an approach that performs a fixed set of operations (retrieving, reading, and reranking) multiple times until the answer is derived for the given query, which is built upon traditional BERT-like LMs.",
+      "block": "b:23",
+      "section": "2 Related Work",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:23/s:5",
+      "page": 3,
+      "text": "Concurrent to our work, Asai et al. (2024) suggested training a sophisticated model to dynamically retrieve, critique, and generate the text.",
+      "block": "b:23",
+      "section": "2 Related Work",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:29/s:3",
+      "page": 4,
+      "text": "Here, we can use any off-the-shelf retriever (Robertson et al., 1994; Karpukhin et al., 2020).",
+      "block": "b:29",
+      "section": "3.1 Preliminaries",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:36/s:1",
+      "page": 4,
+      "text": "In other words, employing the most basic, non-retrievalbased approach LLM ( q ) to respond to the complex query q would be also ineffective (Figure 2, A); conversely, using a more elaborate multi-step approach LLM ( q , d , c ) for simple q would be inefficient (Figure 2, B).",
+      "block": "b:36",
+      "section": "3.2 Adaptive-RAG: Adaptive Retrieval-Augmented Generation",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:47/s:0",
+      "page": 5,
+      "text": "Single-hop QA For simpler queries, we use three benchmark single-hop QA datasets, which consist of queries and their associated documents containing answers, namely 1) SQuAD v1.1 (Rajpurkar et al., 2016), 2) Natural Questions (Kwiatkowski et al., 2019), and 3) TriviaQA (Joshi et al., 2017).",
+      "block": "b:47",
+      "section": "4.1 Datasets",
+      "signals": [
+       "number",
+       "citation"
+      ]
+     },
+     {
+      "id": "b:49/s:0",
+      "page": 6,
+      "text": "Multi-hop QA To consider more complex query scenarios, we use three benchmark multi-hop QA datasets, which require sequential reasoning over multiple documents, namely 1) MuSiQue (Trivedi et al., 2022a), 2) HotpotQA (Yang et al., 2018), and 3) 2WikiMultiHopQA (Ho et al., 2020).",
+      "block": "b:49",
+      "section": "4.1 Datasets",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:51/s:0",
+      "page": 6,
+      "text": "We compare our Adaptive-RAG against relevant models, including three retrieval-augmented LLM strategies (in Section 3.1) and the adaptive retrieval approaches (Mallen et al., 2023; Asai et al., 2024), which can be grouped into one of three categories: Simple, Adaptive, and Complex.",
+      "block": "b:51",
+      "section": "4.2 Models",
+      "signals": [
+       "number",
+       "citation"
+      ]
+     },
+     {
+      "id": "b:51/s:2",
+      "page": 6,
+      "text": "Adaptive approaches include the 3) Adaptive Retrieval (Mallen et al., 2023), 4) Self-RAG (Asai et al., 2024), and our 5) Adaptive-RAG , which can adaptively perform retrieval based on the question complexity.",
+      "block": "b:51",
+      "section": "4.2 Models",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:51/s:3",
+      "page": 6,
+      "text": "For the 6) Multi-step Approach , we use the most sophisticated state-ofthe-art method (Trivedi et al., 2023), iteratively accessing both the retriever and LLM with Chainof-Thought reasoning (Wei et al., 2022b), for every query.",
+      "block": "b:51",
+      "section": "4.2 Models",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:53/s:2",
+      "page": 6,
+      "text": "In particular, for effectiveness, we use F1, EM, and Accuracy (Acc), following the standard evaluation protocol (Mallen et al., 2023; Baek et al., 2023; Asai et al., 2024), where F1 measures the number of overlapping words between the predicted answer and the ground truth, EM measures whether they are the same, and Acc measures whether the predicted answer contains the ground-truth answer.",
+      "block": "b:53",
+      "section": "4.3 Evaluation Metrics",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:55/s:0",
+      "page": 6,
+      "text": "For a fair comparison and following Mallen et al. (2023) and Trivedi et al. (2023), we use the same retriever, a term-based sparse retrieval model known as BM25 (Robertson et al., 1994), across all different models.",
+      "block": "b:55",
+      "section": "4.4 Implementation Details",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:55/s:1",
+      "page": 6,
+      "text": "For the external document corpus, we use different sources depending on the dataset type: the Wikipedia corpus preprocessed by Karpukhin et al. (2020) for single-hop datasets, and the preprocessed corpus by Trivedi et al. (2023) for multihop datasets.",
+      "block": "b:55",
+      "section": "4.4 Implementation Details",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:55/s:2",
+      "page": 6,
+      "text": "Regarding the LLMs that are used to generate answers, we use the FLAN-T5 series models (Chung et al., 2022) of XL with 3B parameters and XXL with 11B parameters, and the GPT-3.5 model (gpt-3.5-turbo-instruct).",
+      "block": "b:55",
+      "section": "4.4 Implementation Details",
+      "signals": [
+       "number",
+       "citation"
+      ]
+     },
+     {
+      "id": "b:55/s:3",
+      "page": 6,
+      "text": "For the retrieval-augmented LLM design, we follow the implementation details from Trivedi et al. (2023), which include input prompts, instructions, and the number of test samples for evaluation (e.g., 500 samples per dataset).",
+      "block": "b:55",
+      "section": "4.4 Implementation Details",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:55/s:4",
+      "page": 6,
+      "text": "In our Adaptive-RAG, for the query-complexity classifier, we use and train the T5-Large model (Raffel et al., 2020).",
+      "block": "b:55",
+      "section": "4.4 Implementation Details",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:55/s:5",
+      "page": 6,
+      "text": "Specifically, the classifier is trained using the epoch that shows the best performance until 100 training iterations from the validation set, with the learning rate of 3e- Figure 3: Performance on QA and query-complexity assessment of different adaptive approaches for retrieval-augmented LLMs with FLAN-T5 XL (Left) and XXL (Center).",
+      "block": "b:55",
+      "section": "4.4 Implementation Details",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:55/s:6",
+      "page": 6,
+      "text": "For labeling the complexity of queries, we use the silver data annotated from the prediction outcomes of models (described in Section 3.2).",
+      "block": "b:55",
+      "section": "4.4 Implementation Details",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:56/s:0",
+      "page": 7,
+      "text": "5 and the AdamW (Loshchilov and Hutter, 2019) as an optimizer.",
+      "block": "b:56",
+      "section": "4.4 Implementation Details",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:59/s:0",
+      "page": 7,
+      "text": "Main Results First of all, Table 1 shows our main results averaged over all considered datasets, which corroborate our hypothesis that simple retrievalaugmented strategies are less effective than the complex strategy, while the complex one is significantly more expensive than the simple ones.",
+      "block": "b:59",
+      "section": "5 Experimental Results and Analyses",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:59/s:1",
+      "page": 7,
+      "text": "In addition, we report the more granular results with FLAN-T5-XL on each of the single-hop and multihop datasets in Table 2 (and more with different LLMs in Table 7 and Table 8 of Appendix), which are consistent with the results observed in Table 1.",
+      "block": "b:59",
+      "section": "5 Experimental Results and Analyses",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:60/s:1",
+      "page": 7,
+      "text": "Note that among the adaptive strategies, our Adaptive-RAG shows remarkable effectiveness over the competitors (Table 1).",
+      "block": "b:60",
+      "section": "5 Experimental Results and Analyses",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:60/s:3",
+      "page": 7,
+      "text": "Also, as shown in Table 2, such simple adaptive strategies are particularly inadequate for handling complex queries in multi-hop datasets, which require aggregated information and reasoning over multiple documents.",
+      "block": "b:60",
+      "section": "5 Experimental Results and Analyses",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:60/s:6",
+      "page": 7,
+      "text": "As shown in Table 1, compared to the complex multi-step strategy, our proposed adaptive strategy is significantly more efficient across all model sizes.",
+      "block": "b:60",
+      "section": "5 Experimental Results and Analyses",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:60/s:9",
+      "page": 7,
+      "text": "As shown in Table 1 and Table 2, we observe that it achieves the best performance while being much more efficient than our Adaptive-RAG without the oracle classifier.",
+      "block": "b:60",
+      "section": "5 Experimental Results and Analyses",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:61/s:1",
+      "page": 8,
+      "text": "As Figure 3 (Left and Center) shows, the classification accuracy of our Adaptive-RAG is better than those of the other adaptive retrieval baselines, which leads to overall QA performance improvements.",
+      "block": "b:61",
+      "section": "5 Experimental Results and Analyses",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:61/s:3",
+      "page": 8,
+      "text": "In addition to the true positive performance of our classifier averaged over all those three labels in Figure 3 (Left and Center), we further report its confusion matrix in Figure 3 (Right).",
+      "block": "b:61",
+      "section": "5 Experimental Results and Analyses",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:61/s:4",
+      "page": 8,
+      "text": "We note that the confusion matrix reveals some notable trends: 'C (Multi)' is sometimes misclassified as 'B (One)' (about 31%) and 'B (One)' as 'C (Multi)' (about 23%); 'A (No)' is misclassified often as 'B (One)' (about 47%) and less frequently as 'C (Multi)' (about 22%).",
+      "block": "b:61",
+      "section": "5 Experimental Results and Analyses",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:61/s:5",
+      "page": 8,
+      "text": "While the overall results in Figure 3 show that our classifier effectively categorizes the three labels, further refining it based on such misclassification would be a meaningful direction for future work.",
+      "block": "b:61",
+      "section": "5 Experimental Results and Analyses",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:62/s:0",
+      "page": 8,
+      "text": "Analyses on Efficiency for Classifier While Table 1 shows the relative elapsed time for each of the three different RAG strategies, we further provide the exact elapsed time per query for our AdaptiveRAG and the distribution for predicted labels from our query-complexity classifier in Table 3.",
+      "block": "b:62",
+      "section": "5 Experimental Results and Analyses",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:62/s:1",
+      "page": 8,
+      "text": "Similar to the results of the elapsed time in Table 1 (relative time), Table 3 (exact time) shows that efficiency can be substantially improved by identifying simple or straightforward queries.",
+      "block": "b:62",
+      "section": "5 Experimental Results and Analyses",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:63/s:1",
+      "page": 8,
+      "text": "Here, we further analyze the different strategies for training the classifier by ablating our full training strategy, which includes two approaches: generating silver data from predicted outcomes of models and utilizing inductive bias in datasets (see Section 3.2).",
+      "block": "b:63",
+      "section": "5 Experimental Results and Analyses",
+      "signals": [
+       "number"
+      ]
+     },
+     {
+      "id": "b:63/s:2",
+      "page": 8,
+      "text": "As Table 4 shows, compared to the training strategy relying solely on the data derived from inductive bias, ours is significantly more efficient.",
+      "block": "b:63",
+      "section": "5 Experimental Results and Analyses",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:64/s:1",
+      "page": 8,
+      "text": "As shown in Table 6, we observe no significant performance differences among classifiers of various sizes, even with reduced complexity and fewer parameters in smaller classifiers.",
+      "block": "b:64",
+      "section": "5 Experimental Results and Analyses",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:65/s:1",
+      "page": 8,
+      "text": "Table 5 shows the classified complexity and the query handling patterns for both simple and complex questions.",
+      "block": "b:65",
+      "section": "5 Experimental Results and Analyses",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:78/s:0",
+      "page": 14,
+      "text": "We use publicly open datasets for both singlehop and multi-hop QA datasets, referring to as Karpukhin et al. (2020) and Trivedi et al. (2023), respectively.",
+      "block": "b:78",
+      "section": "A.1 Datasets",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:79/s:0",
+      "page": 14,
+      "text": "SQuAD v1.1 (Rajpurkar et al., 2016) is created through a process where annotators write questions based on the documents they read.",
+      "block": "b:79",
+      "section": "A.1 Datasets",
+      "signals": [
+       "number",
+       "citation"
+      ]
+     },
+     {
+      "id": "b:80/s:0",
+      "page": 14,
+      "text": "Natural Questions (Kwiatkowski et al., 2019) is",
+      "block": "b:80",
+      "section": "A.1 Datasets",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:82/s:0",
+      "page": 14,
+      "text": "TriviaQA (Joshi et al., 2017) comprises trivia questions sourced from various quiz websites.",
+      "block": "b:82",
+      "section": "A.1 Datasets",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:83/s:0",
+      "page": 14,
+      "text": "MuSiQue (Trivedi et al., 2022a) is collected by compositing multiple single-hop queries, to form queries spanning 2-4 hops.",
+      "block": "b:83",
+      "section": "A.1 Datasets",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:84/s:0",
+      "page": 14,
+      "text": "HotpotQA (Yang et al., 2018) is constructed by having annotators create questions that link multiple Wikipedia articles.",
+      "block": "b:84",
+      "section": "A.1 Datasets",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:85/s:0",
+      "page": 14,
+      "text": "2WikiMultiHopQA (Ho et al., 2020) is derived from Wikipedia and its associated knowledge graph path, needing 2-hops.",
+      "block": "b:85",
+      "section": "A.1 Datasets",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:90/s:1",
+      "page": 14,
+      "text": "This baseline (Mallen et al., 2023) adaptively augments the LLM with the retrieval module, only when the entities appearing in queries are less popular.",
+      "block": "b:90",
+      "section": "A.2 Models",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:90/s:2",
+      "page": 14,
+      "text": "To extract entities, we use the available entity-linking method (Li et al., 2020), namely BLINK, for questions.",
+      "block": "b:90",
+      "section": "A.2 Models",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:91/s:1",
+      "page": 14,
+      "text": "This baseline (Asai et al., 2024)",
+      "block": "b:91",
+      "section": "A.2 Models",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:94/s:1",
+      "page": 14,
+      "text": "This approach (Trivedi et al., 2023) is the multi-step retrieval-augmented",
+      "block": "b:94",
+      "section": "A.2 Models",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:95/s:0",
+      "page": 14,
+      "text": "LLM, which iteratively accesses both the retriever and LLM with interleaved Chain-of-Thought reasoning (Wei et al., 2022b) repeatedly until it derives the solution or reaches the maximum step number.",
+      "block": "b:95",
+      "section": "A.2 Models",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:98/s:2",
+      "page": 14,
+      "text": "Finally, we implemented models using PyTorch (Paszke et al., 2019) and Transformers library (Wolf et al., 2020).",
+      "block": "b:98",
+      "section": "A.3 Implementation Details",
+      "signals": [
+       "citation"
+      ]
+     },
+     {
+      "id": "b:100/s:0",
+      "page": 14,
+      "text": "Performance vs Time We further provide a comparison of different retrieval-augmented generation approaches with FLAN-T5-XL and FLAN-T5XXL models in Figure 4 and Figure 5, respectively, in the context of performance and efficiency tradeoffs.",
+      "block": "b:100",
+      "section": "B Additional Experimental Results",
+      "signals": [
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:100/s:1",
+      "page": 14,
+      "text": "Similar to the observation made from the GPT3.5 model in Figure 1, our proposed Adaptive-RAG is significantly more effective as well as efficient.",
+      "block": "b:100",
+      "section": "B Additional Experimental Results",
+      "signals": [
+       "number",
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:102/s:0",
+      "page": 15,
+      "text": "Performance per Dataset In addition to detailing the performance of each dataset with the FLANT5-XL model, as shown in Table 2, we also present the results for each dataset with the FLAN-T5XXL and GPT-3.5 models in Table 2 and Table 8, respectively.",
+      "block": "b:102",
+      "section": "B Additional Experimental Results",
+      "signals": [
+       "number",
+       "table_figure"
+      ]
+     },
+     {
+      "id": "b:102/s:2",
+      "page": 15,
+      "text": "It is worth noting that while the GPT-3.5 model performs effectively in addressing straightforward queries even without document retrieval, it benefits significantly from our Adaptive-RAG in terms of effectiveness when solving complex multi-hop queries.",
+      "block": "b:102",
+      "section": "B Additional Experimental Results",
+      "signals": [
+       "number"
+      ]
+     }
+    ],
+    "prompt_version": "v1",
+    "total_sentences": 212
+   },
+   "finished_at": "2026-10-17T21:52:11.558Z"
+  },
+  {
+   "step_id": 1281,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 0,
+    "model": "openai/gpt-oss-20b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-17T21:52:11.569Z"
+  },
+  {
+   "step_id": 1282,
+   "step_name": "claims_batch",
+   "status": "done",
+   "detail": {
+    "kept": [
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Figure 1 shows that the proposed method improves overall efficiency and accuracy.",
+      "values": [],
+      "sentence": "This proposed method can offer a robust middle ground among the iterative LLM augmentation methods for complex queries, single-step methods for simpler queries, and even no-retrieval-augmented methods for the most straightforward queries (answerable by LLMs themselves), thus significantly enhancing the overall efficiency and accuracy, as shown in Figure 1.",
+      "refers_to": [
+       "figure:1"
+      ],
+      "comparison": null,
+      "sentence_id": "b:14/s:5",
+      "unknown_refs": []
+     }
+    ],
+    "batch": 0,
+    "usage": {
+     "queue_time": 0.207271912,
+     "total_time": 0.343625839,
+     "prompt_time": 0.146668893,
+     "total_tokens": 2603,
+     "prompt_tokens": 2434,
+     "completion_time": 0.196956946,
+     "completion_tokens": 169,
+     "completion_tokens_details": {
+      "reasoning_tokens": 105
+     }
+    },
+    "dropped": []
+   },
+   "finished_at": "2026-10-17T21:52:42.441Z"
+  },
+  {
+   "step_id": 1283,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 1,
+    "model": "openai/gpt-oss-20b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-17T21:52:42.463Z"
+  },
+  {
+   "step_id": 1284,
+   "step_name": "claims_batch",
+   "status": "done",
+   "detail": {
+    "kept": [
+     {
+      "type": "comparison",
+      "cites": [],
+      "claim": "Our method improves overall accuracy and efficiency compared to prior adaptive strategies on multiple LLMs.",
+      "values": [],
+      "sentence": "The experimental results show that ours significantly improves the overall accuracy and efficiency, compared to the prior adaptive strategies, on multiple LLMs, such as GPT-3.5 (Brown et al., 2020) and FLAN-T5 series (Chung et al., 2022).",
+      "refers_to": [],
+      "comparison": {
+       "kind": "unspecified",
+       "system": "ours",
+       "baseline": "prior adaptive strategies",
+       "direction": "better",
+       "difference": ""
+      },
+      "sentence_id": "b:15/s:1",
+      "unknown_refs": []
+     }
+    ],
+    "batch": 1,
+    "usage": {
+     "queue_time": 0.0182472,
+     "total_time": 0.354515993,
+     "prompt_time": 0.0760397,
+     "total_tokens": 2730,
+     "prompt_tokens": 2470,
+     "completion_time": 0.278476293,
+     "completion_tokens": 260,
+     "prompt_tokens_details": {
+      "cached_tokens": 1280
+     },
+     "completion_tokens_details": {
+      "reasoning_tokens": 176
+     }
+    },
+    "dropped": []
+   },
+   "finished_at": "2026-10-17T21:53:13.152Z"
+  },
+  {
+   "step_id": 1285,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 2,
+    "model": "openai/gpt-oss-20b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-17T21:53:13.174Z"
+  },
+  {
+   "step_id": 1286,
+   "step_name": "claims_batch",
+   "status": "done",
+   "detail": {
+    "kept": [
+     {
+      "type": "citation",
+      "cites": [
+       "Mallen et al., 2023"
+      ],
+      "claim": "Mallen et al. (2023) propose deciding query complexity based on entity frequency and using retrieval only when frequency is below a threshold.",
+      "values": [],
+      "sentence": "In this vein, Mallen et al. (2023) proposed to decide the query's complexity level based on the frequency of its entities and suggested using the retrieval modules only when the frequency falls below a certain threshold.",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:23/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "citation",
+      "cites": [
+       "Qi et al., 2021"
+      ],
+      "claim": "Qi et al. (2021) propose an approach that repeatedly performs retrieving, reading, and reranking until an answer is derived for the query.",
+      "values": [],
+      "sentence": "Additionally, Qi et al. (2021) proposed an approach that performs a fixed set of operations (retrieving, reading, and reranking) multiple times until the answer is derived for the given query, which is built upon traditional BERT-like LMs.",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:23/s:3",
+      "unknown_refs": []
+     },
+     {
+      "type": "citation",
+      "cites": [
+       "Asai et al., 2024"
+      ],
+      "claim": "Asai et al. (2024) suggest training a sophisticated model to dynamically retrieve, critique, and generate text.",
+      "values": [],
+      "sentence": "Concurrent to our work, Asai et al. (2024) suggested training a sophisticated model to dynamically retrieve, critique, and generate the text.",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:23/s:5",
+      "unknown_refs": []
+     },
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Figure 2 shows that using a basic non-retrieval LLM for complex queries is ineffective, while using a multi-step approach for simple queries is inefficient.",
+      "values": [],
+      "sentence": "In other words, employing the most basic, non-retrievalbased approach LLM ( q ) to respond to the complex query q would be also ineffective (Figure 2, A); conversely, using a more elaborate multi-step approach LLM ( q , d , c ) for simple q would be inefficient (Figure 2, B).",
+      "refers_to": [
+       "figure:2"
+      ],
+      "comparison": null,
+      "sentence_id": "b:36/s:1",
+      "unknown_refs": []
+     }
+    ],
+    "batch": 2,
+    "usage": {
+     "queue_time": 0.047118043,
+     "total_time": 0.742981801,
+     "prompt_time": 0.067396364,
+     "total_tokens": 3124,
+     "prompt_tokens": 2464,
+     "completion_time": 0.675585437,
+     "completion_tokens": 660,
+     "prompt_tokens_details": {
+      "cached_tokens": 1280
+     },
+     "completion_tokens_details": {
+      "reasoning_tokens": 374
+     }
+    },
+    "dropped": []
+   },
+   "finished_at": "2026-10-17T21:53:44.240Z"
+  },
+  {
+   "step_id": 1287,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 3,
+    "model": "openai/gpt-oss-20b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-17T21:53:44.258Z"
+  },
+  {
+   "step_id": 1288,
+   "step_name": "claims_batch",
+   "status": "done",
+   "detail": {
+    "kept": [
+     {
+      "type": "comparison",
+      "cites": [],
+      "claim": "Table 1 shows that simple retrieval-augmented strategies are less effective than the complex strategy, and the complex strategy is significantly more expensive.",
+      "values": [],
+      "sentence": "Main Results First of all, Table 1 shows our main results averaged over all considered datasets, which corroborate our hypothesis that simple retrievalaugmented strategies are less effective than the complex strategy, while the complex one is significantly more expensive than the simple ones.",
+      "refers_to": [
+       "table:1"
+      ],
+      "comparison": {
+       "kind": "unspecified",
+       "system": "simple retrieval-augmented strategies",
+       "baseline": "complex strategy",
+       "direction": "worse",
+       "difference": ""
+      },
+      "sentence_id": "b:59/s:0",
+      "unknown_refs": []
+     },
+     {
+      "type": "result",
+      "cites": [],
+      "claim": "Table 2 reports granular results with FLAN-T5-XL on each single-hop and multihop dataset, consistent with Table 1.",
+      "values": [],
+      "sentence": "In addition, we report the more granular results with FLAN-T5-XL on each of the single-hop and multihop datasets in Table 2 (and more with different LLMs in Table 7 and Table 8 of Appendix), which are consistent with the results observed in Table 1.",
+      "refers_to": [
+       "table:2",
+       "table:7",
+       "table:8",
+       "table:1"
+      ],
+      "comparison": null,
+      "sentence_id": "b:59/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "comparison",
+      "cites": [],
+      "claim": "Adaptive-RAG shows remarkable effectiveness over competitors, as shown in Table 1.",
+      "values": [],
+      "sentence": "Note that among the adaptive strategies, our Adaptive-RAG shows remarkable effectiveness over the competitors (Table 1).",
+      "refers_to": [
+       "table:1"
+      ],
+      "comparison": {
+       "kind": "unspecified",
+       "system": "Adaptive-RAG",
+       "baseline": "competitors",
+       "direction": "better",
+       "difference": ""
+      },
+      "sentence_id": "b:60/s:1",
+      "unknown_refs": []
+     }
+    ],
+    "batch": 3,
+    "usage": {
+     "queue_time": 0.018371347,
+     "total_time": 0.608773301,
+     "prompt_time": 0.05751561,
+     "total_tokens": 3063,
+     "prompt_tokens": 2539,
+     "completion_time": 0.551257691,
+     "completion_tokens": 524,
+     "prompt_tokens_details": {
+      "cached_tokens": 1536
+     },
+     "completion_tokens_details": {
+      "reasoning_tokens": 283
+     }
+    },
+    "dropped": []
+   },
+   "finished_at": "2026-10-17T21:54:15.159Z"
+  },
+  {
+   "step_id": 1289,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 4,
+    "model": "openai/gpt-oss-20b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-17T21:54:15.178Z"
+  },
+  {
+   "step_id": 1290,
+   "step_name": "claims_batch",
+   "status": "done",
+   "detail": {
+    "kept": [
+     {
+      "type": "other",
+      "cites": [],
+      "claim": "Simple adaptive strategies are inadequate for handling complex queries in multi-hop datasets, requiring aggregated information and reasoning over multiple documents.",
+      "values": [],
+      "sentence": "Also, as shown in Table 2, such simple adaptive strategies are particularly inadequate for handling complex queries in multi-hop datasets, which require aggregated information and reasoning over multiple documents.",
+      "refers_to": [
+       "table:2"
+      ],
+      "comparison": null,
+      "sentence_id": "b:60/s:3",
+      "unknown_refs": []
+     },
+     {
+      "type": "comparison",
+      "cites": [],
+      "claim": "Our adaptive strategy is more efficient than the complex multi-step strategy across all model sizes.",
+      "values": [],
+      "sentence": "As shown in Table 1, compared to the complex multi-step strategy, our proposed adaptive strategy is significantly more efficient across all model sizes.",
+      "refers_to": [
+       "table:1"
+      ],
+      "comparison": {
+       "kind": "unspecified",
+       "system": "our adaptive strategy",
+       "baseline": "complex multi-step strategy",
+       "direction": "better",
+       "difference": ""
+      },
+      "sentence_id": "b:60/s:6",
+      "unknown_refs": []
+     },
+     {
+      "type": "comparison",
+      "cites": [],
+      "claim": "Our method achieves the best performance while being much more efficient than Adaptive-RAG without the oracle classifier.",
+      "values": [],
+      "sentence": "As shown in Table 1 and Table 2, we observe that it achieves the best performance while being much more efficient than our Adaptive-RAG without the oracle classifier.",
+      "refers_to": [
+       "table:1",
+       "table:2"
+      ],
+      "comparison": {
+       "kind": "unspecified",
+       "system": "our method",
+       "baseline": "Adaptive-RAG without the oracle classifier",
+       "direction": "better",
+       "difference": ""
+      },
+      "repaired_id": "b:60/s/9",
+      "sentence_id": "b:60/s:9",
+      "unknown_refs": []
+     },
+     {
+      "type": "comparison",
+      "cites": [],
+      "claim": "The classification accuracy of our Adaptive-RAG is better than those of other adaptive retrieval baselines, leading to overall QA performance improvements.",
+      "values": [],
+      "sentence": "As Figure 3 (Left and Center) shows, the classification accuracy of our Adaptive-RAG is better than those of the other adaptive retrieval baselines, which leads to overall QA performance improvements.",
+      "refers_to": [
+       "figure:3"
+      ],
+      "comparison": {
+       "kind": "unspecified",
+       "system": "our Adaptive-RAG",
+       "baseline": "other adaptive retrieval baselines",
+       "direction": "better",
+       "difference": ""
+      },
+      "sentence_id": "b:61/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Figure 3 (Right) shows the confusion matrix of our classifier.",
+      "values": [],
+      "sentence": "In addition to the true positive performance of our classifier averaged over all those three labels in Figure 3 (Left and Center), we further report its confusion matrix in Figure 3 (Right).",
+      "refers_to": [
+       "figure:3"
+      ],
+      "comparison": null,
+      "sentence_id": "b:61/s:3",
+      "unknown_refs": []
+     },
+     {
+      "type": "result",
+      "cites": [],
+      "claim": "The confusion matrix reveals misclassification rates: 'C (Multi)' as 'B (One)' 31%, 'B (One)' as 'C (Multi)' 23%, 'A (No)' as 'B (One)' 47%, and 'A (No)' as 'C (Multi)' 22%.",
+      "values": [
+       {
+        "role": "value",
+        "value": "31%",
+        "metric": "misclassification rate",
+        "system": "classifier",
+        "dataset": "",
+        "setting": "C (Multi) as B (One)"
+       },
+       {
+        "role": "value",
+        "value": "23%",
+        "metric": "misclassification rate",
+        "system": "classifier",
+        "dataset": "",
+        "setting": "B (One) as C (Multi)"
+       },
+       {
+        "role": "value",
+        "value": "47%",
+        "metric": "misclassification rate",
+        "system": "classifier",
+        "dataset": "",
+        "setting": "A (No) as B (One)"
+       },
+       {
+        "role": "value",
+        "value": "22%",
+        "metric": "misclassification rate",
+        "system": "classifier",
+        "dataset": "",
+        "setting": "A (No) as C (Multi)"
+       }
+      ],
+      "sentence": "We note that the confusion matrix reveals some notable trends: 'C (Multi)' is sometimes misclassified as 'B (One)' (about 31%) and 'B (One)' as 'C (Multi)' (about 23%); 'A (No)' is misclassified often as 'B (One)' (about 47%) and less frequently as 'C (Multi)' (about 22%).",
+      "refers_to": [],
+      "comparison": null,
+      "sentence_id": "b:61/s:4",
+      "unknown_refs": []
+     },
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Table 1 shows relative elapsed time for each of the three different RAG strategies, and Table 3 provides the exact elapsed time per query for Adaptive-RAG and the distribution for predicted labels from the query-complexity classifier.",
+      "values": [],
+      "sentence": "Analyses on Efficiency for Classifier While Table 1 shows the relative elapsed time for each of the three different RAG strategies, we further provide the exact elapsed time per query for our AdaptiveRAG and the distribution for predicted labels from our query-complexity classifier in Table 3.",
+      "refers_to": [
+       "table:1",
+       "table:3"
+      ],
+      "comparison": null,
+      "sentence_id": "b:62/s:0",
+      "unknown_refs": []
+     },
+     {
+      "type": "result",
+      "cites": [],
+      "claim": "Efficiency can be substantially improved by identifying simple or straightforward queries.",
+      "values": [],
+      "sentence": "Similar to the results of the elapsed time in Table 1 (relative time), Table 3 (exact time) shows that efficiency can be substantially improved by identifying simple or straightforward queries.",
+      "refers_to": [
+       "table:1",
+       "table:3"
+      ],
+      "comparison": null,
+      "sentence_id": "b:62/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "comparison",
+      "cites": [],
+      "claim": "Our training strategy is significantly more efficient than the strategy relying solely on inductive bias.",
+      "values": [],
+      "sentence": "As Table 4 shows, compared to the training strategy relying solely on the data derived from inductive bias, ours is significantly more efficient.",
+      "refers_to": [
+       "table:4"
+      ],
+      "comparison": {
+       "kind": "unspecified",
+       "system": "our training strategy",
+       "baseline": "inductive bias only",
+       "direction": "better",
+       "difference": ""
+      },
+      "sentence_id": "b:63/s:2",
+      "unknown_refs": []
+     },
+     {
+      "type": "result",
+      "cites": [],
+      "claim": "There are no significant performance differences among classifiers of various sizes, even with reduced complexity and fewer parameters in smaller classifiers.",
+      "values": [],
+      "sentence": "As shown in Table 6, we observe no significant performance differences among classifiers of various sizes, even with reduced complexity and fewer parameters in smaller classifiers.",
+      "refers_to": [
+       "table:6"
+      ],
+      "comparison": null,
+      "sentence_id": "b:64/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Table 5 shows the classified complexity and the query handling patterns for both simple and complex questions.",
+      "values": [],
+      "sentence": "Table 5 shows the classified complexity and the query handling patterns for both simple and complex questions.",
+      "refers_to": [
+       "table:5"
+      ],
+      "comparison": null,
+      "sentence_id": "b:65/s:1",
+      "unknown_refs": []
+     }
+    ],
+    "batch": 4,
+    "usage": {
+     "queue_time": 0.018347717,
+     "total_time": 1.804981462,
+     "prompt_time": 0.053418291,
+     "total_tokens": 4135,
+     "prompt_tokens": 2457,
+     "completion_time": 1.751563171,
+     "completion_tokens": 1678,
+     "prompt_tokens_details": {
+      "cached_tokens": 1536
+     },
+     "completion_tokens_details": {
+      "reasoning_tokens": 764
+     }
+    },
+    "dropped": []
+   },
+   "finished_at": "2026-10-17T21:54:47.284Z"
+  },
+  {
+   "step_id": 1291,
+   "step_name": "claims_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 5,
+    "model": "openai/gpt-oss-20b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-17T21:54:47.306Z"
+  },
+  {
+   "step_id": 1292,
+   "step_name": "claims_batch",
+   "status": "done",
+   "detail": {
+    "kept": [
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Figure 4 and Figure 5 compare performance and efficiency of different retrieval-augmented generation approaches with FLAN-T5-XL and FLAN-T5XXL models.",
+      "values": [],
+      "sentence": "Performance vs Time We further provide a comparison of different retrieval-augmented generation approaches with FLAN-T5-XL and FLAN-T5XXL models in Figure 4 and Figure 5, respectively, in the context of performance and efficiency tradeoffs.",
+      "refers_to": [
+       "figure:4",
+       "figure:5"
+      ],
+      "comparison": null,
+      "sentence_id": "b:100/s:0",
+      "unknown_refs": []
+     },
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Figure 1 shows that Adaptive-RAG is more effective and efficient than the GPT-3.5 model.",
+      "values": [],
+      "sentence": "Similar to the observation made from the GPT3.5 model in Figure 1, our proposed Adaptive-RAG is significantly more effective as well as efficient.",
+      "refers_to": [
+       "figure:1"
+      ],
+      "comparison": null,
+      "sentence_id": "b:100/s:1",
+      "unknown_refs": []
+     },
+     {
+      "type": "figure",
+      "cites": [],
+      "claim": "Table 2 and Table 8 present the performance of each dataset with the FLANT5-XL, FLAN-T5XXL, and GPT-3.5 models.",
+      "values": [],
+      "sentence": "Performance per Dataset In addition to detailing the performance of each dataset with the FLANT5-XL model, as shown in Table 2, we also present the results for each dataset with the FLAN-T5XXL and GPT-3.5 models in Table 2 and Table 8, respectively.",
+      "refers_to": [
+       "table:2",
+       "table:8"
+      ],
+      "comparison": null,
+      "sentence_id": "b:102/s:0",
+      "unknown_refs": []
+     }
+    ],
+    "batch": 5,
+    "usage": {
+     "queue_time": 0.20627243,
+     "total_time": 0.717306736,
+     "prompt_time": 0.138188305,
+     "total_tokens": 3108,
+     "prompt_tokens": 2546,
+     "completion_time": 0.579118431,
+     "completion_tokens": 562,
+     "completion_tokens_details": {
+      "reasoning_tokens": 336
+     }
+    },
+    "dropped": []
+   },
+   "finished_at": "2026-10-17T21:55:18.478Z"
+  },
+  {
+   "step_id": 1293,
+   "step_name": "number_check",
+   "status": "done",
+   "detail": {
+    "checks": [
+     {
+      "kind": "value",
+      "note": "6 cells fit and none shows 31%",
+      "claim": 14,
+      "metric": "misclassification rate",
+      "system": "classifier",
+      "claimed": "31%",
+      "dataset": "",
+      "setting": "C (Multi) as B (One)",
+      "verdict": "unverifiable",
+      "candidates": [
+       {
+        "row": "Adaptive-RAG (Ours)",
+        "text": "65.45",
+        "table": "table:4",
+        "column": "Classifier (Accuracy) / Multi",
+        "section": ""
+       },
+       {
+        "row": "Adaptive-RAG (Ours) / w/o Binary",
+        "text": "39.55",
+        "table": "table:4",
+        "column": "Classifier (Accuracy) / Multi",
+        "section": ""
+       },
+       {
+        "row": "Adaptive-RAG (Ours) / w/o Silver",
+        "text": "75.91",
+        "table": "table:4",
+        "column": "Classifier (Accuracy) / Multi",
+        "section": ""
+       },
+       {
+        "row": "Small (60M)",
+        "text": "53.18",
+        "table": "table:6",
+        "column": "Classifier (Accuracy) / Multi",
+        "section": ""
+       },
+       {
+        "row": "Base (223M)",
+        "text": "56.82",
+        "table": "table:6",
+        "column": "Classifier (Accuracy) / Multi",
+        "section": ""
+       }
+      ],
+      "sentence_id": "b:61/s:4"
+     },
+     {
+      "kind": "value",
+      "note": "6 cells fit and none shows 23%",
+      "claim": 14,
+      "metric": "misclassification rate",
+      "system": "classifier",
+      "claimed": "23%",
+      "dataset": "",
+      "setting": "B (One) as C (Multi)",
+      "verdict": "unverifiable",
+      "candidates": [
+       {
+        "row": "Adaptive-RAG (Ours)",
+        "text": "65.45",
+        "table": "table:4",
+        "column": "Classifier (Accuracy) / Multi",
+        "section": ""
+       },
+       {
+        "row": "Adaptive-RAG (Ours) / w/o Binary",
+        "text": "39.55",
+        "table": "table:4",
+        "column": "Classifier (Accuracy) / Multi",
+        "section": ""
+       },
+       {
+        "row": "Adaptive-RAG (Ours) / w/o Silver",
+        "text": "75.91",
+        "table": "table:4",
+        "column": "Classifier (Accuracy) / Multi",
+        "section": ""
+       },
+       {
+        "row": "Small (60M)",
+        "text": "53.18",
+        "table": "table:6",
+        "column": "Classifier (Accuracy) / Multi",
+        "section": ""
+       },
+       {
+        "row": "Base (223M)",
+        "text": "56.82",
+        "table": "table:6",
+        "column": "Classifier (Accuracy) / Multi",
+        "section": ""
+       }
+      ],
+      "sentence_id": "b:61/s:4"
+     },
+     {
+      "kind": "value",
+      "note": "6 cells fit and none shows 47%",
+      "claim": 14,
+      "metric": "misclassification rate",
+      "system": "classifier",
+      "claimed": "47%",
+      "dataset": "",
+      "setting": "A (No) as B (One)",
+      "verdict": "unverifiable",
+      "candidates": [
+       {
+        "row": "Adaptive-RAG (Ours)",
+        "text": "65.45",
+        "table": "table:4",
+        "column": "Classifier (Accuracy) / Multi",
+        "section": ""
+       },
+       {
+        "row": "Adaptive-RAG (Ours) / w/o Binary",
+        "text": "39.55",
+        "table": "table:4",
+        "column": "Classifier (Accuracy) / Multi",
+        "section": ""
+       },
+       {
+        "row": "Adaptive-RAG (Ours) / w/o Silver",
+        "text": "75.91",
+        "table": "table:4",
+        "column": "Classifier (Accuracy) / Multi",
+        "section": ""
+       },
+       {
+        "row": "Small (60M)",
+        "text": "53.18",
+        "table": "table:6",
+        "column": "Classifier (Accuracy) / Multi",
+        "section": ""
+       },
+       {
+        "row": "Base (223M)",
+        "text": "56.82",
+        "table": "table:6",
+        "column": "Classifier (Accuracy) / Multi",
+        "section": ""
+       }
+      ],
+      "sentence_id": "b:61/s:4"
+     },
+     {
+      "kind": "value",
+      "note": "6 cells fit and none shows 22%",
+      "claim": 14,
+      "metric": "misclassification rate",
+      "system": "classifier",
+      "claimed": "22%",
+      "dataset": "",
+      "setting": "A (No) as C (Multi)",
+      "verdict": "unverifiable",
+      "candidates": [
+       {
+        "row": "Adaptive-RAG (Ours)",
+        "text": "65.45",
+        "table": "table:4",
+        "column": "Classifier (Accuracy) / Multi",
+        "section": ""
+       },
+       {
+        "row": "Adaptive-RAG (Ours) / w/o Binary",
+        "text": "39.55",
+        "table": "table:4",
+        "column": "Classifier (Accuracy) / Multi",
+        "section": ""
+       },
+       {
+        "row": "Adaptive-RAG (Ours) / w/o Silver",
+        "text": "75.91",
+        "table": "table:4",
+        "column": "Classifier (Accuracy) / Multi",
+        "section": ""
+       },
+       {
+        "row": "Small (60M)",
+        "text": "53.18",
+        "table": "table:6",
+        "column": "Classifier (Accuracy) / Multi",
+        "section": ""
+       },
+       {
+        "row": "Base (223M)",
+        "text": "56.82",
+        "table": "table:6",
+        "column": "Classifier (Accuracy) / Multi",
+        "section": ""
+       }
+      ],
+      "sentence_id": "b:61/s:4"
+     }
+    ],
+    "summary": {
+     "checks": 4,
+     "supported": 0,
+     "contradicted": 0,
+     "unverifiable": 4,
+     "cells_indexed": 777
+    }
+   },
+   "finished_at": "2026-10-17T21:55:18.959Z"
+  },
+  {
+   "step_id": 1294,
+   "step_name": "figure_plan",
+   "status": "done",
+   "detail": {
+    "jobs": [
+     {
+      "claims": [
+       0,
+       21
+      ],
+      "figure": "figure:1"
+     },
+     {
+      "claims": [
+       5
+      ],
+      "figure": "figure:2"
+     },
+     {
+      "claims": [
+       12,
+       13
+      ],
+      "figure": "figure:3"
+     },
+     {
+      "claims": [
+       20
+      ],
+      "figure": "figure:4"
+     },
+     {
+      "claims": [
+       20
+      ],
+      "figure": "figure:5"
+     }
+    ],
+    "prompt": "P5-figure-checker",
+    "findings": [],
+    "prompt_version": "v2"
+   },
+   "finished_at": "2026-10-17T21:55:19.051Z"
+  },
+  {
+   "step_id": 1295,
+   "step_name": "figures_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 0,
+    "model": "qwen/qwen3.8-27b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-17T21:55:19.056Z"
+  },
+  {
+   "step_id": 1296,
+   "step_name": "figures_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 0,
+    "error": "400 - \"{\\\"error\\\":{\\\"message\\\":\\\"Generated JSON does not match the expected schema. Please adjust your prompt. See 'failed_generation' for more details. Error: jsonschema: '' does not validate with /required: missing properties: 'figure'\\\",\\\"type\\\":\\\"invalid_request_error\\\",\\\"code\\\":\\\"json_validate_ \"\"",
+    "model": "qwen/qwen3.8-27b",
+    "status": 400
+   },
+   "finished_at": "2026-10-17T21:56:06.439Z"
+  },
+  {
+   "step_id": 1297,
+   "step_name": "figures_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 0,
+    "model": "qwen/qwen3.8-27b",
+    "attempt": 2
+   },
+   "finished_at": "2026-10-17T21:56:06.452Z"
+  },
+  {
+   "step_id": 1298,
+   "step_name": "figures_batch",
+   "status": "done",
+   "detail": {
+    "batch": 0,
+    "usage": {
+     "queue_time": 0.085400193,
+     "total_time": 1.09513302,
+     "prompt_time": 0.115074357,
+     "total_tokens": 1974,
+     "prompt_tokens": 1505,
+     "completion_time": 0.980058663,
+     "completion_tokens": 469
+    },
+    "checks": [
+     {
+      "claim": 0,
+      "verdict": "supported",
+      "evidence": "The scatter plot shows 'Adaptive-RAG (Ours)' at the top-left (highest F1, low time), 'Multi-step Approach' at the top-right (high F1, high time), and 'Single-step Approach' at the bottom-middle (low F1, medium time). Adaptive-RAG offers a better trade-off (higher F1 than single-step, lower time than multi-step).",
+      "read_values": [
+       "Adaptive-RAG F1 ~51",
+       "Adaptive-RAG Time ~1.5",
+       "Multi-step F1 ~51",
+       "Multi-step Time ~3.4",
+       "Single-step F1 ~47",
+       "Single-step Time ~1.0"
+      ]
+     },
+     {
+      "claim": 21,
+      "verdict": "supported",
+      "evidence": "The plot shows 'Adaptive-RAG (Ours)' with a higher F1 score (~51) and a lower Time per Query (~1.5) compared to the 'Single-step Approach' (F1 ~47, Time ~1.0) and 'Multi-step Approach' (F1 ~51, Time ~3.4).",
+      "read_values": [
+       "Adaptive-RAG F1 ~51",
+       "Adaptive-RAG Time ~1.5",
+       "Single-step F1 ~47",
+       "Multi-step Time ~3.4"
+      ]
+     }
+    ],
+    "figure": "figure:1",
+    "description": "A scatter plot titled 'Performance vs Time with GPT-3.5'. The x-axis represents 'Time per Query' ranging from 0.5 to 3.5. The y-axis represents 'Performance (F1)' ranging from 47 to 51. Four data points are plotted: 'Adaptive-RAG (Ours)' (purple star) at approximately (1.5, 51), 'Multi-step Approach' (red cross) at approximately (3.4, 51), 'No Retrieval' (blue cross) at approximately (0.7, 48.5), 'Adaptive Retrieval' (green cross) at approximately (0.9, 48.2), and 'Single-step Approach' (red"
+   },
+   "finished_at": "2026-10-17T21:56:53.087Z"
+  },
+  {
+   "step_id": 1299,
+   "step_name": "figures_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 1,
+    "model": "qwen/qwen3.8-27b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-17T21:56:53.102Z"
+  },
+  {
+   "step_id": 1300,
+   "step_name": "figures_batch",
+   "status": "done",
+   "detail": {
+    "batch": 1,
+    "usage": {
+     "queue_time": 0.228453193,
+     "total_time": 0.614350498,
+     "prompt_time": 0.157871815,
+     "total_tokens": 2514,
+     "prompt_tokens": 2293,
+     "completion_time": 0.456478683,
+     "completion_tokens": 221
+    },
+    "checks": [
+     {
+      "claim": 5,
+      "verdict": "supported",
+      "evidence": "In panel (A), the complex query path leads to an answer marked with a red 'X' and the word 'Inaccurate', indicating ineffectiveness. In panel (B), the simple query path shows a loop labeled 'k times' and is explicitly labeled 'Inefficient'.",
+      "read_values": [
+       "Inaccurate",
+       "Inefficient",
+       "k times"
+      ]
+     }
+    ],
+    "figure": "figure:2",
+    "description": "Figure 2 is a conceptual diagram comparing three retrieval-augmented LLM approaches: (A) Single-Step, (B) Multi-Step, and (C) Adaptive. Panel (A) shows a single retrieval step for both simple and complex queries, with the complex query resulting in an 'Inaccurate' answer. Panel (B) shows iterative retrieval ('k times') for both query types, with the simple query path labeled 'Inefficient'. Panel (C) shows a classifier routing simple queries to a single-step path and complex queries to a 'k'-"
+   },
+   "finished_at": "2026-10-17T21:57:39.494Z"
+  },
+  {
+   "step_id": 1301,
+   "step_name": "figures_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 2,
+    "model": "qwen/qwen3.8-27b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-17T21:57:39.509Z"
+  },
+  {
+   "step_id": 1302,
+   "step_name": "figures_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 2,
+    "error": "400 - \"{\\\"error\\\":{\\\"message\\\":\\\"Generated JSON does not match the expected schema. Please adjust your prompt. See 'failed_generation' for more details. Error: jsonschema: '' does not validate with /required: missing properties: 'figure'\\\",\\\"type\\\":\\\"invalid_request_error\\\",\\\"code\\\":\\\"json_validate_ \"\"",
+    "model": "qwen/qwen3.8-27b",
+    "status": 400
+   },
+   "finished_at": "2026-10-17T21:58:26.351Z"
+  },
+  {
+   "step_id": 1303,
+   "step_name": "figures_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 2,
+    "model": "qwen/qwen3.8-27b",
+    "attempt": 2
+   },
+   "finished_at": "2026-10-17T21:58:26.363Z"
+  },
+  {
+   "step_id": 1304,
+   "step_name": "figures_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 2,
+    "error": "400 - \"{\\\"error\\\":{\\\"message\\\":\\\"Failed to generate JSON. Please adjust your prompt. See 'failed_generation' for more details.\\\",\\\"type\\\":\\\"invalid_request_error\\\",\\\"code\\\":\\\"json_validate_failed\\\",\\\"failed_generation\\\":\\\"{\\\\\\\"checks\\\\\\\": [{\\\\\\\"claim\\\\\\\": 1, \\\\\\\"evidence\\\\\\\": \\\\\\\"In the bar charts f \"\"",
+    "model": "qwen/qwen3.8-27b",
+    "status": 400
+   },
+   "finished_at": "2026-10-17T21:59:13.285Z"
+  },
+  {
+   "step_id": 1305,
+   "step_name": "figures_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 2,
+    "model": "qwen/qwen3.8-27b",
+    "attempt": 3
+   },
+   "finished_at": "2026-10-17T21:59:13.298Z"
+  },
+  {
+   "step_id": 1306,
+   "step_name": "figures_llm_error",
+   "status": "failed",
+   "detail": {
+    "batch": 2,
+    "error": "400 - \"{\\\"error\\\":{\\\"message\\\":\\\"Generated JSON does not match the expected schema. Please adjust your prompt. See 'failed_generation' for more details. Error: jsonschema: '' does not validate with /required: missing properties: 'figure'\\\",\\\"type\\\":\\\"invalid_request_error\\\",\\\"code\\\":\\\"json_validate_ \"\"",
+    "model": "qwen/qwen3.8-27b",
+    "status": 400
+   },
+   "finished_at": "2026-10-17T22:00:01.135Z"
+  },
+  {
+   "step_id": 1307,
+   "step_name": "figures_batch",
+   "status": "skipped",
+   "detail": {
+    "batch": 2,
+    "reason": "no valid output after 3 attempts"
+   },
+   "finished_at": "2026-10-17T22:00:01.147Z"
+  },
+  {
+   "step_id": 1308,
+   "step_name": "figures_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 3,
+    "model": "qwen/qwen3.8-27b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-17T22:00:01.149Z"
+  },
+  {
+   "step_id": 1309,
+   "step_name": "figures_batch",
+   "status": "done",
+   "detail": {
+    "batch": 3,
+    "usage": {
+     "queue_time": 0.276141762,
+     "total_time": 0.61273667,
+     "prompt_time": 0.153079942,
+     "total_tokens": 1910,
+     "prompt_tokens": 1700,
+     "completion_time": 0.459656728,
+     "completion_tokens": 210
+    },
+    "checks": [
+     {
+      "claim": 20,
+      "verdict": "not_shown",
+      "evidence": "The figure shows a scatter plot of Performance (F1) vs Time per Query for four approaches: No Retrieval, Adaptive Retrieval, Single-step Approach, and Multi-step Approach. The caption states that FLAN-T5-XL is used. The figure does not contain information about FLAN-T5XXL or Figure 5.",
+      "read_values": [
+       "FLAN-T5-XL (from caption)"
+      ]
+     }
+    ],
+    "figure": "figure:4",
+    "description": "A scatter plot showing the trade-off between Performance (F1) on the y-axis and Time per Query on the x-axis. Four data points are plotted: 'No Retrieval' (blue x), 'Adaptive Retrieval' (green x), 'Single-step Approach' (orange x), and 'Multi-step Approach' (red x). 'Adaptive-RAG (Ours)' is labeled near the top left, corresponding to the 'Single-step Approach' point."
+   },
+   "finished_at": "2026-10-17T22:00:47.440Z"
+  },
+  {
+   "step_id": 1310,
+   "step_name": "figures_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 4,
+    "model": "qwen/qwen3.8-27b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-17T22:00:47.452Z"
+  },
+  {
+   "step_id": 1311,
+   "step_name": "figures_batch",
+   "status": "failed",
+   "detail": {
+    "batch": 4,
+    "error": "the answer has no verdict for any claim",
+    "output_text": "{\"checks\": [], \"figure\": \"A scatter plot showing the relationship between 'Time per Query' (x-axis, range 0.0 to 4.0) and 'Performance (F1)' (y-axis, range 30 to 50). The plot displays five data points representing different approaches: 'No Retrieval' (blue x), 'Adaptive Retrieval' (green x), 'Single-step Approach' (orange x), 'Adaptive-RAG (Ours)' (purple star), and 'Multi-step Approach' (red x).\"}"
+   },
+   "finished_at": "2026-10-17T22:01:33.463Z"
+  },
+  {
+   "step_id": 1312,
+   "step_name": "figures_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 4,
+    "model": "qwen/qwen3.8-27b",
+    "attempt": 2
+   },
+   "finished_at": "2026-10-17T22:01:33.476Z"
+  },
+  {
+   "step_id": 1313,
+   "step_name": "figures_batch",
+   "status": "done",
+   "detail": {
+    "batch": 4,
+    "usage": {
+     "queue_time": 0.117231183,
+     "total_time": 0.750446196,
+     "prompt_time": 0.167201931,
+     "total_tokens": 1933,
+     "prompt_tokens": 1702,
+     "completion_time": 0.583244265,
+     "completion_tokens": 231
+    },
+    "checks": [
+     {
+      "claim": 20,
+      "verdict": "not_shown",
+      "evidence": "The figure shows a scatter plot of Performance (F1) vs Time per Query for five different approaches (No Retrieval, Adaptive Retrieval, Single-step Approach, Adaptive-RAG, Multi-step Approach). The caption states that FLAN-T5-XXL is used. The figure itself does not contain information about Figure 4 or the FLAN-T5-XL model.",
+      "read_values": []
+     }
+    ],
+    "figure": "figure:5",
+    "description": "A scatter plot showing the relationship between Performance (F1) on the y-axis and Time per Query on the x-axis. The y-axis ranges from 30 to 50, and the x-axis ranges from 0.0 to 4.0. Five data points are plotted, representing different retrieval-augmented generation approaches: 'No Retrieval' (blue x), 'Adaptive Retrieval' (green x), 'Single-step Approach' (orange x), 'Adaptive-RAG (Ours)' (purple star), and 'Multi-step Approach' (red x)."
+   },
+   "finished_at": "2026-10-17T22:02:19.779Z"
+  },
+  {
+   "step_id": 1314,
+   "step_name": "citation_plan",
+   "status": "done",
+   "detail": {
+    "jobs": [
+     {
+      "claim": 2,
+      "query": "propose deciding query complexity based on entity frequency and using retrieval only when frequency is below a threshold.",
+      "title": "When Not to Trust Language Models: Investigating Effectiveness of Parametric and Non-Parametric Memories",
+      "marker": "Mallen et al., 2023",
+      "fulltext": true,
+      "paper_id": "arxiv:2212.10511",
+      "passages": [
+       {
+        "id": "E1",
+        "text": "When Not to Trust Language Models: Investigating Effectiveness of Parametric and Non-Parametric Memories. Section 6.1 Method.\nAdaptive Retrieval is based on our findings: as the current best LMs have already memorized more popular knowledge, we can use retrieval only when they do not memorize the factual knowledge and thus need to find external non-parametric knowledge. In particular, we use retrieval for questions whose popularity is lower than a threshold (popularity threshold), and for more popular entities, do not use retrieval at all.",
+        "score": 0.9192,
+        "section": "6.1 Method",
+        "chunk_id": "arxiv:2212.10511#sec:6.1",
+        "chunk_type": "section"
+       },
+       {
+        "id": "E2",
+        "text": "When Not to Trust Language Models: Investigating Effectiveness of Parametric and Non-Parametric Memories. Section 6 Adaptive Retrieval: Using Retrieval.\nOnly Where It Helps\n\nWhile incorporating non-parametric memories helps in long-tail distributions, powerful LMs have already memorized factual knowledge for popular entities, and retrieval augmentation can be harmful. As outlined in (RQ3), can we achieve the best of both worlds? We propose a simple-yeteffective method, Adaptive Retrieval, which decides when to retrieve passages only based on input query information and augments the input with retrieved non-parametric memories only when necessary.",
+        "score": 0.7227,
+        "section": "6 Adaptive Retrieval: Using Retrieval",
+        "chunk_id": "arxiv:2212.10511#sec:6",
+        "chunk_type": "section"
+       },
+       {
+        "id": "E3",
+        "text": "When Not to Trust Language Models: Investigating Effectiveness of Parametric and Non-Parametric Memories. Figure 1.\nFigure 1: Relationship between subject entity popularity in a question and GPT-3 performance in open-domain QA, with and without retrieved passages. Adaptive Retrieval only retrieves when necessary (orange bars) based on the heuristically-decided threshold (red line).",
+        "score": 0.409,
+        "section": "Introduction",
+        "chunk_id": "arxiv:2212.10511#fig:1",
+        "chunk_type": "figure"
+       }
+      ],
+      "reference": "Alex Mallen, Akari Asai, Victor Zhong, Rajarshi Das, Daniel Khashabi, and Hannaneh Hajishirzi. 2023. When not to trust language models: Investigating effectiveness of parametric and non-parametric memories. In Proceedings of the 61st Annual Meeting of the Association for Computational Linguistics (V",
+      "matched_by": "title"
+     },
+     {
+      "claim": 4,
+      "query": "suggest training a sophisticated model to dynamically retrieve, critique, and generate text.",
+      "title": "Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection",
+      "marker": "Asai et al., 2024",
+      "fulltext": true,
+      "paper_id": "arxiv:2310.11511",
+      "passages": [
+       {
+        "id": "E1",
+        "text": "Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection. Section 6 CONCLUSION.\nThis work introduces SELF-RAG, a new framework to enhance the quality and factuality of LLMs through retrieval on demand and self-reflection. SELF-RAG trains an LM to learn to retrieve, generate, and critique text passages and its own generation by predicting the next tokens from its original vocabulary as well as newly added special tokens, called reflection tokens. SELF-RAG further enables the tailoring of LM behaviors at test time by leveraging reflection tokens.",
+        "score": 0.9512,
+        "section": "6 CONCLUSION",
+        "chunk_id": "arxiv:2310.11511#sec:6",
+        "chunk_type": "section"
+       },
+       {
+        "id": "E2",
+        "text": "Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection. Figure 1.\nFigure 1: Overview of SELF-RAG. SELF-RAG learns to retrieve, critique, and generate text passages to enhance overall generation quality, factuality, and verifiability.",
+        "score": 0.9092,
+        "section": "ABSTRACT",
+        "chunk_id": "arxiv:2310.11511#fig:1",
+        "chunk_type": "figure"
+       },
+       {
+        "id": "E3",
+        "text": "Self-RAG: Learning to Retrieve, Generate, and Critique through Self-Reflection. Section 3.1 PROBLEM FORMALIZATION AND OVERVIEW.\nTraining overview. SELF-RAG enables an arbitrary LM to generate text with reflection tokens by unifying them as next token predictions from the expanded model vocabulary (i.e., the original vocabulary plus reflection tokens). Specifically, we train the generator model M on a curated corpus with interleaving passages retrieved by a retriever R and reflection tokens predicted by a critic model C (summarized in Appendix Algorithm 2). We train C to generate reflection tokens for evaluating retrieved passages and the quality of a given task output (Section 3.2.1).",
+        "score": 0.8742,
+        "section": "3.1 PROBLEM FORMALIZATION AND OVERVIEW",
+        "chunk_id": "arxiv:2310.11511#sec:3.1/p2",
+        "chunk_type": "section"
+       }
+      ],
+      "reference": "Akari Asai, Zeqiu Wu, Yizhong Wang, Avirup Sil, and Hannaneh Hajishirzi. 2024. Self-RAG: Learning to retrieve, generate, and critique through self-reflection. In The Twelfth International Conference on Learning Representations .",
+      "matched_by": "title"
+     }
+    ],
+    "prompt": "P6-citation-checker",
+    "batches": [
+     [
+      0,
+      1
+     ]
+    ],
+    "findings": [
+     {
+      "claim": 3,
+      "marker": "Qi et al., 2021",
+      "verdict": "not_in_library",
+      "reference": "Peng Qi, Haejun Lee, Tg Sido, and Christopher D. Manning. 2021. Answering open-domain questions of varying reasoning steps from text. In Proceedings of the 2021 Conference on Empirical Methods in Natural Language Processing, EMNLP 2021, Virtual Event / Punta Cana, Dominican Republic, 7-11 November, "
+     }
+    ],
+    "prompt_version": "v1"
+   },
+   "finished_at": "2026-10-17T22:02:28.411Z"
+  },
+  {
+   "step_id": 1315,
+   "step_name": "citations_attempt",
+   "status": "done",
+   "detail": {
+    "batch": 0,
+    "model": "openai/gpt-oss-20b",
+    "attempt": 1
+   },
+   "finished_at": "2026-10-17T22:02:28.416Z"
+  },
+  {
+   "step_id": 1316,
+   "step_name": "citations_batch",
+   "status": "done",
+   "detail": {
+    "batch": 0,
+    "usage": {
+     "queue_time": 0.016260337,
+     "total_time": 0.265238164,
+     "prompt_time": 0.083669482,
+     "total_tokens": 1588,
+     "prompt_tokens": 1415,
+     "completion_time": 0.181568682,
+     "completion_tokens": 173,
+     "completion_tokens_details": {
+      "reasoning_tokens": 65
+     }
+    },
+    "checks": [
+     {
+      "job": 0,
+      "reason": "Passages describe Adaptive Retrieval that decides when to retrieve based on entity popularity and uses retrieval only when below a threshold.",
+      "verdict": "supported",
+      "evidence": [
+       "E1",
+       "E2"
+      ]
+     },
+     {
+      "job": 1,
+      "reason": "Passages describe SELF‑RAG training a model to retrieve, generate, and critique text passages.",
+      "verdict": "supported",
+      "evidence": [
+       "E1",
+       "E2",
+       "E3"
+      ]
+     }
+    ]
+   },
+   "finished_at": "2026-10-17T22:02:58.982Z"
+  }
+ ]
+}
