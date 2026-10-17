@@ -4,11 +4,11 @@ Retrieval quality and answer quality are measured separately.
 
 | Test | Milestone | Question | Status |
 | --- | --- | --- | --- |
-| E1 chunking | 1 | Does structure-aware chunking (B) retrieve the right paper more often than fixed-size (A)? Recall@k and MRR | Tooling ready; queries to write |
+| E1 chunking | 1 | Does structure-aware chunking (B) retrieve the right paper more often than fixed-size (A)? Recall@k and MRR | Queries written (D38); dev run next |
 | E2 novelty | 2 | Leave-one-out: does the system find the papers a paper builds on? | Tooling ready (`scripts/e2_leave_one_out.py`); run on the team PC |
 | E3 planted errors | 3 | Number check: false alarms on correct numbers, detection of planted errors (digit, transposed digits, inflated), on real claims and on synthetic claims from every table cell (`scripts/e3_number_check.py`, offline) | 0 false alarms and 0 errors accepted on tuning and held-out papers; real-prose coverage low (D35) |
 | E4 gold claims | 3 | Figure check (vision): verdict accuracy on 48 labelled claims about 14 figures (25 true, 19 false, 4 not shown), false alarms, errors caught (`scripts/e4_figure_check.py`, about 65K vision tokens) | Gold set ready; run on the team PC |
-| E5 citation faithfulness | 3 | Faithful vs unfaithful citation pairs | Not started |
+| E5 citation faithfulness | 3 | Citation check: retrieval (does a passage that supports the claim reach the top 3?) measured apart from the verdict (supported / contradicted / not found) on faithful and unfaithful citation pairs | Pipeline ready (D37); gold set to write |
 | E6 verifier on/off | 3 | Invented citations and untraceable numbers per run | Not started |
 | E8 retrieval A/B | 2 | Same stored queries, four ranking settings (fused, plus idea query, reranked, both): expected papers reaching the judge, in the pool, MRR | Tooling ready (`scripts/retrieval_ab.py`); run on the team PC |
 | E7 prompt A/B | 2 | Per prompt version: expected papers found, query diversity, false overlap, LLM summary failures (F-002, F-003), label stability across repeats | Tooling ready (`scripts/prompt_ab.py`); run on the team PC |

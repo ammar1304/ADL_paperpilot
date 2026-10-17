@@ -42,7 +42,7 @@ def test_blocks_sections_and_references():
     assert paper.title == "Corrective Retrieval for Testing" and paper.pages == 3
     claim = next(b for b in paper.blocks if "47.8" in b.text)
     assert claim.section == "1 Introduction" and claim.id.startswith("b:")
-    assert paper.references == ["A. Author. 2020. Some cited paper. In ACL."]
+    assert paper.references == ["A. Author. 2020. Some cited paper. In ACL. arXiv:2101.00002."]
     assert all(b.label != "page_footer" for b in paper.blocks)
 
 
