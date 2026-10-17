@@ -15,7 +15,7 @@ Two things are measured separately, because they fail separately:
 
 Several prompt versions can be compared on the same passages (--versions v1,v2).
 
-Needs the stack running (pp-tools on port 8000, the library built) and GROQ_API_KEY in .env.
+Needs the stack running (pp-tools on PP_TOOLS_HOST_PORT from .env, default 8000; the library built) and GROQ_API_KEY in .env.
 Costs about 2,500 tokens per call and 15 to 20 calls per version (gpt-oss-120b first, 20b
 on its daily limit), 30 s apart.
 
@@ -180,7 +180,8 @@ def score(items: list[dict], results: dict[str, dict]) -> dict:
 def main() -> int:
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--gold", type=Path, default=REPO / "eval" / "e5" / "citation_claims.json")
-    ap.add_argument("--pp-tools-url", default="http://localhost:8000")
+    port = dotenv().get("PP_TOOLS_HOST_PORT") or "8000"  # a team PC moved it to 8010 (README, troubleshooting)
+    ap.add_argument("--pp-tools-url", default=f"http://127.0.0.1:{port}")
     ap.add_argument("--versions", default="", help="comma-separated P6 versions (default: the active one)")
     ap.add_argument("--retrieval-only", action="store_true", help="measure retrieval only, no LLM call")
     ap.add_argument("--label", default="e5-citations")
