@@ -238,7 +238,8 @@ def main() -> int:
                 lines.append("")
         (folder / "summary.json").write_text(json.dumps({"retrieval": {"found": found, "pairs": len(jobs)}, "verdicts": summary}, indent=2) + "\n", encoding="utf-8")
     (folder / "summary.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
-    print("\n".join(lines[lines.index("## Retrieval (no LLM)") + 4:]) if not args.retrieval_only else "")
+    if not args.retrieval_only:
+        print("\n".join(lines[lines.index(next(x for x in lines if x.startswith("## Verdicts"))):]))
     print(f"Wrote {folder.relative_to(REPO)}/")
     return 0
 

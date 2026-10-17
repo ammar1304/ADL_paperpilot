@@ -445,6 +445,10 @@ The container registries were not reachable from the development sandbox, so the
   - P6 (gpt-oss-20b, 120b on the daily limit, strict schema, the D34 pattern) judges batches of claim-passage pairs: supported, contradicted, or not found. Absence of evidence is "not found", never "contradicted" (the lesson of F-020). A verdict must name the passages it rests on; one that names none becomes "not found";
   - a marker with no bibliography entry, or a paper outside the library, is reported as such without a model call.
 - **Measured before building (resolution only, code):** on the claims extracted from the five audited papers, 68 of 69 citation markers resolve to exactly one bibliography entry (after joining split entries, ignoring arXiv ids as years, and reading "Tom B. Brown" correctly); 28 point to a library paper, 20 of them in full text. Self-RAG cites mostly work outside the library's scope (26 of 29).
+- **Measured (E5, 2026-10-18, `eval/results/20261017-232728-e5-citations/`, gpt-oss-120b):** 40 gold pairs about 15 library papers.
+  - Retrieval: the gold evidence phrase is in the three passages for 29/40 pairs; read by hand, the passages are enough to judge 37/40.
+  - Verdicts: 25/25 supported pairs recognised, 0 false alarms; 14/15 changed claims rejected (11 contradicted, 3 not found); 1 accepted, from a passage cut mid-sentence (F-029).
+  - P6 v2 (judge only the part attributed to each citation, F-024) gave the same verdicts as v1 on every pair, so v1 stays active.
 - **Limits:** a cited paper outside the library is not checked (fetching its abstract from Semantic Scholar is a possible extension); for an abstract-only library paper, only the abstract is evidence, so "not found" is more likely and the report says so.
 
 ## D38. The E1 queries were written by Claude, not by teammates (revises D19)

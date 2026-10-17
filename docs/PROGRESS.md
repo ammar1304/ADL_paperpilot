@@ -459,4 +459,6 @@ Branch `feat/m3-parser-spike`. Decision D31: Docling (CPU) instead of MinerU.
 - [x] `corpus/manifest.csv` and `corpus/selection.json` committed (they were only on the team PC).
 - [x] Smoke test: the old audit step expected a placeholder branch and would now run a real audit; replaced by checks of the form page, PDF uploads and request validation, with no LLM call.
 - [x] The form states the library's scope.
-- [ ] Team PC: E5 run (P6 v1 and v2), the three audits with gpt-oss-120b, one PDF upload through the form
+- [x] Team PC: smoke test (no LLM) passed: form page, PDF upload, validation.
+- [x] Team PC: E5 (`eval/results/20261017-232728-e5-citations/`, analysis next to it): retrieval 29/40 strict, 37/40 by hand; 25/25 supported recognised, 0 false alarms, 14/15 changed claims rejected; P6 v2 equal to v1, not activated (D37, F-029).
+- [ ] Team PC: the three audits with gpt-oss-120b, one PDF upload through the form
