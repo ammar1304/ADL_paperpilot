@@ -17,7 +17,7 @@ from typing import Any
 from uuid import UUID
 
 import httpx
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.concurrency import run_in_threadpool
 from fastapi.responses import JSONResponse, Response
 from pydantic import ValidationError
@@ -28,16 +28,20 @@ from .audit.steps import (
     AuditError,
     audit_result,
     claim_prompts,
+    citation_checks,
     claims as audit_claims,
     figure_checks,
+    next_citation_batch,
     next_claim_batch,
     next_figure_check,
     number_check,
     record_llm_error,
+    save_citation_check,
     save_claims,
     save_figure_check,
 )
 from .audit.store import PaperStore
+from .audit.uploads import UploadError, Uploads
 from .config import Settings, get_settings
 from .corpus.arxiv import ArxivClient
 from .corpus.build import CorpusBuilder
@@ -80,6 +84,7 @@ from .novelty import (
     verify,
 )
 from .prompts import PromptError, PromptLibrary
+from .report import result_page
 from .retrieval.embedder import Embedder, EmbedderError
 from .external.openalex import OpenAlex
 from .external.semantic_scholar import SemanticScholar
@@ -106,6 +111,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     library = PromptLibrary(settings.prompts_dir)
     parser = DoclingClient(settings.parser_url, settings.parser_timeout_s) if settings.parser_url else None
     papers = PaperStore(settings.cache_dir / "audit")
+    uploads = Uploads(settings.cache_dir / "uploads", settings.audit_max_pdf_mb * 1_000_000)
     # One worker: builds run one at a time, and never inside a request.
     jobs = ThreadPoolExecutor(max_workers=1, thread_name_prefix="pp-job")
 
@@ -204,6 +210,10 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             log.info("run rejected", extra={"errors": [e.model_dump() for e in errors]})
             return JSONResponse(status_code=422, content={"errors": [e.model_dump() for e in errors]})
 
+        if req.draft_pdf_upload is not None and not uploads.exists(req.draft_pdf_upload):
+            error = FieldError(field="draft_pdf_upload", message="no uploaded PDF with this id; POST the file to /uploads first")
+            return JSONResponse(status_code=422, content={"errors": [error.model_dump()]})
+
         stored = req.model_dump(mode="json")
         try:
             run_id = await run_in_threadpool(db.create_run, req.mode, stored, body.n8n_execution_id)
@@ -213,6 +223,33 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
         log.info("run created", extra={"run_id": str(run_id), "mode": req.mode})
         return CreateRunResponse(run_id=run_id, mode=req.mode, status="received", request=req)
+
+    @app.post("/uploads", status_code=201)
+    async def upload_pdf(request: Request) -> Any:
+        """Store a PDF sent as the raw request body (the form's file field, D39); returns its id."""
+        data = await request.body()
+        try:
+            upload_id = await run_in_threadpool(uploads.save, data)
+        except UploadError as exc:
+            status = 413 if "larger than" in str(exc) else 415
+            raise HTTPException(status_code=status, detail=str(exc)) from exc
+        log.info("pdf uploaded", extra={"upload_id": upload_id[:12], "bytes": len(data)})
+        return {"upload_id": upload_id, "bytes": len(data)}
+
+    @app.post("/form/result")
+    async def form_result(body: dict[str, Any]) -> Any:
+        """The form's last page (D39): {"status_code", "body"} as the router answered -> {"html"}."""
+        status = int(_num(body, "status_code") or 0)
+        answer = body.get("body")
+        run = None
+        run_id = answer.get("run_id") if isinstance(answer, dict) else None
+        if run_id:
+            try:
+                run = await run_in_threadpool(db.get_run, UUID(str(run_id)))
+            except ValueError:
+                run = None
+        form_url = body.get("form_url") if isinstance(body.get("form_url"), str) else None
+        return {"html": result_page(status, answer, run, form_url)}
 
     @app.get("/runs", response_model=list[RunRecord])
     async def list_runs(limit: int = Query(default=20, ge=1, le=100)) -> Any:
@@ -518,17 +555,19 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         run = await run_in_threadpool(db.get_run, run_id)
         if run is None:
             raise HTTPException(status_code=404, detail="run not found")
-        url = (run.get("input") or {}).get("draft_pdf_url")
-        if run.get("mode") != "audit" or not url:
-            raise HTTPException(status_code=409, detail="not an audit run with a draft_pdf_url")
+        given = run.get("input") or {}
+        url, upload = given.get("draft_pdf_url"), given.get("draft_pdf_upload")
+        if run.get("mode") != "audit" or not (url or upload):
+            raise HTTPException(status_code=409, detail="not an audit run with a draft_pdf_url or draft_pdf_upload")
+        source = {"url": url} if url else {"upload": upload}
         try:
-            job_id = await run_in_threadpool(db.create_job, AUDIT_PARSE_JOB, {"run_id": str(run_id), "url": url}, n8n_execution_id)
+            job_id = await run_in_threadpool(db.create_job, AUDIT_PARSE_JOB, {"run_id": str(run_id), **source}, n8n_execution_id)
         except JobConflict as exc:
             raise HTTPException(status_code=409, detail=str(exc)) from exc
-        jobs.submit(_run_audit_parse, job_id, run_id, url)
+        jobs.submit(_run_audit_parse, job_id, run_id, url, upload)
         return JobAccepted(job_id=job_id, status="queued")
 
-    def _run_audit_parse(job_id: UUID, run_id: UUID, url: str) -> None:
+    def _run_audit_parse(job_id: UUID, run_id: UUID, url: str | None, upload: str | None = None) -> None:
         last = [0.0]
 
         def progress(info: dict[str, Any]) -> None:
@@ -539,8 +578,9 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
         try:
             db.update_job(job_id, status="running", progress={"stage": "starting"})
-            result = parse_paper(url, parser, papers, settings.audit_max_pdf_mb * 1_000_000,
-                                 settings.audit_allow_private_urls, progress)
+            pdf = uploads.read(upload) if upload else None
+            result = parse_paper(url or "draft.pdf", parser, papers, settings.audit_max_pdf_mb * 1_000_000,
+                                 settings.audit_allow_private_urls, progress, pdf)
             db.add_step(run_id, "parse", "done", result)
             db.update_job(job_id, status="done", progress={"stage": "done"}, result=result)
             log.info("audit parse done", extra={"job_id": str(job_id), "run_id": str(run_id), "cached": result["cached"]})
@@ -602,6 +642,42 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @app.get("/audit/{run_id}/claims")
     async def audit_get_claims(run_id: UUID) -> Any:
         return await run_in_threadpool(_audit_errors, audit_claims, db, run_id)
+
+    def _papers_library():
+        """The library papers from corpus/manifest.csv, for the citation check; None if unreadable."""
+        from .audit.citations import Library, LibraryPaper
+
+        try:
+            rows = read_manifest(settings.manifest_path)
+        except (ManifestError, OSError):
+            return None
+        return Library(LibraryPaper(r.paper_id, r.arxiv_id, r.title, r.fulltext) for r in rows)
+
+    @app.post("/audit/{run_id}/citations/next")
+    async def audit_next_citations(run_id: UUID) -> Any:
+        return await run_in_threadpool(_audit_errors, next_citation_batch, db, library, papers, run_id, _papers_library(),
+                                       retriever, reranker)
+
+    @app.post("/audit/{run_id}/citation-checks")
+    async def audit_save_citation_check(run_id: UUID, body: dict[str, Any]) -> Any:
+        if not isinstance(body.get("batch"), int):
+            raise HTTPException(status_code=422, detail="batch (integer) is required")
+        return await run_in_threadpool(_audit_errors, save_citation_check, db, run_id, body["batch"], body.get("output"),
+                                       body.get("output_text"), body.get("usage"))
+
+    @app.post("/audit/{run_id}/citation-checks/error")
+    async def audit_citation_error(run_id: UUID, body: dict[str, Any]) -> Any:
+        if not isinstance(body.get("batch"), int):
+            raise HTTPException(status_code=422, detail="batch (integer) is required")
+        status, retry = _num(body, "status"), _num(body, "retry_after")
+        return await run_in_threadpool(
+            _audit_errors, record_llm_error, db, run_id, body["batch"], str(body.get("error", "")),
+            int(status) if status is not None else None, retry, body.get("model") or None, None, "citations",
+        )
+
+    @app.get("/audit/{run_id}/citation-checks")
+    async def audit_get_citation_checks(run_id: UUID) -> Any:
+        return await run_in_threadpool(_audit_errors, citation_checks, db, run_id)
 
     @app.post("/audit/{run_id}/figures/next")
     async def audit_next_figure(run_id: UUID) -> Any:

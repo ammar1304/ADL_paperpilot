@@ -1,0 +1,72 @@
+{
+  "overall": {
+    "fixed": {
+      "recall@1": 0.7805,
+      "recall@5": 0.9512,
+      "recall@10": 1.0,
+      "recall@20": 1.0,
+      "mrr@20": 0.8639
+    },
+    "structured": {
+      "recall@1": 0.9024,
+      "recall@5": 1.0,
+      "recall@10": 1.0,
+      "recall@20": 1.0,
+      "mrr@20": 0.9431
+    },
+    "n": 41
+  },
+  "by_type": {
+    "paraphrase": {
+      "fixed": {
+        "recall@1": 0.8571,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "recall@20": 1.0,
+        "mrr@20": 0.9167
+      },
+      "structured": {
+        "recall@1": 0.9286,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "recall@20": 1.0,
+        "mrr@20": 0.9643
+      },
+      "n": 14
+    },
+    "section": {
+      "fixed": {
+        "recall@1": 0.8462,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "recall@20": 1.0,
+        "mrr@20": 0.9231
+      },
+      "structured": {
+        "recall@1": 1.0,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "recall@20": 1.0,
+        "mrr@20": 1.0
+      },
+      "n": 13
+    },
+    "table": {
+      "fixed": {
+        "recall@1": 0.6429,
+        "recall@5": 0.8571,
+        "recall@10": 1.0,
+        "recall@20": 1.0,
+        "mrr@20": 0.7562
+      },
+      "structured": {
+        "recall@1": 0.7857,
+        "recall@5": 1.0,
+        "recall@10": 1.0,
+        "recall@20": 1.0,
+        "mrr@20": 0.869
+      },
+      "n": 14
+    }
+  }
+}

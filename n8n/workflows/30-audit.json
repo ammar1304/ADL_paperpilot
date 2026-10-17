@@ -411,14 +411,172 @@
    }
   },
   {
+   "id": "c3f2e8f4-0030-4c9a-9c33-000000000030",
+   "name": "Next citations",
+   "notes": "pp-tools resolves every citation (marker to bibliography entry to library paper), retrieves the cited paper's passages for each claim and reranks them (RAG), then serves batches of claim-passage pairs with P6 rendered, or {done: true}. Same loop state and model fallback as the claims.",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2,
+   "position": [
+    1760,
+    -520
+   ],
+   "retryOnFail": true,
+   "maxTries": 3,
+   "waitBetweenTries": 2000,
+   "parameters": {
+    "method": "POST",
+    "url": "={{ $env.PP_TOOLS_URL }}/audit/{{ $('Called by router').first().json.run_id }}/citations/next",
+    "options": {
+     "timeout": 60000
+    }
+   }
+  },
+  {
+   "id": "c3f2e8f4-0031-4c9a-9c33-000000000031",
+   "name": "More citations?",
+   "type": "n8n-nodes-base.if",
+   "typeVersion": 2.2,
+   "position": [
+    1980,
+    -520
+   ],
+   "parameters": {
+    "conditions": {
+     "options": {
+      "caseSensitive": true,
+      "leftValue": "",
+      "typeValidation": "loose",
+      "version": 2
+     },
+     "conditions": [
+      {
+       "id": "c3000031-0000-4000-8000-000000000031",
+       "leftValue": "={{ $json.done }}",
+       "rightValue": false,
+       "operator": {
+        "type": "boolean",
+        "operation": "false",
+        "singleValue": true
+       }
+      }
+     ],
+     "combinator": "and"
+    },
+    "options": {}
+   }
+  },
+  {
+   "id": "c3f2e8f4-0032-4c9a-9c33-000000000032",
+   "name": "Pause before citations",
+   "notes": "Before every P6 call, for as long as pp-tools says (wait_s), as for the claims.",
+   "type": "n8n-nodes-base.wait",
+   "typeVersion": 1.1,
+   "position": [
+    2200,
+    -420
+   ],
+   "webhookId": "03000000-0000-0000-0000-000000000032",
+   "parameters": {
+    "resume": "timeInterval",
+    "amount": "={{ $json.wait_s }}",
+    "unit": "seconds"
+   }
+  },
+  {
+   "id": "c3f2e8f4-0033-4c9a-9c33-000000000033",
+   "name": "Check citations",
+   "notes": "LLM call per batch of claim-passage pairs, straight to Groq's API (D34 pattern): P6 judges whether the passages retrieved from the cited paper support the claim (supported, contradicted, not found). Groq only (D12). Errors go to 'Record citation error', then the batch is served again.",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2,
+   "position": [
+    2420,
+    -420
+   ],
+   "onError": "continueErrorOutput",
+   "parameters": {
+    "method": "POST",
+    "url": "https://api.groq.com/openai/v1/chat/completions",
+    "authentication": "genericCredentialType",
+    "sendBody": true,
+    "specifyBody": "json",
+    "jsonBody": "={{ JSON.stringify($json.request) }}",
+    "options": {
+     "timeout": 120000
+    },
+    "genericAuthType": "httpHeaderAuth"
+   },
+   "credentials": {
+    "httpHeaderAuth": {
+     "id": "ppGroqHeader0001",
+     "name": "Groq API header (PaperPilot)"
+    }
+   }
+  },
+  {
+   "id": "c3f2e8f4-0034-4c9a-9c33-000000000034",
+   "name": "Save citation check",
+   "notes": "pp-tools validates the verdicts (one per pair; evidence ids must be passages the pair was given; a verdict with no evidence becomes not found).",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2,
+   "position": [
+    2640,
+    -420
+   ],
+   "maxTries": 3,
+   "waitBetweenTries": 2000,
+   "parameters": {
+    "method": "POST",
+    "url": "={{ $env.PP_TOOLS_URL }}/audit/{{ $('Called by router').first().json.run_id }}/citation-checks",
+    "sendBody": true,
+    "specifyBody": "json",
+    "jsonBody": "={{ JSON.stringify({ batch: $('Next citations').last().json.batch, output_text: $json.choices[0].message.content, usage: $json.usage }) }}",
+    "options": {
+     "timeout": 60000,
+     "response": {
+      "response": {
+       "fullResponse": true,
+       "neverError": true
+      }
+     }
+    }
+   }
+  },
+  {
+   "id": "c3f2e8f4-0035-4c9a-9c33-000000000035",
+   "name": "Record citation error",
+   "notes": "Stores why a P6 call failed, with the HTTP status and Groq's retry-after (a rate limit gives the attempt back).",
+   "type": "n8n-nodes-base.httpRequest",
+   "typeVersion": 4.2,
+   "position": [
+    2640,
+    -260
+   ],
+   "parameters": {
+    "method": "POST",
+    "url": "={{ $env.PP_TOOLS_URL }}/audit/{{ $('Called by router').first().json.run_id }}/citation-checks/error",
+    "sendBody": true,
+    "specifyBody": "json",
+    "jsonBody": "={{ JSON.stringify({ batch: $('Next citations').last().json.batch, model: $('Next citations').last().json.model, status: ($json.error || {}).status, retry_after: ((($json.error || {}).response || {}).headers || {})['retry-after'], error: String(($json.error || {}).message || $json.message || '').slice(0, 300) + ' ' + JSON.stringify((($json.error || {}).response || {}).data || '').slice(0, 1500) }) }}",
+    "options": {
+     "timeout": 30000,
+     "response": {
+      "response": {
+       "fullResponse": true,
+       "neverError": true
+      }
+     }
+    }
+   }
+  },
+  {
    "id": "c3f2e8f4-0017-4c9a-9c33-000000000017",
    "name": "Assemble result",
-   "notes": "The audit result so far: parsed paper, claims, number checks and figure checks. Step 6 adds the citation check.",
+   "notes": "The audit result: parsed paper, claims, number checks, figure checks and citation checks.",
    "type": "n8n-nodes-base.httpRequest",
    "typeVersion": 4.2,
    "position": [
     2200,
-    -320
+    -640
    ],
    "retryOnFail": true,
    "maxTries": 3,
@@ -762,7 +920,7 @@
     ],
     [
      {
-      "node": "Assemble result",
+      "node": "Next citations",
       "type": "main",
       "index": 0
      }
@@ -814,6 +972,86 @@
     [
      {
       "node": "Next figure",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Next citations": {
+   "main": [
+    [
+     {
+      "node": "More citations?",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "More citations?": {
+   "main": [
+    [
+     {
+      "node": "Pause before citations",
+      "type": "main",
+      "index": 0
+     }
+    ],
+    [
+     {
+      "node": "Assemble result",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Pause before citations": {
+   "main": [
+    [
+     {
+      "node": "Check citations",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Check citations": {
+   "main": [
+    [
+     {
+      "node": "Save citation check",
+      "type": "main",
+      "index": 0
+     }
+    ],
+    [
+     {
+      "node": "Record citation error",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Save citation check": {
+   "main": [
+    [
+     {
+      "node": "Next citations",
+      "type": "main",
+      "index": 0
+     }
+    ]
+   ]
+  },
+  "Record citation error": {
+   "main": [
+    [
+     {
+      "node": "Next citations",
       "type": "main",
       "index": 0
      }

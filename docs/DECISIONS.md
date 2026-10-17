@@ -434,3 +434,34 @@ The container registries were not reachable from the development sandbox, so the
   A is used. Its failures are visible (a refused answer, an empty list) and the loop serves the figure again, up to 3 attempts: at about 30% failures per attempt, a figure fails all three about 3% of the time. B's two errors were silent wrong verdicts; one came from the model reasoning in its evidence field ("68.6 ... higher than 72.9. Wait, looking closer") and keeping the wrong answer. A wrong answer nobody can see is worse than a failure that is retried. An empty verdict list now counts as a failed answer. The samples are small (34 and 35 verdicts); the final E4 run uses A with retries, as the workflow does.
 - **Evaluation (E4, `scripts/e4_figure_check.py`):** 48 gold claims about 14 figures of 5 papers, written by looking at the figures: 25 true, 19 false (reversed trend, wrong order, wrong value), 4 that neither the image nor the caption answers. Measured: accuracy, false alarms on true claims, errors caught, errors accepted.
 
+## D37. The citation check: resolve in code, retrieve from the cited paper, judge with P6
+
+- **Date:** 2026-10-17. Milestone 3, step 6: the audit's RAG step.
+- **Context:** drafts attribute statements to other papers ("Asai et al. (2024) train an LM to critique its own generations"). Checking one means finding the cited paper and reading the relevant part. The library (531 papers, 61 in full text) is already chunked and indexed for the novelty branch.
+- **Decision:**
+  - code links each citation marker to one entry of the draft's bibliography (first author's surname and year, the letter suffix or the second author when needed, or the number), joining entries the parser split, then that entry to a library paper (arXiv id, or the full title inside the entry);
+  - for each claim and cited library paper, the paper's chunks are retrieved with the claim as the query (dense search filtered to that paper) and reranked by the cross-encoder; the top three passages are stored with the plan, so retries and the report use the same evidence;
+  - P6 (gpt-oss-20b, 120b on the daily limit, strict schema, the D34 pattern) judges batches of claim-passage pairs: supported, contradicted, or not found. Absence of evidence is "not found", never "contradicted" (the lesson of F-020). A verdict must name the passages it rests on; one that names none becomes "not found";
+  - a marker with no bibliography entry, or a paper outside the library, is reported as such without a model call.
+- **Measured before building (resolution only, code):** on the claims extracted from the five audited papers, 68 of 69 citation markers resolve to exactly one bibliography entry (after joining split entries, ignoring arXiv ids as years, and reading "Tom B. Brown" correctly); 28 point to a library paper, 20 of them in full text. Self-RAG cites mostly work outside the library's scope (26 of 29).
+- **Limits:** a cited paper outside the library is not checked (fetching its abstract from Semantic Scholar is a possible extension); for an abstract-only library paper, only the abstract is evidence, so "not found" is more likely and the report says so.
+
+## D38. The E1 queries were written by Claude, not by teammates (revises D19)
+
+- **Decision:** the 173 E1 queries in `eval/queries/worksheet.csv` (41 dev, 132 test; 4 section rows skipped because their section list was empty or uninformative) were written by Claude, the coding assistant, from the worksheet's context column, following `eval/queries/README.md`. D19 had planned for teammates to write them.
+- **Why:** the teammates' time goes to the demo and the defence, and the queries had to exist before tuning could start. The worksheet rules were kept and checked by a script: 8 to 25 words, no 5 consecutive words shared with the row's context (12 queries were rewritten after the check), no system names.
+- **Risks, stated in the report:**
+  - The writer saw the abstract or section text, as a teammate would have; queries may still be closer to the paper's wording than a real user's.
+  - The queries are not biased toward the retrieval model (BGE-M3 never saw them being written), but they may share an LLM's phrasing habits.
+  - Only the source paper is marked relevant; another paper answering a broad query counts as a miss for both strategies equally, so the A vs B comparison stays fair while absolute recall is a lower bound.
+- **Mitigation:** a teammate reviews a sample of 20 test queries before the single test run, and the queries are frozen after the first evaluation (rule 7).
+
+## D39. A form in n8n as the user interface, with a result page written by code
+
+- **Decision:** `05-form` uses n8n's Form Trigger (`/form/paperpilot`): pick novelty or audit, type the idea, upload a PDF or paste a link. An uploaded PDF goes to `POST /uploads` and is kept under its SHA-256; the run refers to it as `draft_pdf_upload`. The form then calls the same webhook as every other client (`/webhook/paperpilot`), and a Form Ending node shows a page that `POST /form/result` builds from the stored run.
+- **Why:**
+  - The form is a client of the system, not a second path through it: validation, run tracking, the error workflow and both branches are the ones already tested.
+  - n8n holds the browser on a waiting page until the Form Ending node runs, so a 10-minute audit needs no polling code of ours.
+  - Uploads are stored by pp-tools rather than passed through the router as base64: the run record stays small, the same file is parsed once (the hash also names the parsed-paper cache), and a URL is no longer the only way in. The download path's SSRF guard is not involved, since nothing is fetched.
+  - The page is written by code from verified steps and checks, with every string from the user, the paper or a model HTML-escaped. Problems come first; supported checks and citations outside the library are folded away. The LLM's own summary is shown only with a "not verified" label.
+- **Limits:** no authentication on the form (the stack listens on localhost only); one file per request; the result is shown once on the page and otherwise kept in the run record (`GET /runs/{id}`).

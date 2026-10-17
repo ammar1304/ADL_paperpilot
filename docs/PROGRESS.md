@@ -125,7 +125,7 @@ Run in the development sandbox. arXiv, Hugging Face and the container registries
 
 - [ ] Add foundational papers to the manifest (the selection query favours 2024 to 2026)
 - [ ] Review and commit `corpus/manifest.csv` (choose the 50 full-text papers)
-- [ ] Write the E1 queries in the worksheet (rules in `eval/queries/README.md`)
+- [x] Write the E1 queries in the worksheet (rules in `eval/queries/README.md`; written by Claude, D38)
 - [ ] First E1 run on dev, then tune; one final run on test
 - [ ] Compare BGE-M3 with an English-only embedding model (D14)
 
@@ -426,4 +426,14 @@ Branch `feat/m3-parser-spike`. Decision D31: Docling (CPU) instead of MinerU.
 - [x] Team PC: E4 on variants A and B (C not reached: daily limit). A chosen (D36): 34/34 verdicts right, failures retried; empty answers now count as failures
 - [x] First attempt at the final run (2026-10-17 00:06): the vision model's 200K tokens a day were already spent by the variant comparison. E4 got 1 figure (5/5 right). The audits showed the designed degradation: one 429, then the figure check stopped with "Groq daily token limit reached on qwen/qwen3.8-27b" in the result, while claims and the number check completed (CRAG: 13 margins supported).
 - [ ] Team PC: final E4 with variant A and 3 attempts, and the two audits, once the vision tokens are free again (Groq counts them over a rolling 24 hours); then merge PR #27
+- [x] Citation check (D37): `app/audit/citations.py` (marker → bibliography entry → library paper, in code), retrieval of the cited paper's passages with reranking, P6-citation-checker v1; `POST /audit/{run}/citations/next`, `POST /audit/{run}/citation-checks` (+ `/error`), `GET /audit/{run}/citation-checks`; n8n loop "Next citations" → "Check citations" after the figures; the result carries `citation_checks`. Resolution measured on the five audited papers: 68/69 markers to a reference, 28 in the library. Branch `feat/m3-citations`, 207 tests.
+- [x] Team PC, first citation audit (CRAG): 15 citations placed (7 in the library, 8 outside), passages retrieved and reranked, 4 pairs judged (2 supported, 2 not found) before the gpt-oss daily limit stopped the run cleanly; Adaptive-RAG and FLARE could not even extract claims (limit). One "not found" was a passage cut before the relevant sentence (F-022, fixed: best-matching window). 209 tests.
+- [ ] Team PC: audits of CRAG, Adaptive-RAG and FLARE with the citation check, once the gpt-oss tokens are free
+- [ ] E5: gold citation pairs (faithful, and unfaithful versions), retrieval measured apart from the verdicts
 
+## Interface: the form (2026-10-17)
+
+- [x] `05-form` (D39): Form Trigger at `/form/paperpilot` → upload the PDF if there is one (`POST /uploads`) → the existing webhook → `POST /form/result` → Form Ending page. Branch `feat/form-ui`, 220 tests.
+- [x] Audits accept `draft_pdf_upload` (the file's SHA-256) instead of a URL; tested end to end with the parser stand-in and private URLs refused, so only the upload path could work.
+- [x] Result page from code: novelty (summary, facets, closest work with facet labels, agent rounds, coverage, the LLM summary labelled unverified) and audit (contradictions first, partial-audit notice, numbers, figures, citations with evidence); rendered from the stored CRAG audit and a novelty run, desktop and phone width.
+- [ ] Team PC: submit one idea and one PDF through the browser.

@@ -36,17 +36,17 @@ def main() -> int:
     urls = args.url or ["https://arxiv.org/pdf/2401.15884v3"]
     out = REPO / "eval" / "results" / f"{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}-{args.label}"
     out.mkdir(parents=True)
-    lines = ["| Paper | Seconds | Status | Candidate sentences | Batches | Claims kept | Dropped by the guardrail | By type | Number checks (supported / contradicted / unverifiable) | Figure checks (supported / contradicted / not shown; figures) |",
-             "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |"]
+    lines = ["| Paper | Seconds | Status | Candidate sentences | Batches | Claims kept | Dropped by the guardrail | By type | Number checks (supported / contradicted / unverifiable) | Figure checks (supported / contradicted / not shown; figures) | Citations (in library: supported / contradicted / not found; not in library) |",
+             "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |"]
     for url in urls:
         name = url.rstrip("/").split("/")[-1]
-        print(f"{name}: auditing (parse, claims, number check, figure check; several minutes)...", flush=True)
+        print(f"{name}: auditing (parse, claims, numbers, figures, citations; several minutes)...", flush=True)
         started = time.monotonic()
         status, body = http("POST", f"{args.n8n_url}/webhook/paperpilot", {"mode": "audit", "draft_pdf_url": url}, timeout=3600)
         secs = round(time.monotonic() - started)
         if status != 200 or not isinstance(body, dict):
             print(f"  HTTP {status}: {str(body)[:300]}")
-            lines.append(f"| {name} | {secs} | HTTP {status} | | | | | | | |")
+            lines.append(f"| {name} | {secs} | HTTP {status} | | | | | | | | |")
             continue
         result, run_id = body.get("result") or {}, body.get("run_id")
         _, steps = http("GET", f"{args.pp_tools_url}/runs/{run_id}/steps")
@@ -56,7 +56,9 @@ def main() -> int:
                      f"{cov.get('batches_done')}/{cov.get('batches')} | {len(result.get('claims', []))} | {result.get('claims_dropped')} | {cov.get('by_type')} | "
                      + (f"{nc['summary']['supported']} / {nc['summary']['contradicted']} / {nc['summary']['unverifiable']} |" if (nc := result.get("number_checks")) else "not run |")
                      + (f" {fs['supported']} / {fs['contradicted']} / {fs['not_shown']}; {fs['jobs_done']}/{fs['jobs']} |"
-                        if (fs := (result.get("figure_checks") or {}).get("summary")) else " not run |"))
+                        if (fs := (result.get("figure_checks") or {}).get("summary")) else " not run |")
+                     + (f" {cs['in_library']}: {cs['supported']} / {cs['contradicted']} / {cs['not_found']}; {cs['not_in_library']} |"
+                        if (cs := (result.get("citation_checks") or {}).get("summary")) else " not run |"))
         print("  " + lines[-1], flush=True)
         for c in result.get("claims", [])[:8]:
             vals = ", ".join(f"{v['system']}={v['value']}" for v in c.get("values", []))
@@ -64,6 +66,9 @@ def main() -> int:
         for c in (result.get("number_checks") or {}).get("checks", []):
             if c["verdict"] != "unverifiable":
                 print(f"    {c['verdict'].upper():12} {c['kind']:10} {c['claimed']:>8} {c.get('system', '')[:25]} vs {c.get('baseline', '')[:20]}: {c.get('note', '')[:90]}")
+        for c in (result.get("citation_checks") or {}).get("checks", []):
+            if c.get("cited_paper"):
+                print(f"    CITATION {c['verdict'].upper():12} {c['marker'][:24]:24} -> {(c.get('cited_title') or '')[:40]} | {(c.get('text') or '')[:70]} | {c.get('reason', '')[:90]}")
         for c in (result.get("figure_checks") or {}).get("checks", []):
             print(f"    FIGURE {c['verdict'].upper():12} {c['figure']:10} {(c.get('text') or '')[:80]} | {c.get('evidence', '')[:90]}")
         reasons = Counter(d.get("reason", "")[:40] for s in steps if s["step_name"] == "claims_batch" for d in s["detail"].get("dropped", []))

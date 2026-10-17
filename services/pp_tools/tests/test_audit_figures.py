@@ -156,7 +156,7 @@ def _node(name):
 def test_audit_workflow_runs_the_figure_loop_after_the_number_check():
     conns = AUDIT_WF["connections"]
     assert conns["Check numbers"]["main"][0][0]["node"] == "Next figure"
-    assert [o[0]["node"] for o in conns["More figures?"]["main"]] == ["Pause before figure", "Assemble result"]
+    assert [o[0]["node"] for o in conns["More figures?"]["main"]] == ["Pause before figure", "Next citations"]  # step 6 follows
     assert conns["Pause before figure"]["main"][0][0]["node"] == "Check figure"
     assert [o[0]["node"] for o in conns["Check figure"]["main"]] == ["Save figure check", "Record figure error"]
     assert conns["Save figure check"]["main"][0][0]["node"] == "Next figure"
