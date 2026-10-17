@@ -125,7 +125,7 @@ Run in the development sandbox. arXiv, Hugging Face and the container registries
 
 - [ ] Add foundational papers to the manifest (the selection query favours 2024 to 2026)
 - [ ] Review and commit `corpus/manifest.csv` (choose the 50 full-text papers)
-- [ ] Write the E1 queries in the worksheet (rules in `eval/queries/README.md`)
+- [x] Write the E1 queries in the worksheet (rules in `eval/queries/README.md`; written by Claude, D38)
 - [ ] First E1 run on dev, then tune; one final run on test
 - [ ] Compare BGE-M3 with an English-only embedding model (D14)
 

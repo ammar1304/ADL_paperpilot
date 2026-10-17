@@ -446,3 +446,13 @@ The container registries were not reachable from the development sandbox, so the
 - **Measured before building (resolution only, code):** on the claims extracted from the five audited papers, 68 of 69 citation markers resolve to exactly one bibliography entry (after joining split entries, ignoring arXiv ids as years, and reading "Tom B. Brown" correctly); 28 point to a library paper, 20 of them in full text. Self-RAG cites mostly work outside the library's scope (26 of 29).
 - **Limits:** a cited paper outside the library is not checked (fetching its abstract from Semantic Scholar is a possible extension); for an abstract-only library paper, only the abstract is evidence, so "not found" is more likely and the report says so.
 
+## D38. The E1 queries were written by Claude, not by teammates (revises D19)
+
+- **Decision:** the 173 E1 queries in `eval/queries/worksheet.csv` (41 dev, 132 test; 4 section rows skipped because their section list was empty or uninformative) were written by Claude, the coding assistant, from the worksheet's context column, following `eval/queries/README.md`. D19 had planned for teammates to write them.
+- **Why:** the teammates' time goes to the demo and the defence, and the queries had to exist before tuning could start. The worksheet rules were kept and checked by a script: 8 to 25 words, no 5 consecutive words shared with the row's context (12 queries were rewritten after the check), no system names.
+- **Risks, stated in the report:**
+  - The writer saw the abstract or section text, as a teammate would have; queries may still be closer to the paper's wording than a real user's.
+  - The queries are not biased toward the retrieval model (BGE-M3 never saw them being written), but they may share an LLM's phrasing habits.
+  - Only the source paper is marked relevant; another paper answering a broad query counts as a miss for both strategies equally, so the A vs B comparison stays fair while absolute recall is a lower bound.
+- **Mitigation:** a teammate reviews a sample of 20 test queries before the single test run, and the queries are frozen after the first evaluation (rule 7).
+
