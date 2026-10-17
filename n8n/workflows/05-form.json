@@ -1,0 +1,324 @@
+{
+  "id": "pp05Form00000001",
+  "name": "05-form",
+  "active": false,
+  "nodes": [
+    {
+      "id": "8b1d6f00-05f0-4c1e-a5a5-000000000001",
+      "name": "PaperPilot form",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.4,
+      "position": [
+        0,
+        300
+      ],
+      "webhookId": "0c6e3a52-05f0-4f7d-9d1a-6f2c1e0a0501",
+      "notes": "The user-facing entry point (D39). A Form node later in the workflow makes n8n hold the browser on a waiting page until the run ends.",
+      "parameters": {
+        "formTitle": "PaperPilot",
+        "formDescription": "Check how novel a research idea is against our library of 531 RAG papers, or audit a draft paper: its numbers against its own tables, its figures with a vision model, and its citations against the cited papers.\n\nA novelty check takes about a minute; an audit takes 5 to 15 minutes. Keep this page open.",
+        "formFields": {
+          "values": [
+            {
+              "fieldName": "task",
+              "fieldLabel": "What do you want to do?",
+              "fieldType": "dropdown",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Check how novel an idea is"
+                  },
+                  {
+                    "option": "Audit a draft paper"
+                  }
+                ]
+              },
+              "requiredField": true
+            },
+            {
+              "fieldName": "idea_text",
+              "fieldLabel": "Your idea (for a novelty check)",
+              "fieldType": "textarea",
+              "placeholder": "e.g. Rerank retrieved passages with a small model trained on the generator's own citation errors, evaluated on HotpotQA."
+            },
+            {
+              "fieldName": "draft_pdf",
+              "fieldLabel": "Draft PDF (for an audit)",
+              "fieldType": "file",
+              "multipleFiles": false,
+              "acceptFileTypes": ".pdf"
+            },
+            {
+              "fieldName": "draft_pdf_url",
+              "fieldLabel": "...or a link to the PDF",
+              "fieldType": "text",
+              "placeholder": "https://arxiv.org/pdf/2401.15884"
+            }
+          ]
+        },
+        "responseMode": "onReceived",
+        "options": {
+          "path": "paperpilot",
+          "buttonLabel": "Run PaperPilot",
+          "appendAttribution": false
+        }
+      }
+    },
+    {
+      "id": "8b1d6f00-05f0-4c1e-a5a5-000000000002",
+      "name": "PDF uploaded?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        220,
+        300
+      ],
+      "notes": "Only an audit with a non-empty file goes through the upload; a link goes straight to the router.",
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "d0500001-0000-4000-8000-000000000001",
+              "leftValue": "={{ String($json.task || '').startsWith('Audit') && !!$binary.draft_pdf && Number($json.draft_pdf?.size ?? 1) > 0 }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      }
+    },
+    {
+      "id": "8b1d6f00-05f0-4c1e-a5a5-000000000003",
+      "name": "Store PDF",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        440,
+        180
+      ],
+      "notes": "Sends the file's bytes to pp-tools, which keeps it under its SHA-256 and returns that id. The run refers to the id, so the PDF never travels through the router as base64.",
+      "onError": "continueErrorOutput",
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.PP_TOOLS_URL }}/uploads",
+        "sendBody": true,
+        "contentType": "binaryData",
+        "inputDataFieldName": "draft_pdf",
+        "options": {
+          "timeout": 60000
+        }
+      }
+    },
+    {
+      "id": "8b1d6f00-05f0-4c1e-a5a5-000000000004",
+      "name": "Upload rejected",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        660,
+        40
+      ],
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ JSON.stringify({ statusCode: 422, body: { errors: [{ field: 'draft_pdf_upload', message: 'the file was refused: it must be a PDF of at most 30 MB' }] } }) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "8b1d6f00-05f0-4c1e-a5a5-000000000005",
+      "name": "Build request",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        660,
+        300
+      ],
+      "notes": "Maps the form to the run request the webhook accepts. pp-tools validates it; a bad request comes back as 422 with field errors.",
+      "parameters": {
+        "mode": "raw",
+        "jsonOutput": "={{ JSON.stringify((() => { const f = $('PaperPilot form').first().json; const audit = String(f.task || '').startsWith('Audit'); if (!audit) return { mode: 'novelty', idea_text: String(f.idea_text || '').trim() }; if ($('Store PDF').isExecuted) return { mode: 'audit', draft_pdf_upload: $('Store PDF').first().json.upload_id }; return { mode: 'audit', draft_pdf_url: String(f.draft_pdf_url || '').trim() }; })()) }}",
+        "options": {}
+      }
+    },
+    {
+      "id": "8b1d6f00-05f0-4c1e-a5a5-000000000006",
+      "name": "Run PaperPilot",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        880,
+        300
+      ],
+      "notes": "Calls the same webhook as the scripts and the API, so the form adds no second path through the system.",
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5678/webhook/paperpilot",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify($json) }}",
+        "options": {
+          "timeout": 3600000,
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "neverError": true
+            }
+          }
+        }
+      }
+    },
+    {
+      "id": "8b1d6f00-05f0-4c1e-a5a5-000000000007",
+      "name": "Result page",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1100,
+        300
+      ],
+      "notes": "pp-tools writes the page from the stored run (code, not an LLM), escaping everything that came from the user, the paper or a model.",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.PP_TOOLS_URL }}/form/result",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ status_code: $json.statusCode, body: $json.body, form_url: '/form/paperpilot' }) }}",
+        "options": {
+          "timeout": 20000
+        }
+      }
+    },
+    {
+      "id": "8b1d6f00-05f0-4c1e-a5a5-000000000008",
+      "name": "Show result",
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.4,
+      "position": [
+        1320,
+        300
+      ],
+      "webhookId": "0c6e3a52-05f0-4f7d-9d1a-6f2c1e0a0508",
+      "parameters": {
+        "operation": "completion",
+        "respondWith": "showText",
+        "responseText": "={{ $json.html }}"
+      }
+    }
+  ],
+  "connections": {
+    "PaperPilot form": {
+      "main": [
+        [
+          {
+            "node": "PDF uploaded?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "PDF uploaded?": {
+      "main": [
+        [
+          {
+            "node": "Store PDF",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Store PDF": {
+      "main": [
+        [
+          {
+            "node": "Build request",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Upload rejected",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Upload rejected": {
+      "main": [
+        [
+          {
+            "node": "Result page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build request": {
+      "main": [
+        [
+          {
+            "node": "Run PaperPilot",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Run PaperPilot": {
+      "main": [
+        [
+          {
+            "node": "Result page",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Result page": {
+      "main": [
+        [
+          {
+            "node": "Show result",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "errorWorkflow": "pp90ErrorHandler",
+    "saveDataErrorExecution": "all",
+    "saveDataSuccessExecution": "all"
+  },
+  "pinData": {},
+  "tags": []
+}

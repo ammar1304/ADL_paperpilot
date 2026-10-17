@@ -26,7 +26,7 @@ def test_invalid_request_returns_field_errors_and_stores_nothing(client):
     resp = _create(client, {"mode": "audit"})
     assert resp.status_code == 422
     errors = resp.json()["errors"]
-    assert errors == [{"field": "request", "message": "Value error, draft_pdf_url is required when mode is 'audit'"}]
+    assert errors == [{"field": "request", "message": "Value error, draft_pdf_url or draft_pdf_upload is required when mode is 'audit'"}]
     with client.app.state.db.pool.connection() as conn:
         assert conn.execute("SELECT count(*) FROM runs").fetchone()[0] == 0
 

@@ -36,10 +36,13 @@ def parse_paper(
     max_bytes: int,
     allow_private: bool,
     progress: Callable[[dict[str, Any]], None],
+    pdf: bytes | None = None,
 ) -> dict[str, Any]:
+    """Parse the PDF at ``url``, or the bytes in ``pdf`` (an upload; ``url`` is then only its name)."""
     started = time.monotonic()
-    progress({"stage": "downloading"})
-    pdf = fetch_pdf(url, max_bytes, allow_private)
+    if pdf is None:
+        progress({"stage": "downloading"})
+        pdf = fetch_pdf(url, max_bytes, allow_private)
     digest = sha256(pdf)
     cached = store.has(digest)
     if not cached:
