@@ -23,12 +23,14 @@ from fastapi.responses import JSONResponse, Response
 from pydantic import ValidationError
 
 from .audit.parse_job import parse_paper
+from .audit import citations as cit
 from .audit.parser import DoclingClient
 from .audit.steps import (
     AuditError,
     audit_result,
     claim_prompts,
     citation_checks,
+    citation_passages,
     claims as audit_claims,
     figure_checks,
     next_citation_batch,
@@ -235,6 +237,21 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             raise HTTPException(status_code=status, detail=str(exc)) from exc
         log.info("pdf uploaded", extra={"upload_id": upload_id[:12], "bytes": len(data)})
         return {"upload_id": upload_id, "bytes": len(data)}
+
+    @app.post("/citations/passages")
+    async def citations_passages(body: dict[str, Any]) -> Any:
+        """E5: the passages the citation check would give P6 for {claim, cites, paper_id}, with no run."""
+        paper_id, claim = body.get("paper_id"), body.get("claim")
+        if not isinstance(paper_id, str) or not isinstance(claim, str) or not claim.strip():
+            raise HTTPException(status_code=422, detail="paper_id and claim (strings) are required")
+        query = cit.query_for({"claim": claim, "cites": body.get("cites") or []})
+        if not await run_in_threadpool(store.client.collection_exists, collection_name("structured")):
+            raise HTTPException(status_code=409, detail="no 'structured' collection yet; run a corpus build first")
+        try:
+            passages = await run_in_threadpool(citation_passages, retriever, reranker, query, paper_id)
+        except EmbedderError as exc:
+            raise HTTPException(status_code=503, detail=f"embedder: {exc}") from exc
+        return {"query": query, "passages": passages}
 
     @app.post("/form/result")
     async def form_result(body: dict[str, Any]) -> Any:

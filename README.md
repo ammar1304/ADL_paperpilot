@@ -86,7 +86,7 @@ The embedder downloads the BGE-M3 model (about 2.3 GB) on its first start, which
 python scripts/smoke_test.py
 ```
 
-It starts the stack if needed, checks health, sends a novelty, an audit, an invalid and a deliberately failing request, and checks the stored runs. The failing-request step needs `PP_ALLOW_TEST_FAULTS=true` in `.env`; otherwise add `--skip-fault-test`.
+It starts the stack if needed, checks health, checks the form page, a PDF upload and the request validation (no LLM call), sends a deliberately failing request, and checks the stored runs. The failing-request step needs `PP_ALLOW_TEST_FAULTS=true` in `.env`; otherwise add `--skip-fault-test`.
 
 Add `--with-corpus` to also build a small knowledge base (5 papers) through the ingestion workflow and search it. This needs `corpus/manifest.csv`, internet access, and the embedding model; the first run waits for the model download.
 

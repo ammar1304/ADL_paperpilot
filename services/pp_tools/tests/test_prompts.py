@@ -171,3 +171,12 @@ def test_planner_example_satisfies_its_own_contract():
     assert set(wrapped) == {"output"}
     plan = PlanOutput.model_validate(wrapped["output"])
     assert plan.decision == "search" and {q.where for q in plan.queries} == {"local", "web"}
+
+
+def test_prompt_library_document_is_in_sync():
+    """PROMPT_LIBRARY.md (the graded single-file library) is generated from prompts/; it must match."""
+    import subprocess
+    import sys
+
+    out = subprocess.run([sys.executable, str(REPO / "scripts" / "build_prompt_library.py"), "--check"], capture_output=True, text=True)
+    assert out.returncode == 0, out.stdout

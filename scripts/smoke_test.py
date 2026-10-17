@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""End-to-end smoke test for the PaperPilot milestone 0 stack.
+"""End-to-end smoke test for the PaperPilot stack (no LLM call unless --with-llm).
 
 Standard library only, so it runs on Linux, macOS and Windows without a venv.
 
@@ -39,11 +39,12 @@ def _dotenv() -> dict[str, str]:
     return values
 
 
-def http(method: str, url: str, body: dict | None = None, headers: dict | None = None, timeout: float = 30):
-    """Returns (status, parsed JSON or raw text). Never raises on HTTP error codes."""
-    data = json.dumps(body).encode() if body is not None else None
+def http(method: str, url: str, body: dict | bytes | None = None, headers: dict | None = None, timeout: float = 30):
+    """Returns (status, parsed JSON or raw text). Never raises on HTTP error codes. Bytes are sent as a PDF."""
+    raw_body = isinstance(body, bytes)
+    data = body if raw_body else (json.dumps(body).encode() if body is not None else None)
     req = urllib.request.Request(url, data=data, method=method)
-    req.add_header("Content-Type", "application/json")
+    req.add_header("Content-Type", "application/pdf" if raw_body else "application/json")
     for k, v in (headers or {}).items():
         req.add_header(k, v)
     try:
@@ -214,22 +215,24 @@ def main() -> int:
             print(f"  !!  Qdrant reported down and accepted because of --allow-degraded-qdrant: {health['checks']['qdrant']}")
         wait_for("n8n /healthz", lambda: (http("GET", f"{n8n}/healthz", timeout=10)[0] == 200, None), 180)
 
-        print("\n[3] audit request through the webhook (branch still a placeholder)")
+        print("\n[3] the form, PDF uploads and audit requests (no LLM call)")
 
-        def audit():
-            status, body = http(
-                "POST", webhook, {"mode": "audit", "draft_pdf_url": "https://arxiv.org/pdf/1706.03762", "venue": "NeurIPS"}
-            )
+        def webhook_ready():
+            status, body = http("POST", webhook, {"mode": "audit"})
             # 404 means the webhook is not registered yet (n8n still activating workflows).
             return status != 404, (status, body)
 
-        status, body = wait_for("webhook registered", audit, 120)
-        check(status == 200, "audit request returns HTTP 200", body)
-        check(body.get("result", {}).get("branch") == "audit", "routed to the audit branch", body)
-        check(body.get("result", {}).get("implemented") is False, "audit branch honestly reports implemented=false", body)
-        s, run = http("GET", f"{pp}/runs/{body['run_id']}")
-        check(s == 200 and run["status"] == "done", "audit run stored with status done", run)
-        check(run["input"]["draft_pdf_url"] == "https://arxiv.org/pdf/1706.03762", "stored input matches what was sent", run)
+        status, body = wait_for("webhook registered", webhook_ready, 120)
+        check(status == 422 and "draft_pdf" in json.dumps(body), "an audit without a PDF is refused with a field error", body)
+        status, page = http("GET", f"{n8n}/form/paperpilot-form")
+        check(status == 200 and "PaperPilot" in str(page), "the form page is served", str(page)[:200])
+        pdf = b"%PDF-1.4\n% PaperPilot smoke test " + uuid.uuid4().hex.encode() + b"\n%%EOF\n"
+        status, up = http("POST", f"{pp}/uploads", pdf)
+        check(status == 201 and len(up.get("upload_id", "")) == 64, "a PDF upload is stored under its SHA-256", up)
+        status, body = http("POST", f"{pp}/uploads", b"not a pdf")
+        check(status == 415, "a non-PDF upload is refused", body)
+        status, body = http("POST", webhook, {"mode": "audit", "draft_pdf_upload": "0" * 64})
+        check(status == 422 and body["errors"][0]["field"] == "draft_pdf_upload", "an unknown upload id is refused", body)
 
         print("\n[4] invalid request is rejected before any run is created")
         before = len(http("GET", f"{pp}/runs?limit=100")[1])

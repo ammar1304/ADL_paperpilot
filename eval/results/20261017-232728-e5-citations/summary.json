@@ -1,0 +1,36 @@
+{
+  "retrieval": {
+    "found": 29,
+    "pairs": 40
+  },
+  "verdicts": {
+    "v1": {
+      "grid": {
+        "supported -> supported": 25,
+        "unsupported -> contradicted": 11,
+        "unsupported -> not_found": 3,
+        "unsupported -> supported": 1
+      },
+      "supported_recognised": "25/25",
+      "false_alarms": "0/25",
+      "errors_accepted": "1/15",
+      "errors_contradicted": "11/15",
+      "multi_citation_supported": "7/7",
+      "failed": 0
+    },
+    "v2": {
+      "grid": {
+        "supported -> supported": 25,
+        "unsupported -> contradicted": 11,
+        "unsupported -> not_found": 3,
+        "unsupported -> supported": 1
+      },
+      "supported_recognised": "25/25",
+      "false_alarms": "0/25",
+      "errors_accepted": "1/15",
+      "errors_contradicted": "11/15",
+      "multi_citation_supported": "7/7",
+      "failed": 0
+    }
+  }
+}
