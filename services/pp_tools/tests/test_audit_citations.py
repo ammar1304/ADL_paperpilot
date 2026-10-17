@@ -220,10 +220,10 @@ def test_citation_loop_through_the_api(tmp_path, test_db_url, stub_url):
         run_id = _parsed_run_with_claim(client, stub_url)
         first = client.post(f"/audit/{run_id}/citations/next").json()
         # no corpus was built in this test: retrieval fails and is recorded, the pair is still judged
-        assert (first["done"], first["pairs"], first["model"]) == (False, 1, "openai/gpt-oss-20b")
+        assert (first["done"], first["pairs"], first["model"]) == (False, 1, "openai/gpt-oss-120b")
         user = first["request"]["messages"][1]["content"]
         assert "PAIR 1" in user and "Cited as Author, 2020: Some cited paper" in user and "(no passage was found" in user
-        client.post(f"/audit/{run_id}/citation-checks/error", json={"batch": 0, "status": 429, "retry_after": "20", "model": "openai/gpt-oss-20b"})
+        client.post(f"/audit/{run_id}/citation-checks/error", json={"batch": 0, "status": 429, "retry_after": "20", "model": "openai/gpt-oss-120b"})
         assert client.post(f"/audit/{run_id}/citations/next").json()["attempt"] == 1
         saved = client.post(f"/audit/{run_id}/citation-checks", json={"batch": 0, "output_text": json.dumps(
             {"checks": [{"pair": 1, "verdict": "not_found", "evidence": [], "reason": "no passage"}]})}).json()

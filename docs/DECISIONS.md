@@ -432,6 +432,7 @@ The container registries were not reachable from the development sandbox, so the
   | C: reasoning low, plain JSON | not run (daily limit) | | | | |
 
   A is used. Its failures are visible (a refused answer, an empty list) and the loop serves the figure again, up to 3 attempts: at about 30% failures per attempt, a figure fails all three about 3% of the time. B's two errors were silent wrong verdicts; one came from the model reasoning in its evidence field ("68.6 ... higher than 72.9. Wait, looking closer") and keeping the wrong answer. A wrong answer nobody can see is worse than a failure that is retried. An empty verdict list now counts as a failed answer. The samples are small (34 and 35 verdicts); the final E4 run uses A with retries, as the workflow does.
+- **Final E4** (2026-10-17, `eval/results/20261017-231104-e4-figures-final-A/`, variant A, up to 3 attempts): **14/14 figures answered** (13 at the first attempt, 15 calls), **47/48 verdicts right**: 24/25 true claims supported, 19/19 false claims caught, 0 accepted, 4/4 "not shown" right. The one false alarm: "StrategyQA peaks at 77.3 when about 40% of the steps retrieve" (FLARE figure 5); the point is at about 40% on the x-axis, and the model read it as 50.0. Reading a point's position between labelled ticks is the weak spot.
 - **Evaluation (E4, `scripts/e4_figure_check.py`):** 48 gold claims about 14 figures of 5 papers, written by looking at the figures: 25 true, 19 false (reversed trend, wrong order, wrong value), 4 that neither the image nor the caption answers. Measured: accuracy, false alarms on true claims, errors caught, errors accepted.
 
 ## D37. The citation check: resolve in code, retrieve from the cited paper, judge with P6
@@ -465,3 +466,18 @@ The container registries were not reachable from the development sandbox, so the
   - Uploads are stored by pp-tools rather than passed through the router as base64: the run record stays small, the same file is parsed once (the hash also names the parsed-paper cache), and a URL is no longer the only way in. The download path's SSRF guard is not involved, since nothing is fetched.
   - The page is written by code from verified steps and checks, with every string from the user, the paper or a model HTML-escaped. Problems come first; supported checks and citations outside the library are folded away. The LLM's own summary is shown only with a "not verified" label.
 - **Limits:** no authentication on the form (the stack listens on localhost only); one file per request; the result is shown once on the page and otherwise kept in the run record (`GET /runs/{id}`).
+
+## D40. gpt-oss-120b extracts claims and judges citations; gpt-oss-20b is the fallback
+
+- **Date:** 2026-10-17. Revises the model choice of D33 and D37 (the roles D12 had planned for 120b).
+- **Context:** the final audits (`eval/results/20261017-214450-audit-final/`) ran with gpt-oss-20b only, for the first time on all three papers. The citation check had almost nothing to check: CRAG produced 1 claim with a citation marker, Adaptive-RAG 3. Earlier runs on the same candidate sentences, where gpt-oss-120b did most of the work because 20b's daily tokens were spent, produced 7 to 11 (CRAG) and 12 (Adaptive-RAG). 20b also failed the strict schema three times on one FLARE batch, which was skipped (F-023).
+
+  | Paper | Claims with a citation, 120b runs | 20b only (final run) |
+  | --- | --- | --- |
+  | CRAG | 7 (2026-10-16 20:21), 11 (23:53) | 1 |
+  | Adaptive-RAG | 12 | 3 |
+  | Self-RAG | 17 | not run |
+
+- **Decision:** `CLAIMS_MODEL` is `openai/gpt-oss-120b` for P4 and P6, with `openai/gpt-oss-20b` as the fallback on the daily limit. Same parameters, same strict schema, same rate-limit handling.
+- **Why:** the citation check (the audit's RAG step) depends on claims that carry a marker; a cheaper extractor that skips them makes the most expensive step look idle. 120b has its own 200K tokens a day, and a call costs about the same tokens.
+- **Limits:** the comparison is across runs, not a controlled A/B on identical batches, and gpt-oss output varies between runs; the next audits measure 120b alone. Each model still allows about three three-paper runs a day.

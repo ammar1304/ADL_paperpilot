@@ -437,3 +437,15 @@ Branch `feat/m3-parser-spike`. Decision D31: Docling (CPU) instead of MinerU.
 - [x] Audits accept `draft_pdf_upload` (the file's SHA-256) instead of a URL; tested end to end with the parser stand-in and private URLs refused, so only the upload path could work.
 - [x] Result page from code: novelty (summary, facets, closest work with facet labels, agent rounds, coverage, the LLM summary labelled unverified) and audit (contradictions first, partial-audit notice, numbers, figures, citations with evidence); rendered from the stored CRAG audit and a novelty run, desktop and phone width.
 - [ ] Team PC: submit one idea and one PDF through the browser.
+
+## Milestone 3: final round on the team PC (2026-10-17)
+
+- [x] PRs #28 (citation check), #29 (E1 queries and dev run), #30 (form) merged into `dev`.
+- [x] Full audits of CRAG, Adaptive-RAG and FLARE with every check (`eval/results/20261017-214450-audit-final/`), 431 to 658 s per paper, no run stopped:
+  - numbers: CRAG 13 supported of 13; Adaptive-RAG 4 unverifiable; FLARE none to check;
+  - figures: 7 supported, 2 "not shown" (one claim naming two figures, F-025), 2 figures skipped after three empty answers (F-026);
+  - citations: Adaptive-RAG 2 supported (Mallen et al., Self-RAG), both right; FLARE 3 "not found" on one sentence citing four papers (F-024); CRAG 1 citation, outside the library.
+  - Few citation claims: gpt-oss-20b, which did the whole extraction this time, rarely extracts them (F-023). P4 and P6 now use gpt-oss-120b first (D40).
+- [x] Final E4 (`eval/results/20261017-231104-e4-figures-final-A/`): 14/14 figures answered, 47/48 verdicts right, 19/19 planted errors caught, 1 false alarm (D36).
+- [ ] Rerun the three audits with gpt-oss-120b as the extractor (D40), next day with fresh tokens
+- [ ] E5 citation evaluation; P6 v2 for multi-citation sentences (F-024) measured by it
