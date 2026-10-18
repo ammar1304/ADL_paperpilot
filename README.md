@@ -98,6 +98,8 @@ To test services that are already running: `python scripts/smoke_test.py --no-co
 
 Open http://localhost:8000/app (or the port set by `PP_TOOLS_HOST_PORT` in `.env`, 8010 on the team PC). Choose "Is my idea new?" and describe it, or "Does my draft hold up?" and upload the PDF or paste a link. The page shows each stage as it runs (which ones use an LLM and which are code), then the result: for an idea, the closest papers facet by facet; for a draft, every number, figure and citation check with its evidence, problems first. The address ends in `#run=...`, so a run can be reopened.
 
+An audit of a PDF that was already audited shows the earlier result at once; "Run the audit again" starts a new one. Each check shows its page in the draft and, for figures, the image the vision model read. "Download report" saves the full result as a PDF through the browser's print dialog.
+
 The page is served by pp-tools and calls the same webhook as everything else (D41).
 
 ## Using the form

@@ -465,6 +465,7 @@ Branch `feat/m3-parser-spike`. Decision D31: Docling (CPU) instead of MinerU.
 - [x] Web app at `/app` (D41): the page posts to pp-tools, which calls the webhook in the background; progress per stage from the run's steps; results with evidence. 16 tests (`tests/test_webapp.py`); screenshots checked against stored runs.
 - [x] Team PC: web app rebuilt and opened; an idea check ran end to end through it
 - [ ] Team PC: one audit through the web app (with the 120b audits)
+- [x] Web app polish (D41 additions): finished audits of the same PDF are reused (with "Run the audit again"), page numbers, figure images beside figure verdicts, novelty headline built from the facet labels, report download. 4 more tests.
 
 ## Future work (for the report)
 

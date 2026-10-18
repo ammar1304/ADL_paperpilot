@@ -17,6 +17,7 @@ import threading
 import time
 from concurrent.futures import ThreadPoolExecutor
 from typing import Any
+from uuid import UUID
 
 import httpx
 
@@ -27,6 +28,26 @@ REF_CHARS = "abcdefghijkmnpqrstuvwxyz23456789"
 
 def new_ref() -> str:
     return "".join(secrets.choice(REF_CHARS) for _ in range(20))
+
+
+def run_ref(run_id: Any) -> str:
+    """A ref that names an existing run directly ("u" + the run id's 32 hex digits), used to reopen a
+    finished run; refs from new_ref() are 20 characters, so the two never collide."""
+    return "u" + UUID(str(run_id)).hex
+
+
+def run_id_from_ref(ref: str) -> UUID | None:
+    if len(ref) == 33 and ref.startswith("u"):
+        try:
+            return UUID(hex=ref[1:])
+        except ValueError:
+            return None
+    return None
+
+
+def block_pages(paper: dict[str, Any]) -> dict[str, int]:
+    """Page of each text block ("b:48" -> 6), so the page can show where each checked sentence is."""
+    return {b["id"]: b["page"] for b in paper.get("blocks") or [] if b.get("id") and b.get("page") is not None}
 
 
 class WebhookRunner:

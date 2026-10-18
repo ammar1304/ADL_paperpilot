@@ -89,7 +89,7 @@ from .novelty import (
 )
 from .prompts import PromptError, PromptLibrary
 from .report import result_page
-from .webapp import WebhookRunner, new_ref, status_payload
+from .webapp import WebhookRunner, block_pages, new_ref, run_id_from_ref, run_ref, status_payload
 from .retrieval.embedder import Embedder, EmbedderError
 from .external.openalex import OpenAlex
 from .external.semantic_scholar import SemanticScholar
@@ -262,24 +262,40 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         allowed = {"mode", "idea_text", "draft_pdf_url", "draft_pdf_upload"}
         request = {k: v for k, v in body.items() if k in allowed and v not in (None, "")}
         try:
-            RunRequest.model_validate(request)
+            stored = RunRequest.model_validate(request).model_dump(mode="json")
         except ValidationError as exc:
             errors = [FieldError(field=_loc(e["loc"]), message=e["msg"]).model_dump() for e in exc.errors()]
             return JSONResponse(status_code=422, content={"errors": errors})
+        if stored["mode"] == "audit" and body.get("fresh") is not True:
+            field = "draft_pdf_upload" if stored.get("draft_pdf_upload") else "draft_pdf_url"
+            previous = await run_in_threadpool(db.find_done_audit, field, stored[field])
+            if previous is not None:
+                # same PDF audited before: show that result instead of spending 15 minutes and tokens again
+                return {"ref": run_ref(previous["run_id"]), "reused": True}
         ref = new_ref()
         web_runner.start(ref, {**request, "client_ref": ref})
-        return {"ref": ref}
+        return {"ref": ref, "reused": False}
 
     @app.get("/app/api/runs/{ref}")
     async def web_run_status(ref: str) -> Any:
         if not ref.isalnum() or len(ref) > 40:
             raise HTTPException(status_code=404, detail="unknown run")
-        call = web_runner.get(ref)
-        run = await run_in_threadpool(db.get_run_by_ref, ref)
+        run_id = run_id_from_ref(ref)
+        call = None if run_id else web_runner.get(ref)
+        run = await run_in_threadpool(db.get_run, run_id) if run_id else await run_in_threadpool(db.get_run_by_ref, ref)
         if run is None and call is None:
             raise HTTPException(status_code=404, detail="unknown run")
         steps = await run_in_threadpool(db.get_steps, run["run_id"]) if run else []
-        return status_payload(run, steps, call)
+        out = status_payload(run, steps, call)
+        if out.get("state") == "done" and out.get("mode") == "audit":
+            parse = [s for s in steps if s["step_name"] == "parse" and s["status"] == "done"]
+            if parse:
+                try:
+                    paper = await run_in_threadpool(papers.paper, parse[-1]["detail"]["sha256"])
+                    out["pages"] = block_pages(paper)
+                except (OSError, ValueError, KeyError):
+                    out["pages"] = {}
+        return out
 
     @app.post("/citations/passages")
     async def citations_passages(body: dict[str, Any]) -> Any:

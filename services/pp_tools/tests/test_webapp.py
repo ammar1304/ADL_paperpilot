@@ -10,7 +10,8 @@ from fastapi.testclient import TestClient
 
 from app.config import Settings
 from app.main import create_app
-from app.webapp import REF_CHARS, WebhookRunner, audit_progress, new_ref, novelty_progress, status_payload
+from app.webapp import (REF_CHARS, WebhookRunner, audit_progress, block_pages, new_ref, novelty_progress, run_id_from_ref,
+                        run_ref, status_payload)
 
 
 def step(name, status="done", **detail):
@@ -190,3 +191,51 @@ def test_unknown_or_malformed_ref_is_404(app_client):
 def test_client_ref_must_be_a_plain_token(app_client):
     resp = app_client.post("/runs", json={"request": {"mode": "novelty", "idea_text": "x y z", "client_ref": "x'; drop"}})
     assert resp.status_code == 422
+
+
+# ---- reopening and reusing finished runs ------------------------------------------------------------
+
+
+def test_run_ref_round_trips_and_never_matches_a_client_ref():
+    import uuid
+    rid = uuid.uuid4()
+    ref = run_ref(rid)
+    assert len(ref) == 33 and ref.isalnum() and run_id_from_ref(ref) == rid
+    assert run_id_from_ref(new_ref()) is None
+    assert run_id_from_ref("u" + "z" * 32) is None
+
+
+def test_block_pages_maps_text_blocks_to_their_page():
+    paper = {"blocks": [{"id": "b:0", "page": 1}, {"id": "b:1", "page": None}, {"id": "b:2", "page": 3}]}
+    assert block_pages(paper) == {"b:0": 1, "b:2": 3}
+
+
+def _finish_audit(client, request, stopped=None):
+    run_id = client.post("/runs", json={"request": request, "n8n_execution_id": "e"}).json()["run_id"]
+    client.patch(f"/runs/{run_id}", json={"status": "done", "result": {"branch": "audit", "coverage": {"stopped": stopped}}})
+    return run_id
+
+
+def test_an_audit_of_the_same_pdf_reuses_the_finished_run(app_client):
+    url = "https://arxiv.org/pdf/2403.14403v2"
+    _finish_audit(app_client, {"mode": "audit", "draft_pdf_url": url}, stopped="daily limit")
+    complete = _finish_audit(app_client, {"mode": "audit", "draft_pdf_url": url})
+    _finish_audit(app_client, {"mode": "audit", "draft_pdf_url": url}, stopped="daily limit")  # newer but partial
+
+    resp = app_client.post("/app/api/runs", json={"mode": "audit", "draft_pdf_url": url})
+    assert resp.status_code == 202 and resp.json()["reused"] is True
+    status = app_client.get(f"/app/api/runs/{resp.json()['ref']}").json()
+    assert status["state"] == "done" and status["run_id"] == complete
+    assert _Webhook.received == []  # n8n was not called
+
+
+def test_fresh_or_new_pdf_starts_a_real_run(app_client):
+    url = "https://arxiv.org/pdf/2403.14403v2"
+    _finish_audit(app_client, {"mode": "audit", "draft_pdf_url": url})
+    resp = app_client.post("/app/api/runs", json={"mode": "audit", "draft_pdf_url": url, "fresh": True})
+    assert resp.json()["reused"] is False
+    other = app_client.post("/app/api/runs", json={"mode": "audit", "draft_pdf_url": "https://arxiv.org/pdf/2401.15884v3"})
+    assert other.json()["reused"] is False
+    assert wait_for(lambda: len(_Webhook.received) == 2)
+    # novelty checks are never reused: the web search changes over time
+    assert app_client.post("/app/api/runs", json={"mode": "novelty", "idea_text": "Retrieve only when needed."}).json()["reused"] is False
