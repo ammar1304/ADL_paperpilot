@@ -486,6 +486,7 @@ The container registries were not reachable from the development sandbox, so the
 - **Decision:** `CLAIMS_MODEL` is `openai/gpt-oss-120b` for P4 and P6, with `openai/gpt-oss-20b` as the fallback on the daily limit. Same parameters, same strict schema, same rate-limit handling.
 - **Why:** the citation check (the audit's RAG step) depends on claims that carry a marker; a cheaper extractor that skips them makes the most expensive step look idle. 120b has its own 200K tokens a day, and a call costs about the same tokens.
 - **Limits:** the comparison is across runs, not a controlled A/B on identical batches, and gpt-oss output varies between runs; the next audits measure 120b alone. Each model still allows about three three-paper runs a day.
+- **Outcome (2026-10-18, `eval/results/20261018-172535-audit-120b/`):** with 120b alone on the same candidate sentences, claims kept went from 55 to 110 over the three papers, claims with a citation marker from 5 to 33, citation verdicts from 5 to 33 and figure verdicts from 7 to 20. No LLM error, no rate limit. Among the 33 citation verdicts, one contradiction, checked by hand and found to be a false alarm (F-030). About 25 % more time per audit.
 
 ## D41. A web page served by pp-tools as the main interface; the n8n form stays
 
