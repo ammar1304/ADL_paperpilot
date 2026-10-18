@@ -461,7 +461,8 @@ Branch `feat/m3-parser-spike`. Decision D31: Docling (CPU) instead of MinerU.
 - [x] The form states the library's scope.
 - [x] Team PC: smoke test (no LLM) passed: form page, PDF upload, validation.
 - [x] Team PC: E5 (`eval/results/20261017-232728-e5-citations/`, analysis next to it): retrieval 29/40 strict, 37/40 by hand; 25/25 supported recognised, 0 false alarms, 14/15 changed claims rejected; P6 v2 equal to v1, not activated (D37, F-029).
-- [ ] Team PC: the three audits with gpt-oss-120b, one PDF upload through the form
+- [x] Team PC: the three audits with gpt-oss-120b (`eval/results/20261018-172535-audit-120b/`, analysis next to it): claims 55 → 110, citation verdicts 5 → 33, figure verdicts 7 → 20; one citation false alarm (F-030)
+- [ ] Team PC: one PDF upload through the web app
 - [x] Web app at `/app` (D41): the page posts to pp-tools, which calls the webhook in the background; progress per stage from the run's steps; results with evidence. 16 tests (`tests/test_webapp.py`); screenshots checked against stored runs.
 - [x] Team PC: web app rebuilt and opened; an idea check ran end to end through it
 - [ ] Team PC: one audit through the web app (with the 120b audits)
