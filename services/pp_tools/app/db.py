@@ -112,6 +112,19 @@ class Database:
             cur.execute(f"SELECT {_RUN_COLUMNS} FROM runs WHERE input->>'client_ref' = %s ORDER BY created_at DESC LIMIT 1", (client_ref,))
             return cur.fetchone()
 
+    def find_done_audit(self, field: str, value: str) -> dict[str, Any] | None:
+        """The latest finished audit of the same PDF (same upload hash or same URL), complete runs first."""
+        if field not in ("draft_pdf_upload", "draft_pdf_url"):
+            raise ValueError(field)
+        self.ensure_schema()
+        with self.pool.connection() as conn, conn.cursor(row_factory=dict_row) as cur:
+            cur.execute(
+                f"""SELECT {_RUN_COLUMNS} FROM runs
+                    WHERE mode = 'audit' AND status = 'done' AND input->>'{field}' = %s
+                    ORDER BY (result->'coverage'->>'stopped' IS NULL) DESC, created_at DESC LIMIT 1""",
+                (value,))
+            return cur.fetchone()
+
     def get_run(self, run_id: UUID) -> dict[str, Any] | None:
         self.ensure_schema()
         with self.pool.connection() as conn, conn.cursor(row_factory=dict_row) as cur:

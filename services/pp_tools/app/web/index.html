@@ -168,6 +168,12 @@ h3{font-size:21px;letter-spacing:-.01em;margin:34px 0 14px}
 .margin small{display:block;font:400 13.5px/1.45 var(--sans);color:var(--ink-2);margin-top:6px}
 .ev{font:italic 400 15px/1.55 var(--serif);color:var(--ink-2);margin-top:10px;padding-left:12px;border-left:2px solid var(--rule)}
 .empty{color:var(--ink-3);padding:18px 0}
+.where{font-size:13px;color:var(--ink-3);margin-top:6px}
+.fig{display:block;max-width:100%;max-height:300px;margin-top:14px;border:1px solid var(--rule);border-radius:6px;background:#fff}
+.stamp{display:flex;align-items:center;gap:14px;flex-wrap:wrap;font-size:14.5px;color:var(--ink-2);margin:-6px 0 18px}
+.linkbtn{all:unset;cursor:pointer;color:var(--pencil);font-weight:600;text-decoration:underline;text-underline-offset:3px}
+.linkbtn:focus-visible{outline:3px solid var(--pencil);outline-offset:2px}
+.print-only{display:none}
 .again{margin-top:30px;display:flex;gap:12px;flex-wrap:wrap}
 
 /* how it works */
@@ -192,6 +198,17 @@ footer{color:var(--ink-3);font-size:14px;padding:30px 0 50px;border-top:1px soli
   .st .who{grid-column:2;justify-self:start}
 }
 @media (prefers-reduced-motion:reduce){.hl,.note,.tick{transition:none}}
+@media print{
+  body{background:#fff}
+  .bar,.hero,#work,#live,#how,footer,.again,.tabs,[role=tabpanel],.stamp .linkbtn{display:none!important}
+  .wrap{max-width:none;padding:0}
+  .results{display:block;box-shadow:none;padding:0;margin:0}
+  .print-only{display:block}
+  .print-only h3{margin-top:26px}
+  .claim,.paper{break-inside:avoid}
+  .fig{max-height:220px}
+  a{color:inherit}
+}
 </style>
 </head>
 <body>
@@ -391,13 +408,14 @@ footer{color:var(--ink-3);font-size:14px;padding:30px 0 50px;border-top:1px soli
     $("#run").disabled = false; pick(mode);
     if (r.status === 422) return showErr((j.errors || []).map(e => (FIELD[e.field] || e.field) + ": " + String(e.message).replace(/^Value error, /, "")).join(" "));
     if (!r.ok) return showErr("The check could not start (HTTP " + r.status + ").");
-    follow(j.ref, body);
+    follow(j.ref, body, j.reused);
   }
   $("#run").addEventListener("click", start);
 
   /* ---- following a run ---- */
   let timer = null, poll = null;
-  function follow(ref, body) {
+  function follow(ref, body, reused) {
+    follow.reused = !!reused;
     history.replaceState(null, "", "#run=" + ref);
     $("#work").style.display = "none";
     $("#results").classList.remove("on");
@@ -455,17 +473,33 @@ footer{color:var(--ink-3);font-size:14px;padding:30px 0 50px;border-top:1px soli
       againButtons());
     res.classList.add("on");
   }
-  function againButtons() {
+  function againButtons(done) {
     const b1 = h("button", { class: "cta", type: "button", text: "Check something else" });
     b1.addEventListener("click", () => { $("#results").classList.remove("on"); back(); $("#check").scrollIntoView({ behavior: reduce ? "auto" : "smooth" }); });
-    return h("div", { class: "again" }, b1);
+    if (!done) return h("div", { class: "again" }, b1);
+    const b2 = h("button", { class: "cta ghost", type: "button", text: "Download report" });
+    b2.addEventListener("click", () => window.print());
+    return h("div", { class: "again" }, b1, b2);
+  }
+  const when = t => { const d = new Date(t); return isNaN(d) ? "" : d.toLocaleString(undefined, { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" }); };
+  async function auditAgain(input) {
+    const body = { mode: "audit", fresh: true };
+    if (input.draft_pdf_upload) body.draft_pdf_upload = input.draft_pdf_upload; else body.draft_pdf_url = input.draft_pdf_url;
+    try {
+      const r = await fetch("/app/api/runs", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) });
+      const j = await r.json();
+      if (!r.ok) throw new Error("HTTP " + r.status);
+      $("#results").classList.remove("on");
+      follow(j.ref, body, false);
+    } catch (e) { failed("The audit could not be started again (" + e.message + ")."); }
   }
 
   /* ---- results ---- */
   function finish(s) {
     stop();
     const res = $("#results");
-    res.replaceChildren(...(s.mode === "novelty" ? novelty(s) : audit(s)), againButtons());
+    res.replaceChildren(...(s.mode === "novelty" ? novelty(s) : audit(s)), againButtons(true));
+    if (s.mode === "novelty") res.append(h("p", { class: "print-only where", text: "PaperPilot report, run " + s.run_id + ", " + when(s.created_at) }));
     res.classList.add("on");
     setTimeout(() => { res.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" }); res.focus({ preventScroll: true }); }, 250);
   }
@@ -473,19 +507,27 @@ footer{color:var(--ink-3);font-size:14px;padding:30px 0 50px;border-top:1px soli
   const FACETS = ["task", "method", "data", "result"];
   function novelty(s) {
     const r = s.result || {}, close = r.closest_work || [], other = r.checked_not_close || [], cov = r.coverage || {};
-    const verdict = close.length
-      ? (close.length === 1 ? "One paper already overlaps with this idea." : close.length + " papers already overlap with this idea.")
+    /* a paper "does" the idea when its method is the same, or two facets are; otherwise it only touches part of it */
+    const same = p => FACETS.filter(k => (p.overlap || {})[k] === "same").length;
+    const strong = close.filter(p => (p.overlap || {}).method === "same" || same(p) >= 2);
+    const n = k => k === 1 ? "One paper" : k + " papers";
+    const verdict = strong.length ? n(strong.length) + (strong.length === 1 ? " already does much of this idea." : " already do much of this idea.")
+      : close.length ? "No paper does this idea, but " + (close.length === 1 ? "one touches part of it." : close.length + " touch parts of it.")
       : "Nothing in the library overlaps with this idea.";
+    const sub = strong.length ? "Read them before you claim novelty. Each one shows where it overlaps, facet by facet."
+      : close.length ? "They share a task, a method or data in part, not the idea as a whole. Each one shows which facets, so you can say how your idea differs."
+      : "That is not proof of novelty: only the papers below were searched.";
     const out = [
       h("p", { class: "verdict", text: verdict }),
-      h("p", { class: "sub", text: close.length ? "Read them before you claim novelty. Each one shows where it overlaps, facet by facet." : "That is not proof of novelty: only the papers below were searched." }),
+      h("p", { class: "sub", text: sub }),
       h("div", { class: "facts" },
-        h("div", { class: "fact" + (close.length ? " bad" : " ok") }, h("b", { text: close.length }), h("span", { text: "overlapping papers" })),
+        h("div", { class: "fact" + (strong.length ? " bad" : close.length ? "" : " ok") }, h("b", { text: strong.length ? strong.length : close.length }),
+          h("span", { text: strong.length ? "close matches" : "partial overlaps" })),
         h("div", { class: "fact" }, h("b", { text: cov.candidates_considered ?? "?" }), h("span", { text: "papers judged" })),
         h("div", { class: "fact" }, h("b", { text: (cov.queries || []).length + (cov.web_queries || []).length }), h("span", { text: "searches run" })),
         h("div", { class: "fact" }, h("b", { text: cov.papers_in_knowledge_base ?? 531 }), h("span", { text: "papers in the library" })))
     ];
-    if (close.length) { out.push(h("h3", { text: "Closest work" })); close.forEach(p => out.push(paperRow(p, true))); }
+    if (close.length) { out.push(h("h3", { text: strong.length ? "Closest work" : "Related work, partly overlapping" })); close.forEach(p => out.push(paperRow(p, true))); }
     const f = r.idea_facets || {};
     out.push(h("h3", { text: "How your idea was read" }), h("dl", { class: "idea-read" }, ...FACETS.flatMap(k => [h("dt", { text: k }), h("dd", { text: f[k] || "not specified" })])));
     const rounds = r.search_agent || [];
@@ -495,7 +537,7 @@ footer{color:var(--ink-3);font-size:14px;padding:30px 0 50px;border-top:1px soli
           (rd.queries || []).length ? h("div", { class: "q", text: rd.queries.map(q => "“" + q.text + "” " + (q.where === "web" ? "on the web" : "in the library")).join("; ") }) : null))));
     }
     if (other.length) { out.push(h("h3", { text: "Also checked, no overlap" })); other.forEach(p => out.push(paperRow(p, false))); }
-    out.push(h("div", { class: "aside" }, h("b", { text: "The judge’s own summary (not verified): " }), r.summary_llm_written || "none"));
+    out.push(h("div", { class: "aside" }, h("b", { text: "The judge’s own words (not checked by code): " }), r.summary_llm_written || "none"));
     return out;
   }
   function paperRow(p, withFacets) {
@@ -509,8 +551,11 @@ footer{color:var(--ink-3);font-size:14px;padding:30px 0 50px;border-top:1px soli
     return h("div", { class: "paper" }, left, right);
   }
 
+  let ctx = { runId: "", pages: {} };
+  const pageOf = sid => { const p = ctx.pages[String(sid || "").split("/")[0]]; return p ? "Page " + p : null; };
   function audit(s) {
     const r = s.result || {}, paper = r.paper || {}, claims = r.claims || [];
+    ctx = { runId: s.run_id, pages: s.pages || {} };
     const nc = r.number_checks || {}, fc = r.figure_checks || {}, cc = r.citation_checks || {};
     const ns = nc.summary || {}, fs = fc.summary || {}, cs = cc.summary || {};
     const bad = (ns.contradicted || 0) + (fs.contradicted || 0) + (cs.contradicted || 0);
@@ -525,6 +570,11 @@ footer{color:var(--ink-3);font-size:14px;padding:30px 0 50px;border-top:1px soli
         h("div", { class: "fact" + (bad ? " bad" : "") }, h("b", { text: bad }), h("span", { text: "contradicted" })),
         h("div", { class: "fact" }, h("b", { text: paper.pages ?? "?" }), h("span", { text: "pages read" })))
     ];
+    const again = h("button", { class: "linkbtn", type: "button", text: "Run the audit again" });
+    again.addEventListener("click", () => auditAgain(s.input || {}));
+    out.splice(2, 0, h("div", { class: "stamp" },
+      h("span", { text: follow.reused ? "This PDF was audited before, on " + when(s.created_at) + ". This is that result, shown without spending the tokens again."
+                                      : "Audited on " + when(s.created_at) + "." }), again));
     if (stops.length) out.push(h("div", { class: "aside" }, h("b", { text: "Partial audit. " }), stops.join("; ") + ". The checks below are the ones that finished."));
     const tabs = [
       { id: "numbers", label: "Numbers", count: (nc.checks || []).length, items: () => numberGroups(nc.checks || [], claims) },
@@ -540,15 +590,20 @@ footer{color:var(--ink-3);font-size:14px;padding:30px 0 50px;border-top:1px soli
     tabs.forEach(t => { const b = h("button", { class: "tab", type: "button", role: "tab", "data-id": t.id }, t.label, h("small", { text: t.count })); b.addEventListener("click", () => show(t)); bar.append(b); });
     out.push(h("h3", { text: "Every check, with its evidence" }), bar, list);
     show(tabs.find(t => t.count) || tabs[0]);
+    out.push(h("div", { class: "print-only" }, ...tabs.flatMap(t => {
+      const items = sortItems(t.items());
+      return [h("h3", { text: t.label + " (" + t.count + ")" }), ...(items.length ? items : [h("p", { class: "empty", text: "Nothing of this kind could be checked." })])];
+    }), h("p", { class: "where", text: "PaperPilot report, run " + s.run_id + ", " + when(s.created_at) })));
     return out;
   }
   const ORDER = { contradicted: 0, unresolved_reference: 1, missing_figure: 1, not_answered: 2, unverifiable: 3, not_shown: 3, not_found: 3, not_in_library: 5, supported: 4 };
   const sortItems = items => items.sort((a, b) => (ORDER[a.dataset.v] ?? 3) - (ORDER[b.dataset.v] ?? 3));
   const VERDICT = { supported: "✓ supported", contradicted: "✗ contradicted", unverifiable: "? unverifiable", not_shown: "? not shown", not_found: "? not found", not_in_library: "— not in library", unresolved_reference: "? reference not found", missing_figure: "? figure missing", not_answered: "? not answered" };
-  function claimRow(v, text, note, evidence) {
+  function claimRow(v, text, note, evidence, where, extra) {
     const cls = v === "supported" ? "supported" : v === "contradicted" ? "contradicted" : "other";
     const el = h("div", { class: "claim " + cls, "data-v": v },
-      h("div", {}, h("p", {}, h("mark", { text: text || "" })), evidence ? h("div", { class: "ev", text: evidence }) : null),
+      h("div", {}, h("p", {}, h("mark", { text: text || "" })), where ? h("div", { class: "where", text: where }) : null,
+        evidence ? h("div", { class: "ev", text: evidence }) : null, extra || null),
       h("div", { class: "margin" }, VERDICT[v] || v, note ? h("small", { text: note }) : null));
     return el;
   }
@@ -557,7 +612,7 @@ footer{color:var(--ink-3);font-size:14px;padding:30px 0 50px;border-top:1px soli
     let note = "claimed " + (c.claimed ?? "");
     if (cell.table) note += "; " + cell.table.replace("table:", "Table ") + ", " + cell.row + ": " + cell.text + (base ? " vs " + base.row + ": " + base.text : "");
     if (c.note && !cell.table) note += "; " + c.note;
-    return claimRow(c.verdict, cl.claim || c.system, note, null);
+    return claimRow(c.verdict, cl.claim || c.system, note, null, pageOf(cl.sentence_id));
   }
   /* one sentence often carries several numbers: show it once, with one margin note per number */
   function numberGroups(checks, claims) {
@@ -579,11 +634,17 @@ footer{color:var(--ink-3);font-size:14px;padding:30px 0 50px;border-top:1px soli
     });
   }
   function figureItem(c) {
-    return claimRow(c.verdict, c.text, (c.figure || "").replace("figure:", "Figure ") + ((c.read_values || []).length ? "; read: " + c.read_values.join(", ") : ""), c.evidence);
+    const name = (c.figure || "").replace("figure:", "Figure ");
+    let img = null;
+    if (c.figure && ctx.runId) {
+      img = h("img", { class: "fig", loading: "lazy", alt: name + " as read by the vision model", src: "/audit/" + encodeURIComponent(ctx.runId) + "/figures/" + encodeURIComponent(c.figure) });
+      img.addEventListener("error", () => img.remove());
+    }
+    return claimRow(c.verdict, c.text, name + ((c.read_values || []).length ? "; read: " + c.read_values.join(", ") : ""), c.evidence, pageOf(c.sentence_id), img);
   }
   function citationItem(c) {
     const ev = (c.evidence || [])[0];
-    return claimRow(c.verdict, c.text, "cites " + c.marker + (c.cited_title ? ": " + c.cited_title : ""), ev ? ev.text : (c.reason || null));
+    return claimRow(c.verdict, c.text, "cites " + c.marker + (c.cited_title ? ": " + c.cited_title : ""), ev ? ev.text : (c.reason || null), pageOf(c.sentence_id));
   }
 
   /* a shared link (#run=...) reopens a run */
