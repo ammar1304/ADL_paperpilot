@@ -7,6 +7,7 @@ and the evaluation harness all run the same code.
 """
 
 import json
+from pathlib import Path
 import logging
 import threading
 import time
@@ -19,7 +20,8 @@ from uuid import UUID
 import httpx
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.concurrency import run_in_threadpool
-from fastapi.responses import JSONResponse, Response
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse, Response
 from pydantic import ValidationError
 
 from .audit.parse_job import parse_paper
@@ -87,6 +89,7 @@ from .novelty import (
 )
 from .prompts import PromptError, PromptLibrary
 from .report import result_page
+from .webapp import WebhookRunner, new_ref, status_payload
 from .retrieval.embedder import Embedder, EmbedderError
 from .external.openalex import OpenAlex
 from .external.semantic_scholar import SemanticScholar
@@ -114,6 +117,8 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     parser = DoclingClient(settings.parser_url, settings.parser_timeout_s) if settings.parser_url else None
     papers = PaperStore(settings.cache_dir / "audit")
     uploads = Uploads(settings.cache_dir / "uploads", settings.audit_max_pdf_mb * 1_000_000)
+    web_runner = WebhookRunner(settings.n8n_webhook_url)
+    web_page = (Path(__file__).parent / "web" / "index.html")
     # One worker: builds run one at a time, and never inside a request.
     jobs = ThreadPoolExecutor(max_workers=1, thread_name_prefix="pp-job")
 
@@ -127,6 +132,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
                 log.warning("marked interrupted jobs as failed", extra={"count": interrupted})
         yield
         jobs.shutdown(wait=False, cancel_futures=True)
+        web_runner.close()
         embedder.close()
         if reranker is not None:
             reranker.close()
@@ -237,6 +243,43 @@ def create_app(settings: Settings | None = None) -> FastAPI:
             raise HTTPException(status_code=status, detail=str(exc)) from exc
         log.info("pdf uploaded", extra={"upload_id": upload_id[:12], "bytes": len(data)})
         return {"upload_id": upload_id, "bytes": len(data)}
+
+    # ---- the web app (D41) ------------------------------------------------------------
+
+    app.mount("/app/static", StaticFiles(directory=web_page.parent / "static"), name="web-static")
+
+    @app.get("/", include_in_schema=False)
+    async def root() -> Any:
+        return RedirectResponse("/app")
+
+    @app.get("/app", response_class=HTMLResponse, include_in_schema=False)
+    async def web_app() -> Any:
+        return HTMLResponse(web_page.read_text(encoding="utf-8"))
+
+    @app.post("/app/api/runs", status_code=202)
+    async def web_start_run(body: dict[str, Any]) -> Any:
+        """Start a run through the n8n webhook in the background; the page follows it by ref."""
+        allowed = {"mode", "idea_text", "draft_pdf_url", "draft_pdf_upload"}
+        request = {k: v for k, v in body.items() if k in allowed and v not in (None, "")}
+        try:
+            RunRequest.model_validate(request)
+        except ValidationError as exc:
+            errors = [FieldError(field=_loc(e["loc"]), message=e["msg"]).model_dump() for e in exc.errors()]
+            return JSONResponse(status_code=422, content={"errors": errors})
+        ref = new_ref()
+        web_runner.start(ref, {**request, "client_ref": ref})
+        return {"ref": ref}
+
+    @app.get("/app/api/runs/{ref}")
+    async def web_run_status(ref: str) -> Any:
+        if not ref.isalnum() or len(ref) > 40:
+            raise HTTPException(status_code=404, detail="unknown run")
+        call = web_runner.get(ref)
+        run = await run_in_threadpool(db.get_run_by_ref, ref)
+        if run is None and call is None:
+            raise HTTPException(status_code=404, detail="unknown run")
+        steps = await run_in_threadpool(db.get_steps, run["run_id"]) if run else []
+        return status_payload(run, steps, call)
 
     @app.post("/citations/passages")
     async def citations_passages(body: dict[str, Any]) -> Any:

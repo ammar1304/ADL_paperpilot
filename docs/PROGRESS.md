@@ -462,3 +462,10 @@ Branch `feat/m3-parser-spike`. Decision D31: Docling (CPU) instead of MinerU.
 - [x] Team PC: smoke test (no LLM) passed: form page, PDF upload, validation.
 - [x] Team PC: E5 (`eval/results/20261017-232728-e5-citations/`, analysis next to it): retrieval 29/40 strict, 37/40 by hand; 25/25 supported recognised, 0 false alarms, 14/15 changed claims rejected; P6 v2 equal to v1, not activated (D37, F-029).
 - [ ] Team PC: the three audits with gpt-oss-120b, one PDF upload through the form
+- [x] Web app at `/app` (D41): the page posts to pp-tools, which calls the webhook in the background; progress per stage from the run's steps; results with evidence. 16 tests (`tests/test_webapp.py`); screenshots checked against stored runs.
+- [x] Team PC: web app rebuilt and opened; an idea check ran end to end through it
+- [ ] Team PC: one audit through the web app (with the 120b audits)
+
+## Future work (for the report)
+
+- **Citations outside the library through Semantic Scholar.** When a cited paper is not among the 531, look its title up on Semantic Scholar. If a free PDF exists, chunk, embed and rerank it on the fly and run the same P6 judge. With only the abstract, allow "supported" or "can't tell" but never a negative verdict, since the evidence may be in the full text (the evidence asymmetry of F-020). Needs its own E5-style evaluation. This makes the citation check work in any field; the number and figure checks already do not depend on the library.

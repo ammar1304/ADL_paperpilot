@@ -82,6 +82,8 @@ class Settings(BaseSettings):
 
     # ---- audit branch (milestone 3) -------------------------------------------------
     # docling-serve (D31); empty disables parsing.
+    # The web app (D41) starts runs through the same webhook as every client, inside the compose network.
+    n8n_webhook_url: str = Field(default="http://n8n:5678/webhook/paperpilot", alias="N8N_WEBHOOK_URL")
     parser_url: str = Field(default="", alias="PARSER_URL")
     # Seconds one PDF may take to parse (CPU: 2 to 5 minutes per paper in the spike).
     parser_timeout_s: float = Field(default=1800.0, alias="PARSER_TIMEOUT_S")

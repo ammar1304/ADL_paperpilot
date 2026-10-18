@@ -485,3 +485,15 @@ The container registries were not reachable from the development sandbox, so the
 - **Decision:** `CLAIMS_MODEL` is `openai/gpt-oss-120b` for P4 and P6, with `openai/gpt-oss-20b` as the fallback on the daily limit. Same parameters, same strict schema, same rate-limit handling.
 - **Why:** the citation check (the audit's RAG step) depends on claims that carry a marker; a cheaper extractor that skips them makes the most expensive step look idle. 120b has its own 200K tokens a day, and a call costs about the same tokens.
 - **Limits:** the comparison is across runs, not a controlled A/B on identical batches, and gpt-oss output varies between runs; the next audits measure 120b alone. Each model still allows about three three-paper runs a day.
+
+## D41. A web page served by pp-tools as the main interface; the n8n form stays
+
+- **Date:** 2026-10-18. Adds to D39.
+- **Decision:** pp-tools serves a single page at `/app`. The browser posts to `POST /app/api/runs`; pp-tools validates the request with the same `RunRequest` model, adds a random `client_ref` (20 characters), and calls the n8n webhook (`N8N_WEBHOOK_URL`, default `http://n8n:5678/webhook/paperpilot`) in a background thread. The page polls `GET /app/api/runs/{ref}` every 2 seconds; pp-tools finds the run by `input->>'client_ref'` and turns its recorded steps into stages (who works: an LLM or code; batches done out of total). When the run is done the page draws the result from the stored run.
+- **Why:**
+  - n8n stays the orchestrator: the page is one more client of the webhook, like the form, the smoke test and the evaluation scripts.
+  - The browser cannot call n8n's webhook directly (no CORS headers) and a 15-minute request is fragile; a background call plus polling survives a closed tab, and `#run=<ref>` reopens a run.
+  - Progress comes from the `run_steps` the workflows already record, so it shows what really happened, including a check stopped by the daily token limit.
+  - The n8n form only shows a spinner until the end; the page shows each stage as it finishes and lets the reader tab through numbers, figures and citations with their evidence.
+- **Safety:** every string from the user, a paper or a model is set with `textContent`; links pass `safeUrl()` (http/https only); the ref must match `^[a-z0-9]{12,40}$`; only `mode`, `idea_text`, `draft_pdf_url` and `draft_pdf_upload` are forwarded. Fonts are bundled (OFL), so the page works offline during the demo.
+- **Limits:** the webhook call is kept in memory: if pp-tools restarts during a run, the run continues in n8n and its status is still read from Postgres, but a webhook error that happened before the run was created is lost. No authentication (localhost only, as D39).
