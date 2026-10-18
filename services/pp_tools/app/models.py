@@ -24,6 +24,8 @@ class RunRequest(BaseModel):
     # A PDF sent through the form: POST /uploads returns this id (the file's SHA-256).
     draft_pdf_upload: str | None = Field(default=None, pattern=r"^[0-9a-f]{64}$")
     venue: str | None = Field(default=None, max_length=200)
+    # Set by the web app (D41) so the page can follow the run before the webhook answers.
+    client_ref: str | None = Field(default=None, pattern=r"^[a-z0-9]{12,40}$")
     query_language: Literal["en", "fr"] = "en"
 
     @field_validator("idea_text", "venue", "draft_pdf_url", "draft_pdf_upload", mode="before")

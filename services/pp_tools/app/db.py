@@ -105,6 +105,13 @@ class Database:
             cur.execute(f"SELECT {_RUN_COLUMNS} FROM runs ORDER BY created_at DESC LIMIT %s", (limit,))
             return cur.fetchall()
 
+    def get_run_by_ref(self, client_ref: str) -> dict[str, Any] | None:
+        """The run the web app started with this client ref (D41)."""
+        self.ensure_schema()
+        with self.pool.connection() as conn, conn.cursor(row_factory=dict_row) as cur:
+            cur.execute(f"SELECT {_RUN_COLUMNS} FROM runs WHERE input->>'client_ref' = %s ORDER BY created_at DESC LIMIT 1", (client_ref,))
+            return cur.fetchone()
+
     def get_run(self, run_id: UUID) -> dict[str, Any] | None:
         self.ensure_schema()
         with self.pool.connection() as conn, conn.cursor(row_factory=dict_row) as cur:

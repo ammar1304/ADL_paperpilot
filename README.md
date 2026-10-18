@@ -94,9 +94,15 @@ Add `--with-llm` to also run a full novelty check with the real LLMs. This needs
 
 To test services that are already running: `python scripts/smoke_test.py --no-compose`.
 
+## Using the web app
+
+Open http://localhost:8000/app (or the port set by `PP_TOOLS_HOST_PORT` in `.env`, 8010 on the team PC). Choose "Is my idea new?" and describe it, or "Does my draft hold up?" and upload the PDF or paste a link. The page shows each stage as it runs (which ones use an LLM and which are code), then the result: for an idea, the closest papers facet by facet; for a draft, every number, figure and citation check with its evidence, problems first. The address ends in `#run=...`, so a run can be reopened.
+
+The page is served by pp-tools and calls the same webhook as everything else (D41).
+
 ## Using the form
 
-Open http://localhost:5678/form/paperpilot-form. Choose "Check how novel an idea is" and describe the idea, or "Audit a draft paper" and upload the PDF (or paste a link). Keep the page open: a novelty check takes about a minute, an audit 5 to 15 minutes. The result page lists problems first, each with its evidence.
+The n8n form is the low-code alternative to the web app. Open http://localhost:5678/form/paperpilot-form. Choose "Check how novel an idea is" and describe the idea, or "Audit a draft paper" and upload the PDF (or paste a link). Keep the page open: a novelty check takes about a minute, an audit 5 to 15 minutes. The result page lists problems first, each with its evidence.
 
 The form is the `05-form` workflow. It calls the webhook below, so everything the webhook does applies to it.
 

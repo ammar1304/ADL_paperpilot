@@ -1,0 +1,595 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PaperPilot</title>
+<style>
+@font-face{font-family:"Newsreader";src:url(/app/static/fonts/newsreader-latin-400-normal.woff2) format("woff2");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"Newsreader";src:url(/app/static/fonts/newsreader-latin-500-normal.woff2) format("woff2");font-weight:500;font-style:normal;font-display:swap}
+@font-face{font-family:"Newsreader";src:url(/app/static/fonts/newsreader-latin-400-italic.woff2) format("woff2");font-weight:400;font-style:italic;font-display:swap}
+@font-face{font-family:"Schibsted Grotesk";src:url(/app/static/fonts/schibsted-grotesk-latin-400-normal.woff2) format("woff2");font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:"Schibsted Grotesk";src:url(/app/static/fonts/schibsted-grotesk-latin-500-normal.woff2) format("woff2");font-weight:500;font-style:normal;font-display:swap}
+@font-face{font-family:"Schibsted Grotesk";src:url(/app/static/fonts/schibsted-grotesk-latin-600-normal.woff2) format("woff2");font-weight:600;font-style:normal;font-display:swap}
+@font-face{font-family:"Schibsted Grotesk";src:url(/app/static/fonts/schibsted-grotesk-latin-700-normal.woff2) format("woff2");font-weight:700;font-style:normal;font-display:swap}
+@font-face{font-family:"Caveat";src:url(/app/static/fonts/caveat-latin-500-normal.woff2) format("woff2");font-weight:500;font-style:normal;font-display:swap}
+@font-face{font-family:"Caveat";src:url(/app/static/fonts/caveat-latin-600-normal.woff2) format("woff2");font-weight:600;font-style:normal;font-display:swap}
+:root{
+  --desk:#E6E9ED; --sheet:#FFFFFF; --ink:#1B2430; --ink-2:#4B5563; --ink-3:#8A93A0; --rule:#D5DAE1;
+  --pencil:#2B55C9; --pencil-soft:#E3EAFB;
+  --mark:#FFE36E; --ok:#1C7A50; --ok-soft:#DDF1E6; --bad:#C2372A; --bad-soft:#F9E0DC; --maybe:#9A6B00;
+  --serif:"Newsreader",Georgia,serif; --sans:"Schibsted Grotesk",system-ui,-apple-system,"Segoe UI",sans-serif; --hand:"Caveat","Segoe Print",cursive;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--desk);color:var(--ink);font:16px/1.55 var(--sans)}
+a{color:var(--pencil)}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--pencil);outline-offset:2px;border-radius:6px}
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+
+/* top bar */
+.bar{display:flex;align-items:center;justify-content:space-between;padding:22px 0}
+.brand{display:flex;align-items:center;gap:10px;font-weight:700;font-size:19px;letter-spacing:-.01em;text-decoration:none;color:var(--ink)}
+.brand svg{width:26px;height:26px}
+.bar nav{display:flex;gap:22px;font-size:15px}
+.bar nav a{color:var(--ink-2);text-decoration:none}
+.bar nav a:hover{color:var(--ink)}
+
+/* hero */
+.hero{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:56px;align-items:center;padding:36px 0 64px}
+.hero h1{font-size:clamp(36px,4.6vw,56px);line-height:1.02;letter-spacing:-.035em;font-weight:700;margin:0 0 22px}
+.hero h1 span{display:block;color:var(--ink-3)}
+.hero p{font-size:19px;color:var(--ink-2);max-width:30em;margin:0 0 30px}
+.cta{display:inline-flex;gap:10px;align-items:center;background:var(--ink);color:#fff;border:0;border-radius:999px;padding:14px 26px;font-weight:600;font-size:16px;cursor:pointer;text-decoration:none}
+.cta:hover{background:#000}
+.cta.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 1.5px var(--ink)}
+.hero .ctas{display:flex;gap:12px;flex-wrap:wrap}
+
+/* the annotated sheet: the one memorable thing */
+.sheet{position:relative;background:var(--sheet);border-radius:4px;padding:34px 150px 34px 36px;box-shadow:0 1px 0 rgba(27,36,48,.06),0 18px 40px -18px rgba(27,36,48,.35);transform:rotate(-.6deg)}
+.sheet::before{content:"";position:absolute;top:0;bottom:0;right:132px;border-left:1.5px solid #F2B8B0}
+.sheet .src{font:500 12.5px/1.3 var(--sans);color:var(--ink-3);margin-bottom:14px}
+.sheet .src b{color:var(--ink-2);font-weight:600}
+.sheet p{font:400 17.5px/1.75 var(--serif);margin:0}
+.hl{background-image:linear-gradient(transparent 55%,var(--mark) 55%,var(--mark) 92%,transparent 92%);background-size:0% 100%;background-repeat:no-repeat;transition:background-size .9s cubic-bezier(.6,.1,.2,1)}
+.hl.on{background-size:100% 100%}
+.note{position:absolute;right:12px;width:122px;font:600 22px/1.05 var(--hand);color:var(--ok);opacity:0;transform:translateX(-6px);transition:opacity .5s,transform .5s}
+.note.on{opacity:1;transform:none}
+.note small{display:block;font:500 17px/1.05 var(--hand);color:var(--ink-2);margin-top:2px}
+.sheet .tick{position:absolute;left:12px;font:600 20px var(--hand);color:var(--ok);opacity:0;transition:opacity .4s}
+.sheet .tick.on{opacity:1}
+
+/* sections */
+section{padding:12px 0 72px}
+.panel{background:var(--sheet);border-radius:14px;box-shadow:0 1px 0 rgba(27,36,48,.05),0 10px 30px -20px rgba(27,36,48,.4)}
+h2{font-size:30px;letter-spacing:-.02em;margin:0 0 8px;line-height:1.15}
+.lead{color:var(--ink-2);margin:0 0 26px;max-width:42em}
+
+/* workspace */
+.work{padding:30px}
+.choose{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px}
+.choice{all:unset;cursor:pointer;border-radius:12px;padding:18px 20px;box-shadow:inset 0 0 0 1.5px var(--rule);display:block}
+.choice:hover{box-shadow:inset 0 0 0 1.5px var(--ink-3)}
+.choice[aria-pressed="true"]{box-shadow:inset 0 0 0 2px var(--ink);background:#FAFBFC}
+.choice:focus-visible{outline:3px solid var(--pencil);outline-offset:2px}
+.choice strong{display:block;font-size:19px;letter-spacing:-.01em}
+.choice span{display:block;color:var(--ink-2);font-size:14.5px;margin-top:4px}
+.field label{display:block;font-weight:600;margin-bottom:8px}
+textarea{width:100%;min-height:150px;resize:vertical;border:1.5px solid var(--rule);border-radius:10px;padding:14px 16px;font:400 18px/1.6 var(--serif);background:#fff}
+textarea:focus,input[type=url]:focus{border-color:var(--ink);outline:none}
+.tries{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 0;align-items:center;font-size:14px;color:var(--ink-3)}
+.try{all:unset;cursor:pointer;font-size:14px;color:var(--ink-2);padding:5px 12px;border-radius:999px;background:var(--desk)}
+.try:hover{background:#DADFE5;color:var(--ink)}
+.try:focus-visible{outline:3px solid var(--pencil)}
+.drop{border:1.5px dashed var(--ink-3);border-radius:12px;padding:30px;text-align:center;cursor:pointer;transition:background .2s,border-color .2s}
+.drop.over{background:var(--pencil-soft);border-color:var(--pencil)}
+.drop b{display:block;font-size:18px}
+.drop span{color:var(--ink-2);font-size:14.5px}
+.drop.has{border-style:solid;border-color:var(--ok);background:var(--ok-soft)}
+.or{display:flex;align-items:center;gap:12px;color:var(--ink-3);font-size:14px;margin:16px 0}
+.or::before,.or::after{content:"";flex:1;border-top:1px solid var(--rule)}
+input[type=url]{width:100%;border:1.5px solid var(--rule);border-radius:10px;padding:12px 14px;font-size:16px;background:#fff}
+.go{display:flex;align-items:center;gap:16px;margin-top:24px;flex-wrap:wrap}
+.go .hint{color:var(--ink-3);font-size:14px}
+.err{margin-top:16px;color:var(--bad);background:var(--bad-soft);border-radius:10px;padding:12px 14px;display:none}
+.err.on{display:block}
+
+/* live run */
+.live{padding:30px;display:none}
+.live.on{display:block}
+.live-head{display:flex;justify-content:space-between;align-items:baseline;gap:16px;flex-wrap:wrap;margin-bottom:22px}
+.live-head .what{font:italic 400 19px/1.5 var(--serif);color:var(--ink-2);max-width:46em}
+.clock{font-variant-numeric:tabular-nums;color:var(--ink-3);font-size:15px}
+.stages{list-style:none;margin:0;padding:0;position:relative}
+.stages::before{content:"";position:absolute;left:11px;top:14px;bottom:14px;border-left:2px solid var(--rule)}
+.st{position:relative;display:grid;grid-template-columns:24px 1fr auto;gap:16px;padding:12px 0;align-items:start}
+.dot{width:24px;height:24px;border-radius:50%;background:var(--sheet);box-shadow:inset 0 0 0 2px var(--rule);position:relative;z-index:1;display:grid;place-items:center;font-size:13px;color:#fff;font-weight:700}
+.st.done .dot{background:var(--ok);box-shadow:none}
+.st.active .dot{background:var(--pencil);box-shadow:0 0 0 6px var(--pencil-soft)}
+.st.failed .dot{background:var(--bad);box-shadow:none}
+.st .t{font-weight:600;font-size:17px}
+.st.waiting .t{color:var(--ink-3)}
+.st .n{color:var(--ink-2);font-size:14.5px;margin-top:2px}
+.who{font-size:13px;color:var(--ink-2);background:var(--desk);border-radius:999px;padding:3px 10px;white-space:nowrap}
+.who.llm{background:var(--pencil-soft);color:var(--pencil)}
+.meter{height:4px;background:var(--desk);border-radius:4px;margin-top:8px;overflow:hidden;max-width:260px}
+.meter i{display:block;height:100%;background:var(--pencil);transition:width .6s}
+@media (prefers-reduced-motion:no-preference){.st.active .dot{animation:breathe 1.6s ease-in-out infinite}}
+@keyframes breathe{50%{box-shadow:0 0 0 10px rgba(43,85,201,.08)}}
+
+/* results */
+.results{display:none;padding:34px;margin-top:18px}
+.results.on{display:block}
+.verdict{font-size:clamp(26px,3.4vw,40px);line-height:1.12;letter-spacing:-.025em;font-weight:700;margin:0 0 12px;max-width:22em}
+.sub{color:var(--ink-2);max-width:46em;margin:0 0 28px}
+.facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:2px;background:var(--rule);border-radius:12px;overflow:hidden;margin:0 0 32px}
+.fact{background:var(--sheet);padding:16px 18px}
+.fact b{display:block;font-size:30px;letter-spacing:-.02em;line-height:1.1;font-variant-numeric:tabular-nums}
+.fact span{color:var(--ink-2);font-size:14px}
+.fact.bad b{color:var(--bad)} .fact.ok b{color:var(--ok)}
+h3{font-size:21px;letter-spacing:-.01em;margin:34px 0 14px}
+.paper{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:24px;padding:18px 0;border-top:1px solid var(--rule)}
+.paper:first-of-type{border-top:0}
+.paper .title{font-weight:600;font-size:17px;line-height:1.35}
+.paper .title a{color:var(--ink);text-decoration-color:var(--rule);text-underline-offset:3px}
+.paper .title a:hover{text-decoration-color:var(--ink)}
+.paper .meta{color:var(--ink-3);font-size:13.5px;margin-top:2px}
+.quote{font:italic 400 16.5px/1.6 var(--serif);color:var(--ink-2);margin-top:10px}
+.facets{display:grid;grid-template-columns:auto 1fr;gap:6px 12px;align-content:start;font-size:14px}
+.facets dt{color:var(--ink-3)}
+.facets dd{margin:0;font-weight:600}
+.lvl-same{color:var(--bad)} .lvl-partial{color:var(--maybe)} .lvl-different{color:var(--ok)} .lvl-unknown{color:var(--ink-3);font-weight:500}
+.idea-read{display:grid;grid-template-columns:110px 1fr;gap:8px 18px;font-size:16px}
+.idea-read dt{color:var(--ink-3)}
+.idea-read dd{margin:0;font-family:var(--serif);font-size:17.5px}
+.rounds{list-style:none;margin:0;padding:0}
+.rounds li{padding:12px 0;border-top:1px solid var(--rule)}
+.rounds li:first-child{border-top:0}
+.rounds .q{color:var(--ink-2);font-size:14.5px;margin-top:4px}
+.aside{font-size:14.5px;color:var(--ink-2);background:var(--desk);border-radius:10px;padding:14px 16px;margin-top:22px}
+.aside b{color:var(--ink)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 4px}
+.tab{all:unset;cursor:pointer;padding:9px 16px;border-radius:999px;font-weight:600;font-size:15px;color:var(--ink-2)}
+.tab[aria-selected="true"]{background:var(--ink);color:#fff}
+.tab:focus-visible{outline:3px solid var(--pencil)}
+.tab small{font-weight:500;opacity:.75;margin-left:6px}
+.claim{display:grid;grid-template-columns:minmax(0,1fr) 230px;gap:24px;padding:18px 0;border-top:1px solid var(--rule)}
+.claim:first-child{border-top:0}
+.claim p{margin:0;font:400 17.5px/1.65 var(--serif)}
+.claim p mark{background:none;padding:0 2px;border-radius:2px}
+.claim.supported p mark{background:linear-gradient(transparent 55%,var(--ok-soft) 55%)}
+.claim.contradicted p mark{background:linear-gradient(transparent 50%,var(--bad-soft) 50%);text-decoration:underline wavy var(--bad);text-underline-offset:5px}
+.claim.other p mark{background:linear-gradient(transparent 55%,#EEF0F3 55%)}
+.margin{font:600 21px/1.1 var(--hand)}
+.margin .mnote+.mnote{margin-top:12px}
+.margin .mnote.supported{color:var(--ok)} .margin .mnote.contradicted{color:var(--bad)} .margin .mnote.other{color:var(--ink-3)}
+.claim.supported .margin{color:var(--ok)} .claim.contradicted .margin{color:var(--bad)} .claim.other .margin{color:var(--ink-3)}
+.margin small{display:block;font:400 13.5px/1.45 var(--sans);color:var(--ink-2);margin-top:6px}
+.ev{font:italic 400 15px/1.55 var(--serif);color:var(--ink-2);margin-top:10px;padding-left:12px;border-left:2px solid var(--rule)}
+.empty{color:var(--ink-3);padding:18px 0}
+.again{margin-top:30px;display:flex;gap:12px;flex-wrap:wrap}
+
+/* how it works */
+.how{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:28px}
+.how h4{font-size:17px;margin:0 0 6px}
+.how p{margin:0;color:var(--ink-2);font-size:15px}
+footer{color:var(--ink-3);font-size:14px;padding:30px 0 50px;border-top:1px solid #D3D8DF}
+
+@media (max-width:900px){
+  .hero{grid-template-columns:1fr;gap:40px;padding-top:12px}
+  .sheet{transform:none;padding:26px 22px 26px 30px}
+  .sheet::before,.note{display:none}
+  .paper,.claim{grid-template-columns:1fr;gap:10px}
+  .how{grid-template-columns:1fr}
+}
+@media (max-width:560px){
+  .wrap{padding:0 16px}
+  .choose{grid-template-columns:1fr}
+  .work,.live,.results{padding:20px}
+  .bar nav{display:none}
+  .st{grid-template-columns:24px 1fr}
+  .st .who{grid-column:2;justify-self:start}
+}
+@media (prefers-reduced-motion:reduce){.hl,.note,.tick{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="bar">
+    <a class="brand" href="/app" aria-label="PaperPilot home">
+      <svg viewBox="0 0 26 26" aria-hidden="true"><rect x="3" y="2" width="16" height="21" rx="2" fill="none" stroke="#1B2430" stroke-width="1.8"/><path d="M7 8h8M7 12h8M7 16h5" stroke="#1B2430" stroke-width="1.8" stroke-linecap="round"/><path d="M15.5 21.5l7-7 2 2-7 7h-2z" fill="#2B55C9"/></svg>
+      PaperPilot
+    </a>
+    <nav aria-label="Page">
+      <a href="#check">Check</a>
+      <a href="#how">How it works</a>
+      <a href="/docs">API</a>
+    </nav>
+  </header>
+
+  <div class="hero">
+    <div>
+      <h1>Check the idea before you write it. <span>Check the draft before you send it.</span></h1>
+      <p>PaperPilot finds the prior work your idea overlaps with, and reads your draft the way a careful reviewer would: every number against its table, every figure against its picture, every citation against the cited paper.</p>
+      <div class="ctas">
+        <a class="cta" href="#check" data-pick="novelty">Check an idea</a>
+        <a class="cta ghost" href="#check" data-pick="audit">Audit a draft</a>
+      </div>
+    </div>
+    <figure class="sheet" aria-label="Example: three claims from the CRAG paper, checked">
+      <div class="src"><b>Corrective Retrieval Augmented Generation</b>, results section</div>
+      <p id="demo">
+        <span class="hl" data-n="0">CRAG outperforms RAG by 7.0% accuracy on PopQA</span> when based on SelfRAG-LLaMA2-7b.
+        <span class="hl" data-n="1">Figure 1 shows that a low-quality retriever is prone to introducing irrelevant information</span>, misleading the generator.
+        <span class="hl" data-n="2">RAG is regarded as a useful method to address hallucination issues</span> (Lewis et al., 2020).
+      </p>
+      <div class="note" data-n="0">Table 1<small>59.8 − 52.8 = 7.0</small></div>
+      <div class="note" data-n="1">Figure 1<small>"Inaccurate Documents", wrong answer</small></div>
+      <div class="note" data-n="2">Lewis et al.<small>"hallucinate less"</small></div>
+    </figure>
+  </div>
+
+  <section id="check" aria-labelledby="check-title">
+    <div class="panel work" id="work">
+      <h2 id="check-title">What do you want to check?</h2>
+      <p class="lead">The library holds 531 papers on retrieval-augmented generation for question answering; the novelty check also searches the web. Citations can be checked for papers in the library.</p>
+      <div class="choose" role="group" aria-label="Kind of check">
+        <button class="choice" type="button" data-mode="novelty" aria-pressed="true"><strong>Is my idea new?</strong><span>Describe it in a few sentences. About a minute.</span></button>
+        <button class="choice" type="button" data-mode="audit" aria-pressed="false"><strong>Does my draft hold up?</strong><span>Upload the PDF. Five to fifteen minutes.</span></button>
+      </div>
+
+      <div id="novelty-input" class="field">
+        <label for="idea">Your idea</label>
+        <textarea id="idea" placeholder="For example: train a small model to decide, for each question, whether retrieval is needed before answering, and measure exact match on PopQA."></textarea>
+        <div class="tries">Try one:
+          <button class="try" type="button" data-idea="Train a small model to decide, for each question, whether retrieval is needed at all before answering.">deciding when to retrieve</button>
+          <button class="try" type="button" data-idea="Rewrite the search query after each retrieval step so a language model can answer multi-hop questions, evaluated on HotpotQA.">rewriting queries between hops</button>
+          <button class="try" type="button" data-idea="Use a diffusion model to predict protein structures from amino-acid sequences, evaluated on CASP targets.">an idea outside the library</button>
+        </div>
+      </div>
+
+      <div id="audit-input" class="field" hidden>
+        <label id="pdf-label">Your draft</label>
+        <div class="drop" id="drop" role="button" tabindex="0" aria-labelledby="pdf-label">
+          <b id="drop-title">Drop the PDF here</b>
+          <span id="drop-sub">or click to choose a file (up to 30 MB)</span>
+        </div>
+        <input type="file" id="file" accept="application/pdf,.pdf" hidden>
+        <div class="or">or a link to the PDF</div>
+        <input type="url" id="url" placeholder="https://arxiv.org/pdf/2401.15884v3" aria-label="Link to the PDF">
+        <div class="tries">Try one:
+          <button class="try" type="button" data-url="https://arxiv.org/pdf/2401.15884v3">CRAG</button>
+          <button class="try" type="button" data-url="https://arxiv.org/pdf/2403.14403v2">Adaptive-RAG</button>
+        </div>
+      </div>
+
+      <div class="go">
+        <button class="cta" id="run" type="button">Check my idea</button>
+        <span class="hint" id="hint">Runs on free models; the page keeps you posted while it works.</span>
+      </div>
+      <div class="err" id="err" role="alert"></div>
+    </div>
+
+    <div class="panel live" id="live" aria-live="polite">
+      <div class="live-head">
+        <div>
+          <h2 id="live-title">Checking your idea</h2>
+          <div class="what" id="live-what"></div>
+        </div>
+        <div class="clock" id="clock">0:00</div>
+      </div>
+      <ol class="stages" id="stages"></ol>
+    </div>
+
+    <div class="panel results" id="results" tabindex="-1"></div>
+  </section>
+
+  <section id="how" aria-labelledby="how-title">
+    <h2 id="how-title">How it works</h2>
+    <p class="lead">An automation workflow runs each step in a fixed order. Language models do the reading and judging; code checks everything they answer before you see it.</p>
+    <div class="how">
+      <div><h4>Novelty</h4><p>The idea is split into task, method, data and result. Several searches run over the library, fused and reranked. A search agent decides whether to look again, here or on the web. A judge compares the idea with each paper, and code rejects any paper or passage the search never returned.</p></div>
+      <div><h4>Draft audit</h4><p>The PDF is parsed into text, tables and figure images. Claims are extracted from the sentences that carry numbers, figures or citations. Numbers are recomputed from the table cells; figures are read by a vision model; citations are checked against passages retrieved from the cited paper.</p></div>
+      <div><h4>What a verdict means</h4><p>"Supported" and "contradicted" always come with the evidence. "Unverifiable" or "not found" means the evidence was missing, not that the claim is wrong. Saying a claim is wrong needs more evidence than saying it is right.</p></div>
+    </div>
+  </section>
+
+  <footer>PaperPilot, an ESPRIT Advanced Deep Learning project. The library covers retrieval-augmented generation for question answering; results outside it are not a judgement of novelty.</footer>
+</div>
+
+<script>
+(() => {
+  "use strict";
+  const $ = (s, el = document) => el.querySelector(s);
+  const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* small DOM helper: text only, never HTML */
+  function h(tag, attrs, ...kids) {
+    const el = document.createElement(tag);
+    for (const [k, v] of Object.entries(attrs || {})) {
+      if (v == null || v === false) continue;
+      if (k === "class") el.className = v; else if (k === "text") el.textContent = v; else el.setAttribute(k, v);
+    }
+    for (const kid of kids.flat()) if (kid != null && kid !== false) el.append(kid.nodeType ? kid : document.createTextNode(String(kid)));
+    return el;
+  }
+  const safeUrl = u => (typeof u === "string" && /^https?:\/\//.test(u)) ? u : null;
+
+  /* ---- hero: the annotated sheet ---- */
+  function playSheet() {
+    const marks = $$(".hl"), notes = $$(".note"), sheet = $(".sheet");
+    const place = () => notes.forEach(n => {
+      const m = marks[n.dataset.n]; const top = m.getBoundingClientRect().top - sheet.getBoundingClientRect().top;
+      n.style.top = (top - 4) + "px";
+    });
+    place(); addEventListener("resize", place);
+    if (reduce) { marks.forEach(m => m.classList.add("on")); notes.forEach(n => n.classList.add("on")); return; }
+    marks.forEach((m, i) => setTimeout(() => { m.classList.add("on"); setTimeout(() => notes[i].classList.add("on"), 650); }, 700 + i * 1500));
+  }
+  if (document.fonts) document.fonts.ready.then(playSheet); else playSheet();
+
+  /* ---- choosing the check ---- */
+  let mode = "novelty", upload = null;
+  function pick(m) {
+    mode = m;
+    $$(".choice").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.mode === m)));
+    $("#novelty-input").hidden = m !== "novelty";
+    $("#audit-input").hidden = m !== "audit";
+    $("#run").textContent = m === "novelty" ? "Check my idea" : "Audit my draft";
+    $("#err").classList.remove("on");
+  }
+  $$(".choice").forEach(b => b.addEventListener("click", () => pick(b.dataset.mode)));
+  $$("[data-pick]").forEach(a => a.addEventListener("click", () => pick(a.dataset.pick)));
+  $$("[data-idea]").forEach(b => b.addEventListener("click", () => { $("#idea").value = b.dataset.idea; $("#idea").focus(); }));
+  $$("[data-url]").forEach(b => b.addEventListener("click", () => { $("#url").value = b.dataset.url; clearFile(); }));
+
+  const drop = $("#drop"), file = $("#file");
+  function clearFile() { upload = null; file.value = ""; drop.classList.remove("has"); $("#drop-title").textContent = "Drop the PDF here"; $("#drop-sub").textContent = "or click to choose a file (up to 30 MB)"; }
+  function takeFile(f) {
+    if (!f) return;
+    if (!/\.pdf$/i.test(f.name) && f.type !== "application/pdf") return showErr("That file is not a PDF. Choose the draft's PDF.");
+    if (f.size > 30e6) return showErr("That PDF is larger than 30 MB.");
+    upload = f; $("#url").value = ""; drop.classList.add("has");
+    $("#drop-title").textContent = f.name; $("#drop-sub").textContent = (f.size / 1e6).toFixed(1) + " MB, ready. Click to choose another.";
+    $("#err").classList.remove("on");
+  }
+  drop.addEventListener("click", () => file.click());
+  drop.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); file.click(); } });
+  file.addEventListener("change", () => takeFile(file.files[0]));
+  ["dragenter", "dragover"].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.add("over"); }));
+  ["dragleave", "drop"].forEach(t => drop.addEventListener(t, e => { e.preventDefault(); drop.classList.remove("over"); }));
+  drop.addEventListener("drop", e => takeFile(e.dataTransfer.files[0]));
+
+  function showErr(msg) { const e = $("#err"); e.textContent = msg; e.classList.add("on"); }
+
+  /* ---- starting a run ---- */
+  const FIELD = { idea_text: "Your idea", draft_pdf_url: "The link", draft_pdf_upload: "The PDF", request: "The request", mode: "The kind of check" };
+  async function start() {
+    $("#err").classList.remove("on");
+    const body = { mode };
+    if (mode === "novelty") {
+      body.idea_text = $("#idea").value.trim();
+      if (body.idea_text.length < 20) return showErr("Describe the idea in at least 20 characters: what it does, and on what.");
+    } else if (upload) {
+      $("#run").disabled = true; $("#run").textContent = "Uploading the PDF";
+      try {
+        const r = await fetch("/uploads", { method: "POST", headers: { "Content-Type": "application/pdf" }, body: upload });
+        const j = await r.json();
+        if (!r.ok) throw new Error(j.detail || "the upload was refused");
+        body.draft_pdf_upload = j.upload_id;
+      } catch (e) { $("#run").disabled = false; pick(mode); return showErr("The PDF could not be uploaded: " + e.message); }
+    } else {
+      body.draft_pdf_url = $("#url").value.trim();
+      if (!safeUrl(body.draft_pdf_url)) return showErr("Choose a PDF, or paste a link starting with https://");
+    }
+    $("#run").disabled = true;
+    let r, j;
+    try { r = await fetch("/app/api/runs", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }); j = await r.json(); }
+    catch (e) { $("#run").disabled = false; pick(mode); return showErr("PaperPilot could not be reached. Is the stack running?"); }
+    $("#run").disabled = false; pick(mode);
+    if (r.status === 422) return showErr((j.errors || []).map(e => (FIELD[e.field] || e.field) + ": " + String(e.message).replace(/^Value error, /, "")).join(" "));
+    if (!r.ok) return showErr("The check could not start (HTTP " + r.status + ").");
+    follow(j.ref, body);
+  }
+  $("#run").addEventListener("click", start);
+
+  /* ---- following a run ---- */
+  let timer = null, poll = null;
+  function follow(ref, body) {
+    history.replaceState(null, "", "#run=" + ref);
+    $("#work").style.display = "none";
+    $("#results").classList.remove("on");
+    $("#live").classList.add("on");
+    follow.headed = false;
+    head(body.mode, body);
+    $("#live").scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" });
+    const t0 = Date.now();
+    clearInterval(timer); timer = setInterval(() => { const s = Math.floor((Date.now() - t0) / 1000); $("#clock").textContent = Math.floor(s / 60) + ":" + String(s % 60).padStart(2, "0"); }, 1000);
+    renderStages(placeholderStages(body.mode));
+    const tick = async () => {
+      let s;
+      try { const r = await fetch("/app/api/runs/" + ref); s = await r.json(); if (!r.ok) throw new Error(s.detail); }
+      catch (e) { poll = setTimeout(tick, 4000); return; }
+      if (s.mode && !follow.headed) { follow.headed = true; head(s.mode, s.input || {}); }
+      if (s.stages) renderStages(s.stages);
+      if (s.state === "done") return finish(s);
+      if (s.state === "rejected") { stop(); back(); return showErr((s.errors || []).map(e => (FIELD[e.field] || e.field) + ": " + String(e.message).replace(/^Value error, /, "")).join(" ")); }
+      if (s.state === "failed") { stop(); return failed(s.error); }
+      poll = setTimeout(tick, 2000);
+    };
+    tick();
+  }
+  function head(m, input) {
+    const novelty = m === "novelty";
+    $("#live-title").textContent = novelty ? "Checking your idea" : "Auditing your draft";
+    $("#live-what").textContent = novelty ? (input.idea_text ? "“" + input.idea_text + "”" : "")
+      : (input.draft_pdf_url || (upload && upload.name) || "Your uploaded PDF");
+  }
+  const stop = () => { clearInterval(timer); clearTimeout(poll); };
+  function back() { $("#live").classList.remove("on"); $("#work").style.display = ""; history.replaceState(null, "", "#check"); }
+
+  function placeholderStages(m) {
+    const list = m === "novelty"
+      ? [["Reading the idea", "Decomposer (LLM)"], ["Searching 531 papers", "Retriever (code)"], ["Looking for what is missing", "Search agent (LLM)"], ["Comparing with each paper", "Judge (LLM)"], ["Checking the judge", "Verifier (code)"]]
+      : [["Reading the PDF", "Parser (Docling)"], ["Finding the claims", "Claim extractor (LLM)"], ["Checking numbers against the tables", "Number check (code)"], ["Looking at the figures", "Vision model (LLM)"], ["Reading the cited papers", "Citation checker (RAG + LLM)"]];
+    return list.map(([label, who], i) => ({ label, who, state: i ? "waiting" : "active", note: "" }));
+  }
+  function renderStages(stages) {
+    const ol = $("#stages"); ol.replaceChildren();
+    for (const s of stages) {
+      const llm = /LLM/.test(s.who);
+      const row = h("li", { class: "st " + s.state },
+        h("span", { class: "dot", "aria-hidden": "true", text: s.state === "done" ? "✓" : s.state === "failed" ? "!" : "" }),
+        h("div", {}, h("div", { class: "t", text: s.label }), s.note ? h("div", { class: "n", text: s.note }) : null,
+          s.total ? h("div", { class: "meter", role: "progressbar", "aria-valuemin": "0", "aria-valuemax": String(s.total), "aria-valuenow": String(s.done || 0) }, h("i", { style: "width:" + Math.round(100 * (s.done || 0) / s.total) + "%" })) : null),
+        h("span", { class: "who" + (llm ? " llm" : ""), text: s.who }));
+      ol.append(row);
+    }
+  }
+  function failed(msg) {
+    const res = $("#results"); res.replaceChildren(
+      h("p", { class: "verdict", text: "The check stopped before the end." }),
+      h("p", { class: "sub", text: (msg || "The workflow reported an error.") + " The steps that finished are kept; try again in a minute, or check the n8n execution log." }),
+      againButtons());
+    res.classList.add("on");
+  }
+  function againButtons() {
+    const b1 = h("button", { class: "cta", type: "button", text: "Check something else" });
+    b1.addEventListener("click", () => { $("#results").classList.remove("on"); back(); $("#check").scrollIntoView({ behavior: reduce ? "auto" : "smooth" }); });
+    return h("div", { class: "again" }, b1);
+  }
+
+  /* ---- results ---- */
+  function finish(s) {
+    stop();
+    const res = $("#results");
+    res.replaceChildren(...(s.mode === "novelty" ? novelty(s) : audit(s)), againButtons());
+    res.classList.add("on");
+    setTimeout(() => { res.scrollIntoView({ behavior: reduce ? "auto" : "smooth", block: "start" }); res.focus({ preventScroll: true }); }, 250);
+  }
+
+  const FACETS = ["task", "method", "data", "result"];
+  function novelty(s) {
+    const r = s.result || {}, close = r.closest_work || [], other = r.checked_not_close || [], cov = r.coverage || {};
+    const verdict = close.length
+      ? (close.length === 1 ? "One paper already overlaps with this idea." : close.length + " papers already overlap with this idea.")
+      : "Nothing in the library overlaps with this idea.";
+    const out = [
+      h("p", { class: "verdict", text: verdict }),
+      h("p", { class: "sub", text: close.length ? "Read them before you claim novelty. Each one shows where it overlaps, facet by facet." : "That is not proof of novelty: only the papers below were searched." }),
+      h("div", { class: "facts" },
+        h("div", { class: "fact" + (close.length ? " bad" : " ok") }, h("b", { text: close.length }), h("span", { text: "overlapping papers" })),
+        h("div", { class: "fact" }, h("b", { text: cov.candidates_considered ?? "?" }), h("span", { text: "papers judged" })),
+        h("div", { class: "fact" }, h("b", { text: (cov.queries || []).length + (cov.web_queries || []).length }), h("span", { text: "searches run" })),
+        h("div", { class: "fact" }, h("b", { text: cov.papers_in_knowledge_base ?? 531 }), h("span", { text: "papers in the library" })))
+    ];
+    if (close.length) { out.push(h("h3", { text: "Closest work" })); close.forEach(p => out.push(paperRow(p, true))); }
+    const f = r.idea_facets || {};
+    out.push(h("h3", { text: "How your idea was read" }), h("dl", { class: "idea-read" }, ...FACETS.flatMap(k => [h("dt", { text: k }), h("dd", { text: f[k] || "not specified" })])));
+    const rounds = r.search_agent || [];
+    if (rounds.length) {
+      out.push(h("h3", { text: "What the search agent did" }), h("ul", { class: "rounds" }, ...rounds.map(rd =>
+        h("li", {}, h("div", {}, h("b", { text: "Round " + rd.round + ": " }), rd.decision === "stop" ? "stopped. " : "searched again. ", rd.reason || ""),
+          (rd.queries || []).length ? h("div", { class: "q", text: rd.queries.map(q => "“" + q.text + "” " + (q.where === "web" ? "on the web" : "in the library")).join("; ") }) : null))));
+    }
+    if (other.length) { out.push(h("h3", { text: "Also checked, no overlap" })); other.forEach(p => out.push(paperRow(p, false))); }
+    out.push(h("div", { class: "aside" }, h("b", { text: "The judge’s own summary (not verified): " }), r.summary_llm_written || "none"));
+    return out;
+  }
+  function paperRow(p, withFacets) {
+    const url = safeUrl(p.url);
+    const title = url ? h("a", { href: url, target: "_blank", rel: "noopener noreferrer", text: p.title || p.paper_id }) : (p.title || p.paper_id);
+    const left = h("div", {}, h("div", { class: "title" }, title),
+      h("div", { class: "meta", text: [p.year, p.paper_id, p.source && p.source !== "local" ? "found on the web" : null].filter(Boolean).join(", ") }),
+      p.rationale ? h("div", { class: "quote", text: p.rationale }) : null);
+    const o = p.overlap || {};
+    const right = withFacets ? h("dl", { class: "facets" }, ...FACETS.flatMap(k => [h("dt", { text: k }), h("dd", { class: "lvl-" + (o[k] || "unknown"), text: o[k] || "unknown" })])) : h("div");
+    return h("div", { class: "paper" }, left, right);
+  }
+
+  function audit(s) {
+    const r = s.result || {}, paper = r.paper || {}, claims = r.claims || [];
+    const nc = r.number_checks || {}, fc = r.figure_checks || {}, cc = r.citation_checks || {};
+    const ns = nc.summary || {}, fs = fc.summary || {}, cs = cc.summary || {};
+    const bad = (ns.contradicted || 0) + (fs.contradicted || 0) + (cs.contradicted || 0);
+    const good = (ns.supported || 0) + (fs.supported || 0) + (cs.supported || 0);
+    const stops = [...new Set([(r.coverage || {}).stopped, fs.stopped, cs.stopped].filter(Boolean))];
+    const out = [
+      h("p", { class: "verdict", text: bad ? (bad === 1 ? "One claim is contradicted by the paper’s own evidence." : bad + " claims are contradicted by the evidence.") : "No claim is contradicted by the evidence found." }),
+      h("p", { class: "sub", text: (paper.title ? paper.title + ". " : "") + (bad ? "They are listed first in each tab, with what the table, figure or cited paper shows." : "“Unverifiable” and “not found” mean the evidence was missing, not that the claim is wrong.") }),
+      h("div", { class: "facts" },
+        h("div", { class: "fact" }, h("b", { text: claims.length }), h("span", { text: "claims found" })),
+        h("div", { class: "fact ok" }, h("b", { text: good }), h("span", { text: "supported" })),
+        h("div", { class: "fact" + (bad ? " bad" : "") }, h("b", { text: bad }), h("span", { text: "contradicted" })),
+        h("div", { class: "fact" }, h("b", { text: paper.pages ?? "?" }), h("span", { text: "pages read" })))
+    ];
+    if (stops.length) out.push(h("div", { class: "aside" }, h("b", { text: "Partial audit. " }), stops.join("; ") + ". The checks below are the ones that finished."));
+    const tabs = [
+      { id: "numbers", label: "Numbers", count: (nc.checks || []).length, items: () => numberGroups(nc.checks || [], claims) },
+      { id: "figures", label: "Figures", count: (fc.checks || []).length, items: () => (fc.checks || []).map(figureItem) },
+      { id: "citations", label: "Citations", count: (cc.checks || []).length, items: () => (cc.checks || []).map(citationItem) }];
+    const list = h("div", { role: "tabpanel" });
+    const bar = h("div", { class: "tabs", role: "tablist", "aria-label": "Checks" });
+    const show = t => {
+      $$(".tab", bar).forEach(b => b.setAttribute("aria-selected", String(b.dataset.id === t.id)));
+      const items = sortItems(t.items());
+      list.replaceChildren(...(items.length ? items : [h("p", { class: "empty", text: "Nothing of this kind could be checked in this draft." })]));
+    };
+    tabs.forEach(t => { const b = h("button", { class: "tab", type: "button", role: "tab", "data-id": t.id }, t.label, h("small", { text: t.count })); b.addEventListener("click", () => show(t)); bar.append(b); });
+    out.push(h("h3", { text: "Every check, with its evidence" }), bar, list);
+    show(tabs.find(t => t.count) || tabs[0]);
+    return out;
+  }
+  const ORDER = { contradicted: 0, unresolved_reference: 1, missing_figure: 1, not_answered: 2, unverifiable: 3, not_shown: 3, not_found: 3, not_in_library: 5, supported: 4 };
+  const sortItems = items => items.sort((a, b) => (ORDER[a.dataset.v] ?? 3) - (ORDER[b.dataset.v] ?? 3));
+  const VERDICT = { supported: "✓ supported", contradicted: "✗ contradicted", unverifiable: "? unverifiable", not_shown: "? not shown", not_found: "? not found", not_in_library: "— not in library", unresolved_reference: "? reference not found", missing_figure: "? figure missing", not_answered: "? not answered" };
+  function claimRow(v, text, note, evidence) {
+    const cls = v === "supported" ? "supported" : v === "contradicted" ? "contradicted" : "other";
+    const el = h("div", { class: "claim " + cls, "data-v": v },
+      h("div", {}, h("p", {}, h("mark", { text: text || "" })), evidence ? h("div", { class: "ev", text: evidence }) : null),
+      h("div", { class: "margin" }, VERDICT[v] || v, note ? h("small", { text: note }) : null));
+    return el;
+  }
+  function numberItem(c, claims) {
+    const cl = claims[c.claim] || {}, cell = c.cell || {}, base = c.baseline_cell;
+    let note = "claimed " + (c.claimed ?? "");
+    if (cell.table) note += "; " + cell.table.replace("table:", "Table ") + ", " + cell.row + ": " + cell.text + (base ? " vs " + base.row + ": " + base.text : "");
+    if (c.note && !cell.table) note += "; " + c.note;
+    return claimRow(c.verdict, cl.claim || c.system, note, null);
+  }
+  /* one sentence often carries several numbers: show it once, with one margin note per number */
+  function numberGroups(checks, claims) {
+    const groups = new Map();
+    checks.forEach(c => {
+      const text = (claims[c.claim] || {}).claim || c.system || "";
+      if (!groups.has(text)) groups.set(text, []);
+      groups.get(text).push(c);
+    });
+    return [...groups.entries()].map(([text, cs]) => {
+      if (cs.length === 1) return numberItem(cs[0], claims);
+      cs.sort((a, b) => (ORDER[a.verdict] ?? 3) - (ORDER[b.verdict] ?? 3));
+      const row = numberItem(cs[0], claims), margin = row.querySelector(".margin");
+      margin.replaceChildren(...cs.map(c => {
+        const one = numberItem(c, claims).querySelector(".margin");
+        return h("div", { class: "mnote " + (c.verdict === "supported" ? "supported" : c.verdict === "contradicted" ? "contradicted" : "other") }, ...one.childNodes);
+      }));
+      return row;
+    });
+  }
+  function figureItem(c) {
+    return claimRow(c.verdict, c.text, (c.figure || "").replace("figure:", "Figure ") + ((c.read_values || []).length ? "; read: " + c.read_values.join(", ") : ""), c.evidence);
+  }
+  function citationItem(c) {
+    const ev = (c.evidence || [])[0];
+    return claimRow(c.verdict, c.text, "cites " + c.marker + (c.cited_title ? ": " + c.cited_title : ""), ev ? ev.text : (c.reason || null));
+  }
+
+  /* a shared link (#run=...) reopens a run */
+  const m = location.hash.match(/^#run=([a-z0-9]{12,40})$/);
+  if (m) follow(m[1], { mode: "novelty", idea_text: "" });
+})();
+</script>
+</body>
+</html>
