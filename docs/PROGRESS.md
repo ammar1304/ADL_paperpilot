@@ -470,3 +470,4 @@ Branch `feat/m3-parser-spike`. Decision D31: Docling (CPU) instead of MinerU.
 ## Future work (for the report)
 
 - **Citations outside the library through Semantic Scholar.** When a cited paper is not among the 531, look its title up on Semantic Scholar. If a free PDF exists, chunk, embed and rerank it on the fly and run the same P6 judge. With only the abstract, allow "supported" or "can't tell" but never a negative verdict, since the evidence may be in the full text (the evidence asymmetry of F-020). Needs its own E5-style evaluation. This makes the citation check work in any field; the number and figure checks already do not depend on the library.
+- [x] E1 test split, run once after the review of 20 test queries (all fine): structured R@1 0.894 vs fixed 0.773, MRR@20 0.938 vs 0.862, McNemar p = 0.0015 (`eval/results/20261018-182430-e1-test/analysis.md`)

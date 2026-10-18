@@ -460,6 +460,7 @@ The container registries were not reachable from the development sandbox, so the
   - The queries are not biased toward the retrieval model (BGE-M3 never saw them being written), but they may share an LLM's phrasing habits.
   - Only the source paper is marked relevant; another paper answering a broad query counts as a miss for both strategies equally, so the A vs B comparison stays fair while absolute recall is a lower bound.
 - **Mitigation:** a teammate reviews a sample of 20 test queries before the single test run, and the queries are frozen after the first evaluation (rule 7).
+- **Outcome (2026-10-18):** the review of 20 test queries (`eval/queries/test_review.xlsx`) found all 20 plausible; none changed. The single test run (`eval/results/20261018-182430-e1-test/`, 132 queries): structured R@1 0.894 against fixed 0.773, MRR@20 0.938 against 0.862; structured right where fixed is wrong on 20 queries, the reverse on 4 (exact McNemar p = 0.0015). The dev result holds.
 
 ## D39. A form in n8n as the user interface, with a result page written by code
 
