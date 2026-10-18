@@ -1,0 +1,22 @@
+{
+  "created_at": "20261018-182430",
+  "git_commit": "8a2dbef",
+  "queries_file": "/pp/eval/queries/worksheet.csv",
+  "queries_sha256_12": "38ec33d6fb6d",
+  "split": "test",
+  "manifest_sha256_12": "a1f238afcd17",
+  "chunk_tokens": 512,
+  "chunk_overlap": 64,
+  "embedder_url": "http://embedder:80",
+  "retrieval_path": "api http://127.0.0.1:8000",
+  "ks": [
+    1,
+    5,
+    10,
+    20
+  ],
+  "strategies": [
+    "fixed",
+    "structured"
+  ]
+}
