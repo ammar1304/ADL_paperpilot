@@ -52,6 +52,7 @@ Commit result folders you report. Queries go through the running service's `/sea
 ### Rules that keep the numbers honest
 
 - **Tune on `dev` only:** chunk size, overlap and anything else. Run `--split test` once, at the end, and report that.
+- **Before the test run, a teammate reviews 20 test queries (D38):** `python scripts/make_e1_review.py` writes `eval/queries/test_review.xlsx`, a fixed-seed sample stratified by type. Queries flagged there are fixed before the run, never after, and the report says how many.
 - **Never edit a query after seeing how it scored.** Add new ones instead, and say so.
 - **Report losses too:** where A beats B, `per_query.json` shows which queries; explain them.
 - **Papers can be relevant to many queries:** list every relevant paper in `relevant_papers`, separated by `;`.
