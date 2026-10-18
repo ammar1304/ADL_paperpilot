@@ -1,52 +1,54 @@
 # PaperPilot
 
-Pre-submission copilot for research papers, built on n8n. Given an idea or a draft PDF, PaperPilot finds the closest prior work, checks whether the draft's claims are supported by its own tables and cited papers, and returns a venue-readiness report. It does not predict acceptance.
+Pre-submission copilot for research papers, built on n8n. Given an idea or a draft PDF, PaperPilot finds the closest prior work and checks the draft the way a careful reviewer would: every number against its table, every figure against its image, every citation against the cited paper. It does not predict acceptance.
 
-**Current state: milestone 2, part 1 (LLM layer and novelty check).**
+**State: complete.** Both checks run end to end through n8n, from the web app, the n8n form or the webhook, and every part is measured (E1 to E5).
 
-- **"Check my idea" works end to end:** an LLM splits the idea into facets, the knowledge base is searched, a second LLM compares the idea with the closest papers citing evidence, and a code verifier rejects anything retrieval cannot back up.
-- **The audit branch** parses the draft PDF with Docling (tables as cell grids, figures as images, D31 and D32); the checks themselves are being built (milestone 3), so the n8n audit workflow still answers `"implemented": false`.
-- **The papers knowledge base** (RAG for question answering, from arXiv) can be selected, built through n8n, searched, and evaluated with two chunking strategies.
+- **"Is my idea new?" (novelty):** an LLM splits the idea into task, method, data and result; the library is searched with several queries, fused and reranked; a search agent decides whether to search again, in the library or on the web; a judge compares the idea with each candidate, citing passages; a code verifier rejects any paper or passage that retrieval never returned.
+- **"Does my draft hold up?" (audit):** the PDF is parsed with Docling (tables as cell grids, figures as images); an LLM extracts the claims; numbers are recomputed in code from the table cells; a vision model reads each figure a claim refers to; citations are checked against passages retrieved from the cited paper (RAG). "Contradicted" always needs evidence; missing evidence gives "unverifiable" or "not found".
+- **The library:** 531 arXiv papers on retrieval-augmented generation for question answering, 61 with full text, chunked two ways (fixed size and by structure) and evaluated (E1: structured chunking puts the right paper first for 89 % of unseen queries, against 77 %).
 
-See [docs/PROGRESS.md](docs/PROGRESS.md) for what is verified and [docs/DECISIONS.md](docs/DECISIONS.md) for why it is built this way.
+See [docs/PROGRESS.md](docs/PROGRESS.md) for what is verified, [docs/DECISIONS.md](docs/DECISIONS.md) for why it is built this way, [PROMPT_LIBRARY.md](PROMPT_LIBRARY.md) for every prompt and [eval/README.md](eval/README.md) for the evaluations.
 
-## What runs today
+## What runs
 
 ```
-POST /webhook/paperpilot
-        │
-   00-router (n8n)
+Web app (pp-tools /app) ──┐
+n8n form (05-form) ───────┼─► POST /webhook/paperpilot
+curl, scripts ────────────┘          │
+                               00-router (n8n)
         ├─ Create run ──────────────► pp-tools POST /runs  (validate + store, 422 on bad input)
         ├─ Mark running ────────────► pp-tools PATCH /runs/{id}
         ├─ Route by mode (Switch, no LLM)
-        │     ├─ novelty ─► 20-novelty sub-workflow
-        │     │      render P1 ─► LLM "Decompose idea" (Groq gpt-oss-20b, Gemini fallback, JSON schema)
-        │     │      ─► save facets ─► retrieve (all queries, rank fusion) ─► render P3
-        │     │      ─► LLM "Judge novelty" (Groq gpt-oss-120b, Gemini fallback, JSON schema)
+        │     ├─ novelty ─► 20-novelty
+        │     │      P1 "Decompose idea" (Groq gpt-oss-20b, Gemini fallback, JSON schema)
+        │     │      ─► retrieve (all queries, rank fusion, cross-encoder rerank)
+        │     │      ─► P2 search agent (stop, or search again in the library or on the web; up to 2 rounds)
+        │     │      ─► P3 "Judge novelty" (Groq gpt-oss-120b, Gemini fallback, JSON schema)
         │     │      ─► verifier (code) ─► retry once with feedback, or assemble result
-        │     └─ audit ───► 30-audit sub-workflow   (placeholder)
+        │     └─ audit ───► 30-audit
+        │            parse PDF (Docling job, polled) ─► P4 extract claims, batch by batch (gpt-oss-120b, 20b fallback)
+        │            ─► number check (code, table cells) ─► P5 figure check, one image per call (qwen3.8-27b vision)
+        │            ─► P6 citation check on retrieved passages of the cited paper (gpt-oss-120b) ─► assemble result
         ├─ Mark done ───────────────► pp-tools PATCH /runs/{id}
         └─ Respond with run_id, mode, status, result
 
-POST /webhook/ingest
-        │
-   10-ingest-papers (n8n)
-        ├─ Start build ─────────────► pp-tools POST /corpus/build  (background job, 202 + job_id)
-        ├─ Respond job_id to caller
-        └─ every 15 s: GET /jobs/{id} until done (summary) or failed (error)
-                  pp-tools: manifest ─► arXiv metadata + PDFs ─► text + structure
-                            ─► chunking A (fixed) and B (structured) ─► BGE-M3 ─► Qdrant
+POST /webhook/ingest ─► 10-ingest-papers: pp-tools corpus build job, polled every 15 s
+      manifest ─► arXiv metadata + PDFs ─► text + structure ─► chunking A (fixed) and B (structured) ─► BGE-M3 ─► Qdrant
 
 Any failure ─► 90-error-handler ─► pp-tools POST /runs/fail-by-execution
 ```
 
+Drafts never go to the Gemini free tier (D12); every audit model is on Groq. All models are free tiers.
+
 | Service | Port (localhost only) | Role |
 | --- | --- | --- |
-| n8n 2.42.6 | 5678 | Orchestration, webhook, routing, LLM calls (Groq, Gemini fallback) |
-| pp-tools | 8000 | Python service: validation, run state, corpus build jobs, search; later the verifier |
+| n8n 2.42.6 | 5678 | Orchestration: webhook, routing, loops, LLM calls (Groq, Gemini fallback for novelty), form |
+| pp-tools (FastAPI) | 8000 (`PP_TOOLS_HOST_PORT`) | Web app, validation, run state, uploads, search, prompt rendering, claim validation, number check, verifiers, evaluations |
 | embedder (TEI cpu-1.9) | internal | Serves the BGE-M3 embedding model |
+| reranker (TEI cpu-1.9) | internal | Serves the `BAAI/bge-reranker-base` cross-encoder |
 | parser (docling-serve-cpu v1.30.0) | 127.0.0.1:5001 | PDF layout parsing for audits: tables as cell grids, figures as images (about 4.4 GB image, 3.5 GB of memory while converting) |
-| Postgres 17 | 5433 | n8n's database and the `paperpilot` app database (runs, jobs) |
+| Postgres 17 | 5433 | n8n's database and the `paperpilot` app database (runs, steps, jobs) |
 | Qdrant v1.19.2 | 6333 | Vector store: `papers_fixed` and `papers_structured` |
 
 ## Prerequisites
@@ -220,9 +222,9 @@ docker-compose.yml        all services
 .env.example              every variable, placeholders only
 n8n/entrypoint.sh         unpublish, import, publish, then start n8n
 n8n/workflows/            05-form, 00-router, 10-ingest-papers, 20-novelty, 30-audit, 90-error-handler
-services/pp_tools/        FastAPI service: corpus/, retrieval/, eval/, schema.sql, tests
+services/pp_tools/        FastAPI service: web/ (the web app), audit/, corpus/, retrieval/, eval/, schema.sql, tests
 infra/postgres/init/      creates the app database on first start
-scripts/                  smoke test, workflow export and normalizer
+scripts/                  smoke test, workflow export, evaluation runners (audits, E5), prompt library builder
 corpus/                   manifest.csv (the papers), selection.json, guide
 .cache/pp-tools/          downloaded PDFs, metadata, extracted text, build report (not in git)
 prompts/                  prompt library: versioned prompts, active.json, failure log
