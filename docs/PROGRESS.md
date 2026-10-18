@@ -470,3 +470,5 @@ Branch `feat/m3-parser-spike`. Decision D31: Docling (CPU) instead of MinerU.
 ## Future work (for the report)
 
 - **Citations outside the library through Semantic Scholar.** When a cited paper is not among the 531, look its title up on Semantic Scholar. If a free PDF exists, chunk, embed and rerank it on the fly and run the same P6 judge. With only the abstract, allow "supported" or "can't tell" but never a negative verdict, since the evidence may be in the full text (the evidence asymmetry of F-020). Needs its own E5-style evaluation. This makes the citation check work in any field; the number and figure checks already do not depend on the library.
+
+- [x] Team PC: PDF upload through the web app: Self-RAG (30 pages) uploaded as a file, 48 claims, 8 figure checks, 53 citations, page numbers and figure images shown, report downloaded (19 pages). The report then grouped the citations to papers outside the library into one line and shows each figure image once.

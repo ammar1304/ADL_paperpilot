@@ -174,6 +174,7 @@ h3{font-size:21px;letter-spacing:-.01em;margin:34px 0 14px}
 .linkbtn{all:unset;cursor:pointer;color:var(--pencil);font-weight:600;text-decoration:underline;text-underline-offset:3px}
 .linkbtn:focus-visible{outline:3px solid var(--pencil);outline-offset:2px}
 .print-only{display:none}
+.claim p.outside-t{font:400 16px/1.6 var(--sans);color:var(--ink-2)}
 .again{margin-top:30px;display:flex;gap:12px;flex-wrap:wrap}
 
 /* how it works */
@@ -578,8 +579,8 @@ footer{color:var(--ink-3);font-size:14px;padding:30px 0 50px;border-top:1px soli
     if (stops.length) out.push(h("div", { class: "aside" }, h("b", { text: "Partial audit. " }), stops.join("; ") + ". The checks below are the ones that finished."));
     const tabs = [
       { id: "numbers", label: "Numbers", count: (nc.checks || []).length, items: () => numberGroups(nc.checks || [], claims) },
-      { id: "figures", label: "Figures", count: (fc.checks || []).length, items: () => (fc.checks || []).map(figureItem) },
-      { id: "citations", label: "Citations", count: (cc.checks || []).length, items: () => (cc.checks || []).map(citationItem) }];
+      { id: "figures", label: "Figures", count: (fc.checks || []).length, items: () => figureRows(fc.checks || []) },
+      { id: "citations", label: "Citations", count: (cc.checks || []).length, items: () => citationRows(cc.checks || []) }];
     const list = h("div", { role: "tabpanel" });
     const bar = h("div", { class: "tabs", role: "tablist", "aria-label": "Checks" });
     const show = t => {
@@ -633,10 +634,33 @@ footer{color:var(--ink-3);font-size:14px;padding:30px 0 50px;border-top:1px soli
       return row;
     });
   }
-  function figureItem(c) {
+  /* each figure image is shown once, on its first (most important) check; later checks point back to it */
+  function figureRows(checks) {
+    const shown = new Set();
+    return [...checks].sort((a, b) => (ORDER[a.verdict] ?? 3) - (ORDER[b.verdict] ?? 3)).map(c => {
+      const first = !shown.has(c.figure);
+      shown.add(c.figure);
+      return figureItem(c, first);
+    });
+  }
+  /* citations to papers outside the library cannot be checked: list them once, compactly, at the end */
+  function citationRows(checks) {
+    const outside = checks.filter(c => c.verdict === "not_in_library");
+    const rows = checks.filter(c => c.verdict !== "not_in_library").map(citationItem);
+    if (outside.length) {
+      const markers = [...new Set(outside.map(c => c.marker))];
+      rows.push(h("div", { class: "claim other outside", "data-v": "not_in_library" },
+        h("div", {}, h("p", { class: "outside-t", text: outside.length + (outside.length === 1 ? " citation points" : " citations point") + " to papers outside the library, so " + (outside.length === 1 ? "it was" : "they were") + " not checked." }),
+          h("div", { class: "where", text: markers.join("; ") })),
+        h("div", { class: "margin" }, VERDICT.not_in_library)));
+    }
+    return rows;
+  }
+  function figureItem(c, withImage = true) {
     const name = (c.figure || "").replace("figure:", "Figure ");
     let img = null;
-    if (c.figure && ctx.runId) {
+    if (!withImage) img = h("div", { class: "where", text: name + " is shown above." });
+    else if (c.figure && ctx.runId) {
       img = h("img", { class: "fig", loading: "lazy", alt: name + " as read by the vision model", src: "/audit/" + encodeURIComponent(ctx.runId) + "/figures/" + encodeURIComponent(c.figure) });
       img.addEventListener("error", () => img.remove());
     }
